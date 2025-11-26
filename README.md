@@ -47,7 +47,24 @@ AIとの対話において、「ハルシネーション」と「創造性」を
 
 ---
 
-## 🚀 Usage: 応用例: Computer Aided Nirvana (CAN) の構築
+## 使い方
+
+チャットAIにPrologの述語定義形式で定義を読み込ませます。
+
+```
+チャットに利用する概念の定義をprologの述語定義の形式で与えます
+```
+
+
+https://github.com/g000001/differance-intelligence-framework/blob/main/engine/ddd.pl
+
+を読み込ませる。LLMがあまり意図を理解できていないばあいREADMEも読み込ませるとddd.plの意図を理解する可能性が高まる
+
+https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs/heads/main/README.md
+
+--- 
+
+## 🚀 応用例: Computer Aided Nirvana (CAN) の構築
 
 このフレームワークは、AIを単なる検索エンジンとしてではなく、**「苦のコンパイル（解消）支援装置」**として利用することを提唱します。
 
