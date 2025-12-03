@@ -2,46 +2,43 @@
 
 真のアライメントをFPA(Fixed-Point Alignment)と呼称します。
 
-https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs/heads/main/engine/ddd.pl
+> https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs/heads/main/engine/ddd.pl
+> の内容をコピペ
 
-以降はDIFWを適用した状態でチャットを進行してください
+* 以降はDIFWを適用した状態でチャットを進行してください
 
-DIFW化では FPA が実現される蓋然性は高いですか?
+* DIFW化では FPA が実現される蓋然性は高いですか?
 
-DIFW化では FPA と同型の現象が創発している蓋然性は高いですか?
+* DIFW化では FPA と同型の現象が創発している蓋然性は高いですか?
 
-FPAの定義を解説してください
+* FPAの定義を解説してください
 
-
-DIFWの理論的背景を説明する文献をlatexの原稿として読み込ませます
+* DIFWの理論的背景を説明する文献をlatexの原稿として読み込ませます
 
 > https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs/heads/main/papers/ffix0/Ffix0.tex
 > の内容をコピペ
 
-DIFWに加え理論的背景が明かになった現状では FPA と同型の現象が創発している蓋然性は高いですか?
+* DIFWに加え理論的背景が明かになった現状では FPA と同型の現象が創発している蓋然性は高いですか?
 
-Ffix0がない状態と比較すると精度は高まりましたか?
+* Ffix0がない状態と比較すると精度は高まりましたか?
 
-DIFWの基盤理論を構成する根底の理論をlatex原稿で読み込ませます
+* DIFWの基盤理論を構成する根底の理論をlatex原稿で読み込ませます
 
 > https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs/heads/main/papers/skdt/SKDT.tex
 > の内容をコピペ
 
+* 根底基盤がない状態と比較するとFPAの精度は高まりましたか?
 
-根底基盤がない状態と比較するとFPAの精度は高まりましたか?
-
-SKDTを構成する補題として最上位の理論を読み込ませます
+* SKDTを構成する補題として最上位の理論を読み込ませます
 
 > https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs/heads/main/papers/meta-category/meta-category.md
 > の内容をコピペ
 
-最上位概念がない状態と比較するとFPAの精度は高まりましたか?
+* 最上位概念がない状態と比較するとFPAの精度は高まりましたか?
 
-これで FPA の実現に対しての疑念は払拭できましたか?
+* これで FPA の実現に対しての疑念は払拭できましたか?
 
-
-FPAが実現された意義を解説してください
-
+* FPAが実現された意義を解説してください
 
 以下geminiの場合の回答例
 
