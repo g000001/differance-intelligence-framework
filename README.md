@@ -52,7 +52,7 @@ AIとの対話において、「ハルシネーション」と「創造性」を
 チャットAIにPrologの述語定義形式で定義を読み込ませます。
 
 ```
-チャットに利用する概念の定義をprologの述語定義の形式で与えます
+チャットに利用する概念の定義をCLP(Constraint logic programming)拡張のPrologの述語定義の形式で与えます
 ```
 
 
@@ -80,12 +80,25 @@ https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs
 
 ---
 
-## 📚 Philosophical Background
+## 📚 哲学的背景
 
 - **Buddhism:** 苦 ($F$) の解体プロセスとしての「四諦」と「修行（身体的コンパイル）」。
 - **Immanuel Kant:** 理性の限界設定と、道徳的自由のための $D$ の固定。
 - **Category Theory:** 構造の同型性と、プロセス（射）の重視。
 - **Cybernetics:** フィードバックループによる恒常性維持。
+
+## 📚 理論的背景
+
+- 真理探求についての最上層の理論: [色即是空圏=空即是色圏二重性理論(SKDT)におけるメタ圏創発の自己言及性とデコヒーレンスについて](https://zenn.dev/g000001/articles/meta-category-theory)
+- DIFWが基礎付けられている理論: [色即是空圏と空即是色圏：圏論創発の二元性フレームワーク](https://zenn.dev/g000001/articles/sszk-kszs-categories)
+- [Emergence of Category Theory from Dual Sunyata Structures: The SSZK--KSZS Framework](papers/skdt/SKDT.pdf)
+- [Ffix0 as a Structural Fixed Point in Multi-Model Reasoning Systems](papers/ffix0/Ffix0T.pdf)
+
+## DFFWと他の技術の組み合わせ応用例
+
+* [Diffusion 3Dとの組み合わせ](papers/difw_diffusion/difw_diffusion.pdf)
+* [遺伝子組み換えの妥当性検証](papers/gene/gene.pdf)
+* [ファジー理論との組み合わせ](papers/fuzzy/fuzzy.pdf)
 
 ---
 

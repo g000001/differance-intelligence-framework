@@ -1,0 +1,33 @@
+*.aux          # Auxiliary file
+*.log          # Log file
+*.bbl          # Bibliography
+*.blg          # Bibliography log
+*.brf          # BibTeX style file (Biber/BibTeX)
+*.dvi          # Device-independent file
+*.lof          # List of figures
+*.lot          # List of tables
+*.nav          # Navigation file (Beamer)
+*.out          # Output file (hyperref)
+*.snm          # Slide number file (Beamer)
+*.toc          # Table of contents
+*.vrb          # Verbose file
+*.idx          # Index file
+*.ind          # Index file
+*.ilg          # Index log file
+*.glg          # Glossary log file
+*.glo          # Glossary file
+*.ist          # Index style file
+*.acn          # Acronyms
+*.acr          # Acronyms
+*.alg          # Acronyms log
+*.gls          # Glossary entries
+*.glstex       # Glossary entries for hyperref
+*.loa          # List of abbreviations
+*.loc          # List of nomenclature
+*.run.xml      # Latexmk run file
+*~             # Emacs/Vim temporary files
+*.bak          # Backup files
+*.synctex.gz   # SyncTeX (Source/PDF viewer synchronization)
+*.fdb_latexmk  # latexmk file database
+*.fls          # File list/statistics
+._* # macOS resource forks

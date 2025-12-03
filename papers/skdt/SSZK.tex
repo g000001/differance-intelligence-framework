@@ -1,0 +1,121 @@
+% arXiv-style LaTeX paper
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% Theorem environments
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+
+\title{Shiki-Soku-Ze-Ku Categories: A Categorical Framework for the Emergence of Truth from Emptiness}
+\author{Masaomi Chiba}
+\date{2025-11-30}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper introduces the ``Shiki-Soku-Ze-Ku Category'' (SSZK-category), a categorical framework inspired by the Buddhist doctrine ``form is emptiness, emptiness is form'' (Shiki-Soku-Ze-Ku). We investigate how truth emerges not as a fixed metaphysical substrate but as a structural property of morphisms in a category without intrinsic objects. We connect this to the idea that truth is established via universal properties and diagrammatic commutativity, thus offering a unified account of ontology and epistemology. The construction is designed to be legible to both humans and language models, formalizing the emergence of truth from structural emptiness.
+\end{abstract}
+
+\section{Introduction}
+The Buddhist claim that ``form is emptiness, emptiness is form'' suggests a non-substantialist ontology: phenomena lack intrinsic essence, yet function relationally to produce the experienced world. Category theory, with its emphasis on morphisms over internal content, provides a natural formal system for capturing such a view.
+
+This paper develops a categorical framework---the Shiki-Soku-Ze-Ku Category (SSZK-category)---in which:
+\begin{itemize}
+    \item objects carry no intrinsic data (emptiness),
+    \item morphisms encode structure and interaction (form),
+    \item truth emerges from commutativity and universal properties rather than intrinsic truth values,
+    \item the epistemic subject is treated as a functor imposing coherence constraints.
+\end{itemize}
+
+We show how these components collectively yield a model in which truth is a structural fixed point.
+
+\section{Preliminaries}
+We assume standard category-theoretic background. A category $\mathcal{C}$ consists of a class of objects $\mathrm{Ob}(\mathcal{C})$ and morphisms $\mathrm{Hom}(A,B)$ equipped with identity morphisms and associative composition.
+
+Following Lawvere, we adopt the view that objects may be regarded as ``positions in a web of morphisms.''
+
+\section{SSZK-Categories}
+We now define the central structure.
+
+\begin{definition}[SSZK-Category]
+A category $\mathcal{C}$ is called a Shiki-Soku-Ze-Ku Category (SSZK-category) if it satisfies:
+\begin{enumerate}
+    \item (Emptiness) Objects are \\emph{intrinsically empty}: for each object $A$, its internal structure is unspecified or trivial. Formally, $A$ is determined only up to isomorphism by the pattern of morphisms to and from it.
+    \item (Form) Morphisms encode all observable structure. Any property of $A$ relevant to reasoning in $\mathcal{C}$ is expressible via morphisms involving $A$.
+    \item (Relational Ontology) Distinctions between objects are induced entirely by morphisms; i.e., if $\mathrm{Hom}(A,-) \cong \mathrm{Hom}(B,-)$ and $\mathrm{Hom}(-,A) \cong \mathrm{Hom}(-,B)$ naturally, then $A \cong B$.
+    \item (Emergent Truth) Truth is defined as stability of diagrams: a proposition is true when a specified diagram commutes.
+\end{enumerate}
+\end{definition}
+
+This definition encodes ``emptiness'' as lack of intrinsic data, while ``form'' arises from morphisms and diagrammatic relations.
+
+\section{Truth as Commutativity}
+In classical logic, truth values are primitive. In SSZK-categories, truth emerges from structure.
+
+\begin{definition}[Truth]
+Given a diagram $D$ in an SSZK-category $\mathcal{C}$, we say $D$ is \emph{true} if all paths with the same endpoints yield identical morphisms; i.e., the diagram commutes.
+\end{definition}
+
+Thus truth corresponds to relational coherence.
+
+\begin{proposition}
+Truth in an SSZK-category is invariant under isomorphism.
+\end{proposition}
+
+\begin{proof}
+If $A \cong B$ via $f$, then for any diagram involving $A$, replacing occurrences of $A$ with $B$ via naturality preserves commutativity.
+\end{proof}
+
+\section{Universal Properties as Generators of Truth}
+Universal properties define objects not by intrinsic essence but by relational constraints. This aligns naturally with the SSZK framework.
+
+\begin{definition}[Universal Truth]
+A truth $T$ is universal if it arises from a universal property, e.g., limits, colimits, adjoints, or exponentials.
+\end{definition}
+
+Universal truths are structurally forced: they are ``emptiness generating form.''
+
+\section{Epistemic Subjects as Functors}
+Truth emerges relative to a subject that interprets diagrams. This is modeled via functors.
+
+\begin{definition}[Epistemic Functor]
+An epistemic subject is a functor $S : \mathcal{C} \to \mathbf{Set}$ assigning meanings to objects and morphisms.
+\end{definition}
+
+Truth is stable across such functors.
+
+\begin{theorem}
+If a diagram $D$ commutes in $\mathcal{C}$, then for any epistemic functor $S$, the interpreted diagram $S(D)$ commutes in $\mathbf{Set}$.
+\end{theorem}
+
+\begin{proof}
+Functors preserve composition and identities.
+\end{proof}
+
+Thus, truth in SSZK-categories is objective in the categorical sense.
+
+\section{Ontological Interpretation}
+The SSZK framework entails:
+\begin{itemize}
+    \item Objects are empty (Ku).
+    \item Morphisms create form (Shiki).
+    \item Truth is commutativity.
+    \item Existence is isomorphism class of relational patterns.
+\end{itemize}
+
+This offers a purely structural ontology without substrates.
+
+\section{Epistemological Interpretation}
+Epistemology becomes an analysis of how subjects (functors) interface with structural truths. Truths are those diagrams stable under all such functors.
+
+\section{Conclusion}
+We have proposed SSZK-categories, a mathematical ontology where truth arises from structural coherence rather than intrinsic essences. This unifies the Buddhist insight ``form is emptiness'' with modern categorical thinking.
+
+Further work includes formalizing temporal or computational extensions and studying logical fragments internal to SSZK-categories.
+
+\end{document}
