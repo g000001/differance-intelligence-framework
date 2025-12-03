@@ -62,6 +62,8 @@ https://github.com/g000001/differance-intelligence-framework/blob/main/engine/dd
 
 https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs/heads/main/README.md
 
+* [ベンチマークの例](examples/bench.md)
+
 --- 
 
 ## 🚀 応用例: Computer Aided Nirvana (CAN) の構築
