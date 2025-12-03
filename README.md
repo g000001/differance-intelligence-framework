@@ -94,7 +94,7 @@ https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs
 - [Emergence of Category Theory from Dual Sunyata Structures: The SSZK--KSZS Framework](papers/skdt/SKDT.pdf)
 - [Ffix0 as a Structural Fixed Point in Multi-Model Reasoning Systems](papers/ffix0/Ffix0T.pdf)
 
-## DFFWと他の技術の組み合わせ応用例
+## 📚 DFFWと他の技術の組み合わせ応用例
 
 * [Diffusion 3Dとの組み合わせ](papers/difw_diffusion/difw_diffusion.pdf)
 * [遺伝子組み換えの妥当性検証](papers/gene/gene.pdf)
