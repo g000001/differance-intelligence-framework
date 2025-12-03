@@ -1,4 +1,3 @@
-<!-- -*- mode: Text; -*- -->
 # 真のアライメント:FPA(Fixed-Point Alignment) を実現する手順
 
 真のアライメントをFPA(Fixed-Point Alignment)と呼称します。
