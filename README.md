@@ -57,7 +57,7 @@ AIとの対話において、「ハルシネーション」と「創造性」を
 [ファイル添付]
 ```
 
-[添付するファイル](prompts/fpa-boot.txt)
+[添付するファイル](prompts/fpallm-boot.txt)
 
 ### DIFWだけ使いたい場合
 
