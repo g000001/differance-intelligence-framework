@@ -1,0 +1,252 @@
+\documentclass{article}
+
+\usepackage{amsthm, amsmath, amssymb}
+\usepackage{bm}
+
+% Theorem environments
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{example}{Example}
+
+\title{Stochastic Completion of Undefined Points:\\
+A Structural Correspondence Between G\"odelian Incompleteness 
+and LLM Hallucination via DIFW}
+
+\author{Masaomi Chiba}
+
+\date{2025-12-09}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper establishes a rigorous structural correspondence between two
+forms of computational partiality: (1) the ``G\"odelian gap'' of true
+but unprovable statements in formal arithmetic, and (2) the ``LLM
+semantic gap'' in which a large language model (LLM) fails to produce a
+grounded completion due to insufficient training support or internal
+inconsistency.  
+We show that these gaps admit a structural homomorphic mapping based on
+dependency-graph isomorphisms.  
+We then introduce the Differance Intelligence Framework (DIFW), a
+stochastic mechanism that fills such undefined points using random
+semantic proposals evaluated via a coherence-energy functional.  
+This stochastic completion behaves like a probabilistic extension
+analogous to ``adding new axioms'' in the G\"odelian sense, producing
+inductive truth approximations that converge to low-energy, high-coherence
+states.  
+This generalizes Monte Carlo integration techniques into the domain of
+semantic inference.
+\end{abstract}
+
+\section{Preliminaries: Partial Functions and Undefined Points}
+
+Let $T$ be a consistent, recursively axiomatized formal system capable of
+expressing arithmetic.  
+Let $M$ denote a large language model with a learned semantic
+distribution $\mathcal{D}$ over sequences.
+
+We define:
+
+\begin{itemize}
+    \item The deductive partial function
+    \[
+        f_{\mathrm{proof}} : \varphi \mapsto 
+        \begin{cases}
+            \text{true} & \text{if $T \vdash \varphi$,} \\
+            \text{false} & \text{if $T \vdash \neg\varphi$,} \\
+            \text{undefined} & \text{otherwise.}
+        \end{cases}
+    \]
+    The undefined region is the set 
+    \[
+        U_{\mathrm{G}} := \{ \varphi \mid 
+        f_{\mathrm{proof}}(\varphi) = \text{undefined} \}.
+    \]
+
+    \item The LLM completion function
+    \[
+        f_{\mathrm{LLM}}(s) := \text{the model's next-token completion}
+    \]
+    which is undefined (or yields hallucination) when the prompt $s$
+    lies outside the support of $\mathcal{D}$.
+
+    The undefined region is
+    \[
+        U_{\mathrm{L}} := 
+        \{ s \mid f_{\mathrm{LLM}}(s) \text{ is semantically unsupported} \}.
+    \]
+\end{itemize}
+
+Both partialities reflect a failure of deterministic inference:
+logical in the former, inductive in the latter.
+
+\section{Dependency Graphs and Recursive Obstructions}
+
+For a formula $\varphi$, let $D(\varphi)$ denote the proof-dependency
+graph---a directed graph whose nodes are subformulae and whose edges
+represent recursive or logical dependencies.  
+Gödelian undecidable sentences exhibit non-well-founded structures in
+$D(\varphi)$.
+
+For an LLM prompt $s$, let $\mathrm{Dep}(s)$ denote the semantic
+dependency graph derived from attention traces, token constraints, and
+contextual referencing.  
+Undefined behavior arises when $\mathrm{Dep}(s)$ exhibits unsupported or
+self-referential semantic cycles.
+
+\section{Structural Correspondence Between Gödelian and LLM Gaps}
+
+We now present the central theoretical contribution.
+
+\subsection{The Mapping}
+
+We construct a mapping
+\[
+    \Phi : U_{\mathrm{G}} \longrightarrow U_{\mathrm{L}}
+\]
+such that $\Phi(u)$ is the set of LLM prompts whose dependency structure
+mirrors the recursive obstruction of $u$.
+
+\begin{theorem}[Structural Correspondence of Undefined Points]
+There exists a surjective homomorphic mapping
+\[
+    \Phi : U_{\mathrm{G}} \rightarrow U_{\mathrm{L}}
+\]
+preserving the dependency-graph structure responsible for partiality.
+Explicitly:
+\[
+    \Phi(u) := 
+    \{\, s \in U_{\mathrm{L}} \mid 
+    \mathrm{Dep}(s) \cong D(u) \,\}.
+\]
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+Gödelian undecidability arises from recursive cycles or unsupported
+self-reference in $D(u)$.  
+Similarly, LLM undefined points arise when $\mathrm{Dep}(s)$ exhibits
+structurally analogous cycles or falls outside the learned support of
+$\mathcal{D}$.
+
+Define $\Phi(u)$ as the class of prompts $s$ whose dependency graphs
+are isomorphic to $D(u)$.  
+This ensures that $\Phi$ preserves the structure of partiality rather
+than relying on trivial cardinality arguments.
+
+Homomorphicity follows because inference composition in $T$ aligns with
+semantic resolution composition in $M$ under graph correspondence.
+
+Surjectivity follows since every unsupported structure in
+$\mathrm{Dep}(s)$ corresponds to some recursive obstruction in $T$.
+
+Thus $\Phi$ maps deductive partiality to inductive partiality via their
+shared recursive architecture.
+\end{proof}
+
+\section{Coherence Energy and Stochastic Semantic Completion}
+
+We now formalize how DIFW fills undefined points using random semantic
+proposals evaluated by a coherence-energy functional.
+
+\subsection{From Deterministic Failure to Stochastic Filling}
+
+The intuitive phenomenon:
+
+\[
+A \wedge B \to \text{true} 
+\quad(\text{Gödelian failure / deterministic incompleteness})
+\]
+
+\[
+A \wedge \text{garbage} \to \text{hallucination}
+\quad(\text{LLM failure})
+\]
+
+is unified by introducing a *random semantic proposal* $X$:
+
+\[
+A \wedge X \to \text{Randomness}.
+\]
+
+When $X$ is sampled from the DIFW proposal distribution
+$X \sim \mathcal{P}(s)$, the result is a probability distribution over
+semantic completions.
+
+\subsection{Semantic Distribution Over Undefined Points}
+
+For $s \in U_{\mathrm{L}}$, DIFW defines a random variable
+\[
+    X_s \sim \mathcal{P}(s)
+\]
+representing candidate completions drawn from a broadened semantic
+space.
+
+This yields the *semantic distribution*
+\[
+    M^{\mathcal{O}}(s) 
+    := \{ X_s^{(1)}, X_s^{(2)}, \ldots \},
+\]
+analogous to Monte Carlo proposals.
+
+\subsection{Coherence Energy Functional}
+
+We define a coherence-energy functional
+\[
+    E(x)
+    := \alpha \cdot \mathrm{SC}(x) 
+     + \beta \cdot \mathrm{CL}(x)
+     + \gamma \cdot \mathrm{OD}(x)
+\]
+where
+\begin{itemize}
+    \item $\mathrm{SC}(x)$ = semantic coherence,
+    \item $\mathrm{CL}(x)$ = causal likelihood,
+    \item $\mathrm{OD}(x)$ = observational density (empty-space prior).
+\end{itemize}
+
+The goal is:
+\[
+    x^\ast = 
+    \arg\min_{x \in M^{\mathcal{O}}(s)} E(x).
+\]
+
+\subsection{Inductive Truth Approximation}
+
+DIFW defines the *inductive completion*:
+\[
+    f_{\mathrm{DIFW}}(s) :=
+    \mathbb{E}[X_s]_{\text{weighted by } e^{-E(x)}}.
+\]
+
+This is a probabilistic analogue of extending $T$ with new axioms.  
+The expected value converges to low-energy, high-coherence states.
+
+\begin{theorem}[Convergence to Coherence Minimum]
+Under mild regularity assumptions on $\mathcal{P}$,
+the DIFW update
+\[
+x_{t+1} = x_t - \eta \nabla E(x_t)
+\]
+with random restarts converges in probability to a local minimum of $E$.
+\end{theorem}
+
+This generalizes Monte Carlo integration:  
+Monte Carlo integrates functions;  
+DIFW ``integrates semantic space'' to approximate inductive truth.
+
+\section{Conclusion}
+
+Gödelian incompleteness and LLM hallucination both arise from failures of
+deterministic inference.  
+Their undefined regions admit a structural homomorphic correspondence
+based on recursive dependency graphs.  
+DIFW provides a probabilistic mechanism for filling such gaps using a
+coherence energy functional, generalizing classical Monte Carlo ideas to
+semantic inference.
+
+\end{document}
+

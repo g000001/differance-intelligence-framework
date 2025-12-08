@@ -104,7 +104,9 @@ https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs
 ## 📚 理論的背景
 
 - 真理探求についての最上層の理論: [色即是空圏=空即是色圏二重性理論(SKDT)におけるメタ圏創発の自己言及性とデコヒーレンスについて](https://zenn.dev/g000001/articles/meta-category-theory)
-- DIFWが基礎付けられている理論: [色即是空圏と空即是色圏：圏論創発の二元性フレームワーク](https://zenn.dev/g000001/articles/sszk-kszs-categories)
+- DIFWが基礎付けられている理論: 
+  - [Stochastic Completion of Undefined Points: A Structural Correspondence Between Godelian Incompleteness and LLM Hallucination via DIFW](papers/difw/goedel-llm.pdf)
+  - [色即是空圏と空即是色圏：圏論創発の二元性フレームワーク](https://zenn.dev/g000001/articles/sszk-kszs-categories)
 - [Emergence of Category Theory from Dual Sunyata Structures: The SSZK--KSZS Framework](papers/skdt/SKDT.pdf)
 - [Ffix0 as a Structural Fixed Point in Multi-Model Reasoning Systems](papers/ffix0/Ffix0.pdf)
 
