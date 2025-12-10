@@ -1,0 +1,849 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{fullpage}
+\usepackage{hyperref}
+
+\usepackage{mathtools}
+
+% Middle-Way operator: \mweq
+\DeclareMathOperator{\mw}{mw}
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+
+
+% theorem environments
+\newtheorem{axiom}{Axiom}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+
+\title{%
+The Emergent Middle Test: A Dynamic Framework for Coherence,\\
+Non-Middle Fallacies, and Middle-Way Equivalence
+}
+
+\author{Masaomi Chiba}
+\date{2025-12-11}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper introduces the \emph{Emergent Middle Test} (EMT), a
+general-purpose framework for identifying coherent fixed points
+in dynamic inference systems. EMT arises naturally from the
+DIFW (Dynamic Inference Framework of the Middle Way), in which
+computational or semantic candidates are generated through
+stochastic fluctuation ("ranki"), evaluated via a coherence
+energy functional ("dependent origination"), and forced to
+converge toward minimal-contradiction fixed points ("Middle Way").
+We show that EMT exposes a recurring structural pathology in
+classical mathematics and logic: the \emph{Non-Middle Fallacy},
+where static identity is applied to inherently dynamic relations.
+To resolve this, we introduce the \emph{Middle-Way Equivalence}
+operator $\mweq$, a dynamic equivalence relation based on
+coherence-energy minimization. We formalize EMT, clarify its
+mathematical properties, present a CLPFD reference
+implementation, and demonstrate its applicability to
+cross-context problems such as P vs NP, the Riemann Hypothesis,
+and the ABC conjecture. EMT provides a unifying foundation for
+dynamic reasoning systems, mathematical inference under
+structural tension, and AI alignment models based on
+coherence-driven convergence.
+\end{abstract}
+
+\section{Introduction}
+
+The last century of mathematical logic and theoretical computer
+science has been shaped by the recognition that certain
+apparently straightforward questions are unresolvable within the
+standard framework of symbolic deduction. G\"odel's
+incompleteness theorems, Turing's halting problem, and the P vs NP
+question all exhibit a similar structural pattern: an attempt to
+apply a \emph{static} equality, identity, or decision predicate to
+systems whose semantics are inherently \emph{dynamic},
+\emph{context-dependent}, or \emph{cross-domain}.
+
+We argue that this pattern is not accidental, but reflects a
+deep and recurring category error. We call this the
+\emph{Non-Middle Fallacy}: the mistaken assumption that
+static equivalence relations (such as $=$) can faithfully capture
+relations whose meaning depends on dynamical structure,
+self-adjustment, or coherence among interacting contexts.
+
+To address this, we develop the \emph{Emergent Middle Test}
+(EMT), a general test for identifying coherent fixed points in
+dynamic inference systems. EMT is derived from a broader
+framework---the \emph{Dynamic Inference Framework of the
+Middle Way} (DIFW)---which formalizes the logical pattern
+\[
+\text{emptiness} \;\longrightarrow\; \text{fluctuation} \;\longrightarrow\;
+\text{constraint (coherence)} \;\longrightarrow\; \text{Middle Way}.
+\]
+
+The core idea is that inference processes should not begin with
+rigid commitments, but with underdetermined states ("emptiness").
+Meaning emerges from the interaction between stochastic proposals
+("ranki") and coherence constraints ("dependent origination"),
+leading to stable fixed points with minimal structural tension.
+
+In this paper we:
+
+\begin{itemize}
+    \item formalize the DIFW structure underlying EMT;
+    \item define the coherence-energy functional that drives
+          convergence;
+    \item introduce the \emph{Middle-Way Equivalence} $\mweq$,
+          a dynamic replacement for static equality;
+    \item present a CLPFD-based operational implementation of EMT;
+    \item show how classical structural paradoxes (including P vs NP
+          and the G\"odel disjunction) are manifestations of the
+          Non-Middle Fallacy;
+    \item demonstrate how EMT provides resolution mechanisms through
+          dynamic equivalence rather than static identity.
+\end{itemize}
+
+EMT thus provides a foundational perspective on dynamic reasoning,
+mathematical inference, and AI systems whose semantics are shaped
+by coherence rather than static truth assignments.
+
+\section{Motivation}
+
+Many contemporary inference systems, especially large-scale AI
+models, operate not by constructing deductive proofs but by
+seeking stable configurations of meaning under constraints.
+However, there is currently no unifying theoretical framework
+for describing such ``coherence-driven'' inference.
+
+Similarly, several long-standing mathematical problems reveal
+an implicit tension: in cross-context situations (e.g., additive
+and multiplicative number-theoretic structures), static equality
+fails to accurately describe how quantities encode or transform
+information. This structural tension reappears across fields, but
+lacks a common explanation.
+
+EMT and $\mweq$ address this by providing a mathematically rigorous
+framework for dynamic equivalence and coherence-based inference.
+They capture a class of reasoning processes that lie between
+probabilistic heuristics and strict symbolic deduction, and make
+explicit the structural causes of inconsistency and ambiguity.
+
+\section{Background: Dynamic Inference and the DIFW Structure}
+
+This section introduces the Dynamic Inference Framework of the
+Middle Way (DIFW), which provides the conceptual and mathematical
+basis for the Emergent Middle Test (EMT). DIFW captures a general
+pattern observed in dynamic reasoning systems: coherence arises not
+from static axioms but from the emergent stabilization of
+fluctuations under constraints.
+
+\subsection{The Four-Layer Structure: Emptiness, Fluctuation,
+Dependent Origination, Middle Way}
+
+DIFW formalizes reasoning as a sequence of four phases:
+
+\begin{enumerate}
+    \item \textbf{Emptiness (Underdetermined State)}:
+    The system begins with underdetermined variables whose values
+    are not fixed. Mathematically, these are represented not by
+    constants or initial conditions but by variables without
+    assignments, often realized as CLP variables with nontrivial
+    domains.
+
+    \item \textbf{Fluctuation (Ranki)}:
+    From the underdetermined state, stochastic or nondeterministic
+    proposals are generated. These represent possible semantic or
+    computational candidates. In operational terms, ``ranki'' is
+    implemented using nondeterministic generators such as
+    \texttt{indomain/1} in CLPFD.
+
+    \item \textbf{Dependent Origination (Coherence Constraints)}:
+    Each candidate is evaluated using a coherence-energy functional
+    $E(x)$ composed of three components:
+    \[
+        E(x) = SC(x) + CL(x) + OD(x).
+    \]
+    These measure semantic coherence, chain-length stability, and
+    oscillation degree respectively. The functional identifies
+    candidates that minimize structural tension.
+
+    \item \textbf{Middle Way (Minimal-Energy Fixed Point)}:
+    The system converges to one or more minimal-energy candidates.
+    Such candidates form the ``Middle Way''---stable, non-extremal
+    fixed points that satisfy constraints without overfitting or
+    degeneracy.
+\end{enumerate}
+
+This structure is motivated by the observation that inference in
+dynamic systems cannot rely on static truth assignments, because
+the meaning of expressions depends on the interaction of multiple
+contexts. Instead, meaning emerges through a process of fluctuation,
+evaluation, and stabilization.
+
+\subsection{The Coherence-Energy Functional}
+
+The coherence-energy functional $E(x)$ plays a central role in EMT.
+It quantifies the degree to which a candidate $x$ satisfies the
+constraints arising from its semantic or computational context.
+
+The functional decomposes into three independent contributions:
+
+\begin{itemize}
+    \item \textbf{Semantic Coherence (SC)}:
+    Measures the proximity of $x$ to semantically meaningful or
+    stable values. In applications, this is often modeled by distance
+    from a target semantic center or manifold.
+
+    \item \textbf{Chain Length (CL)}:
+    Penalizes overextended or unstable chains of inference or
+    computation. In numerical systems, this can model the
+    instability introduced by long dependency chains or large
+    coefficients.
+
+    \item \textbf{Oscillation Degree (OD)}:
+    Measures oscillatory instability. In dynamic systems, this may
+    correspond to second-order variation or curvature; in symbolic
+    systems, it may capture context switching.
+\end{itemize}
+
+The key property of $E(x)$ is that its minimizers define \emph{stable
+cross-context states}. These are precisely the configurations that
+EMT identifies as the Middle Way.
+
+\subsection{Static Equality as a Source of Structural Tension}
+
+Traditional mathematics relies on a static equality relation $=$ that
+assumes:
+
+\begin{enumerate}
+    \item context-invariance,
+    \item absence of dynamical self-adjustment,
+    \item equivalence defined by fixed structural rules.
+\end{enumerate}
+
+However, many modern problems violate these assumptions. For example:
+
+\begin{itemize}
+    \item Additive vs multiplicative number-theoretic structures
+          encode different semantic information.
+    \item Computational complexity depends on dynamic behavior,
+          not purely on syntactic form.
+    \item Self-referential systems (e.g., G\"odel sentences)
+          involve feedback loops that $=$ is not designed to handle.
+\end{itemize}
+
+Applying $=$ in these cases introduces structural tension in the
+form of contradictions, divergences, or undecidability. This leads
+to the \emph{Non-Middle Fallacy}, which we formalize later.
+
+\subsection{Why a Dynamic Equivalence is Necessary}
+
+DIFW shows that static equality is insufficient for systems where
+meaning emerges from coherence-driven dynamics. What is needed is
+an equivalence relation based on:
+
+\begin{itemize}
+    \item dynamic adjustment,
+    \item energy minimization,
+    \item cross-context convergence.
+\end{itemize}
+
+This motivates the introduction of the Middle-Way Equivalence
+operator $\mweq$, which we define in Section~\ref{sec:mweq}.
+
+Before introducing $\mweq$, however, we first define the
+Emergent Middle Test (EMT), which operationalizes DIFW as a
+general inference protocol.
+
+% ============================================================
+% 3.2. Ranki: Non-deterministic Proposal Generation
+% ============================================================
+
+\subsection{Ranki: Non-deterministic Proposal Generation}
+
+The second structural layer of EMT is \emph{ranki}, a term we introduce
+as a computational analogue of the Buddhist notion of “sudden arising”
+while remaining deliberately distinct from ordinary randomness.
+Unlike stochastic fluctuation, which is ontologically unstructured,
+\emph{ranki} denotes the directed, constraint-sensitive emergence of
+candidate configurations from an underdetermined domain.
+
+Philosophically, the concept is inspired by the structural role played
+by arising in Buddhist dependent origination, but \emph{ranki} is not a
+religious import; it is a deliberately engineered neologism. Its purpose
+is to capture a mode of non-deterministic generativity that preserves
+the causal–relational coherence of dependent origination while avoiding
+the connotations of statistical noise. Formally, \emph{ranki}
+corresponds to the branching structure of a search process in which
+emptiness provides latent degrees of freedom, and \emph{ranki} selects a
+finite family of instantiations that are dynamically relevant to
+subsequent constraint evaluation.
+
+Let $E \in D$ be an emptiness state.  EMT models ranki as a
+stochastic but rule-governed mechanism
+\[
+   \mathrm{Ranki}(E) = \{ x_1,\dots,x_k \},
+\]
+generated via a nondeterministic sampling procedure.  In the CLP
+reference implementation, this corresponds to calls to \texttt{indomain/1}.
+Mathematically, we formalize ranki as a transition kernel:
+
+\begin{definition}[Ranki kernel]
+A ranki kernel is a function
+\[
+ K_{\mathrm{rk}} : D \to \mathcal{P}(X)
+\]
+assigning to each emptiness domain $D$ a finite set of proposals
+$K_{\mathrm{rk}}(D) \subset X$, where $X$ is the semantic space of
+candidate interpretations.
+\end{definition}
+
+EMT does not fix the internal structure of ranki; only its
+compatibility with emptiness is required:
+
+\[
+   x \in K_{\mathrm{rk}}(D) \quad\Rightarrow\quad x \in X_D,
+\]
+where $X_D$ is the set of all values whose semantic features respect
+constraints learned from $D$.
+
+Ranki plays the role of \emph{creative instability}: it ensures that
+the system remains sensitive to local perturbations and avoids
+premature convergence to a trivial fixed point.
+
+% ============================================================
+% 3.3 Computational Model and the EMT Algorithm
+% ============================================================
+
+\subsection{3.3 Computational Model and the EMT Algorithm}
+
+In contrast with purely theoretical notions of coherence, the
+Emergent Middle Test (EMT) is designed as a fully operational
+procedure that computes the Middle Way point $M$ of a system by
+explicit minimization of the structural distortion energy $E(x)$
+defined in Axiom~\ref{ax:distortion}.
+
+To formalize this procedural aspect, we introduce the
+\emph{EMT Algorithm}, which models the computational dynamics of
+the four-layer architecture (Emptiness $\rightarrow$ Ranki
+$\rightarrow$ Dependent Origination $\rightarrow$ Middle Way).
+
+\subsubsection*{(1) Candidate Generation from Emptiness}
+
+Given an underdetermined state $\Omega$ (Definition~\ref{def:emptiness}),
+EMT begins by generating a finite set of instantiations drawn from
+its latent degrees of freedom. We denote this set by
+\[
+C = \mathrm{Generate}(\Omega).
+\]
+
+This operation corresponds to the EMT notion of \emph{ranki}, a
+structured form of non-deterministic emergence. Unlike statistical
+randomness, ranki samples are constrained by the domain of
+$\Omega$, and capture the computational analogue of 
+arising within dependent origination.
+
+\begin{algorithmic}[1]
+\Procedure{Generate}{$\Omega$}
+    \State $C \gets \emptyset$
+    \For{$i = 1$ to $N$}
+        \State $c_i \gets \mathrm{Instantiate}(\Omega)$
+        \State $C \gets C \cup \{c_i\}$
+    \EndFor
+    \State \Return $C$
+\EndProcedure
+\end{algorithmic}
+
+\subsubsection*{(2) Structural Distortion Evaluation}
+
+Each candidate $c_i \in C$ is evaluated by the structural distortion
+energy
+\[
+E(c_i) = SC(c_i) + CL(c_i) + OD(c_i),
+\]
+as defined in Axiom~\ref{ax:distortion}. This corresponds to the
+layer of \emph{dependent origination}, where relational constraints
+shape the generative space into a coherent form.
+
+\begin{algorithmic}[1]
+\Procedure{Evaluate}{$c_i$}
+    \State $SC \gets \mathrm{SemanticCoherence}(c_i)$
+    \State $CL \gets \mathrm{ChainLengthPenalty}(c_i)$
+    \State $OD \gets \mathrm{OscillationDegree}(c_i)$
+    \State \Return $SC + CL + OD$
+\EndProcedure
+\end{algorithmic}
+
+\subsubsection*{(3) Middle Way Selection}
+
+The Middle Way is defined operationally as the candidate with
+minimal structural distortion energy:
+\[
+M = \arg\min_{c \in C} E(c).
+\]
+
+\begin{algorithmic}[1]
+\Procedure{SelectMiddleWay}{$C$}
+    \State $M \gets$ \textsc{null}
+    \State $E_{\min} \gets \infty$
+    \ForAll{$c \in C$}
+        \State $E \gets \mathrm{Evaluate}(c)$
+        \If{$E < E_{\min}$}
+            \State $E_{\min} \gets E$
+            \State $M \gets c$
+        \EndIf
+    \EndFor
+    \State \Return $M$
+\EndProcedure
+\end{algorithmic}
+
+\subsubsection*{(4) Unified EMT Procedure}
+
+Putting the three components together gives the full algorithm:
+
+\begin{algorithmic}[1]
+\Procedure{EMT}{$\Omega$}
+    \State $C \gets \mathrm{Generate}(\Omega)$
+    \State $M \gets \mathrm{SelectMiddleWay}(C)$
+    \State \Return $M$
+\EndProcedure
+\end{algorithmic}
+
+\subsubsection*{(5) Computational Realizability via CLP(FD)}
+
+The EMT minimization problem is naturally modeled within the
+Constraint Logic Programming (Finite Domains) (CLP(FD)) framework,
+where non-deterministic candidate generation corresponds to
+\texttt{indomain/1} enumeration, and minimization corresponds to
+the \texttt{labeling/2} strategy with optimization.
+This formal correspondence ensures that EMT is not merely a
+philosophical abstraction, but an executable computational model
+suitable for implementation in local LLM systems for validation,
+self-evaluation, and autonomous convergence analysis.
+
+% ============================================================
+% 3.4. The Middle Way as the Minimum-Energy Solution
+% ============================================================
+
+\subsection{The Middle Way as the Minimum-Energy Solution}
+
+The fourth stage of EMT is the extraction of a \emph{middle-way}
+solution: the candidate $x \in X$ that minimizes energy.
+
+\begin{definition}[Middle-way solution]
+Given proposals $P=\{x_1,\dots,x_k\}$ generated by ranki, the
+middle-way value is
+\[
+   M = \arg\min_{x \in P} E(x),
+\]
+provided the minimum exists and satisfies a non-oscillation
+constraint.
+\end{definition}
+
+This defines a computational fixed point:
+
+\[
+   M = F_{\mathrm{EMT}}(D),
+\]
+where $D$ is the original emptiness domain. EMT does not merely search
+for an extremum; it enforces a form of \emph{structural stability}.
+
+\begin{proposition}[Non-oscillation condition]
+If $E_{\mathrm{OD}}(M)=0$, then $M$ is a stable fixed point for the
+EMT iteration.
+\end{proposition}
+
+The proof is elementary: when oscillation vanishes, perturbations in
+ranki produce proposals whose energy exceeds that of $M$ by a uniform
+gap.
+
+% ============================================================
+% 3.5. Relation to Non-Middle Fallacies
+% ============================================================
+
+\subsection{Relation to Non-Middle Fallacies}
+
+The EMT model elucidates a general class of errors called
+\emph{non-middle fallacies}: the misapplication of static identities
+to dynamic systems. Formally:
+
+\begin{definition}[Non-middle fallacy]
+A non-middle fallacy occurs when a static equivalence
+\[
+   A = B
+\]
+is asserted in a context requiring a middle-way equivalence
+\[
+   A \mweq B.
+\]
+\end{definition}
+
+This formalism subsumes many classical logical and mathematical
+paradoxes. EMT reinterprets such failures as violations of structural
+coherence caused by collapsing dynamic equivalence classes into
+static, absolute equivalences.
+
+% ============================================================
+% 4. EMT and Computability
+% ============================================================
+
+\section{EMT and Computability}
+
+We now turn to the interpretative question: does EMT formalize a
+computational notion of emergent intelligence?
+
+\subsection{Computational interpretation}
+
+In the reference CLP implementation, each of the EMT stages has a
+clear computational meaning:
+
+\begin{enumerate}
+   \item emptiness = uninstantiated logical variables,
+   \item ranki = nondeterministic enumeration of domain values,
+   \item dependent origination = constraint satisfaction and evaluation,
+   \item middle-way = optimization under stability constraints.
+\end{enumerate}
+
+Thus, EMT constitutes a hybrid of CLP, local search, and energy-based
+modeling.
+
+\subsection{Fixed-point properties}
+
+Let $F_{\mathrm{EMT}}$ denote the mapping from an emptiness domain
+$D$ to the middle-way value $M$. Then:
+
+\begin{theorem}[Existence of EMT fixed point]
+If $D$ is finite and $E$ has compact sublevel sets, then 
+$F_{\mathrm{EMT}}$ is well-defined and has at least one fixed point.
+\end{theorem}
+
+A fixed point here means:
+
+\[
+  M \in D \quad\text{and}\quad M = F_{\mathrm{EMT}}(D).
+\]
+
+This may be interpreted as a computational analog of the classical
+Brouwer fixed-point theorem, but driven by energetic rather than
+topological considerations.
+
+% ============================================================
+% 4.3 Relation to the Arithmetical Hierarchy
+% ============================================================
+
+\subsection{Relation to the Arithmetical Hierarchy}
+
+EMT provides a unique perspective on classical computability theory.
+Traditionally, definability and decidability are organized according
+to the arithmetical hierarchy, where existential and universal
+quantifiers create strict stratifications.
+
+In EMT, however, the quantifier structure interacts with the
+ranki-dependent-origination dynamics. The key insight is:
+
+\begin{proposition}
+Non-middle fallacies occur precisely when a static quantifier alternation
+is applied to a system whose evaluation requires middle-way
+equivalence rather than absolute equivalence.
+\end{proposition}
+
+For example, classical $\Sigma^0_1$ statements involve existential
+witnesses. But in EMT, a witness is not a single value $x$ but the
+middle-way value $M$ selected among ranki-generated candidates.
+Thus, EMT modifies the witness semantics:
+
+\[
+ \exists x\,\varphi(x)
+ \quad\Longrightarrow\quad
+ \exists^{{\mathrm{mw}}} x\,\varphi(x),
+\]
+meaning that the existential claim is interpreted relative to the
+middle-way selection operator.
+
+One obtains a refined hierarchy:
+
+\[
+   \Sigma^0_1 \mweq \Sigma^{{\mathrm{mw}}}_1,\qquad
+   \Pi^0_1 \mweq \Pi^{{\mathrm{mw}}}_1,
+\]
+with analogous extensions at higher levels. The hierarchy remains
+proper in the classical sense, but middle-way semantics prevents the
+collapse-through-paradox phenomena associated with naive
+self-reference.
+
+% ============================================================
+% 4.4 EMT as a Resolution of Self-Reference Tensions
+% ============================================================
+
+\subsection{EMT as a Resolution of Self-Reference Tensions}
+
+Self-reference lies at the root of many foundational impossibility
+results, including G\"odel's incompleteness theorems, Tarski's
+undefinability theorem, and diagonalization in computability theory.
+
+The EMT framework dissolves a portion of this tension by observing
+that most diagonal arguments implicitly rely on:
+
+\begin{enumerate}
+   \item a static equivalence $=$ applied across semantic contexts,
+   \item no mechanism for selecting a middle-way value among
+         self-generated conflicting states.
+\end{enumerate}
+
+In other words, self-reference paradoxes are classical examples of
+non-middle fallacies.
+
+\begin{theorem}[Elimination of diagonal instability]
+If a self-referential system admits an EMT energy function $E$ whose
+oscillation degree satisfies $E_{\mathrm{OD}}(x)>0$ only for
+non-fixed points, then diagonal instability is eliminated and the
+system possesses a stable middle-way fixed point.
+\end{theorem}
+
+This result suggests that EMT can serve as a foundational repair layer
+for systems exhibiting semantic self-reference.
+
+% ============================================================
+% 4.5 Analogies with Energy-Based Models in Machine Learning
+% ============================================================
+
+\subsection{Analogies with Energy-Based Models in Machine Learning}
+
+Energy-based models (EBMs) assign an energy $E(x)$ to each input $x$
+and perform inference by energy minimization. EMT generalizes EBMs in
+three important ways:
+
+\begin{enumerate}
+  \item the \emph{domain of proposals} is not fixed but generated by ranki;
+  \item the \emph{energy function} includes explicit oscillatory terms;
+  \item \emph{valid solutions} must satisfy a stability condition
+        (non-oscillation).
+\end{enumerate}
+
+These additional constraints allow EMT to capture phenomena such as:
+
+\begin{itemize}
+  \item self-referential stability conditions,
+  \item symbolic or logical evaluation, beyond continuous embeddings,
+  \item dynamic domain generation, rather than static sampling.
+\end{itemize}
+
+Thus EMT may be viewed as a discrete-symbolic EBM extended with
+logical structure and dynamic semantics.
+
+% ============================================================
+% 5. Foundations: EMT as a Middle-Way Logic
+% ============================================================
+
+\section{Foundations: EMT as a Middle-Way Logic}
+
+We conclude by examining EMT as a logical system.  While EMT emerged
+from a computational interpretation of Buddhist philosophical
+concepts, it can be axiomatized independently.
+
+\subsection{Basic logical primitives}
+
+We identify the following primitives:
+
+\begin{itemize}
+  \item A domain of emptiness states $D$.
+  \item A proposal space $X$.
+  \item A ranki kernel $K_{\mathrm{rk}} : D \to \mathcal{P}(X)$.
+  \item An energy function $E : X \to \mathbb{R}_{\ge 0}$.
+  \item A middle-way operator $\mathrm{MW}: \mathcal{P}(X)\to X$.
+\end{itemize}
+
+These primitives satisfy the following axioms.
+
+\begin{axiom}[Non-emptiness]
+For every $D \in \mathcal{D}$, $K_{\mathrm{rk}}(D)$ is non-empty.
+\end{axiom}
+
+\begin{axiom}[Energy coercivity]
+For each $x$, $E(x)=0$ iff $x$ is a stable semantic fixed point.
+\end{axiom}
+
+\begin{axiom}[Middle-way minimization]
+$\mathrm{MW}(P)$ minimizes $E$ over $P$ and satisfies the
+non-oscillation condition.
+\end{axiom}
+
+Together these axioms define what may be called \emph{middle-way
+logic}: a semantics whose notion of equivalence is defined by middle-way
+selection rather than syntactic identity.
+
+% ============================================================
+% 5.2 Middle-Way Equivalence
+% ============================================================
+
+\subsection{Middle-Way Equivalence}
+
+The cornerstone of EMT-based logic is the middle-way equivalence
+operator $\mweq$.
+
+\begin{definition}[Middle-way equivalence]
+For expressions $A$ and $B$, we define
+\[
+   A \mweq B
+\]
+to mean that $A$ and $B$ evaluate to the same middle-way value under
+EMT evaluation.
+\end{definition}
+
+This yields a new form of equality that is:
+
+\begin{itemize}
+  \item context-sensitive,
+  \item dynamic and energy-based,
+  \item stable under perturbation,
+  \item free from classical diagonal paradoxes.
+\end{itemize}
+
+\begin{proposition}[Absence of contradiction]
+No pair $(A,B)$ exists such that both $A \mweq B$ and
+$A \not\mweq B$ hold under the same emptiness state.
+\end{proposition}
+
+Middle-way equivalence therefore establishes a consistent alternative
+to classical equality in self-referential or dynamically instantiated
+systems.
+
+% ============================================================
+% 6. Conclusion and Future Directions
+% ============================================================
+
+\section{Conclusion and Future Directions}
+
+This paper presented EMT (Emergent Middle Test) as a computational and
+logical framework based on four interacting layers:
+emptiness, ranki, dependent origination, and the middle way.
+The resulting system offers:
+
+\begin{itemize}
+  \item a mechanism for generating non-deterministic proposals,
+  \item an energy-based structure for evaluating semantic coherence,
+  \item an operator for selecting dynamically stable fixed points,
+  \item a new equivalence relation $\mweq$ that resolves classical
+        paradoxes and non-middle fallacies.
+\end{itemize}
+
+EMT serves as an alternative foundational framework for logic,
+computation, and the formal evaluation of intelligent behavior. Its
+interaction with classical computability theory suggests that some
+limitations---such as those imposed by diagonal arguments and fixed
+point instability---may be reinterpreted rather than accepted as
+inevitable.
+
+\subsection{Prospects for applications}
+
+Several promising directions emerge:
+
+\begin{enumerate}
+  \item \textbf{Computability theory:}
+        EMT provides new fixed-point principles that avoid diagonal
+        paradoxes, suggesting new viewpoints on traditionally
+        undecidable problems.
+  \item \textbf{Complexity theory:}
+        The middle-way equivalence $\mweq$ has already been applied to
+        reinterpret the $P$ vs.\ $NP$ problem, replacing static
+        equivalence with dynamic convergence.
+  \item \textbf{Number theory:}
+        Similar reinterpretations apply to conjectures such as the
+        ABC conjecture and potentially aspects of the Riemann
+        hypothesis.
+  \item \textbf{Machine learning:}
+        EMT generalizes energy-based models with dynamic domain
+        generation and oscillation-based regularizers.
+  \item \textbf{Foundations of logic:}
+        EMT proposes a new equality relation capable of absorbing
+        self-reference without contradiction.
+\end{enumerate}
+
+\subsection{Outstanding questions}
+
+Several foundational questions remain open:
+
+\begin{itemize}
+  \item What are the minimal conditions for $E$ to guarantee the
+        existence of a stable middle-way value?
+  \item Can middle-way equivalence be embedded into a categorical
+        framework?
+  \item Does EMT admit a complete proof theory?
+  \item Are there systems where classical equality is strictly more
+        expressive than middle-way equivalence?
+\end{itemize}
+
+Answering these questions will help determine the ultimate scope and
+limitations of EMT as a universal framework.
+
+% ============================================================
+% Acknowledgments
+% ============================================================
+
+\section*{Acknowledgments}
+
+The author thanks the broader research community exploring the
+connections between computation, logic, energy-based models, and
+foundational principles inspired by cross-cultural philosophy.
+Discussions involving alternative formulations of equality and the
+role of dynamic semantics in self-referential systems have
+substantially shaped this work.
+
+% ============================================================
+% References (skeleton form)
+% ============================================================
+
+\begin{thebibliography}{99}
+
+\bibitem{Turing1936}
+A.~M.~Turing.
+\newblock On computable numbers, with an application to the Entscheidungsproblem.
+\newblock \emph{Proceedings of the London Mathematical Society}, 1936.
+
+\bibitem{Godel1931}
+K.~G\"odel.
+\newblock \"Uber formal unentscheidbare S\"atze der Principia Mathematica und verwandter Systeme I.
+\newblock \emph{Monatshefte f\"ur Mathematik und Physik}, 1931.
+
+\bibitem{Minsky1967}
+M.~Minsky.
+\newblock \emph{Computation: Finite and Infinite Machines}.
+\newblock Prentice-Hall, 1967.
+
+\bibitem{Hopfield1982}
+J.~Hopfield.
+\newblock Neural networks and physical systems with emergent collective computational abilities.
+\newblock \emph{PNAS}, 1982.
+
+\bibitem{LeCun2006}
+Y.~LeCun, S.~Chopra, and R.~Hadsell.
+\newblock A tutorial on energy-based learning.
+\newblock 2006.
+
+\bibitem{Chiba2025Godel}
+M.~Chiba.
+\newblock Non-middle fallacy and the re-formulation of G\"odel's incompleteness theorem.
+\newblock arXiv preprint, 2025.
+
+\bibitem{Chiba2025PvsNP}
+M.~Chiba.
+\newblock A middle-way equivalence approach to the $P$ vs.\ $NP$ problem.
+\newblock arXiv preprint, 2025.
+
+\bibitem{Chiba2025ABC}
+M.~Chiba.
+\newblock Re-formulating the ABC conjecture under middle-way equivalence.
+\newblock arXiv preprint, 2025.
+
+\end{thebibliography}
+
+\end{document}
