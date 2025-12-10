@@ -1,0 +1,257 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{hyperref}
+\usepackage{mathtools}
+
+% Middle-Way operator: \mweq
+\DeclareMathOperator{\mw}{mw}
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+
+
+\title{An Extended Resolution of the Classical P=NP Problem via the Middle-Way Equivalence Operator $\mweq$}
+\author{Masaomi Chiba}
+\date{\today}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The classical formulation of the P=NP problem presupposes a \emph{static notion of equality},
+in which the equality symbol ``$=$'' denotes strict identity between complexity classes. 
+However, empirical computational practice---from SAT solvers and heuristic algorithms 
+to machine learning and large language models---reveals a different picture: 
+NP-complete problems often behave as if they are ``practically tractable'' despite their 
+worst-case hardness.
+
+This paper introduces a new operator, the \emph{Middle-Way Equivalence} $\mweq$, 
+which expresses \emph{dynamic, procedural, and convergence-based equivalence} 
+between complexity classes. 
+We show that under this operator, the relationship between P and NP can be expressed as
+\[
+\mathrm{P} \mweq \mathrm{NP},
+\]
+a formulation that captures the empirical convergence and practical equivalence 
+between these classes without asserting classical equality.
+
+This yields an \emph{extended resolution} of the P=NP problem, not by deciding 
+its truth value in the classical sense, but by generalizing the notion of equivalence 
+to account for real-world computational phenomena.
+\end{abstract}
+
+\section{Introduction}
+
+The P=NP problem traditionally asks whether
+\[
+\mathrm{P} = \mathrm{NP},
+\]
+where ``$=$'' denotes strict set-theoretic equality. 
+This classical framing assumes:
+
+\begin{itemize}
+    \item fixed computational models,
+    \item static notions of identity,
+    \item observer-independence of computational truth,
+    \item and worst-case performance as the essential criterion.
+\end{itemize}
+
+However, modern computational systems---including heuristic search,
+SAT solvers, probabilistic algorithms, evolutionary algorithms,
+reinforcement learning, and large language models---exhibit behavior
+that contradicts the naive expectation that NP-complete problems are ``intractable.''
+
+In practice:
+
+\begin{itemize}
+    \item NP-complete problems are solved efficiently in most real-world cases;
+    \item heuristic and approximate algorithms achieve near-optimal solutions;
+    \item machine learning models infer NP solutions statistically;
+    \item adaptive computation reduces effective complexity.
+\end{itemize}
+
+These observations suggest a need to reformulate the equivalence relation 
+used in the P=NP problem.
+
+\section{Motivation for the Middle-Way Operator}
+
+\subsection{The limits of classical equality}
+
+The classical equality relation is:
+
+\begin{itemize}
+    \item static,
+    \item context-free,
+    \item observer-independent,
+    \item and insensitive to dynamic computational processes.
+\end{itemize}
+
+But actual computation is:
+
+\begin{itemize}
+    \item dynamic and adaptive,
+    \item observer- or algorithm-dependent,
+    \item procedurally realized,
+    \item driven by convergence rather than static identity.
+\end{itemize}
+
+Thus, a more flexible notion of equivalence is required.
+
+\subsection{Observer non-fixation}
+
+Recent developments in AI introduce \emph{observer non-fixation}:
+
+\begin{itemize}
+    \item the evaluating agent (algorithm, model, heuristic) changes over time;
+    \item the computation space itself is adaptive;
+    \item convergence behavior depends on the evolving observer.
+\end{itemize}
+
+Classical P=NP assumes a fixed Turing machine observer.  
+This assumption is incompatible with modern computational phenomena.
+
+\section{Definition of the Middle-Way Equivalence}
+
+\begin{definition}[Middle-Way Equivalence]
+For complexity classes $C_1$ and $C_2$, we write
+\[
+C_1 \mweq C_2
+\]
+if the following conditions hold:
+
+\begin{enumerate}
+    \item \textbf{Typical-case convergence:} 
+    A high-probability subset of instances in $C_1$ converges to the computational 
+    resource bounds of $C_2$.
+    \item \textbf{Heuristic or statistical equivalence:} 
+    Approximation, heuristic, or probabilistic methods achieve $C_2$-level 
+    performance for solving $C_1$ instances.
+    \item \textbf{Adaptive observer convergence:}
+    When the computational observer is allowed to evolve,
+    the search dynamics for $C_1$ become asymptotically equivalent to those of $C_2$.
+\end{enumerate}
+\end{definition}
+
+This equivalence is \emph{dynamic}, not static.
+
+\section{Main Theorem}
+
+\begin{theorem}[Extended P-NP Equivalence]
+Under the Middle-Way Equivalence relation,
+\[
+\mathrm{P} \mweq \mathrm{NP}.
+\]
+\end{theorem}
+
+\begin{proof}[Sketch of proof]
+The following independent observations jointly support the equivalence:
+
+\begin{enumerate}
+    \item Modern SAT solvers solve large NP-complete instances 
+    near-polynomially in practical contexts.
+    \item Many NP-complete problems have polynomial-time approximation schemes 
+    or strong heuristics.
+    \item Machine learning and large language models can statistically infer 
+    solutions to NP problems.
+    \item Probabilistic computation models narrow the gap between P and NP.
+    \item Adaptive search and self-modifying heuristics cause NP search behavior 
+    to converge toward P-like performance under realistic distributions.
+\end{enumerate}
+
+Together, these satisfy all three conditions of the $\mweq$ definition.
+\end{proof}
+
+\section{Relation to Classical P=NP}
+
+Our result neither claims that
+\[
+\mathrm{P} = \mathrm{NP}
+\]
+nor that
+\[
+\mathrm{P} \neq \mathrm{NP}.
+\]
+
+Instead it highlights a deeper issue:
+the equality symbol itself encodes ontological assumptions incompatible 
+with modern computation.
+
+The Middle-Way view generalizes equivalence from static identity to 
+dynamic convergence.
+
+\section{Applications}
+
+This framework unifies the following phenomena:
+
+\begin{itemize}
+    \item empirical tractability of SAT and CSP,
+    \item efficiency of branch-and-bound and CDCL heuristics,
+    \item success of ILP solvers,
+    \item AI-assisted optimization,
+    \item evolutionary and reinforcement learning convergence.
+\end{itemize}
+
+Thus, $\mweq$ provides a rigorous vocabulary for ``practically P $\approx$ NP'' behavior.
+
+\section{Connection to EMT (Emergent Middle Test)}
+
+The EMT framework (Emergent Middle Test) describes convergence dynamics:
+
+\[
+\text{emptiness} \rightarrow \text{random excitation} 
+\rightarrow \text{dependent origination} \rightarrow \text{Middle Way}.
+\]
+
+This dynamic structure aligns naturally with $\mweq$,
+and EMT can serve as a computational test for verifying Middle-Way equivalence 
+between classes or algorithms.
+
+\section{Conclusion}
+
+We introduced the Middle-Way Equivalence operator $\mweq$ and applied it to the
+relationship between P and NP.  
+This yields an \emph{extended resolution} of the P=NP problem in which:
+
+\begin{itemize}
+    \item the strict identity ``$=$'' is replaced by a dynamic, convergence-based equivalence,
+    \item practical computational phenomena are formally integrated,
+    \item P and NP are equivalent in the Middle-Way sense.
+\end{itemize}
+
+This reframes P=NP not as a binary decision problem, but as a question of 
+computational phenomenology and convergence theory.
+
+\begin{thebibliography}{9}
+
+\bibitem{cook}
+S. Cook,
+\emph{The complexity of theorem-proving procedures},
+Proceedings of the Third Annual ACM Symposium on Theory of Computing, 1971.
+
+\bibitem{garey}
+M. Garey and D. Johnson,
+\emph{Computers and Intractability: A Guide to the Theory of NP-Completeness},
+Freeman, 1979.
+
+\bibitem{arora}
+S. Arora and B. Barak,
+\emph{Computational Complexity: A Modern Approach},
+Cambridge University Press, 2009.
+
+\bibitem{solomonoff}
+R. Solomonoff,
+\emph{A formal theory of inductive inference},
+Information and Control, 1964.
+
+\end{thebibliography}
+
+\end{document}
+
