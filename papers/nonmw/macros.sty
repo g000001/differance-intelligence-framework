@@ -1,0 +1,116 @@
+% macros.sty
+% Comprehensive macro package for MWEQ, EMT, MW-CH, Evo-CL
+% Author: Masaomi Chiba
+% Date: 2025-12-12
+% ASCII only
+
+\ProvidesPackage{macros}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 1. Basic Operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Middle-Way Equivalence (MWEQ)
+% Usage:  X \mweq Y
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+
+% Structural distortion energy E
+% Usage: \E(T,B)
+\newcommand{\E}{E}
+
+% Components of distortion energy
+\newcommand{\SC}{\mathrm{SC}}  % semantic coherence
+\newcommand{\CL}{\mathrm{CL}}  % chain-length penalty
+\newcommand{\OD}{\mathrm{OD}}  % oscillation degree
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 2. Middle-Way Logic & Non-Middle Fallacy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Non-Middle Fallacy
+\newcommand{\NMF}{\mathrm{NMF}}
+
+% Middle Way (fixed point)
+\newcommand{\MW}{\mathrm{MW}}
+
+% argmin operator
+\newcommand{\argmin}{\mathop{\mathrm{arg\,min}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 3. Evo-CL Type System
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Type evolution arrow
+% Usage: T0 \evolves T1
+\newcommand{\evolves}{\rightarrow_{\mathrm{evo}}}
+
+% Behaviour symbol
+\newcommand{\Beh}{\mathrm{B}}
+
+% Type symbol
+\newcommand{\Type}{\mathrm{T}}
+
+% Error-as-TypeBoundary
+\newcommand{\Err}{\mathrm{Err}}
+
+% refine operator (type refinement)
+% Usage: \refine(T, v)
+\newcommand{\refine}{\mathrm{refine}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 4. EMT (Emptiness - Ranki - Origination - Middle)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Emptiness
+\newcommand{\Empty}{\mathrm{Empty}}
+
+% Ranki (nondeterministic extraction)
+\newcommand{\Ranki}{\mathrm{Ranki}}
+
+% Dependent Origination (evaluation)
+\newcommand{\Orig}{\mathrm{Orig}}
+
+% Middle (min-distortion selection)
+\newcommand{\Middle}{\mathrm{Middle}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 5. IUT & Universe Structures
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Additive and multiplicative universes
+\newcommand{\Uadd}{U_{\mathrm{add}}}
+\newcommand{\Umult}{U_{\mathrm{mult}}}
+
+% Theta-link
+\newcommand{\ThetaLink}{\Theta\text{-link}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 6. Proof theory & Dynamic Curry–Howard
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% dynamic CH equivalence arrows
+\newcommand{\CH}{\mathrm{CH}}
+\newcommand{\dynCH}{\mathrm{CH}_{\mathrm{dyn}}}
+
+% term ~ proof under dynamic CH
+\newcommand{\termeqproof}{\mathrel{\sim_{\mathrm{tp}}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 7. ABC-specific notation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\rad}{\mathrm{rad}}
+\newcommand{\ABC}{\mathrm{ABC}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% theorem environments
+\newtheorem{axiom}{Axiom}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+
+\endinput
