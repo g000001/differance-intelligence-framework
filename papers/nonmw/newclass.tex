@@ -5,6 +5,13 @@
 \usepackage{hyperref}
 \usepackage{macros}
 
+% 圏論記号の定義
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\K}{\mathsf{K}} % 空即是色圏 (Sunyata Category)
+\newcommand{\Sg}{\mathsf{S}} % 色即是空圏 (Rupa Category)
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\G}{\mathcal{G}}
+
 \geometry{margin=1in}
 
 \title{
@@ -35,14 +42,15 @@ We provide a unified classification of major undecidable or controversial
 problems---including the ABC conjecture, the Riemann hypothesis,
 P versus NP, the Continuum Hypothesis, and Godel-type incompleteness---
 according to distinct types of NMF.
-We then propose a dynamic normalization framework, denoted $\mathbf{mweq}$,
+We then propose a dynamic normalization framework, denoted $\mathbf{\mweq}$,
 which replaces static equality with a stability-based equivalence.
-This framework does not claim to produce classical proofs, but rather
+This framework is based on the Sunyata-Rupa Duality Theory (SKDT) and
+does not claim to produce classical proofs, but rather
 to normalize structural tension and classify the logical status of
 statements beyond the theorem/hypothesis dichotomy.
 
 Finally, we introduce a refined taxonomy of mathematical truth
-(Nomological Truth, Praxis Truth, and Quasi-Theorem),
+(Nomological Truth, Practical Truth, and Quasi-Theorem),
 intended to clarify the epistemic status of results that are
 structurally stable yet classically undecidable.
 \end{abstract}
@@ -59,7 +67,7 @@ the P versus NP problem, and the Continuum Hypothesis.
 Despite decades of effort, these problems remain undecided within
 standard formal frameworks.
 
-At the same time, foundational results such as Godel's incompleteness
+At the same time, foundational results such as Gödel's incompleteness
 theorems and Cohen's independence results demonstrate that undecidability
 is not an anomaly but an intrinsic feature of sufficiently expressive
 formal systems.
@@ -84,12 +92,13 @@ diagnostic signal of structural mismatch.
 Our approach proceeds in three stages:
 
 \begin{enumerate}
-  \item Define NMFs as structural obstructions arising from static
-        formalization.
-  \item Classify major undecidable or controversial problems according
-        to distinct types of NMF.
-  \item Introduce a dynamic normalization framework, $\mathbf{mweq}$,
-        that replaces static equality with stability-based equivalence.
+\item Define NMFs as structural obstructions arising from static
+  formalization.
+\item Classify major undecidable or controversial problems according
+  to distinct types of NMF.
+\item Introduce a dynamic normalization framework, $\mathbf{\mweq}$,
+  based on the SKDT (Sunyata-Rupa Duality Theory),
+  that replaces static equality with stability-based equivalence.
 \end{enumerate}
 
 The goal is not to refute classical mathematics, but to extend its
@@ -121,14 +130,14 @@ of the problem.
 We identify three recurring structural sources of NMFs.
 
 \begin{enumerate}
-  \item \textbf{Dynamic vs Static Mismatch:}
-        Finite static descriptions are applied to infinite or
-        process-oriented phenomena.
-  \item \textbf{Inter-Structural Comparison:}
-        Distinct logical domains are compared via static equality.
-  \item \textbf{Boundary and Self-Reference:}
-        A system attempts to fully describe or decide properties of
-        its own expressive boundary.
+\item \textbf{Dynamic vs Static Mismatch:}
+  Finite static descriptions are applied to infinite or
+  process-oriented phenomena.
+\item \textbf{Inter-Structural Comparison:}
+  Distinct logical domains are compared via static equality.
+\item \textbf{Boundary and Self-Reference:}
+  A system attempts to fully describe or decide properties of
+  its own expressive boundary.
 \end{enumerate}
 
 These sources give rise to distinct classes of NMF, which we analyze
@@ -153,9 +162,9 @@ stable semantic interpretation.
 
 Typical examples involve comparisons between:
 \begin{itemize}
-  \item additive and multiplicative structures,
-  \item discrete and continuous domains,
-  \item computational processes and verification procedures.
+\item additive and multiplicative structures,
+\item discrete and continuous domains,
+\item computational processes and verification procedures.
 \end{itemize}
 
 \subsubsection{Representative Problems}
@@ -273,63 +282,61 @@ This observation motivates the search for a normalization framework
 that replaces static equality with a stability-based criterion.
 
 
-\section{Dynamic Normalization via mweq}
+
+\section{Dynamic Normalization via $\mweq$ (SKDT Framework)}
 
 This section introduces the core technical contribution of this paper:
 the replacement of static equality by a dynamic stability operator,
-denoted by $mweq$.
-This operator provides a normalization mechanism that resolves
-Non-Middle Fallacy without increasing structural complexity.
+denoted by $\mweq$, within the framework of the Sunyata-Rupa Duality Theory (SKDT).
 
 \subsection{Limitations of Static Equality}
 
 Classical equality is defined as a timeless, context-independent
 relation.
 While effective in homogeneous domains, it becomes unstable when
-applied across structurally distinct systems.
+applied across structurally distinct systems, leading to NMF.
 
 Formally, expressions of the form
 \[
 A = B
 \]
-implicitly assume:
-\begin{itemize}
-  \item identical generative rules,
-  \item shared invariants,
-  \item identical semantic resolution.
-\end{itemize}
+fail when the underlying generative rules or semantic resolution are
+incompatible.
 
-In the presence of NMF, these assumptions fail, producing either
-undecidability or explosive complexity.
+\subsection{Definition of the $\mweq$ Operator based on SKDT}
 
-\subsection{Definition of the mweq Operator}
+We define $\mweq$ as a relation between structures that captures
+dynamic convergence rather than static identity, utilizing the SKDT framework.
 
-We define $mweq$ as a relation between structures that captures
-dynamic convergence rather than static identity.
+\begin{definition}[Middle-Way Equivalence ($\mweq$)]
+Let $\Sg$ be the Rupa (form/phenomenon) Category and $\K$ be the Sunyata
+(void/potential) Category.
+Let $F: \Sg \rightarrow \K$ and $G: \K \rightarrow \Sg$ be the
+inter-structural transformations (functors of 'Pratityasamutpada' or
+Interdependence).
 
-\begin{definition}[Middle-Way Equivalence]
-Let $S_1$ and $S_2$ be two structures equipped with transformations
-$F$ and $G$.
-We write
+We write a structure $X \in \Sg$ is Middle-Way Equivalent to a structure
+$Y \in \Sg$,
 \[
-S_1 \; mweq \; S_2
+X \; \mweq \; Y
 \]
-if there exists a finite sequence of transformations such that the
-structural distortion measure $E$ satisfies
+if the distortion measure $E$ associated with the transformation loop
+satisfies:
 \[
-E(F(G(x))) \rightarrow E_{min}
+E(G \circ F(X)) \rightarrow E_{min}
 \]
-for all admissible $x$.
+where $E_{min}$ is the minimal admissible structural tension, often $E_{min}=0$
+but not necessarily.
+Stability is defined by convergence to this minimal admissible value,
+not by exact coincidence.
 \end{definition}
 
-Here $E$ is not required to vanish.
-Stability is defined by convergence to a minimal admissible value,
-not by exact coincidence.
+
 
 \subsection{Finite Stabilization Principle}
 
-A central principle of $mweq$-based mathematics is the exclusion of
-static infinity.
+A central principle of $\mweq$-based mathematics is the exclusion of
+static infinity, which is the primary source of Hierarchical Inclusion NMF.
 
 \begin{principle}[Finite Stabilization]
 All valid constructions must admit a finite stabilization process.
@@ -342,33 +349,32 @@ replaces it with iterative convergence criteria.
 
 \subsection{Resolution of Inter-Structural Comparison NMF}
 
-Given two structures $S_1$ and $S_2$, classical mathematics asks whether
-they are equal or not.
-The $mweq$ framework instead asks whether their interaction stabilizes.
+The $\mweq$ framework replaces static comparison with a convergence condition.
 
 \subsubsection{Functorial Coherence}
 
-Let
+Let $S_1, S_2 \in \Sg$ be two distinct structures (e.g., additive and
+multiplicative arithmetic).
+The condition
 \[
 f : S_1 \rightarrow S_2, \quad g : S_2 \rightarrow S_1
 \]
-be structure-preserving maps.
-The condition
+The dynamic coherence is maintained if the composition stabilizes:
 \[
-g \circ f \; mweq \; id_{S_1}
+g \circ f \; \mweq \; id_{S_1}
 \]
-expresses dynamic coherence rather than strict invertibility.
-
 This replaces static comparison with a convergence condition that can
 be verified algorithmically.
 
 \subsection{Resolution of Boundary and Self-Reference NMF}
 
-Boundary-related NMF are resolved by abandoning static completeness.
+Boundary-related NMF are resolved by abandoning static completeness and
+introducing dynamic reflection.
 
 \subsubsection{Meta-Level Stabilization}
 
-Let $C$ be a formal system and $M$ a meta-system.
+Let $C$ be a formal system (an object in $\Sg$) and $M$ be its
+reflective meta-system (a higher object in $\Sg$, perhaps $\Sg$'s self-reference).
 Instead of requiring $C$ to decide its own consistency, we introduce
 a reflective transformation
 \[
@@ -381,21 +387,19 @@ iteration, rather than a statically provable property.
 
 \subsection{Resolution of Hierarchical Inclusion NMF}
 
-Hierarchical questions such as the continuum hypothesis rely on
-static determination of infinite strata.
-
-Under $mweq$, such questions are reformulated as follows:
+Hierarchical questions (e.g., CH) are reformulated under $\mweq$ as:
 \begin{quote}
 Does a given generative process stabilize under finite extension?
 \end{quote}
 
-If stabilization occurs, the hierarchy is admissible.
-If not, the question itself is declared structurally invalid rather
-than undecidable.
+Since the axiom of infinity is excluded, the notion of fixed infinite
+cardinality is replaced by the notion of admissible generative processes.
+If the generative process does not stabilize, the question of its
+static size is declared structurally invalid rather than undecidable.
 
 \subsection{Summary}
 
-The $mweq$ operator provides a low-complexity alternative to classical
+The $\mweq$ operator provides a low-complexity alternative to classical
 meta-theoretic escalation.
 By replacing equality with dynamic stability, it resolves all major
 classes of Non-Middle Fallacy while preserving computational and
@@ -412,14 +416,7 @@ insufficient in the presence of Non-Middle Fallacy.
 \subsection{Limitations of the Theorem--Conjecture Dichotomy}
 
 In classical mathematics, a statement is assigned one of two statuses:
-
-\begin{itemize}
-  \item \textbf{Theorem}: provable within a fixed axiom system by a
-  finite sequence of deductions.
-  \item \textbf{Conjecture}: not yet provable or undecidable within the
-  given system.
-\end{itemize}
-
+\textbf{Theorem} or \textbf{Conjecture}.
 This classification presupposes that all meaningful statements admit
 static truth values.
 However, NMF demonstrates that many foundational questions fail not
@@ -428,7 +425,7 @@ structurally ill-posed.
 
 \subsection{Dynamic Truth and Coherence Levels}
 
-Under the $mweq$ framework, truth is evaluated by the degree to which a
+Under the $\mweq$ framework, truth is evaluated by the degree to which a
 statement maintains dynamic stability across structural transformations.
 
 We therefore introduce three classes of truth, ordered by increasing
@@ -440,7 +437,7 @@ strength of coherence.
 A statement is called a \emph{nomological truth} if it expresses a
 structural constraint required for universal dynamic stability.
 Such a statement resolves all associated NMF and remains coherent
-under arbitrary admissible transformations.
+under arbitrary admissible transformations ($\mweq$-coherence level: Universal).
 \end{definition}
 
 Nomological truths are not contingent on a particular axiom system.
@@ -456,7 +453,7 @@ candidate for nomological truth.
 \begin{definition}[Practical Truth]
 A statement is called a \emph{practical truth} if it guarantees dynamic
 stability under finite operational procedures, even if universal
-coherence is not established.
+coherence is not established ($\mweq$-coherence level: Operational).
 \end{definition}
 
 Practical truths are characterized by effective convergence rather
@@ -471,7 +468,7 @@ establish exact equality, but reliably converges toward stable outcomes.
 \begin{definition}[Quasi-Theorem]
 A statement is called a \emph{quasi-theorem} if it is internally
 consistent and provable within a newly constructed formal universe,
-but lacks verified coherence with external or classical systems.
+but lacks verified coherence with external or classical systems ($\mweq$-coherence level: Local).
 \end{definition}
 
 This class legitimizes innovative frameworks without prematurely
@@ -483,6 +480,8 @@ understood as quasi-theorems until functorial coherence with classical
 arithmetic is demonstrated.
 
 \subsection{Structural Classification of Major Problems}
+
+
 
 The following table summarizes the proposed classification.
 
@@ -523,22 +522,22 @@ producing undecidability, paradox, or endless controversy.
 The main contributions of this work are as follows.
 
 \begin{enumerate}
-  \item A unified definition of NMF was introduced, explaining
-  undecidability, incompleteness, and foundational conflict as a single
-  structural phenomenon.
-  \item The operator $mweq$ was proposed as a dynamic replacement for
-  static equality, allowing comparisons based on convergence and
-  stability rather than absolute identity.
-  \item A normalization framework based on finite operations and
-  dynamic middle-way coherence was shown to dissolve major classes of
-  NMF.
-  \item Classical open problems were reclassified according to their
-  structural nature rather than their proof status.
-  \item Three new truth classes were introduced: nomological truth,
-  practical truth, and quasi-theorem.
+ \item A unified definition of NMF was introduced, explaining
+ undecidability, incompleteness, and foundational conflict as a single
+ structural phenomenon.
+ \item The operator $\mweq$, grounded in the SKDT framework, was proposed as a dynamic replacement for
+ static equality, allowing comparisons based on convergence and
+ stability rather than absolute identity.
+ \item A normalization framework based on finite operations and
+ dynamic middle-way coherence was shown to dissolve major classes of
+ NMF.
+ \item Classical open problems were reclassified according to their
+ structural nature rather than their proof status.
+ \item Three new truth classes were introduced: nomological truth,
+ practical truth, and quasi-theorem.
 \end{enumerate}
 
-These results suggest that the limits identified by Goedel and later
+These results suggest that the limits identified by Gödel and later
 formal results do not merely constrain provability, but signal the need
 for a change in the underlying notion of mathematical truth.
 
@@ -552,12 +551,12 @@ coherence is maintained through iterative normalization.
 This perspective resolves several long-standing tensions:
 
 \begin{itemize}
-  \item Incompleteness becomes a structural boundary condition rather
-  than a failure.
-  \item Independence results are reinterpreted as indicators of invalid
-  static questions.
-  \item Highly complex theories are evaluated by coherence rather than
-  by forced equivalence with classical formalisms.
+ \item Incompleteness becomes a structural boundary condition rather
+ than a failure.
+ \item Independence results are reinterpreted as indicators of invalid
+ static questions.
+ \item Highly complex theories are evaluated by coherence rather than
+ by forced equivalence with classical formalisms.
 \end{itemize}
 
 In particular, inter-universal constructions may be meaningful without
@@ -570,12 +569,12 @@ The framework developed here opens multiple directions for future
 research.
 
 \begin{itemize}
-  \item In number theory, major conjectures may be reformulated as
-  nomological truths expressing unavoidable structural constraints.
-  \item In logic and computer science, dynamic normalization provides a
-  new lens on complexity, verification, and computation.
-  \item In physics and information theory, middle-way coherence offers
-  a foundation for understanding stability without singularities.
+ \item In number theory, major conjectures may be reformulated as
+ nomological truths expressing unavoidable structural constraints.
+ \item In logic and computer science, dynamic normalization provides a
+ new lens on complexity, verification, and computation.
+ \item In physics and information theory, middle-way coherence offers
+ a foundation for understanding stability without singularities.
 \end{itemize}
 
 More broadly, this work suggests that the role of mathematics is
@@ -589,7 +588,7 @@ of the twentieth century.
 
 The Non-Middle Fallacy is not an obstacle to be eliminated, but a signal
 that a static formulation has exceeded its domain of validity.
-By embracing dynamic coherence through $mweq$, mathematics can proceed
+By embracing dynamic coherence through $\mweq$, mathematics can proceed
 beyond its classical limits without abandoning rigor.
 
 This shift does not weaken mathematics.
