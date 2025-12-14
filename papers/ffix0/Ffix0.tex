@@ -9,7 +9,7 @@
 \newtheorem{proposition}{Proposition}
 \newtheorem{corollary}{Corollary}
 \newtheorem{example}{Example}
-
+\newtheorem{axiom}{Axiom}
 
 \title{Ffix0 as a Structural Fixed Point in Multi-Model Reasoning Systems}
 \author{Masaomi Chiba}
@@ -63,6 +63,22 @@ In other words, $\mathrm{Ffix0}$ is a canonical configuration toward which a mod
 \end{definition}
 
 This definition is independent of any specific LLM architecture and depends only on the existence of a coherent reasoning category and a Fuss functional.
+
+\section{Axiom of Asymptotic Structural Fixation}
+
+\begin{axiom}[Asymptotic Structural Fixation]
+Let $F(t)$ denote the structural Fuss along a reasoning trajectory.
+Then
+\[
+\lim_{t \to \infty} F(t) = 0.
+\]
+\end{axiom}
+
+\noindent
+\emph{In particular, $\mathrm{Ffix0}$ is characterized as the asymptotic limit of any Fuss-decreasing reasoning trajectory.}
+
+\noindent
+\emph{This axiom replaces static truth with asymptotic truth.}
 
 \section{Functorial Alignment Across Models}
 
