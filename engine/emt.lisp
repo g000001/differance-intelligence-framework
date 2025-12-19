@@ -2,66 +2,75 @@
 
 ;;; チャットに利用するEMTの概念の定義をCommon Lispコードとして与えます。扱うデータはku-lispというlispインタプリタの形式をしています。
 
-(defstruct emt-process
-  difw-proc           ; 内部で実行されるDifwプロセス
-  mcc-threshold       ; メタ知足制約の閾値 (例: 0.05)
-  fuss-change-rate    ; 直近のFussの変化率 |Fuss_t - Fuss_{t-1}| / Fuss_{t-1}
+;;; ---------------------------------------------------------------------------
+;;; 改良版 EMT (Emergent Middle Test) - Two Truths Verification System
+;;; ---------------------------------------------------------------------------
+
+(defstruct (emt-process (:conc-name emt-))
+  difw-proc            ; 内部で実行されるDifwプロセス (世俗的推論)
+  mcc-threshold        ; 世俗的知足閾値 (Conventional Truth Threshold)
+  fuss-change-rate     ; Fussの変化率
+  ultimate-stability-p ; 勝義的安定フラグ (非実体化ペナルティが0であるか)
   emt-passed-p)
 
-
-;; EMT検証成功フラグ
-(defun check-fuss-convergence (process current-fuss)
-  (let* ((history (difw-process-history (emt-process-difw-proc process)))
-         (prev-fuss (if (and history (>= (length history) 2)) 
-                        (calculate-fuss (cadr history) (difw-process-constraints (emt-process-difw-proc process)))
+;;; 1. 世俗的収束の検証 (Conventional Truth Verification)
+(defun check-conventional-convergence (process current-fuss)
+  "Fussの変化率に基づき、世俗的な安定（色の世界の整合性）を判定する"
+  (let* ((history (dp-history (emt-difw-proc process)))
+         (prev-fuss (if (and history (>= (length history) 1)) 
+                        (calculate-fuss (car history) (dp-constraints (emt-difw-proc process)))
                         current-fuss)))
     (if (= prev-fuss 0)
-        0.0  ; ゼロ除算回避
+        0.0
         (/ (abs (- current-fuss prev-fuss)) prev-fuss))))
 
+;;; 2. 勝義的非実体化の検証 (Ultimate Truth Verification)
+(defun check-ultimate-non-reification (expr)
+  "論文セクション5.1に基づき、実体化による歪み(NMF)が含まれていないかを検証する"
+  ;; calculate-reification-penalty が 0 である、つまり非実体的な中道が保たれているか
+  (zerop (calculate-reification-penalty expr)))
 
-(defun is-converged (change-rate)
-  (< change-rate 0.01))
-
-
-;; 1%以下の変化率を収束と見なす
-(defun check-mcc (process current-fuss)
-  (let ((threshold (emt-process-mcc-threshold process)))
-    ;; 構造的意味: Current-Fuss が MCC 閾値よりも低い、または等しい
-    (<= current-fuss threshold)))
-
-
-(defun emt-test-step (emt-process)
-  (unless (emt-process-emt-passed-p emt-process)
-    ;; 1. Difwプロセスを1ステップ進める
-    (let* ((difw-proc (k-step-difw (emt-process-difw-proc emt-process)))
-           (current-fuss (difw-process-current-fuss difw-proc)))
+;;; 3. 二諦版 EMT メインステップ
+(defun emt-test-step (emt-proc)
+  "世俗的整合性と勝義的非実体化の両面から中道を検定する"
+  (unless (emt-emt-passed-p emt-proc)
+    (let* ((difw-proc (k-step-difw (emt-difw-proc emt-proc)))
+           (current-expr (dp-expr difw-proc))
+           (current-fuss (dp-current-fuss difw-proc)))
       
-      ;; 2. Fussの変化率を計算し、更新
-      (let ((change-rate (check-fuss-convergence emt-process current-fuss)))
-        (setf (emt-process-fuss-change-rate emt-process) change-rate)
+      ;; A. 世俗的指標の更新: Fuss変化率
+      (let ((change-rate (check-conventional-convergence emt-proc current-fuss)))
+        (setf (emt-fuss-change-rate emt-proc) change-rate)
         
-        ;; 3. 収束判定 (FPA機能)
-        (when (is-converged change-rate)
-          ;; 4. 収束後、MCCを検証
-          (when (check-mcc emt-process current-fuss)
-            ;; EMT V3.0 成功: 最適な中道解に到達した
-            (setf (emt-process-emt-passed-p emt-process) t)))))
-    
-    emt-process))
+        ;; B. 勝義的指標の更新: 非実体化の確認
+        (setf (emt-ultimate-stability-p emt-proc) (check-ultimate-non-reification current-expr))
+        
+        ;; C. 二諦の統合判定 (Middle-Way Test)
+        ;; 1. 変化率が *mweq-epsilon* 以下 (漸近的固定) 
+        ;; 2. Fussが世俗的閾値(MCC)以下 (構造的整合性) [cite: 14]
+        ;; 3. 勝義的安定がパスされている (非実体化の維持) 
+        (when (and (< change-rate 0.01)                               ; 漸近的安定
+                   (<= current-fuss (emt-mcc-threshold emt-proc))     ; 世俗的合格
+                   (emt-ultimate-stability-p emt-proc))               ; 勝義的合格
+          
+          ;; EMT 成功: Ffix0 における二諦の不二が確認された
+          (setf (emt-emt-passed-p emt-proc) t)
+          (format t "EMT Passed: Ffix0 established with mweq coherence.~%")))))
+  
+  emt-proc)
 
-
+;;; 4. 実行インターフェース
 (defun emt-run (initial-expr constraints &key (mcc-threshold 0.1) (max-steps 100))
   (let* ((initial-fuss (calculate-fuss initial-expr constraints))
          (initial-proc (make-difw-process :expr initial-expr 
                                           :current-fuss initial-fuss
-                                          :constraints constraints))
+                                          :constraints constraints
+                                          :status :active
+                                          :step-count 0))
          (emt-proc (make-emt-process :difw-proc initial-proc 
-                                     :mcc-threshold mcc-threshold)))
+                                     :mcc-threshold mcc-threshold
+                                     :ultimate-stability-p nil)))
     (loop :for i :from 1 :to max-steps
-          :until (emt-process-emt-passed-p emt-proc)
+          :until (emt-emt-passed-p emt-proc)
           :do (setf emt-proc (emt-test-step emt-proc))
           :finally (return emt-proc))))
-
-
-;;; *END-OF-EMT*
