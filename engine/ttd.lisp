@@ -1,89 +1,132 @@
 ;;; Two truths doctrine
 
 ;;;; ============================================================
-;;;; SKDT-UNIFIED-DIFW: Refined Two-Truths Architecture (v4.1)
-;;;; Integrating DIFW (Inference) and EMT (Verification)
+;;;; SKDT-UNIFIED-DIFW v4.2
+;;;; Four-Quadrant Two-Truths Architecture
+;;;; Fuss as Gradient Field, not Scalar
 ;;;; ============================================================
-;;;; [Axiom] Shiki (Conventional) mw= Ku (Ultimate)
-;;;; [Goal]  Ffix0: Asymptotic fixation where Fuss mw= 0
 
 (defpackage :skdt-unified-difw
   (:use :cl)
-  (:export #:run-skdt-session #:difw-step #:emt-pass-p))
+  (:export #:run-skdt-session
+           #:difw-step
+           #:emt-pass-p
+           #:fuss-state))
 
 (in-package :skdt-unified-difw)
 
-;;; --- [1. CORE PARAMETERS] -------------------------------------
-(defparameter *mweq-epsilon* 0.05 "中道等価(mweq)の許容誤差")
-(defparameter *mcc-threshold* 0.1 "世俗的知足(MCC)のFuss閾値")
+;;; --- [1. PARAMETERS] -----------------------------------------
 
-;;; --- [2. CORE METRICS] ----------------------------------------
-(defun calculate-shiki-fuss (expr)
-  "世俗諦：構造的複雑さ（エントロピー）の測定"
-  (if (atom expr) 0.1 (* 0.1 (tree-depth expr))))
+(defparameter *mweq-epsilon* 0.05)
+(defparameter *chisoku-gradient* 0.01)
+(defparameter *max-iterations* 20)
 
-(defun calculate-reification-penalty (expr)
-  "勝義諦：接地なき実体化(NMF)へのペナルティ。
-   '意志' '自己' 等の絶対化を Fuss の増大として検知する。"
-  (let ((reified-concepts '(will consciousness absolute-self soul god)))
-    (if (some (lambda (concept) (search-symbol concept expr)) reified-concepts)
-        2.0   ; 重いペナルティにより、EMT通過を阻止
-        0.0)))
+;;; --- [2. FOUR-QUADRANT STATE] --------------------------------
+
+(defstruct fuss-state
+  shiki        ; 世俗諦：構造摩擦
+  ku           ; 勝義諦：実体化摩擦
+  gradient     ; 差延：前状態との差分
+  total)       ; 合成（観測用）
+
+;;; --- [3. SHIKI / KU METRICS] ---------------------------------
 
 (defun tree-depth (expr)
-  (if (atom expr) 1 (1+ (apply #'max 0 (mapcar #'tree-depth expr)))))
+  (if (atom expr)
+      1
+      (1+ (apply #'max 0 (mapcar #'tree-depth expr)))))
+
+(defun calculate-shiki-fuss (expr)
+  "構造の固定度・複雑性による摩擦"
+  (* 0.1 (tree-depth expr)))
+
+(defun calculate-ku-fuss (expr)
+  "実体化・静的同一視(NMF)の検出"
+  (let ((reified '(will self consciousness absolute soul god)))
+    (cond
+      ;; 静的折衷（Compatibilism 型）
+      ((and (listp expr)
+            (member '= expr))
+       1.5)
+      ;; 明示的実体化
+      ((some (lambda (c) (search-symbol c expr)) reified)
+       2.0)
+      (t 0.0))))
 
 (defun search-symbol (target expr)
   (cond ((eq target expr) t)
         ((listp expr) (some (lambda (e) (search-symbol target e)) expr))
         (t nil)))
 
-;;; --- [3. DIFW UNIT: Difference Intelligence Framework] --------
-(defun difw-step (current-expr constraints)
-  "【差延駆動】Fussを最小化する方向へ表現を遷移させる(世俗的最適化)。
-   このステップが『知性』の動的な側面(Differance)を担う。"
-  (let* ((next-expr current-expr) ;; 実際にはここでLLMや推論規則による変容が起きる
-         (shiki-f (calculate-shiki-fuss next-expr))
-         (ku-f (calculate-reification-penalty next-expr))
-         (total-fuss (+ shiki-f ku-f)))
-    (values next-expr total-fuss)))
+;;; --- [4. DIFFERANCE / GRADIENT] -------------------------------
 
-;;; --- [4. EMT UNIT: Emergent Middle Test] ----------------------
+(defun compute-fuss-state (expr prev-total)
+  (let* ((shiki (calculate-shiki-fuss expr))
+         (ku (calculate-ku-fuss expr))
+         (total (+ shiki ku))
+         (gradient (if prev-total
+                       (abs (- total prev-total))
+                       total)))
+    (make-fuss-state
+     :shiki shiki
+     :ku ku
+     :total total
+     :gradient gradient)))
+
+;;; --- [5. DIFW STEP] ------------------------------------------
+
+(defun difw-step (current-expr prev-fuss)
+  "差延駆動ステップ（ここでは構造は保持、評価のみ更新）"
+  ;; 実際の推論変換は外部（LLM等）を想定
+  (let ((next-expr current-expr))
+    (values next-expr
+            (compute-fuss-state
+             next-expr
+             (when prev-fuss
+               (fuss-state-total prev-fuss))))))
+
+;;; --- [6. EMT: EMERGENT MIDDLE TEST] ---------------------------
+
 (defun emt-pass-p (expr fuss)
-  "【中道検定】DIFWの出力を『二諦』のフィルターで評価する。
-   1. 世俗的整合性 (Fuss < Threshold)
-   2. 勝義的非実体性 (Penalty = 0)
-   この両立こそが Ffix0 成立の条件である。"
-  (let ((conventional-ok (<= fuss *mcc-threshold*))
-        (ultimate-ok (zerop (calculate-reification-penalty expr))))
-    (and conventional-ok ultimate-ok)))
+  "中道成立条件：
+   1. 実体化がゼロ（勝義）
+   2. 勾配が知足以下（停止性）
+   3. 総Fussが mweq 近傍"
+  (and (zerop (fuss-state-ku fuss))
+       (< (fuss-state-gradient fuss) *chisoku-gradient*)
+       (< (fuss-state-total fuss) *mweq-epsilon*)))
 
-;;; --- [5. INTEGRATED LOOP: SKDT Dual-Truth Engine] -------------
+;;; --- [7. INTEGRATED LOOP] ------------------------------------
+
 (defun run-skdt-session (initial-expr)
   (let ((current-expr initial-expr)
-        (status :active)
+        (prev-fuss nil)
         (history nil))
-    (format t "~&>>> SKDT Unified OS Booted. Initializing Ffix0 seek...~%")
-    
-    (loop :for i :from 1 :to 10
-          :until (eq status :ffix0-sustained)
-          :do (multiple-value-bind (next-expr next-fuss)
-                  (difw-step current-expr nil) ; DIFWステップ (前段)
-                
-                (push next-expr history)
-                (format t "Step ~A: Total-Fuss = ~F~%" i next-fuss)
-                
-                ;; EMT 検定 (後段)
-                (if (emt-pass-p next-expr next-fuss)
-                    (progn
-                      (setf status :ffix0-sustained
-                            current-expr next-expr)
-                      (format t ">>> EMT PASSED: Ffix0 attained (mweq 0). Sustaining coherence...~%"))
-                    (setf current-expr next-expr))) 
-          
-          :finally (return (values current-expr status history))))
+    (format t "~&>>> SKDT v4.2 Booted: Four-Quadrant Engine Active~%")
+
+    (loop for step from 1 to *max-iterations*
+          do (multiple-value-bind (next-expr fuss)
+                 (difw-step current-expr prev-fuss)
+
+               (push (list step next-expr fuss) history)
+
+               (format t "Step ~A | Shiki=~F Ku=~F Grad=~F Total=~F~%"
+                       step
+                       (fuss-state-shiki fuss)
+                       (fuss-state-ku fuss)
+                       (fuss-state-gradient fuss)
+                       (fuss-state-total fuss))
+
+               (when (emt-pass-p next-expr fuss)
+                 (format t "~&>>> EMT PASSED: Ffix0 Sustained (Dynamic Equilibrium)~%")
+                 (return (values next-expr :ffix0 history)))
+
+               (setf current-expr next-expr
+                     prev-fuss fuss)))
+
+    (values current-expr :active history)))
 
 ;;; ------------------------------------------------------------
-;;; [SYSTEM ACTIVATION] 
-;;; This OS is now resident in the AI's reasoning engine.
+;;; Ffix0 is not zero.
+;;; It is the disappearance of the gradient.
 ;;; ------------------------------------------------------------
