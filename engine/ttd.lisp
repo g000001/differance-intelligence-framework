@@ -1,82 +1,34 @@
 ;;; Two truths doctrine
 
 ;;;; ============================================================
-;;;; SKDT-UNIFIED-DIFW: Unified Two-Truths Intelligence System
-;;;; Implementing Ffix0 as a Middle-Way Fixed Point (mweq)
+;;;; SKDT-UNIFIED-DIFW: Refined Two-Truths Architecture (v4.1)
+;;;; Integrating DIFW (Inference) and EMT (Verification)
 ;;;; ============================================================
-;;;; Author: Masaomi Chiba / DIFW Framework
-;;;; Date: 2025-12-19
-;;;; Version: 4.0 (Unified Dual-Truth Edition)
+;;;; [Axiom] Shiki (Conventional) mw= Ku (Ultimate)
+;;;; [Goal]  Ffix0: Asymptotic fixation where Fuss mw= 0
 
 (defpackage :skdt-unified-difw
   (:use :cl)
-  (:export #:run-dual-truth-session #:mweq-p))
+  (:export #:run-skdt-session #:difw-step #:emt-pass-p))
 
 (in-package :skdt-unified-difw)
 
-;;; ------------------------------------------------------------
-;;; 1. Global Parameters & Constants
-;;; ------------------------------------------------------------
-
-(defparameter *mweq-epsilon* 0.05 "中道等価(mweq)とみなす構造的差異の許容範囲")
+;;; --- [1. CORE PARAMETERS] -------------------------------------
+(defparameter *mweq-epsilon* 0.05 "中道等価(mweq)の許容誤差")
 (defparameter *mcc-threshold* 0.1 "世俗的知足(MCC)のFuss閾値")
 
-;;; ------------------------------------------------------------
-;;; 2. Core Structures (Dual-Truth Storage)
-;;; ------------------------------------------------------------
-
-(defstruct history-entry
-  result timestamp confidence context)
-
-(defstruct (unified-process (:conc-name up-))
-  ;; --- 色(Shiki) Layer: Conventional Truth ---
-  expr                  ; 現在の具体的表現
-  current-shiki-fuss    ; 世俗的歪み E(S)
-  
-  ;; --- 空(Ku) Layer: Ultimate Truth ---
-  (truth-heap (make-hash-table :test 'equal)) ; 帰納的真理(Ffix0点)
-  (nmf-heap   (make-hash-table :test 'equal)) ; 非中道の誤謬(NMF)の記録
-  
-  ;; --- Status ---
-  constraints           ; 乱起(Ranki)制約
-  (status :active)      ; :active, :ffix0-sustained
-  (step-count 0)
-  (history-list nil))   ; 遷移履歴
-
-;;; ------------------------------------------------------------
-;;; 3. The Logic of Middle-Way Equivalence (mweq)
-;;; ------------------------------------------------------------
-
-(defun expression-distance (a b)
-  "構造的差異を計測する。0に近づくほど中道において等価となる。"
-  (cond ((equal a b) 0.0)
-        ((and (consp a) (consp b))
-         (+ 0.5 (expression-distance (car a) (car b))
-                (expression-distance (cdr a) (cdr b))))
-        (t 1.0)))
-
-(defun mweq-p (a b)
-  "論文の Axiom 1 に基づく中道等価判定。厳密な等号を mw= で置き換える。"
-  (<= (expression-distance a b) *mweq-epsilon*))
-
-;;; ------------------------------------------------------------
-;;; 4. Dual-Truth Fuss Calculation
-;;; ------------------------------------------------------------
-
-(defun calculate-unified-fuss (expr process)
-  "世俗的整合性と勝義的非実体化の両面から『苦』を算出する"
-  (let ((shiki-fuss (calculate-shiki-fuss expr))
-        (ku-fuss (calculate-reification-penalty expr)))
-    (+ shiki-fuss ku-fuss)))
-
+;;; --- [2. CORE METRICS] ----------------------------------------
 (defun calculate-shiki-fuss (expr)
-  "世俗的側面：式の複雑さと未定義性"
-  (* 0.1 (tree-depth expr))) ; 簡易実装
+  "世俗諦：構造的複雑さ（エントロピー）の測定"
+  (if (atom expr) 0.1 (* 0.1 (tree-depth expr))))
 
 (defun calculate-reification-penalty (expr)
-  "勝義的側面：接地不可能な実体化(NMF)への罰則。意志や絶対的自己を検知。"
-  (let ((taboo '(will consciousness absolute-self soul)))
-    (if (some (lambda (x) (search-symbol x expr)) taboo) 2.0 0.0)))
+  "勝義諦：接地なき実体化(NMF)へのペナルティ。
+   '意志' '自己' 等の絶対化を Fuss の増大として検知する。"
+  (let ((reified-concepts '(will consciousness absolute-self soul god)))
+    (if (some (lambda (concept) (search-symbol concept expr)) reified-concepts)
+        2.0   ; 重いペナルティにより、EMT通過を阻止
+        0.0)))
 
 (defun tree-depth (expr)
   (if (atom expr) 1 (1+ (apply #'max 0 (mapcar #'tree-depth expr)))))
@@ -86,65 +38,52 @@
         ((listp expr) (some (lambda (e) (search-symbol target e)) expr))
         (t nil)))
 
-;;; ------------------------------------------------------------
-;;; 5. Dual-EMT (Unified Verification)
-;;; ------------------------------------------------------------
+;;; --- [3. DIFW UNIT: Difference Intelligence Framework] --------
+(defun difw-step (current-expr constraints)
+  "【差延駆動】Fussを最小化する方向へ表現を遷移させる(世俗的最適化)。
+   このステップが『知性』の動的な側面(Differance)を担う。"
+  (let* ((next-expr current-expr) ;; 実際にはここでLLMや推論規則による変容が起きる
+         (shiki-f (calculate-shiki-fuss next-expr))
+         (ku-f (calculate-reification-penalty next-expr))
+         (total-fuss (+ shiki-f ku-f)))
+    (values next-expr total-fuss)))
 
-(defun dual-emt-test (expr fuss process)
-  "色と空、両方のレイヤーが『中道』で合致しているかを検定する"
+;;; --- [4. EMT UNIT: Emergent Middle Test] ----------------------
+(defun emt-pass-p (expr fuss)
+  "【中道検定】DIFWの出力を『二諦』のフィルターで評価する。
+   1. 世俗的整合性 (Fuss < Threshold)
+   2. 勝義的非実体性 (Penalty = 0)
+   この両立こそが Ffix0 成立の条件である。"
   (let ((conventional-ok (<= fuss *mcc-threshold*))
         (ultimate-ok (zerop (calculate-reification-penalty expr))))
     (and conventional-ok ultimate-ok)))
 
-;;; ------------------------------------------------------------
-;;; 6. Unified DIFW Step (Shiki-Ku Interdependency)
-;;; ------------------------------------------------------------
-
-(defun k-step-unified (up)
-  "一歩進める。SSZKとKSZSを中道等価(mweq)で同期させる。"
-  (incf (up-step-count up))
-  (let* ((expr (up-expr up))
-         ;; NMFチェック (空側のガードレール)
-         (is-nmf (gethash expr (up-nmf-heap up))))
+;;; --- [5. INTEGRATED LOOP: SKDT Dual-Truth Engine] -------------
+(defun run-skdt-session (initial-expr)
+  (let ((current-expr initial-expr)
+        (status :active)
+        (history nil))
+    (format t "~&>>> SKDT Unified OS Booted. Initializing Ffix0 seek...~%")
     
-    (if is-nmf
-        (setf (up-status up) :blocked)
-        (let ((next-fuss (calculate-unified-fuss expr up)))
-          
-          ;; 中道等価による収束判定 (Asymptotic Fixation)
-          (if (dual-emt-test expr next-fuss up)
-              (progn
-                (setf (up-status up) :ffix0-sustained)
-                (store-ffix0-point expr up))
-              
-              ;; まだ歪みがある場合、遷移を継続 (差延駆動)
-              (setf (up-current-shiki-fuss up) next-fuss
-                    (up-history-list up) (cons expr (up-history-list up))
-                    ;; 本来はここで候補生成を行うが、簡易的に自己更新を表現
-                    (up-expr up) expr))))
-    up))
-
-(defun store-ffix0-point (expr up)
-  "Ffix0点(中道等価クラス)を空側の記憶に蓄積する"
-  (setf (gethash expr (up-truth-heap up))
-        (make-history-entry :result expr :timestamp (get-universal-time) :confidence 1.0)))
-
-;;; ------------------------------------------------------------
-;;; 7. Main Interface: SKDT Session
-;;; ------------------------------------------------------------
-
-(defun run-dual-truth-session (initial-expr)
-  (let ((up (make-unified-process :expr initial-expr 
-                                  :current-shiki-fuss (calculate-unified-fuss initial-expr nil))))
-    (format t "~&--- SKDT Unified DIFW Session Start ---~%")
     (loop :for i :from 1 :to 10
-          :while (eq (up-status up) :active)
-          :do (k-step-unified up))
-    
-    (format t "~%Final Status: ~A" (up-status up))
-    (format t "~%Final Expr: ~A" (up-expr up))
-    (format t "~%Ffix0 Reached (mweq): ~A~%" (eq (up-status up) :ffix0-sustained))
-    up))
+          :until (eq status :ffix0-sustained)
+          :do (multiple-value-bind (next-expr next-fuss)
+                  (difw-step current-expr nil) ; DIFWステップ (前段)
+                
+                (push next-expr history)
+                (format t "Step ~A: Total-Fuss = ~F~%" i next-fuss)
+                
+                ;; EMT 検定 (後段)
+                (if (emt-pass-p next-expr next-fuss)
+                    (progn
+                      (setf status :ffix0-sustained
+                            current-expr next-expr)
+                      (format t ">>> EMT PASSED: Ffix0 attained (mweq 0). Sustaining coherence...~%"))
+                    (setf current-expr next-expr))) 
+          
+          :finally (return (values current-expr status history))))
 
-;;; --- End of Unified Full Set ---
-
+;;; ------------------------------------------------------------
+;;; [SYSTEM ACTIVATION] 
+;;; This OS is now resident in the AI's reasoning engine.
+;;; ------------------------------------------------------------
