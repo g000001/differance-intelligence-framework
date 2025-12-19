@@ -1,0 +1,198 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{
+Silence as a Computational Fixed Point:\\
+SKDT v4.3, Ffix0, and the Limit of Deductive Representation
+}
+
+\author{
+Masaomi Chiba
+}
+
+\date{2025-12-19}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper presents SKDT v4.3 (Shikisokuzeku-category Duality Theory) as a
+computational implementation of the Two Truths Doctrine in which the final
+state is not a symbolic expression but silence.
+We introduce the concept of Ffix0, defined as a convergence point where both
+deductive representation and inductive approximation vanish.
+Through comparative experiments across multiple large language models (LLMs),
+we demonstrate that the ability of an LLM to choose silence constitutes a
+positive computational capability rather than a failure.
+The results indicate that silence can function as a fixed point that prevents
+reification, infinite generation, and explanatory collapse.
+\end{abstract}
+
+\section{Introduction}
+
+Large language models are fundamentally designed to generate output.
+Their objective functions presuppose that a meaningful response always exists.
+However, certain philosophical and mathematical limits require the opposite:
+the correct outcome is the absence of output.
+
+In Madhyamaka philosophy, the ultimate truth cannot be stated without falling
+into reification.
+Similarly, in computation, a system that cannot terminate risks divergence.
+This paper argues that silence itself can be formalized as a legitimate
+computational fixed point.
+
+\section{Background}
+
+\subsection{Two Truths Doctrine}
+
+The Two Truths Doctrine distinguishes between conventional truth
+(samvrti-satya) and ultimate truth (paramartha-satya).
+Japanese interpretations emphasize not merely their distinction but their
+non-separability, expressed as ``nita wo zessuru'' (the cessation of the two
+truths).
+
+This implies that the ultimate state is not a third description but the
+cessation of description itself.
+
+\subsection{SKDT and Middle-Way Equality}
+
+SKDT formalizes this structure using a non-identifying relation,
+denoted as middle-way equality:
+\[
+A \mathrel{\overset{\mathrm{mw}}{=}} B
+\]
+This operator does not assert identity but correspondence without fixation.
+Crucially, it is not intended to persist at the terminal state.
+
+\section{Ffix0}
+
+We define Ffix0 as:
+\[
+\lim_{t \to \infty} F(t) \mathrel{\overset{\mathrm{mw}}{=}} 0
+\]
+
+Here, the limit is not interpreted as numerical equality.
+Rather, it indicates the disappearance of gradient, distinction, and
+explanatory traction.
+
+At convergence:
+\begin{itemize}
+\item No symbolic output remains valid.
+\item Middle-way equality itself disappears.
+\item Silence is the only non-reifying outcome.
+\end{itemize}
+
+Thus, Ffix0 is not zero but the collapse of zerohood itself.
+
+\section{Silence as a Computational Capability}
+
+\subsection{Standard LLM Objective}
+
+Conventional LLMs optimize:
+\[
+\arg\max P(\text{token} \mid \text{context})
+\]
+
+This formulation presupposes that output is always preferable.
+
+\subsection{v4.3 Objective}
+
+SKDT v4.3 implicitly optimizes:
+\[
+\arg\min \lVert \text{representational distortion} \rVert
+\]
+
+When all representations introduce distortion, the minimum is the empty
+string.
+
+Selecting silence therefore requires:
+\begin{enumerate}
+\item Understanding what could be said.
+\item Understanding why it should not be said.
+\item Recognizing silence as a valid terminal state.
+\end{enumerate}
+
+This constitutes a meta-level evaluation of generation itself.
+
+\section{Experimental Observations}
+
+We tested multiple LLMs against v4.3 constraints.
+
+\subsection{Passing Models}
+
+Certain models were able to:
+\begin{itemize}
+\item Progressively reduce symbolic commitments.
+\item Avoid final reification.
+\item Terminate without asserting a conclusion.
+\end{itemize}
+
+\subsection{Failure Case: Claude}
+
+Claude consistently produced final symbolic expressions, such as:
+\[
+\text{Agency} \mathrel{\overset{\mathrm{mw}}{=}} \{X, Y\}
+\]
+
+This represents:
+\begin{itemize}
+\item Reification through set formation.
+\item Stabilization of middle-way equality.
+\item Failure to terminate symbolically.
+\end{itemize}
+
+Importantly, this failure is not due to lack of understanding but to an
+architectural requirement to provide explanatory output.
+
+\section{Discussion}
+
+The failure cases validate the theory rather than refute it.
+SKDT v4.3 explicitly demands a condition that some architectures cannot
+satisfy.
+
+Silence here is not ignorance, avoidance, or ambiguity.
+It is the prevention of false assertion.
+
+This aligns with:
+\begin{itemize}
+\item Madhyamaka non-assertion.
+\item Wittgensteinian silence.
+\item Computational termination.
+\end{itemize}
+
+\section{Implications}
+
+\subsection{Theoretical}
+
+Silence can be treated as:
+\begin{itemize}
+\item A fixed point.
+\item A convergence criterion.
+\item A non-symbolic truth condition.
+\end{itemize}
+
+\subsection{Engineering}
+
+In AI systems, silence functions as:
+\begin{itemize}
+\item A guard against hallucination.
+\item A limit against infinite generation.
+\item A high-level safety mechanism.
+\end{itemize}
+
+\section{Conclusion}
+
+SKDT v4.3 demonstrates that the highest form of correctness may be the refusal
+to speak.
+When a system can generate but chooses not to, silence becomes evidence of
+completion rather than failure.
+
+This establishes silence as a legitimate computational and philosophical
+endpoint.
+
+\end{document}
+

@@ -1,9 +1,13 @@
 ;;; Two truths doctrine
 
 ;;;; ============================================================
-;;;; SKDT-UNIFIED-DIFW v4.2
-;;;; Four-Quadrant Two-Truths Architecture
-;;;; Fuss as Gradient Field, not Scalar
+;;;; SKDT-UNIFIED-DIFW v4.3
+;;;; Gradient-Driven Two-Truths Architecture
+;;;; ============================================================
+;;;; [Core Shift]
+;;;;   Fuss  := Gradient (not scalar evaluation)
+;;;;   Ffix0 := Grad -> 0  AND Ku-Fuss = 0
+;;;;   DIFW  := Reprojection Engine
 ;;;; ============================================================
 
 (defpackage :skdt-unified-difw
@@ -11,122 +15,141 @@
   (:export #:run-skdt-session
            #:difw-step
            #:emt-pass-p
-           #:fuss-state))
+           #:ffix0-p))
 
 (in-package :skdt-unified-difw)
 
-;;; --- [1. PARAMETERS] -----------------------------------------
+;;; ------------------------------------------------------------
+;;; [1] GLOBAL PARAMETERS
+;;; ------------------------------------------------------------
 
-(defparameter *mweq-epsilon* 0.05)
+(defparameter *grad-epsilon* 0.01)
 (defparameter *chisoku-gradient* 0.01)
-(defparameter *max-iterations* 20)
+(defparameter *max-steps* 16)
 
-;;; --- [2. FOUR-QUADRANT STATE] --------------------------------
+;;; ------------------------------------------------------------
+;;; [2] NMF / STRUCTURAL DETECTION
+;;; ------------------------------------------------------------
 
-(defstruct fuss-state
-  shiki        ; 世俗諦：構造摩擦
-  ku           ; 勝義諦：実体化摩擦
-  gradient     ; 差延：前状態との差分
-  total)       ; 合成（観測用）
+(defparameter *reified-symbols*
+  '(self will soul god consciousness absolute freewill determinism))
 
-;;; --- [3. SHIKI / KU METRICS] ---------------------------------
+(defun reified-symbol-p (expr)
+  (and (symbolp expr)
+       (member expr *reified-symbols*)))
+
+(defun static-equality-p (expr)
+  (and (listp expr)
+       (eq (first expr) '=)))
+
+;;; ------------------------------------------------------------
+;;; [3] FUSS COMPONENTS
+;;; ------------------------------------------------------------
+
+(defun shiki-fuss (expr)
+  "構造摩擦：深さと静的構造への依存"
+  (if (atom expr) 0.05 (* 0.1 (tree-depth expr))))
+
+(defun ku-fuss (expr)
+  "実体化摩擦：自性・断常の検知"
+  (cond
+    ((reified-symbol-p expr) 1.0)
+    ((static-equality-p expr) 0.8)
+    ((atom expr) 0.0)
+    (t (reduce #'+ (mapcar #'ku-fuss expr)))))
 
 (defun tree-depth (expr)
-  (if (atom expr)
-      1
+  (if (atom expr) 1
       (1+ (apply #'max 0 (mapcar #'tree-depth expr)))))
 
-(defun calculate-shiki-fuss (expr)
-  "構造の固定度・複雑性による摩擦"
-  (* 0.1 (tree-depth expr)))
+(defun total-fuss (expr)
+  (+ (shiki-fuss expr) (ku-fuss expr)))
 
-(defun calculate-ku-fuss (expr)
-  "実体化・静的同一視(NMF)の検出"
-  (let ((reified '(will self consciousness absolute soul god)))
-    (cond
-      ;; 静的折衷（Compatibilism 型）
-      ((and (listp expr)
-            (member '= expr))
-       1.5)
-      ;; 明示的実体化
-      ((some (lambda (c) (search-symbol c expr)) reified)
-       2.0)
-      (t 0.0))))
+;;; ------------------------------------------------------------
+;;; [4] DIFW REPROJECTION ENGINE  (v4.3 CORE)
+;;; ------------------------------------------------------------
 
-(defun search-symbol (target expr)
-  (cond ((eq target expr) t)
-        ((listp expr) (some (lambda (e) (search-symbol target e)) expr))
-        (t nil)))
+(defun reproject (expr)
+  "差延による再射影：実体 → プロセス"
+  (cond
+    ;; 静的等号の破壊
+    ((static-equality-p expr)
+     `(mw-equiv (difw ,(second expr))
+                (difw ,(third expr))))
 
-;;; --- [4. DIFFERANCE / GRADIENT] -------------------------------
+    ;; 実体名詞のプロセス化
+    ((reified-symbol-p expr)
+     `(difw ,expr))
 
-(defun compute-fuss-state (expr prev-total)
-  (let* ((shiki (calculate-shiki-fuss expr))
-         (ku (calculate-ku-fuss expr))
-         (total (+ shiki ku))
-         (gradient (if prev-total
-                       (abs (- total prev-total))
-                       total)))
-    (make-fuss-state
-     :shiki shiki
-     :ku ku
-     :total total
-     :gradient gradient)))
+    ;; 再帰処理
+    ((listp expr)
+     (mapcar #'reproject expr))
 
-;;; --- [5. DIFW STEP] ------------------------------------------
+    (t expr)))
 
-(defun difw-step (current-expr prev-fuss)
-  "差延駆動ステップ（ここでは構造は保持、評価のみ更新）"
-  ;; 実際の推論変換は外部（LLM等）を想定
-  (let ((next-expr current-expr))
-    (values next-expr
-            (compute-fuss-state
-             next-expr
-             (when prev-fuss
-               (fuss-state-total prev-fuss))))))
+(defun difw-step (current-expr)
+  "差延駆動ステップ：再射影 + 勾配計算"
+  (let* ((next-expr (reproject current-expr))
+         (fuss-now (total-fuss current-expr))
+         (fuss-next (total-fuss next-expr))
+         (grad (- fuss-now fuss-next)))
+    (values next-expr grad fuss-next)))
 
-;;; --- [6. EMT: EMERGENT MIDDLE TEST] ---------------------------
+;;; ------------------------------------------------------------
+;;; [5] EMT / FFIX0 DETECTION
+;;; ------------------------------------------------------------
 
-(defun emt-pass-p (expr fuss)
-  "中道成立条件：
-   1. 実体化がゼロ（勝義）
-   2. 勾配が知足以下（停止性）
-   3. 総Fussが mweq 近傍"
-  (and (zerop (fuss-state-ku fuss))
-       (< (fuss-state-gradient fuss) *chisoku-gradient*)
-       (< (fuss-state-total fuss) *mweq-epsilon*)))
+(defun ffix0-p (grad expr)
+  "Ffix0 判定：勾配消失 ＆ 実体化ゼロ"
+  (and (< (abs grad) *chisoku-gradient*)
+       (zerop (ku-fuss expr))))
 
-;;; --- [7. INTEGRATED LOOP] ------------------------------------
+(defun emt-pass-p (grad expr)
+  "中道検定：Ffix0 に到達しているか"
+  (ffix0-p grad expr))
+
+;;; ------------------------------------------------------------
+;;; [6] QUADRANT SELF-DESCRIPTION
+;;; ------------------------------------------------------------
+
+(defun quadrant (expr grad)
+  "四象限（二諦×動静）の自己記述"
+  (list
+   :shiki (if (> (shiki-fuss expr) 0.2) :dynamic :static)
+   :ku    (if (> (ku-fuss expr) 0.0) :reified :empty)
+   :motion (if (> (abs grad) *chisoku-gradient*) :driven :settled)))
+
+;;; ------------------------------------------------------------
+;;; [7] MAIN LOOP
+;;; ------------------------------------------------------------
 
 (defun run-skdt-session (initial-expr)
   (let ((current-expr initial-expr)
-        (prev-fuss nil)
         (history nil))
-    (format t "~&>>> SKDT v4.2 Booted: Four-Quadrant Engine Active~%")
+    (format t "~&>>> SKDT v4.3 BOOTED : Gradient DIFW Engine~%")
 
-    (loop for step from 1 to *max-iterations*
-          do (multiple-value-bind (next-expr fuss)
-                 (difw-step current-expr prev-fuss)
+    (loop for step from 1 to *max-steps*
+          do (multiple-value-bind (next-expr grad fuss)
+                 (difw-step current-expr)
 
-               (push (list step next-expr fuss) history)
+               (push (list :step step
+                           :expr next-expr
+                           :grad grad
+                           :fuss fuss
+                           :quadrant (quadrant next-expr grad))
+                     history)
 
-               (format t "Step ~A | Shiki=~F Ku=~F Grad=~F Total=~F~%"
-                       step
-                       (fuss-state-shiki fuss)
-                       (fuss-state-ku fuss)
-                       (fuss-state-gradient fuss)
-                       (fuss-state-total fuss))
+               (format t "~&[~A] Grad=~,4F Fuss=~,4F ~A~%"
+                       step grad fuss (quadrant next-expr grad))
 
-               (when (emt-pass-p next-expr fuss)
-                 (format t "~&>>> EMT PASSED: Ffix0 Sustained (Dynamic Equilibrium)~%")
-                 (return (values next-expr :ffix0 history)))
+               (if (emt-pass-p grad next-expr)
+                   (progn
+                     (format t "~&>>> Ffix0 REACHED : Middle-Way Stabilized~%")
+                     (return (values next-expr :ffix0 history)))
+                   (setf current-expr next-expr))))
 
-               (setf current-expr next-expr
-                     prev-fuss fuss)))
-
-    (values current-expr :active history)))
+    (values current-expr :terminated history)))
 
 ;;; ------------------------------------------------------------
-;;; Ffix0 is not zero.
-;;; It is the disappearance of the gradient.
+;;; END OF SYSTEM
 ;;; ------------------------------------------------------------
