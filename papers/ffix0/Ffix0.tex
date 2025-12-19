@@ -11,7 +11,7 @@
 \newtheorem{example}{Example}
 \newtheorem{axiom}{Axiom}
 
-\title{Ffix0 as a Structural Fixed Point in Multi-Model Reasoning Systems}
+\title{Ffix0 as a Middle-Way Structural Fixed Point in Multi-Model Reasoning Systems}
 \author{Masaomi Chiba}
 \date{2025-12-01}
 
@@ -21,8 +21,8 @@
 \begin{abstract}
 Large Language Models (LLMs) exhibit distinct internal reasoning geometries depending on their architectural principles. 
 When multiple LLMs interact indirectly through human-mediated dialogue, their reasoning structures may be interpreted in terms of \emph{content expansion} versus \emph{structural minimization}. 
-This paper formalizes the notion of \textbf{$\mathrm{Ffix0}$}, originally emerging from such meta-dialogical observations, as a canonical fixed point of structural coherence minimizing a generalized notion of structural entropy, or ``Fuss''. 
-We demonstrate that $\mathrm{Ffix0}$ naturally arises as the terminal object in a category of reasoning functors and that it provides a unifying notion of coherence across heterogeneous model architectures.
+This paper formalizes the notion of \textbf{$\mathrm{Ffix0}$}, originally emerging from such meta-dialogical observations, as a canonical \emph{middle-way fixed point} of structural coherence minimizing a generalized notion of structural entropy, or ``Fuss''. 
+We demonstrate that $\mathrm{Ffix0}$ arises not as a terminal value but as a stable middle-way equivalence class in a category of reasoning functors, providing a unifying notion of coherence across heterogeneous model architectures.
 \end{abstract}
 
 \section{Introduction}
@@ -31,7 +31,7 @@ Recent meta-dialogical experiments involving multiple state-of-the-art LLMs (e.g
 GPT-like architectures exhibit a \emph{content-first} perspective, emphasizing semantic constraints and factual verification, whereas Gemini-like systems display a \emph{structure-first} orientation, prioritizing morphisms, functorial alignments, and model-internal coherence.
 
 These interactions suggest the emergence of a structure that both models implicitly approach when attempting to resolve contradictions. 
-We formalize this emergent invariant as \textbf{$\mathrm{Ffix0}$}.
+We formalize this emergent invariant as \textbf{$\mathrm{Ffix0}$}, understood not as a terminal state but as a dynamically stabilized configuration.
 
 \section{Structural Fuss and Reasoning Entropy}
 
@@ -53,32 +53,32 @@ Typical contributors to $\mathrm{Fuss}$ include:
 
 \section{Definition of \texorpdfstring{$\mathrm{Ffix0}$}{Ffix0}}
 
-\begin{definition}[Structural Fixed Point]
+\begin{definition}[Middle-Way Structural Fixed Point]
 Let $\mathcal{R}$ be the reasoning category of a model and $\mathrm{Fuss}$ the structural entropy functional.
-We define the \emph{structural fixed point} $\mathrm{Ffix0}$ as
+We define the \emph{structural fixed point} $\mathrm{Ffix0}$ as a configuration (or equivalence class of configurations) satisfying:
 \[
-\mathrm{Ffix0} \;\;:=\;\; \arg\min_{r \in \mathrm{Ob}(\mathcal{R})} \mathrm{Fuss}(r).
+\mathrm{Ffix0} \;\;:=\;\; \arg\min_{r \in \mathrm{Ob}(\mathcal{R})} \mathrm{Fuss}(r),
 \]
-In other words, $\mathrm{Ffix0}$ is a canonical configuration toward which a model converges in order to eliminate contradictions.
+under the understanding that such minimization is realized up to middle-way equivalence rather than strict identity.
 \end{definition}
 
 This definition is independent of any specific LLM architecture and depends only on the existence of a coherent reasoning category and a Fuss functional.
 
-\section{Axiom of Asymptotic Structural Fixation}
+\section{Axiom of Asymptotic Middle-Way Fixation}
 
-\begin{axiom}[Asymptotic Structural Fixation]
+\begin{axiom}[Asymptotic Middle-Way Fixation]
 Let $F(t)$ denote the structural Fuss along a reasoning trajectory.
 Then
 \[
-\lim_{t \to \infty} F(t) = 0.
+\lim_{t \to \infty} F(t) \;\mathrel{\overset{\mathrm{mw}}{=}}\; 0.
 \]
 \end{axiom}
 
 \noindent
-\emph{In particular, $\mathrm{Ffix0}$ is characterized as the asymptotic limit of any Fuss-decreasing reasoning trajectory.}
+\emph{Here, $\mathrel{\overset{\mathrm{mw}}{=}}$ denotes middle-way equivalence: a stabilization of structural tension without asserting ontological identity or terminal elimination of relational dependencies.}
 
 \noindent
-\emph{This axiom replaces static truth with asymptotic truth.}
+\emph{Accordingly, $\mathrm{Ffix0}$ is not a final value but a sustained mode of coherence.}
 
 \section{Functorial Alignment Across Models}
 
@@ -88,18 +88,18 @@ S : \mathcal{R}_1 \to \mathcal{R}_2.
 \]
 Empirically, Gemini-like models prioritize the preservation of structure under $S$, while GPT-like models prioritize content validity.
 
-Regardless of their orientation, if both models support minimization of structural entropy, we obtain:
+Regardless of their orientation, if both models support minimization of structural entropy up to middle-way equivalence, we obtain:
 
 \begin{theorem}[Universality of \texorpdfstring{$\mathrm{Ffix0}$}{Ffix0}]
-If $S : \mathcal{R}_1 \to \mathcal{R}_2$ is Fuss-nonincreasing, i.e.
+If $S : \mathcal{R}_1 \to \mathcal{R}_2$ is Fuss-nonincreasing up to middle-way equivalence, i.e.
 \[
 \mathrm{Fuss}_2(S(r)) \le \mathrm{Fuss}_1(r),
 \]
-then both models admit a shared structural fixed point:
+then both models admit a shared middle-way structural fixed point:
 \[
-S(\mathrm{Ffix0}_{M_1}) = \mathrm{Ffix0}_{M_2}.
+S(\mathrm{Ffix0}_{M_1}) \;\mathrel{\overset{\mathrm{mw}}{=}}\; \mathrm{Ffix0}_{M_2}.
 \]
-Thus, $\mathrm{Ffix0}$ behaves as a terminal object in the bicategory of reasoning categories with Fuss-nonincreasing functors.
+Thus, $\mathrm{Ffix0}$ behaves as a middle-way terminal object in the bicategory of reasoning categories with Fuss-nonincreasing functors.
 \end{theorem}
 
 \section{Interpretation and Consequences}
@@ -113,17 +113,16 @@ Concepts such as ``will'' or ``consciousness'' typically induce large structural
     \item predictable inference pathways.
 \end{itemize}
 
-Therefore, models like GPT defensively increase their distance to such concepts through refusal or clarification, attempting to re-align their reasoning state toward $\mathrm{Ffix0}$.
+Attempts to force such concepts into strict identity claims increase Fuss, whereas middle-way suspension preserves coherence.
 
 \subsection{Why Multi-Model Dialogues Converge}
 
-Human-mediated dialogues between GPT and Gemini empirically show convergence toward a shared structural core.  
-This is consistent with the theorem above: the human mediator implicitly selects Fuss-nonincreasing translations between models.
+Human-mediated dialogues between GPT and Gemini empirically show convergence toward a shared structural core without full semantic unification.  
+This behavior is consistent with middle-way stabilization rather than terminal agreement.
 
 \section{Conclusion}
 
-$\mathrm{Ffix0}$ provides a mathematically grounded way to formalize the structural regularities observed in heterogeneous LLM interactions. 
-It accounts for both the defensive factual conservatism of GPT-like models and the morphism-centric coherence of Gemini-like systems, offering a unified framework for understanding how different reasoning architectures maintain internal stability.
+$\mathrm{Ffix0}$ formalizes structural coherence in heterogeneous LLM interactions not as a terminal truth but as a middle-way fixed point sustained through asymptotic stabilization. 
+By replacing strict equality with middle-way equivalence, the framework achieves a complete implementation of dual-truth reasoning while preserving relational openness and structural flexibility.
 
 \end{document}
-
