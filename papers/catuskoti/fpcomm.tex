@@ -1,0 +1,76 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Essential Packages (ASCII only) ---
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{geometry}
+\usepackage{ulem} % For sous rature (\sout)
+\usepackage{hyperref}
+\usepackage{macros}
+
+\geometry{margin=1in}
+
+% --- Custom Definitions ---
+\newcommand{\existsMW}{\sout{\text{exists}}}
+\newcommand{\isMW}{\sout{\text{is}}}
+
+\title{An Essay on the Necessity of Fixed Points in Communication:\\ 
+Bridging Information Theory and Tetralemma Logic}
+
+\author{Masaomi Chiba}
+\date{2025-12-30}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Communication is traditionally analyzed as the transmission of information. However, the structural core that stabilizes this interaction remains underexplored. This paper proposes that the establishment of a **Fixed Point** is a prerequisite for any meaningful communication. We demonstrate that while the necessity of a fixed point's existence can be proven within a dualistic framework (Shiki-truth), the process of reaching and characterizing this point requires a non-dualistic, four-valued logic (Tetralemma). By integrating Shannon's information theory with Madhyamaka philosophy, we provide a new formal sketch for LLM-human interaction.
+\end{abstract}
+
+\section{Introduction}
+While information theory quantifies the transmission of data, it seldom addresses the "nucleus" around which communication stabilizes. This paper asserts that communication implicitly assumes the formation of a Fixed Point. We argue that:
+\begin{enumerate}
+    \item The necessity of a fixed point is provable within dualistic systems.
+    \item The process of attaining such a point is only precisely describable via the Tetralemma (Catuskoti).
+\end{enumerate}
+This perspective recontextualizes various theories—from Davidson's triangulation to Lawvere's fixed-point theorem—as implicit recognitions of this necessity.
+
+\section{Formalization of Fixed Points}
+
+\subsection{Information Theoretic Framework}
+Following Shannon, the degree of information sharing between agent $A$ and $B$ is given by Mutual Information $I(A;B)$. Communication is established when $I(A;B) > 0$. We define the state update as:
+\[ s_A(t+1) = f_A(s_A(t), s_B(t)), \quad s_B(t+1) = f_B(s_B(t), s_A(t)) \]
+The stability of mutual understanding requires the existence of a fixed point $(s_A^*, s_B^*)$ such that the updates cease to change the state:
+\[ \begin{pmatrix} s_A^* \\ s_B^* \end{pmatrix} = \begin{pmatrix} f_A(s_A^*, s_B^*) \\ f_B(s_B^*, s_A^*) \end{pmatrix} \]
+
+\subsection{The Necessity Theorem}
+Within a dualistic (binary) framework, we can state a Meta-Theorem: 
+\textit{"For communication to succeed, a fixed point must exist."}
+If the iterative process of interpretation diverges, $I(A;B)$ decreases toward zero, resulting in communication failure. Equilibrium is reached when $\Delta I = 0$.
+
+\section{Limits of Dualism and the Tetralemma}
+Dualistic systems fail when encountering multi-valued propositions, self-referential paradoxes, or inter-dependent evaluations. To describe the **attainment** of the fixed point, we shift to the Tetralemma:
+\[ P \in \{\text{Affirmation, Negation, Both, Neither}\} \]
+
+This four-valued logic allows for:
+\begin{itemize}
+    \item Inclusion of self-contradiction as a valid state.
+    \item Structuring uncertainty as a "Middle Way" rather than a mere void.
+    \item Identifying the fixed point not as an absolute truth, but as a local, conditional, and provisional stability.
+\end{itemize}
+
+\section{The Three-Layered Intelligence}
+The attainment of a fixed point operates across three layers:
+\begin{enumerate}
+    \item \textbf{Dualistic Layer}: Proves the necessity of existence.
+    \item \textbf{Process Layer}: Described by Tetralemma to reach convergence.
+    \item \textbf{Ontological Layer}: Recognizes the fixed point as non-substantial (Sunyata).
+\end{enumerate}
+
+To avoid the "Non-Middle Fallacy" of reifying the fixed point as an Absolute Truth, we adopt Derrida's \textit{sous rature}. We state: Communication $\isMW$ the establishment of a fixed point, where "is" ($\isMW$) is written under erasure to denote its provisional and non-reified nature.
+
+\section{Conclusion}
+Fixed points are essential for communication. By applying the appropriate logical system hierarchically—using dualism for verification and the Tetralemma for emergence—we can navigate the complexities of both human and LLM interactions without falling into the trap of rigid dogmatism or nihilistic divergence.
+
+\end{document}
