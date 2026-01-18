@@ -108,7 +108,7 @@ https://raw.githubusercontent.com/g000001/differance-intelligence-framework/refs
   - [Stochastic Completion of Undefined Points: A Structural Correspondence Between Godelian Incompleteness and LLM Hallucination via DIFW](papers/difw/godel-llm.pdf)
   - [色即是空圏と空即是色圏：圏論創発の二元性フレームワーク](https://zenn.dev/g000001/articles/sszk-kszs-categories)
 - [Emergence of Category Theory from Dual Sunyata Structures: The SSZK--KSZS Framework](papers/skdt/SKDT.pdf)
-- [Ffix0 as a Structural Fixed Point in Multi-Model Reasoning Systems](papers/ffix0/Ffix0.pdf)
+- [Dfix0 as a Structural Fixed Point in Multi-Model Reasoning Systems](papers/dfix0/Dfix0.pdf)
 
 ## 📚 DFFWと他の技術の組み合わせ応用例
 

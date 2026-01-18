@@ -43,7 +43,7 @@
     (format t " > Conventional Stability: ~A~%" conventional-ok)
     (format t " > Ultimate Non-Reification: ~A~%" ultimate-ok)
     
-    ;; 両方の真理が中道で合致している場合のみパス (Ffix0の成立)
+    ;; 両方の真理が中道で合致している場合のみパス (Dfix0の成立)
     (and conventional-ok ultimate-ok)))
 
 (defun emergent-shikika (potential history constraints)

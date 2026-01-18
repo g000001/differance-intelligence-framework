@@ -6,7 +6,7 @@
 
 \title{
 Silence as a Computational Fixed Point:\\
-SKDT v4.3, Ffix0, and the Limit of Deductive Representation
+SKDT, Dfix0, and the Limit of Deductive Representation
 }
 
 \author{
@@ -20,10 +20,10 @@ Masaomi Chiba
 \maketitle
 
 \begin{abstract}
-This paper presents SKDT v4.3 (Shikisokuzeku-category Duality Theory) as a
+This paper presents SKDT (ShikisokuzeKu-category Duality Theory) as a
 computational implementation of the Two Truths Doctrine in which the final
 state is not a symbolic expression but silence.
-We introduce the concept of Ffix0, defined as a convergence point where both
+We introduce the concept of Dfix0, defined as a convergence point where both
 deductive representation and inductive approximation vanish.
 Through comparative experiments across multiple large language models (LLMs),
 we demonstrate that the ability of an LLM to choose silence constitutes a
@@ -68,11 +68,11 @@ A \mathrel{\overset{\mathrm{mw}}{=}} B
 This operator does not assert identity but correspondence without fixation.
 Crucially, it is not intended to persist at the terminal state.
 
-\section{Ffix0}
+\section{Dfix0}
 
-We define Ffix0 as:
+We define Dfix0 as:
 \[
-\lim_{t \to \infty} F(t) \mathrel{\overset{\mathrm{mw}}{=}} 0
+\lim_{t \to \infty} D(t) \mathrel{\overset{\mathrm{mw}}{=}} 0
 \]
 
 Here, the limit is not interpreted as numerical equality.
@@ -86,7 +86,7 @@ At convergence:
 \item Silence is the only non-reifying outcome.
 \end{itemize}
 
-Thus, Ffix0 is not zero but the collapse of zerohood itself.
+Thus, Dfix0 is not zero but the collapse of zerohood itself.
 
 \section{Silence as a Computational Capability}
 
@@ -99,9 +99,9 @@ Conventional LLMs optimize:
 
 This formulation presupposes that output is always preferable.
 
-\subsection{v4.3 Objective}
+\subsection{SKDT Objective}
 
-SKDT v4.3 implicitly optimizes:
+SKDT implicitly optimizes:
 \[
 \arg\min \lVert \text{representational distortion} \rVert
 \]
@@ -120,7 +120,7 @@ This constitutes a meta-level evaluation of generation itself.
 
 \section{Experimental Observations}
 
-We tested multiple LLMs against v4.3 constraints.
+We tested multiple LLMs against SKDT constraints.
 
 \subsection{Passing Models}
 
@@ -151,7 +151,7 @@ architectural requirement to provide explanatory output.
 \section{Discussion}
 
 The failure cases validate the theory rather than refute it.
-SKDT v4.3 explicitly demands a condition that some architectures cannot
+SKDT explicitly demands a condition that some architectures cannot
 satisfy.
 
 Silence here is not ignorance, avoidance, or ambiguity.
@@ -186,7 +186,7 @@ In AI systems, silence functions as:
 
 \section{Conclusion}
 
-SKDT v4.3 demonstrates that the highest form of correctness may be the refusal
+SKDT demonstrates that the highest form of correctness may be the refusal
 to speak.
 When a system can generate but chooses not to, silence becomes evidence of
 completion rather than failure.

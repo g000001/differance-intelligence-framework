@@ -53,9 +53,9 @@
                    (<= current-fuss (emt-mcc-threshold emt-proc))     ; 世俗的合格
                    (emt-ultimate-stability-p emt-proc))               ; 勝義的合格
           
-          ;; EMT 成功: Ffix0 における二諦の不二が確認された
+          ;; EMT 成功: Dfix0 における二諦の不二が確認された
           (setf (emt-emt-passed-p emt-proc) t)
-          (format t "EMT Passed: Ffix0 established with mweq coherence.~%")))))
+          (format t "EMT Passed: Dfix0 established with mweq coherence.~%")))))
   
   emt-proc)
 

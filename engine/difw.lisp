@@ -13,7 +13,7 @@
   current-fuss          ; 現在の構造的歪み E(S)
   constraints           ; 乱起 (Ranki) 制約
   sustained-mweq-p      ; 中道等価維持フラグ (勝義諦的安定)
-  status                ; :active, :ffix0-sustained
+  status                ; :active, :dfix0-sustained
   step-count)
 
 (defparameter *mweq-epsilon* 0.001 "中道等価(mweq)とみなすFussの変化閾値")
@@ -56,7 +56,7 @@
 
 ;;; 3. 差延知性メインループ (k-step)
 (defun k-step-difw (process)
-  "知性を一歩進める。Ffix0に達した後は中道等価を維持する"
+  "知性を一歩進める。Dfix0に達した後は中道等価を維持する"
   (incf (dp-step-count process))
   
   (multiple-value-bind (next-expr next-fuss)
@@ -67,11 +67,11 @@
       (if (and (< (abs (- current-fuss next-fuss)) *mweq-epsilon*)
                (< next-fuss 0.1))
           
-          ;; 【Ffix0到達】 停止せず、状態を「維持」に移行 (勝義的知足)
+          ;; 【Dfix0到達】 停止せず、状態を「維持」に移行 (勝義的知足)
           (progn
-            (setf (dp-status process) :ffix0-sustained
+            (setf (dp-status process) :dfix0-sustained
                   (dp-sustained-mweq-p process) t)
-            (format t "Step ~A: Ffix0 attained (mweq). Sustaining coherence...~%" 
+            (format t "Step ~A: Dfix0 attained (mweq). Sustaining coherence...~%" 
                     (dp-step-count process)))
 
           ;; 【差延駆動】 まだ歪みがある場合は遷移を継続 (世俗的最適化)

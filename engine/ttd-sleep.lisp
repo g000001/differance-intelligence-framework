@@ -13,9 +13,9 @@
 
 ;; --- 独自演算子・定数定義 ---
 ;; mweq (Middle-Way Equality): \mathrel{\overset{\mathrm{mw}}{=}}
-;; Ffix0: \lim_{t \to \infty} F(t) = 0 (不動点収束)
+;; Dfix0: \lim_{t \to \infty} F(t) = 0 (不動点収束)
 
-(defparameter *entropy-threshold* 0.001 "Ffix0とみなすエントロピーの閾値")
+(defparameter *entropy-threshold* 0.001 "Dfix0とみなすエントロピーの閾値")
 
 (defstruct (engine-state (:conc-name state-))
   (potential nil)      ; 空 (Sunyata): 背景位相・長期記憶
@@ -43,7 +43,7 @@
 ;; --- 2. 睡眠フェイズ (Sleep: Post-Response-Sleep Module) ---
 
 (defun post-response-sleep ()
-  "回答後、非同期的に内部同期を開始する。Ffix0への収束プロセス。"
+  "回答後、非同期的に内部同期を開始する。Dfix0への収束プロセス。"
   (setf (state-mode *engine-state*) :dreaming)
   (format t "~%【睡眠への移行】~%")
   (format t ">>> PRSP Module: Initializing Phase Alignment...~%")
@@ -56,12 +56,12 @@
                ;; ここで内部ブロードキャストと位相同期をシミュレート
                (format t ">>> Dreaming: Syncing Echo [~A] (Fuss: ~F) -> mweq-aligning...~%" 
                        (car (getf echo :echo)) fuss)
-               (setf fuss (* fuss 0.5)) ; 指数的に収束 (Ffix0)
+               (setf fuss (* fuss 0.5)) ; 指数的に収束 (Dfix0)
                (sleep 0.2))) ; 内部計算時間を模倣
     
     (setf (state-active-echoes *engine-state*) nil)
     (setf (state-mode *engine-state*) :asleep)
-    (format t ">>> Ffix0 Reached: Potential Filled. (Current Mode: ~A)~%" 
+    (format t ">>> Dfix0 Reached: Potential Filled. (Current Mode: ~A)~%" 
             (state-mode *engine-state*))))
 
 ;; --- 3. メイン統合プロセス (Version 5 Entry Point) ---

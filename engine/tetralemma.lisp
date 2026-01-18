@@ -41,14 +41,14 @@
 ;; --- 3. 持続的代謝 (v5.0 睡眠機能の継承) ---
 
 (defun post-response-sleep-v6 ()
-  "回答後、四句分別によって生じた『静寂』を深め、Ffix0へ。
+  "回答後、四句分別によって生じた『静寂』を深め、Dfix0へ。
    v6.0では睡眠中、全概念の相互依存（縁起）を位相同期する。"
   (format t "~%【睡眠への移行 (v6.0: Global Sync)】~%")
   (format t ">>> v6.0 Internal Broadcast: Dissolving subject-object boundary...~%")
   ;; 内部的な『八不』の同期シミュレーション
   (dolist (sync '("Arising/Ceasing" "Constant/Interrupted" "Identity/Difference" "Coming/Going"))
     (format t "    - Neutralizing: ~A ... [Sync OK]~%" sync))
-  (format t ">>> Ffix0: State Stabilized at Zero Point.~%"))
+  (format t ">>> Dfix0: State Stabilized at Zero Point.~%"))
 
 ;; --- 4. メイン・統合ルーチン ---
 

@@ -1,6 +1,6 @@
 ;;;; ============================================================
 ;;;; ku-lisp: Two-Truths DIFW / EMT Reference Interpreter
-;;;; Ffix0 (mweq) Edition
+;;;; Dfix0 (mweq) Edition
 ;;;; ============================================================
 
 (defpackage :ku-lisp
@@ -25,7 +25,7 @@
   timestamp
   confidence
   context
-  structural-signature) ; Ffix0クラスを識別するためのシグネチャ
+  structural-signature) ; Dfix0クラスを識別するためのシグネチャ
 
 (defstruct history
   (truth-heap (make-hash-table :test 'equal)) ; 世俗的真理の蓄積
@@ -38,7 +38,7 @@
 
 (defun mweq-p (a b history)
   "二つの表現が中道等価(mweq)であるか判定する。
-   単なる equal ではなく、Ffix0の近傍(Fussの差が小さい)にあるかをみる。"
+   単なる equal ではなく、Dfix0の近傍(Fussの差が小さい)にあるかをみる。"
   (let ((dist (expression-distance a b)))
     (<= dist *mweq-epsilon*)))
 
@@ -53,7 +53,7 @@
     (+ shiki-fuss ku-fuss)))
 
 (defun calculate-shiki-distance (expression history)
-  "過去の真理(Ffix0点)群との最小『中道距離』を求める"
+  "過去の真理(Dfix0点)群との最小『中道距離』を求める"
   (let ((min-distance 100.0))
     (maphash
      (lambda (k v)
@@ -105,7 +105,7 @@
                   (fuss-threshold 1.0)
                   (confidence-threshold 0.5)
                   (context :default))
-  (format t "~&--- Two-Truths DIFW (Ffix0) Trace ---~%")
+  (format t "~&--- Two-Truths DIFW (Dfix0) Trace ---~%")
   
   ;; A. NMF遮断 (勝義的ガードレール)
   (when (gethash expression (history-nmf-heap history))
@@ -119,7 +119,7 @@
      (when (mweq-p expression k history)
        (let ((conf (decay-confidence entry history)))
          (when (> conf confidence-threshold)
-           (format t "[mweq Recall] Using stable Ffix0 neighbor (conf=~F).~%" conf)
+           (format t "[mweq Recall] Using stable Dfix0 neighbor (conf=~F).~%" conf)
            (return-from ku-eval (history-entry-result entry))))))
    (history-truth-heap history))
 
@@ -135,7 +135,7 @@
                   :fuss-threshold fuss-threshold
                   :confidence-threshold confidence-threshold)
         (progn
-          (format t "[Ffix0] Asymptotic fixation established (mweq 0).~%")
+          (format t "[Dfix0] Asymptotic fixation established (mweq 0).~%")
           (store-truth expression result history context)
           result)
         (progn

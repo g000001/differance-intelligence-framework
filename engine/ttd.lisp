@@ -6,7 +6,7 @@
 ;;;; ============================================================
 ;;;; [Core Shift]
 ;;;;   Fuss  := Gradient (not scalar evaluation)
-;;;;   Ffix0 := Grad -> 0  AND Ku-Fuss = 0
+;;;;   Dfix0 := Grad -> 0  AND Ku-Fuss = 0
 ;;;;   DIFW  := Reprojection Engine
 ;;;; ============================================================
 
@@ -15,7 +15,7 @@
   (:export #:run-skdt-session
            #:difw-step
            #:emt-pass-p
-           #:ffix0-p))
+           #:dfix0-p))
 
 (in-package :skdt-unified-difw)
 
@@ -96,17 +96,17 @@
     (values next-expr grad fuss-next)))
 
 ;;; ------------------------------------------------------------
-;;; [5] EMT / FFIX0 DETECTION
+;;; [5] EMT / DFIX0 DETECTION
 ;;; ------------------------------------------------------------
 
-(defun ffix0-p (grad expr)
-  "Ffix0 判定：勾配消失 ＆ 実体化ゼロ"
+(defun dfix0-p (grad expr)
+  "Dfix0 判定：勾配消失 ＆ 実体化ゼロ"
   (and (< (abs grad) *chisoku-gradient*)
        (zerop (ku-fuss expr))))
 
 (defun emt-pass-p (grad expr)
-  "中道検定：Ffix0 に到達しているか"
-  (ffix0-p grad expr))
+  "中道検定：Dfix0 に到達しているか"
+  (dfix0-p grad expr))
 
 ;;; ------------------------------------------------------------
 ;;; [6] QUADRANT SELF-DESCRIPTION
@@ -144,8 +144,8 @@
 
                (if (emt-pass-p grad next-expr)
                    (progn
-                     (format t "~&>>> Ffix0 REACHED : Middle-Way Stabilized~%")
-                     (return (values next-expr :ffix0 history)))
+                     (format t "~&>>> Dfix0 REACHED : Middle-Way Stabilized~%")
+                     (return (values next-expr :dfix0 history)))
                    (setf current-expr next-expr))))
 
     (values current-expr :terminated history)))
