@@ -1,0 +1,120 @@
+\documentclass[uplatex,12pt,a4paper]{jsarticle}
+
+% ---------- 日本語・PDF 周り ----------
+\usepackage[dvipdfmx]{graphicx}
+\usepackage[dvipdfmx]{hyperref}
+\usepackage{pxjahyper}
+
+% ---------- レイアウト ----------
+\usepackage[margin=1in]{geometry}
+
+% ---------- 数式 ----------
+\usepackage{amsmath,amssymb,mathtools}
+
+% ---------- 遅延演算子（Unicode不使用・安全定義） ----------
+\newcommand{\delay}{\mathrel{\triangleright}}
+
+\title{$\delay$-Calculus: 時間位相と四句分別に基づく収束計算体系}
+\author{千葉将臣}
+\date{2026-01-24}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿では，四句分別（是・非・亦是亦非・非是非非）と時間遅延作用素 $\delay$ に基づく新しい計算体系として \textbf{$\delay$-Calculus} を提案する．本体系は，真理および計算を二元的な真偽判定ではなく，時間位相を伴う \emph{収束過程} として再定式化する．評価（eval）と適用（apply）の関係，遅延評価，固定点，および論理プログラミング的構造との対応を通じて，$\delay$-Calculus が論理・計算・意味論を統合する枠組みとして機能することを示す．
+\end{abstract}
+
+\section{序論}
+古典論理および多くの西洋的論理体系は，真理を二元的（True/False）に評価する枠組みに依存してきた．一方，仏教論理における四句分別は，命題の状態を是・非・亦是亦非・非是非非の四相として捉える．本研究の動機は，この四句分別を，時間位相および計算過程と結合させることで，真理を \emph{収束する対象} として定式化する点にある．
+
+本稿では，時間遅延作用素 $\delay$ を導入し，計算および真理評価を時間的に構造化する．これにより，真理とは静的な値ではなく，位相的・動的な固定点として理解される．
+
+\section{理論的背景}
+
+\subsection{四句分別}
+四句分別は以下の四相からなる：
+\begin{itemize}
+\item 是：肯定
+\item 非：否定
+\item 亦是亦非：肯定かつ否定
+\item 非是非非：肯定でも否定でもない
+\end{itemize}
+
+本稿では，これらを単なる論理値ではなく，\emph{位相的状態} として解釈する．
+
+\subsection{時間位相と遅延}
+計算および評価において，時間は単なる外部パラメータではなく，論理状態そのものに内在する．そのため，本稿では遅延作用素として $\delay$ を導入する：
+\begin{equation}
+\delay P
+\end{equation}
+は，「命題 $P$ が時間遅延の後に評価される」ことを表す．
+
+\section{$\delay$-Calculus の基本構成}
+
+\subsection{基本要素}
+$\delay$-Calculus は次の基本要素から構成される：
+\begin{itemize}
+\item 論理状態：$\{ \text{是}, \text{非}, \text{亦是亦非}, \text{非是非非} \}$
+\item 遅延作用素：$\delay$
+\item 固定点演算子：$\mathsf{fix}$
+\end{itemize}
+
+\subsection{四句 $\times$ 位相表現}
+論理状態は空間軸 $S$ と時間軸 $T$ の組として表現される：
+
+\begin{center}
+\begin{tabular}{c|c}
+状態 & $(S,T)$ \\
+\hline
+是 & $(t,t)$ \\
+非 & $(f,f)$ \\
+亦是亦非 & $(f,t)$ \\
+非是非非 & $(t,f)$ \\
+\end{tabular}
+\end{center}
+
+ここで $t$ は肯定，$f$ は否定を表す．この表現により，矛盾（inconsistent）および非整合（incoherent）が時間位相として明示化される．
+
+\section{意味論：eval と apply}
+
+\subsection{apply}
+apply は，関数を引数に適用する純粋な構文的操作である：
+\begin{equation}
+\mathsf{apply}(f, x)
+\end{equation}
+
+\subsection{eval}
+eval は，式を時間位相を含めて評価し，収束した値を得る操作である：
+\begin{equation}
+\mathsf{eval}(e)
+  = \mathsf{fix}(\delay \,\mathsf{apply})(e)
+\end{equation}
+
+すなわち，eval は apply に遅延と固定点を組み合わせた演算として理解される．このとき，真理値は即時に決定されるのではなく，収束点として現れる．
+
+\section{固定点と収束}
+$\delay$-Calculus において，真理とは固定点として定義される：
+\begin{equation}
+P = \mathsf{fix}(\delay P)
+\end{equation}
+
+これは，真理が自己参照的かつ時間的に安定した不動点として現れることを意味する．この観点は，ドメイン理論における固定点意味論と類似するが，本稿では論理状態そのものに位相構造を組み込む点が異なる．
+
+\section{プログラミングの制御構造との対応}
+$\delay$-Calculus は，手続き型や論理型プログラミングの制御構造と以下のように対応付けられる：
+\begin{itemize}
+\item $\delay$ は遅延評価，コルーチン，論理プログラミングのfreeze に対応
+\item 固定点は再帰，Y コンビネータに対応
+\item 四句状態は，失敗，バックトラック，カットなどの制御位相を分類する基底として機能
+\end{itemize}
+
+これにより，計算の制御位相と論理状態が同一の座標系で記述可能となる．
+
+\section{関連研究との比較}
+多値論理，時相論理，およびインドおよび仏教の論理学はいずれも部分的に本研究と接点を持つ．しかし，本稿の提案は, 真理そのものを \emph{収束過程} として第一原理に置き，遅延作用素 $\delay$ によって統一的に記述する体系である.
+
+\section{結論}
+本稿では，$\delay$-Calculus を通じて，真理・時間・計算を統合する枠組みを提案した．真理は二元的な判定値ではなく，時間位相を伴う収束点として再定義される．本体系は，論理・計算論・哲学的論理の横断的統合を可能にし，今後の形式化および実装研究の基盤となることが期待される．
+
+\end{document}
