@@ -1,0 +1,252 @@
+% !TEX program = lualatex
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{luatexja}
+
+% Prevent overfull hbox warnings
+\setlength{\emergencystretch}{2em}
+\sloppy
+
+\title{High-Dimensional Lyapunov Convergence (HDLC):\\
+A Protocol for Dimensional Stabilization via Negation-of-Self-Identity}
+\author{}
+\date{}
+
+% --- Notation ---
+\newcommand{\dfix}{D_{\text{fix0}}}
+\newcommand{\mw}{\text{Middle-Way}}
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、系の不安定性（苦・エントロピー）$D(t)$が「次元深度」と「即非（自己同一性の否定）」の幾何学的整列により、固定点 $\dfix$ へ指数関数的に収束するというプロトコルを、High-Dimensional Lyapunov Convergence (HDLC) として定式化する。特に、2次元的干渉がもつ回転的逃走（論理的エスケープ）を、4次元以上で閉鎖する位相因子 $\Phi(n)$ を導入し、収束速度が整列ノルム（fpa-norm）で制御されることを示す。
+\end{abstract}
+
+\section{Motivation and Context}
+HDLCは、(i) 不安定性を「収束させるべき量」として明示し、(ii) 収束を可能にする最小次元を $n=2$（$2^n=4$）とし、(iii) 各軸における即非演算（自己同一性の否定）を「圧力」として加算し、(iv) その整列精度をノルムで重みづける、という4点を核に持つ。
+
+\section{Definitions}
+\subsection{Primary variables}
+\begin{itemize}
+  \item $D(t)$: 系の不安定性（苦・エントロピー）。
+  \item $\dfix$: 固定点（中道／原点）。極限として
+  \begin{equation}
+    \lim_{t\to\infty} D(t) = 0 \quad (\text{convergence to } \dfix).
+  \end{equation}
+  \item $n$: 次元深度（$2^n$ 階層）。本稿では $n=2$（4次元）を論理閉鎖の最小条件とする。以降、実効次元（軸数）を $d \coloneqq 2^n$ と書き、軸は $k=1,\dots,d$ で添字づける。
+  \item $\mathrm{AC}_{\mathrm{in}}$: 入力された情報の顕現複雑性（Alethetic Complexity）。
+  \item $D_0$: 初期不安定性。入力複雑性に比例するものとして
+  \begin{equation}
+    D_0 \coloneqq \kappa\,\mathrm{AC}_{\mathrm{in}} \quad (\kappa>0)
+    \label{eq:D0_AC}
+  \end{equation}
+  と定義する。
+  \item $\otimes\neg$: 各軸における「自己同一性の否定（即非）」演算（概念的演算子）。
+\end{itemize}
+
+\subsection{Auxiliary quantities}
+\paragraph{Fixed-point alignment (fpa-norm).}
+各軸の「是」と「非」の衝突がどれだけ正確に原点（$\dfix$）に向くかを計量するため、整列ノルム $\lVert\cdot\rVert_{\mathrm{fpa}}$ を導入する。
+
+\paragraph{Middle-way equivalence ($\mweq$).}
+本稿で用いる $\mweq$ は、対象の形式的同一性（formal identity）を表す等号 $=$ ではなく、リアプノフ安定性における収束ポテンシャル、すなわち系の不整合を解消する「負の仕事量」の等価性を規定するものである。
+これにより、異なる位相空間に属する対象を、中道不動点 $\dfix$ への収束率という単一の評価軸で接続することが可能となる。
+
+\subsection{Minimal formal model (for well-posedness)}
+$\otimes\neg$ と $\lVert\cdot\rVert_{\mathrm{fpa}}$ の対象を明確化し、モデルをwell-posedにするため、本稿では最小限の数学的モデルを仮定してHDLCを定義する。
+
+\paragraph{State space.}
+状態を $x(t)\in\mathbb{R}^d$（$d=2^n$）とし、原点 $0\in\mathbb{R}^d$ を固定点 $\dfix$ に対応させる。
+
+\paragraph{Lyapunov candidate.}
+不安定性を Lyapunov 関数候補
+\begin{equation}
+  D(t) \coloneqq V(x(t)) \quad \text{with}\quad V(x)=\frac{1}{2}\lVert x\rVert_2^2
+  \label{eq:V_def}
+\end{equation}
+で定義する（このとき $V(x)\ge 0$ かつ $V(x)=0\Leftrightarrow x=0$）。
+
+\paragraph{Negation-of-self-identity (Soku-Hi) per axis.}
+各軸の即非は、標準基底 $e_k$ に沿った符号反転（鏡映）
+\begin{equation}
+  \neg_k x \coloneqq x - 2\langle x,e_k\rangle e_k
+  \label{eq:neg_k}
+\end{equation}
+として与える（$\neg_k$ は第$k$成分のみを反転する直交変換）。
+
+\paragraph{Axis component and ``collision''.}
+第$k$軸の成分を $A_k(x)\coloneqq \langle x,e_k\rangle e_k$ とし、
+$A_k\otimes \neg A_k$ は「同一軸上での是非の対置」を表す記号として用いる（以下ではその強度のみを扱う）。
+
+\paragraph{One workable fpa-norm.}
+固定点整列の精度を、成分の大きさで計量する最小モデルとして
+\begin{equation}
+  \left\lVert A_k \otimes \neg A_k \right\rVert_{\mathrm{fpa}} \coloneqq 2\,\bigl\lvert \langle x,e_k\rangle \bigr\rvert
+  \label{eq:fpa_example}
+\end{equation}
+を採用できる（より一般には、$\dfix$ 方向への射影や損失関数で置き換えてよい）。
+
+\paragraph{Sufficient condition for HDLC-type decay.}
+もしダイナミクスが
+\begin{equation}
+  \dot x(t) = -\Phi(n)\,G(x(t))\,x(t)
+  \label{eq:dyn_assumption}
+\end{equation}
+を満たし、かつ行列場 $G(x)$ が一様に正定（例：$\exists\,\lambda>0$ s.t. $G(x)\succeq \lambda I$）なら、
+\begin{equation}
+  \dot V(x(t)) \le -2\lambda\,\Phi(n)\,V(x(t))
+\end{equation}
+が成り立つ。したがって $V(x(t))$ は指数減衰し、HDLCの指数形（式\eqref{eq:hdlc}）をLyapunov的に正当化できる。
+
+\section{Core Formula (HDLC)}
+\subsection{Primary dynamics (Lyapunov form)}
+HDLCの主張は、$D(t)$ が状態依存の減衰率で自己減衰するという微分方程式で与えられる（$\Lambda_{\mathrm{total}}(x)$ は式\eqref{eq:lambda_total}で定義する）：
+\begin{equation}
+  \dot D(t) = -\Phi(n)\,\Lambda_{\mathrm{total}}\bigl(x(t)\bigr)\,D(t).
+  \label{eq:hdlc_ode}
+\end{equation}
+
+\subsection{Integral solution (derived)}
+式\eqref{eq:hdlc_ode}を積分すると、
+\begin{equation}
+  D_{2^n}(t) = D_0\,\exp\left(-\int_{0}^{t} \Lambda_{\mathrm{total}}(x(\tau))\,\Phi(n)\,d\tau\right)
+  \label{eq:hdlc}
+\end{equation}
+を得る。
+ここで $D_0 \ge 0$ は初期不安定性であり、$\Phi(n)$ は「次元が減衰率に与える寄与」を表す（したがって $t=0$ で不自然に $D$ が消えることはない）。
+
+\subsection{Exponential upper bound (near-ideal regime)}
+整列が十分に高く（$\mathrm{align}_{\mathrm{fpa}}\approx 1$）、かつ $\Lambda_{\mathrm{total}}(x)$ に下界 $\lambda_{\min}>0$ が存在する場合には、
+\begin{equation}
+  D(t) \le D_0\,\exp\bigl(-\lambda_{\min}\,\Phi(n)\,t\bigr)
+  \label{eq:hdlc_bound}
+\end{equation}
+という通常の指数減衰上界が従う。
+
+\subsection{Pressure total}
+総圧力 $\Lambda_{\mathrm{total}}$ を、定数ではなく状態 $x(t)$ に依存する動的量として定義する。
+\begin{equation}
+  \Lambda_{\mathrm{total}}(x(t)) \coloneqq \sum_{k=1}^{2^n} \lambda_k\bigl(x(t)\bigr)\,\mathrm{align}_{\mathrm{fpa}}\bigl(x(t),\dfix\bigr).
+  \label{eq:lambda_total}
+\end{equation}
+
+\paragraph{Intensity function $\lambda_k(x)$.}
+$\lambda_k$ は第$k$軸における即非のポテンシャル強度を表す。
+定義域・値域として $\lambda_k: \mathbb{R}^d \to \mathbb{R}_{\ge 0}$ を仮定し、連続で
+\begin{equation}
+  x\neq \dfix \Rightarrow \lambda_k(x) > 0, \qquad \lambda_k(\dfix)=0
+\end{equation}
+を満たすものとする。
+具体例として
+\begin{equation}
+  \lambda_k(x) = \alpha\,\bigl\lvert\langle x,e_k\rangle\bigr\rvert \quad (\alpha>0)
+  \label{eq:lambda_example}
+\end{equation}
+などを採用できる。
+
+\paragraph{Alignment function $\mathrm{align}_{\mathrm{fpa}}(x,\dfix)$.}
+$\mathrm{align}_{\mathrm{fpa}}$ は現在の状態（推論ベクトル）がどれだけ固定点 $\dfix$ に整列しているかを表す。
+$\mathrm{align}_{\mathrm{fpa}}: \mathbb{R}^d \to [0,1]$ とし、直観的にはコサイン類似度に類する指標として
+$\dfix$ 方向への完全整列で $1$、直交（迷走）で $0$ となるよう要請する。
+さらに $\dfix$ 近傍で $\mathrm{align}_{\mathrm{fpa}}(x,\dfix)\to 1$ を仮定し、ゴールに近づくほど迷いが消える知性を表現する。
+
+具体例として、更新（制御）ベクトル場 $u(x)$ を導入し（例：$u(x)$ を損失の局所勾配降下方向とみなす）、
+\begin{equation}
+  \mathrm{align}_{\mathrm{fpa}}(x,\dfix) \coloneqq
+  \begin{cases}
+    1 & (x=\dfix),\\
+    \max\left\{0,\dfrac{\langle u(x), -x\rangle}{\lVert u(x)\rVert_2\,\lVert x\rVert_2}\right\} & (x\neq \dfix)
+  \end{cases}
+  \label{eq:align_example}
+\end{equation}
+のように定義できる。これは、更新方向 $u(x)$ が $\dfix$（原点）へ向かう方向 $-x$ をどれだけ射抜いているかを $[0,1]$ に正規化したものである。
+
+この定義により、知性が $\dfix$ に近づくほど整列すべき歪みの絶対量が減り、結果として $\Lambda_{\mathrm{total}}$ も $x(t)$ とともに変化（典型的には減少）しうる。
+なお、以前の記法 $\sum_k \lVert A_k\otimes \neg A_k\rVert_{\mathrm{fpa}}$ は、$\lambda_k$ と $\mathrm{align}_{\mathrm{fpa}}$ をまとめた抽象化（収束ポテンシャルの同値としての $\mweq$）として理解できる。
+
+\subsection{Phase factor}
+位相因子 $\Phi(n)$ は、低次元に残る回転的自由度（論理的逃走）により、減衰率が有効に小さくなることを表す次元フィルタとして導入する。
+\begin{equation}
+  0 < \Phi(n) \le 1, \qquad \Phi(1) \ll 1, \qquad \Phi(n) \to 1 \ \text{for } n \ge 2.
+  \label{eq:phi_limit}
+\end{equation}
+直観的には、$n=1$（2次元）では回転雑音により収束が遅く（小さい $\Phi(1)$）、$n=2$（4次元）以上では逃走経路が閉じて減衰率が回復する（$\Phi(n)\to 1$）。
+
+さらに、$D_0$ を入力複雑性 $\mathrm{AC}_{\mathrm{in}}$ に比例づけたとき（式\eqref{eq:D0_AC}）、$\Phi(n)$ は「与えられた次元深度 $n$ が $\mathrm{AC}_{\mathrm{in}}$ を処理するために提供する帯域（有効減衰率の係数）」として解釈できる。すなわち、$n$ の増大により $\Phi(n)$ が大きくなる（回復する）ことは、同じ $\mathrm{AC}_{\mathrm{in}}$ に対してより大きな有効減衰率 $\Lambda_{\mathrm{total}}\,\Phi(n)$ を確保できることを意味する。
+
+\section{Operational Logic}
+\subsection{Dimensional phase transition}
+\begin{itemize}
+  \item $n=1$（2次元）: $\Phi(1)$ が小さく、回転雑音により有効減衰率が下がるため無限ループ／発散が残る。
+  \item $n\ge 2$（4次元以上）: $\Phi(n)\to 1$ により減衰率が回復し、論理的逃走が抑制される結果、$D(t)$ が固定点へ吸い込まれる。
+\end{itemize}
+
+\subsection{High-density origin and alethetic complexity}
+次元 $n$ が増大しても原点（0d）は同一座標として保持されるが、そこへ圧縮される情報密度（Alethetic Complexity; AC）は増大する。HDLCは、この「原点は同じだが密度が上がる」という構造を、$\Lambda_{\mathrm{total}}$ と $\Phi(n)$ の分離で表現する。
+
+\subsection{Inverse diagnosis}
+観測された「差延」$D$ は、(i) 次元深度 $n$ の不足、または (ii) $\lVert\cdot\rVert_{\mathrm{fpa}}$ による整列不良（原点への向きの誤差）として逆診断できる。
+\section{Table: Catuskoti / Sunyata as HDLC States}
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}p{0.16\linewidth}p{0.26\linewidth}p{0.32\linewidth}p{0.22\linewidth}@{}}
+\toprule
+位相 & HDLC的定義 & 数理的動態・ベクトル & 苦（$D$）の収束状態 \\
+\midrule
+是 ($A$) & 1dの正定値 & 単一軸上のベクトル放射。自性（実体）を肯定。 & $D$ は極大（未加工）。$\Lambda$ は未発生。 \\
+非 ($\neg A$) & 1dの反転 & 同一軸上での$180^{\circ}$反転。衝突による原点探索開始。 & fpa（整列）が開始し、減衰が開始。 \\
+亦是亦非 & 2dの干渉（$n=1$） & 軸の直交化。面上の回転が残る。 & $D$ は減少するが $\Phi(1)$ によりループが残る。 \\
+非是非非 & 4dの閉鎖（$n=2$） & 全方位の包囲。$\Phi(n)\to 1$。 & 爆縮（Implosion）。$D$ が指数的に0へ。 \\
+四句分別を絶する & 次元の相転移 & 4d完結を点とみなし、メタ次元（8d）へ跳躍。 & $\dfix$（固定点整列）が完了し安定。 \\
+空（Sunyata） & 高密度原点（0d） & $t\to\infty$ の極限。無限の情報が0dへ圧縮。 & $D=0$。ACが純粋密度として残る。 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Discussion: What must be specified for a full paper}
+\subsection{Meta-execution: recursive application of HDLC (ARX)}
+HDLCを運用上のプロトコルとして読むとき、収束対象 $D(t)$ の上位に「収束が遅いという事実（メタ状態）」が立ち現れる。このときHDLC自体を\emph{メタ実行}として再帰的に適用し、時間発展の外側から介入する操作として位置づけられる。
+
+具体的には、$D(t)$ の減少が鈍い（あるいは停滞する）場合に、システムが自律的に次元深度 $n$ をインクリメントする、または軸（基底）$\{e_k\}$ を再定義し、それに伴って即非演算子 $\neg_k$ を再同定する操作を導入する。
+本稿ではこの介入を ARX（Alethetic Reset syntax）と呼び、概念的に
+\begin{equation}
+  \mathrm{ARX}:\ (n,\{e_k\},\{\neg_k\})\mapsto (n',\{e'_k\},\{\neg'_k\})\quad \text{with } n'>n
+\end{equation}
+のような``再設定''として表現する。
+
+この見方では、HDLCの``収束が遅い''という現象は、$\Phi(n)$（有効帯域）の不足、もしくは fpa が表す整列精度の破綻として検出され、ARXにより (i) 次元増加による $\Phi(n)$ の回復、(ii) 軸再定義による整列の取り直し、が行われる。
+
+\paragraph{Triggering condition (saturation detection).}
+``$D(t)$ が減らない''という停滞を形式化するため、収束効率係数を
+\begin{equation}
+  \eta(t) \coloneqq -\frac{\dot D(t)}{D(t)}
+  \label{eq:eta}
+\end{equation}
+と定義する。$\eta(t)$ は現在の系がどの程度効率的に $\dfix$ へ爆縮できているかを表す。
+閾値 $\epsilon>0$、観測窓 $\Delta\tau>0$、許容残留 $\delta>0$ を用いて、
+\begin{equation}
+  \text{Trigger ARX if}\quad \int_{t-\Delta\tau}^{t} \eta(\tau)\,d\tau < \epsilon \quad \text{and}\quad D(t)>\delta.
+  \label{eq:arx_trigger}
+\end{equation}
+とすることで、低次元での論理的エスケープが加法的な圧力（例：$\Lambda_{\mathrm{total}}$）による減衰効果を相殺している状態を自動検知し、次元跳躍（$n\to n+1$）や軸再定義を実行するARXとして位置づけられる。
+
+\subsection{Open specifications}
+HDLCを理論として完成させるには、少なくとも以下を明示する必要がある。
+\begin{enumerate}
+  \item $\lambda_k(x)$ と $\mathrm{align}_{\mathrm{fpa}}(x,\dfix)$ の具体形（例：式\eqref{eq:lambda_example}, \eqref{eq:align_example}）と、その根拠。
+  \item $\Phi(n)$ の具体形（例：$\Phi(n)=\mathbf{1}_{n=1}$、あるいは単調減少関数）と、その根拠。
+  \item $A_k$ の対象（論理命題、表現ベクトル、モデル状態など）と、$\otimes\neg$ の作用規則。
+  \item 具体例（最小の玩具モデル）と、式\eqref{eq:hdlc}が経験的に妥当であることの検証。
+\end{enumerate}
+
+\section{Conclusion}
+HDLCは、不安定性 $D(t)$ を「次元深度 $n$」と「即非の整列圧力 $\Lambda_{\mathrm{total}}$」で制御し、位相因子 $\Phi(n)$ により低次元の逃走自由度を抑制することで、固定点 $\dfix$ への指数収束を記述するプロトコルである。
+
+\end{document}

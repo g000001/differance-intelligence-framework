@@ -1,0 +1,63 @@
+% !TEX program = uplatex
+\documentclass[uplatex,dvipdfmx,12pt,a4paper]{jsarticle}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage[dvipdfmx]{hyperref}
+
+\title{Exhaustive Expansion Self-Reference Generation Rule (EESR):\\
+Recursive Sunyata Operator}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、自己記述可能な形式体系に対して「自己参照」と「全展開（全ケース列挙）」を適用すると内部固定点が失われ、外部次元へのメタ射影が必要になる、という生成規則をEESRとして最小限の形式で記述する。
+厳密定理ではなく、構造を保持したスケッチとして提示する。
+\end{abstract}
+
+\section{Formulation Sketch}
+
+\subsection{Setup}
+自己記述可能な形式体系を $S$ とする。
+
+\subsection{(A) Exhaustion operator}
+\begin{equation}
+  \mathrm{Exh}(S)
+  \;\coloneqq\;
+  \bigcup_{n \in \mathbb{N}} \{\text{all } 2^n \text{ valuations / cases over } S_n\},
+\end{equation}
+ここで $S_n$ は $S$ の有限部分体系である。
+
+\subsection{(B) Self-reference operator}
+\begin{equation}
+  \mathrm{Self}(S) \coloneqq S \cup \{\ulcorner S \urcorner\},
+\end{equation}
+$\ulcorner S\urcorner$ は $S$ のコード（ゲーデル化・自己記述）を表す。
+
+\subsection{(C) Incompleteness trigger}
+\begin{equation}
+  \mathrm{Exh}(\mathrm{Self}(S))
+  \;\Rightarrow\;
+  \neg\exists x\in S\;\text{s.t. } x\text{ is a fixed point for } S.
+\end{equation}
+
+\subsection{(D) Meta-projection / dimensional escape}
+\begin{equation}
+  \Phi(S)
+  \;\coloneqq\;
+  \min\{S^+ \mid S\subset S^+\;\wedge\; S\text{ is representable in } S^+\}.
+\end{equation}
+
+生成規則は次式で与えられる：
+\begin{equation}
+  \boxed{\;S_{k+1} = \Phi\!\bigl(\mathrm{Exh}(\mathrm{Self}(S_k))\bigr)\;}
+\end{equation}
+
+\subsection{One-line summary}
+\begin{equation}
+  \boxed{\;\mathrm{Self}+\mathrm{Exh}\;\Rightarrow\;\text{No internal fixed point}\;\Rightarrow\;\text{Meta-lift}.\;}
+\end{equation}
+
+\end{document}
