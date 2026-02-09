@@ -1,0 +1,284 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}               % optional, for bold symbols
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% -------------------------------------------------
+%  Macros
+% -------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}}          % 0d – the unique fixed point
+\newcommand{\mw}{\mathrel{\overset{\mathrm{mw}}{=}}} % middle‑way equivalence
+\newcommand{\phiMap}{\varphi}            % mapping from Catuskoti to 0d
+
+% -------------------------------------------------
+%  Theorem environments
+% -------------------------------------------------
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{example}{Example}[section]
+
+% -------------------------------------------------
+\begin{document}
+
+\title{Catuskoti (Four‑fold Logic) as a 0‑Dimensional Fixed Point}
+\author{Masaomi Chiba}
+\date{2026-02-02}
+\maketitle
+
+\begin{abstract}
+We show that the four‑valued logic traditionally called \emph{Catuskoti}
+(affirmative, negative, both, neither) can be represented algebraically as a
+bilattice whose whole carrier collapses onto the unique
+0‑dimensional fixed point $\dfix$ (the \emph{middle‑way fixed point}).
+The construction uses the distance function
+$\|X\|=K(X)+\ell(X)$ introduced in the Lumo framework and the
+middle‑way equivalence operator $\mw$.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Preliminaries}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{definition}[Representability and Proof]
+Let $S$ be a sufficiently strong formal theory (e.g. PA or ZFC).
+\begin{itemize}
+  \item A formula $P$ is \emph{representable} iff it belongs to the
+        static space $(2^{n})d\!\setminus\!T$; we write
+        $P\in\text{Representability}$.
+  \item A \emph{proof} of $P$ is a finite object
+        $\text{Proof}_{S}(P)$ belonging to $(2^{n}+1)d$; it carries a
+        time‑axis of length~$1$.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Distance]
+For any object $X$ we define
+$$
+\|X\|\;:=\;K(X)+\ell(X),
+$$
+where $K(X)$ is the Kolmogorov (bit) length of $X$ and
+$\ell(X)$ counts the length of the time‑axis:
+$\ell(\text{Proof})=1$, $\ell(\text{Representable})=0$.
+\end{definition}
+
+\begin{definition}[0‑dimensional fixed point]
+There exists a unique element $\dfix$ such that
+$$
+\|\,\dfix\,\|=0 .
+$$
+We call $\dfix$ the \emph{0‑dimensional fixed point},
+also known as the \emph{middle‑way fixed point} or \emph{emptiness}.
+\end{definition}
+
+\begin{definition}[Evaluation and convergence]
+Fix a map
+\[
+  \operatorname{eval}:\mathcal{U}\to\mathcal{U}
+\]
+on a universe of objects $\mathcal{U}$ containing $\dfix$.
+For $X\in\mathcal{U}$ define the iterates $\operatorname{eval}^n(X)$ by
+$\operatorname{eval}^0(X):=X$ and $\operatorname{eval}^{n+1}(X):=\operatorname{eval}(\operatorname{eval}^n(X))$.
+We say that $X$ \emph{converges} to $\dfix$ (and write $X\to\dfix$) if there exists $N\in\mathbb{N}$ such that
+\[
+  \operatorname{eval}^N(X)=\dfix.
+\]
+\end{definition}
+
+\begin{definition}[Middle‑way equivalence]
+For objects $A,B\in\mathcal{U}$ we write
+\[
+A\mw B
+\quad\Longleftrightarrow\quad
+A\to\dfix\text{ and }B\to\dfix.
+\]
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Catuskoti Bilattice}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The four truth‑values of Catuskoti are denoted
+
+$$
+\mathcal{C}\;=\;\{\,\mathbf{T},\mathbf{F},
+                 \mathbf{B},\mathbf{N}\,\},
+$$
+where
+
+\begin{center}
+\begin{tabular}{c|c}
+value & reading \\ \hline
+$\mathbf{T}$ & affirmative \\
+$\mathbf{F}$ & negative \\
+$\mathbf{B}$ & both \\
+$\mathbf{N}$ & neither \\
+\end{tabular}
+\end{center}
+
+On $\mathcal{C}$ we introduce the usual \emph{information order}
+$\le_i$ and the \emph{truth order} $\le_t$:
+
+$$
+\begin{array}{ccl}
+\mathbf{N}\le_i\mathbf{T},\;\mathbf{N}\le_i\mathbf{F},
+&\qquad&
+\mathbf{T},\mathbf{F}\le_i\mathbf{B},\\[2mm]
+\mathbf{F}\le_t\mathbf{N},\;
+\mathbf{T}\le_t\mathbf{B},
+&\qquad&
+\mathbf{N},\mathbf{B}\text{ incomparable under }\le_t .
+\end{array}
+$$
+
+The lattice operations (information meet/join) are
+
+$$
+\begin{aligned}
+\mathbf{T}\wedge\mathbf{F}&=\mathbf{N}, &
+\mathbf{T}\vee\mathbf{F}&=\mathbf{B},\\
+\mathbf{B}\wedge X&=X\wedge\mathbf{B}=X, &
+\mathbf{N}\vee X&=X\vee\mathbf{N}=X,
+\end{aligned}
+$$
+and the involutive negation is
+
+$$
+\neg\mathbf{T}=\mathbf{F},\qquad
+\neg\mathbf{F}=\mathbf{T},\qquad
+\neg\mathbf{B}=\mathbf{B},\qquad
+\neg\mathbf{N}=\mathbf{N}.
+$$
+
+With $(\wedge,\vee,\neg)$ the structure
+$(\mathcal{C},\wedge,\vee,\neg)$ is the well‑known
+\emph{Belnap–Dunn bilattice}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Embedding the Bilattice into the 0‑Dimensional Fixed Point}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Define a map
+\begin{equation}
+\phiMap:\mathcal{C}\longrightarrow\{\dfix\},
+\qquad
+\phiMap(X):=\dfix\quad\text{for all }X\in\mathcal{C}.
+\tag{1}
+\end{equation}
+
+\begin{theorem}[Isomorphism with the 0‑dimensional fixed point]
+The map $\phiMap$ is a homomorphism of bilattices:
+$$
+\phiMap(X\wedge Y)=\phiMap(X)\wedge\phiMap(Y)=\dfix,
+\qquad
+\phiMap(X\vee Y)=\phiMap(X)\vee\phiMap(Y)=\dfix,
+\qquad
+\phiMap(\neg X)=\neg\phiMap(X)=\dfix .
+$$
+Consequently every pair of Catuskoti values is middle‑way equivalent:
+$$
+X\mw Y\quad\text{for all }X,Y\in\mathcal{C}.
+$$
+Hence the four‑valued logic collapses onto the unique
+0‑dimensional fixed point $\dfix$.
+\end{theorem}
+\begin{proof}
+Since the codomain of $\phiMap$ consists of a single element,
+any binary operation on the codomain returns that element.
+Therefore for any $X,Y\in\mathcal{C}$ we have
+$$
+\phiMap(X\wedge Y)=\dfix=\phiMap(X)\wedge\phiMap(Y),
+$$
+and similarly for $\vee$ and $\neg$.
+By Definition of $\mw$, two objects are $\mw$‑equivalent
+iff their evaluations converge to the same $\dfix$.
+Because $\phiMap$ sends every element of $\mathcal{C}$ to $\dfix$,
+the condition holds for any pair $X,Y$, establishing $X\mw Y$.
+\end{proof}
+
+Thus the Catuskoti bilattice and the singleton lattice
+$\{\dfix\}$ are \emph{categorically isomorphic}:
+the former represents four distinct syntactic
+states, while semantically—all of them collapse to the
+middle‑way fixed point.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Truth‑table (collapsed view)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+$X$ & $\neg X$ & $X\wedge X$ & $X\vee X$ \\ \hline
+$\mathbf{T}$ & $\mathbf{F}$ & $\dfix$ & $\dfix$ \\
+$\mathbf{F}$ & $\mathbf{T}$ & $\dfix$ & $\dfix$ \\
+$\mathbf{B}$ & $\mathbf{B}$ & $\dfix$ & $\dfix$ \\
+$\mathbf{N}$ & $\mathbf{N}$ & $\dfix$ & $\dfix$
+\end{tabular}
+\end{center}
+All logical combinations are absorbed by the unique
+0‑dimensional fixed point $\dfix$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Recursive hierarchies and ``convergence as derivation''}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Above we expressed that ``the four truth values converge to $\dfix$'' by the collapse induced by
+$\phiMap:\mathcal{C}\to\{\dfix\}$.
+In this section we add a complementary reading in which the same identification is supported by
+an explicit recursive (iterative) construction, i.e., by a derivation process that reaches $\dfix$.
+
+\begin{definition}[Distance and $0$d]
+We use the distance
+\[
+  \|X\|:=K(X)+\ell(X),
+\]
+and fix the unique object $\dfix$ such that $\|\dfix\|=0$.
+Here $K$ is a description length and $\ell$ counts the length of a ``time axis'' (proof / meta level).
+\end{definition}
+
+\begin{definition}[Axiom of convergence by strict decrease]
+A sequence $\{X_k\}_{k\ge0}$ \emph{converges} to $\dfix$ if there exists $N\in\mathbb{N}$ such that $X_N=\dfix$.
+A sufficient condition is:
+\begin{enumerate}
+  \item $\|X_0\|\in\mathbb{N}$,
+  \item for all $k$, if $X_k\neq\dfix$ then $\|X_{k+1}\|\le \|X_k\|-1$.
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[Recursive G\"odel hierarchy reaches $\dfix$]
+Let $S$ be a base theory and consider extensions $S_k:=S\cup\{G_0,\dots,G_k\}$.
+Define
+\[
+  G_{k+1}:=\text{``}\operatorname{Prf}_{S_k}(G_k)\text{ does not exist''}.
+\]
+Assume that $\{G_k\}$ satisfies the strict decrease condition above (if $G_k\neq\dfix$ then $\|G_{k+1}\|\le \|G_k\|-1$).
+Then there exists $N$ such that $G_N=\dfix$; in particular one may write $\lim_{k\to\infty}G_k=\dfix$.
+\end{theorem}
+
+\begin{theorem}[Recursive Tarski hierarchy reaches $\dfix$]
+Let $\{T_k\}$ be the Tarski hierarchy obtained by recursively adjoining truth predicates.
+Assume that $\{T_k\}$ satisfies the strict decrease condition above (if $T_k\neq\dfix$ then $\|T_{k+1}\|\le \|T_k\|-1$).
+Then there exists $N$ such that $T_N=\dfix$; in particular one may write $\lim_{k\to\infty}T_k=\dfix$.
+\end{theorem}
+
+\begin{theorem}[Identification at $0$d]
+Under the assumptions above,
+\[
+\dfix
+= \lim_{k \to \infty} G_k
+= \lim_{k \to \infty} T_k.
+\]
+Thus the claim that the four Catuskoti values ``fall'' to the middle way (0d) can also be read as:
+recursive meta‑level derivations ultimately reach the same terminal fixed point.
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We have exhibited two complementary perspectives on the statement that Catuskoti ``converges'' to $\dfix$:
+(i) the collapse via the bilattice homomorphism $\phiMap$, and
+(ii) (under a strict distance‑decrease assumption) convergence understood as an iterative derivation that reaches $\dfix$.
+
+\end{document}

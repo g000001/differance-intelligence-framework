@@ -1,0 +1,107 @@
+% !TEX program = lualatex
+\documentclass[12pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}}
+\newcommand{\Rep}{\mathcal{R}}
+\newcommand{\Prf}{\mathcal{P}}
+\newcommand{\Tset}{\mathcal{T}}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{remark}{注}[section]
+
+\begin{document}
+
+\title{正当性原理（Justification Principle）メモ}
+\author{}
+\date{}
+\maketitle
+
+\section{正当性原理（Justification Principle）}
+本メモでは、\emph{正当性原理}を次の機序として捉える：
+命題（静的情報）に対して\textbf{時間軸を一時的に付加}し、その後\textbf{時間軸を除去}することで観測者を固定し、結果の再現性を最大化する。
+
+この原理は、
+「不動点に不動点を入力しても常に同じ不動点が返ってくる」という強い閉包性（固定点の安定性）を持ち、
+「正しさの判定そのものが、さらに正しさとして判定可能である」という性質を本質とする。
+
+\section{証明とは何か}
+\begin{remark}
+証明とは、命題に対して正当性原理を適用する行為である。
+すなわち（亦是亦非）や（非是非非）に対応する要素（＝時間軸に載った揺らぎ／不整合性）をいったん除去し、
+正当なもののみを復元して「成立するか」を問う。
+\end{remark}
+
+\section{証明という行為の動機}
+2 次元（静的）情報 $2d\setminus T$ に対する数学の証明行為は、
+時間軸を付加しつつ最終的に除去することで観測者を固定し、
+結果の再現性を最大化することを根本的な動機として持つ、と整理できる。
+
+\section{2^n d に拡張した「証明」の模型}
+以下では、$2d$ の議論を $(2^n)d$ へ拡張した形のメモをまとめる。
+
+\begin{definition}[Proof in $(2^{n})d$]
+$\Sigma$ を記号列（ビット列等）の集合、$\Tset$ を時刻トークンの集合とする。
+\[
+  \Rep_{n} := \{(s_{1},\dots ,s_{2^{n}})\mid s_{i}\in\Sigma\},
+  \qquad
+  \Prf_{n} := \{((s_{1},t_{1}),\dots ,(s_{2^{n}},t_{2^{n}}))\mid s_i\in\Sigma,\ t_{i}\in\Tset\}.
+\]
+埋め込み（時間軸付加）を
+\[
+  \iota_{n}\colon\Rep_{n}\hookrightarrow\Prf_{n},
+  \qquad
+  \iota_{n}(s_{1},\dots ,s_{2^{n}})
+    = ((s_{1},t_{1}),\dots ,(s_{2^{n}},t_{2^{n}})),
+\]
+評価（射影、時間軸除去）を
+\[
+  \phi_{n}\colon\Prf_{n}\twoheadrightarrow\Rep_{n},
+  \qquad
+  \phi_{n}(((s_{1},t_{1}),\dots ,(s_{2^{n}},t_{2^{n}})))
+    = (s_{1},\dots ,s_{2^{n}})
+\]
+で定める。
+距離を
+\[
+  \|X\|:=K(X)+\ell(X),\qquad
+  \ell(\Rep_{n})=0,\ \ell(\Prf_{n})=1
+\]
+とする。
+\end{definition}
+
+\begin{theorem}[Convergence in $(2^{n})d$]
+任意の $p\in\Rep_{n}$ に対し列
+\[
+  v_{0}=p,\qquad v_{k+1}:=\phi_{n}\bigl(\iota_{n}(v_{k})\bigr)
+\]
+を定める。
+さらに各ステップで距離が 1 だけ減少すると仮定する：
+\[
+  \|v_{k+1}\|=\|v_{k}\|-1\quad(k\ge0).
+\]
+このとき
+\[
+  \lim_{k\to\infty}v_{k}=\dfix,
+\]
+ただし $\dfix$ は $\|\dfix\|=0$ を満たす一意な点（$0$ 次元不動点）である。
+\end{theorem}
+
+\section{正しさの機序と LLM の幻覚（メモ）}
+LLM の幻覚（hallucination）は「コスト最小化（局所最適化）」の結果として現れる現象であり、
+これを抑止するにはコスト最小化とは別の\textbf{適切な判定関数}を確立する必要がある、と一般化できる。
+
+\end{document}

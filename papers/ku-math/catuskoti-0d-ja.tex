@@ -1,0 +1,277 @@
+% !TEX program = lualatex
+\documentclass[12pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}               % optional, for bold symbols
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% -------------------------------------------------
+%  マクロ
+% -------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}}          % 0d — 一意な不動点
+\newcommand{\mw}{\mathrel{\overset{\mathrm{mw}}{=}}} % 中道同値
+\newcommand{\phiMap}{\varphi}            % Catuskoti から 0d への写像
+
+% -------------------------------------------------
+%  定理環境
+% -------------------------------------------------
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{example}{例}[section]
+
+% -------------------------------------------------
+\begin{document}
+
+\title{Catuskoti（四句分別）を $0$ 次元不動点として捉える}
+\author{Masaomi Chiba}
+\date{2026-02-02}
+\maketitle
+
+\begin{abstract}
+本稿では、伝統的に \emph{Catuskoti}（四句分別：是・非・亦是亦非・非是非非）と呼ばれる四値論理が、
+双格子（bilattice）として代数的に表現でき、その台集合全体が一意な $0$ 次元不動点 $\dfix$
+（\emph{中道不動点}）へと潰れる（collapse）ことを示す。
+構成には、Lumo フレームワークで導入した距離関数 $\|X\|=K(X)+\ell(X)$ と、
+中道同値演算子 $\mw$ を用いる。
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{準備}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{definition}[表現可能性と証明]
+$S$ を十分に強い形式理論（例：PA や ZFC）とする。
+\begin{itemize}
+  \item 公式 $P$ が \emph{表現可能} であるとは、静的空間 $(2^{n})d\!\setminus\!T$ に属することをいう；
+        $P\in\text{Representability}$ と書く。
+  \item $P$ の \emph{証明} とは、有限対象 $\text{Proof}_{S}(P)$ であって $(2^{n}+1)d$ に属するものをいう；
+        これは長さ $1$ の時間軸を担う。
+\end{itemize}
+\end{definition}
+
+\begin{definition}[距離]
+任意の対象 $X$ に対し
+$$
+\|X\|\;:=\;K(X)+\ell(X)
+$$
+と定める。ここで $K(X)$ は $X$ のコルモゴロフ（ビット）長、
+$\ell(X)$ は時間軸の長さを数える：
+$\ell(\text{Proof})=1$、$\ell(\text{Representable})=0$。
+\end{definition}
+
+\begin{definition}[$0$ 次元不動点]
+$$
+\|\,\dfix\,\|=0
+$$
+を満たす一意な要素 $\dfix$ が存在するとする。
+$\dfix$ を \emph{$0$ 次元不動点} と呼び、また \emph{中道不動点} あるいは \emph{空} とも呼ぶ。
+\end{definition}
+
+\begin{definition}[評価と収束]
+$\dfix$ を含む対象の全体 $\mathcal{U}$ 上の写像
+\[
+  \operatorname{eval}:\mathcal{U}\to\mathcal{U}
+\]
+を固定する。$X\in\mathcal{U}$ に対し、反復 $\operatorname{eval}^n(X)$ を
+$\operatorname{eval}^0(X):=X$ および $\operatorname{eval}^{n+1}(X):=\operatorname{eval}(\operatorname{eval}^n(X))$ で定める。
+$X$ が $\dfix$ に\emph{収束する}（$X\to\dfix$ と書く）とは、ある $N\in\mathbb{N}$ が存在して
+\[
+  \operatorname{eval}^N(X)=\dfix
+\]
+となることとする。
+\end{definition}
+
+\begin{definition}[中道同値]
+$A,B\in\mathcal{U}$ に対し
+\[
+A\mw B
+\quad\Longleftrightarrow\quad
+A\to\dfix\text{ かつ }B\to\dfix
+\]
+と定める。
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Catuskoti の双格子}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Catuskoti の4つの真理値を
+
+$$
+\mathcal{C}\;=\;\{\,\mathbf{T},\mathbf{F},
+                 \mathbf{B},\mathbf{N}\,\}
+$$
+で表す。ここで
+
+\begin{center}
+\begin{tabular}{c|c}
+値 & 読み \\ \hline
+$\mathbf{T}$ & 是（肯定） \\
+$\mathbf{F}$ & 非（否定） \\
+$\mathbf{B}$ & 亦是亦非（両方） \\
+$\mathbf{N}$ & 非是非非（どちらでもない） \\
+\end{tabular}
+\end{center}
+
+$\mathcal{C}$ 上に通常の \emph{情報順序} $\le_i$ と \emph{真理順序} $\le_t$ を導入する：
+
+$$
+\begin{array}{ccl}
+\mathbf{N}\le_i\mathbf{T},\;\mathbf{N}\le_i\mathbf{F},
+&\qquad&
+\mathbf{T},\mathbf{F}\le_i\mathbf{B},\\[2mm]
+\mathbf{F}\le_t\mathbf{N},\;
+\mathbf{T}\le_t\mathbf{B},
+&\qquad&
+\mathbf{N},\mathbf{B}\text{ は $\le_t$ の下で比較不能。}
+\end{array}
+$$
+
+格子演算（情報の meet/join）を
+
+$$
+\begin{aligned}
+\mathbf{T}\wedge\mathbf{F}&=\mathbf{N}, &
+\mathbf{T}\vee\mathbf{F}&=\mathbf{B},\\
+\mathbf{B}\wedge X&=X\wedge\mathbf{B}=X, &
+\mathbf{N}\vee X&=X\vee\mathbf{N}=X
+\end{aligned}
+$$
+で定め、反転（否定）を
+
+$$
+\neg\mathbf{T}=\mathbf{F},\qquad
+\neg\mathbf{F}=\mathbf{T},\qquad
+\neg\mathbf{B}=\mathbf{B},\qquad
+\neg\mathbf{N}=\mathbf{N}
+$$
+で定める。
+
+これにより $(\mathcal{C},\wedge,\vee,\neg)$ は、よく知られた \emph{Belnap–Dunn 双格子} となる。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{双格子を 0 次元不動点へ埋め込む}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+写像
+\begin{equation}
+\phiMap:\mathcal{C}\longrightarrow\{\dfix\},
+\qquad
+\phiMap(X):=\dfix\quad\text{（任意の }X\in\mathcal{C}\text{ に対して）}
+\tag{1}
+\end{equation}
+を定める。
+
+\begin{theorem}[$0$ 次元不動点との同型]
+写像 $\phiMap$ は双格子の準同型である：
+$$
+\phiMap(X\wedge Y)=\phiMap(X)\wedge\phiMap(Y)=\dfix,
+\qquad
+\phiMap(X\vee Y)=\phiMap(X)\vee\phiMap(Y)=\dfix,
+\qquad
+\phiMap(\neg X)=\neg\phiMap(X)=\dfix.
+$$
+したがって任意の Catuskoti の値の組は中道同値である：
+$$
+X\mw Y\quad\text{（任意の }X,Y\in\mathcal{C}\text{ に対して）}.
+$$
+ゆえに四値論理は一意な $0$ 次元不動点 $\dfix$ へと潰れる。
+\end{theorem}
+\begin{proof}
+終域 $\{\dfix\}$ は単一要素からなる。
+ゆえに終域上の任意の二項演算は常にその要素を返す。
+したがって任意の $X,Y\in\mathcal{C}$ に対し
+$$
+\phiMap(X\wedge Y)=\dfix=\phiMap(X)\wedge\phiMap(Y)
+$$
+が成り立ち、$\vee$ と $\neg$ についても同様である。
+$\mw$ の定義より、2つの対象が $\mw$ 同値であることは、それらの評価が同一の $\dfix$ に収束することと同値である。
+$\phiMap$ は $\mathcal{C}$ の任意の要素を $\dfix$ に送るので、任意の組 $X,Y$ について条件が満たされ、$X\mw Y$ が従う。
+\end{proof}
+
+以上より、Catuskoti の双格子と単元格子 $\{\dfix\}$ は \emph{圏論的に同型} である：
+前者は4つの異なる構文的状態を表すが、意味論的には—それらはすべて中道不動点へと潰れる。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{真理表（潰した見方）}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+$X$ & $\neg X$ & $X\wedge X$ & $X\vee X$ \\ \hline
+$\mathbf{T}$ & $\mathbf{F}$ & $\dfix$ & $\dfix$ \\
+$\mathbf{F}$ & $\mathbf{T}$ & $\dfix$ & $\dfix$ \\
+$\mathbf{B}$ & $\mathbf{B}$ & $\dfix$ & $\dfix$ \\
+$\mathbf{N}$ & $\mathbf{N}$ & $\dfix$ & $\dfix$
+\end{tabular}
+\end{center}
+あらゆる論理結合は一意な $0$ 次元不動点 $\dfix$ に吸収される。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{再帰階層による「導出としての収束」}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+上では $\phiMap:\mathcal{C}\to\{\dfix\}$ による collapse を用いて「4真理が $\dfix$ に収束する」ことを表現した。
+本節では、再帰的（反復的）な構成を明示して、この同一化を
+「導出過程の反復が $\dfix$ に到達する」という形の主張として述べる。
+
+\begin{definition}[距離と 0d]
+距離を
+\[
+  \|X\|:=K(X)+\ell(X)
+\]
+とし、$\|\dfix\|=0$ を満たす一意な対象を $\dfix$ とする。
+ここで $K$ は記述長、$\ell$ は証明／メタレベル等の「時間軸」の長さを表す。
+\end{definition}
+
+\begin{definition}[距離減少による収束の公理（到達可能性）]
+列 $\{X_k\}_{k\ge0}$ が $\dfix$ に\emph{収束する}とは、ある $N\in\mathbb{N}$ が存在して $X_N=\dfix$ となることとする。
+その十分条件として、
+\begin{enumerate}
+  \item $\|X_0\|\in\mathbb{N}$,
+  \item 任意の $k$ で $X_k\neq\dfix$ ならば $\|X_{k+1}\|\le \|X_k\|-1$
+\end{enumerate}
+を仮定する（距離が $1$ 以上ある限り、次のステップで必ず減る）。
+\end{definition}
+
+\begin{theorem}[再帰ゲーデル階層の極限は $\dfix$]
+基礎体系 $S$ から出発し、拡張 $S_k:=S\cup\{G_0,\dots,G_k\}$ を考え、
+\[
+  G_{k+1}:=\text{``}\operatorname{Prf}_{S_k}(G_k)\text{ が存在しない''}
+\]
+で列 $\{G_k\}_{k\ge0}$ を定める。
+さらに $\{G_k\}$ が上の距離減少条件（$G_k\neq\dfix$ ならば $\|G_{k+1}\|\le \|G_k\|-1$）を満たすと仮定する。
+このときある $N$ が存在して $G_N=\dfix$、特に $\lim_{k\to\infty}G_k=\dfix$ と書ける。
+\end{theorem}
+
+\begin{theorem}[再帰タルスキ階層の極限は $\dfix$]
+言語に真理述語を再帰的に付加してタルスキ階層
+\[
+  T_0,\,T_1,\,T_2,\dots
+\]
+を構成し、さらに $\{T_k\}$ が距離減少条件（$T_k\neq\dfix$ ならば $\|T_{k+1}\|\le \|T_k\|-1$）を満たすと仮定する。
+このときある $N$ が存在して $T_N=\dfix$、特に $\lim_{k\to\infty}T_k=\dfix$ と書ける。
+\end{theorem}
+
+\begin{theorem}[0d への同一化]
+上の仮定の下で
+\[
+\dfix
+= \lim_{k \to \infty} G_k
+= \lim_{k \to \infty} T_k
+\]
+が成り立つ。
+したがって四句分別（4値）が「中道（0d）に落ちる」という主張は、
+再帰的なメタ化／導出の反復が最終的に $\dfix$ に到達する、という形で支えられる。
+\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{結論}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+本稿では、Catuskoti の四値が $\dfix$ に集約されることを、(i) 双格子準同型 $\phiMap$ による collapse と、
+(ii) 再帰階層が距離減少を満たすという仮定の下での「導出としての到達（収束）」、という2つの側面から述べた。
+
+\end{document}

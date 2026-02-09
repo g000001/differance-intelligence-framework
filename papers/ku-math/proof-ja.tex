@@ -1,0 +1,190 @@
+% !TEX program = lualatex
+\documentclass[12pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}               % optional, for bold symbols
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}}          % 0d — 一意な不動点
+\newcommand{\dist}{\|\cdot\|}            % 距離記号
+\newcommand{\Rep}{\mathcal{R}}           % 表現可能（静的）対象
+\newcommand{\Prf}{\mathcal{P}}           % 証明対象
+\newcommand{\Tset}{\mathcal{T}}          % 時刻トークンの集合
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+
+%-------------------------------------------------
+\begin{document}
+
+\title{単射・全射・縮小写像による「証明」の形式化}
+\author{Masaomi Chiba}
+\date{2026-02-02}
+\maketitle
+
+\begin{abstract}
+本稿では、証明行為が次のデータによって厳密に記述できることを示す。
+\begin{itemize}[nosep]
+  \item 単射（埋め込み）$\iota\colon\Rep\hookrightarrow\Prf$,
+  \item 全射（射影）$\phi\colon\Prf\twoheadrightarrow\Rep$,
+  \item ならびに距離 $\|X\|=K(X)+\ell(X)$ に関する $\phi$ の縮小性。
+\end{itemize}
+これにより、証明の圏論的な像が与えられ、情報の損失のない移送が保証され、
+距離が単調に減少して一意な $0$ 次元不動点 $\dfix$ に到達することが確保される。
+さらにこの圏論的コアを、\emph{Catuskoti}（四句分別／四句分別法）解釈における収束機構として用いる。
+すなわち、異なる真理ステータスは評価を通じて同一の $0$ 次元不動点（``0d''）$\dfix$ へと潰れていくものとして理解される。
+特に「空」を別個の対象としては扱わず、それは単にこの $0$ 次元不動点に他ならない。
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{何がより厳密になるか}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{definition}[対象]
+$$
+\begin{aligned}
+\Rep &:= \{\, (s_x,s_y)\mid s_x,s_y\in\Sigma \,\}
+      &&\text{(静的・時間軸を持たない情報)}\\[2mm]
+\Prf &:= \{\, ((s_x,t_x),(s_y,t_y))
+          \mid (s_x,s_y)\in\Rep,\;t_x,t_y\in\Tset \,\}
+      &&\text{(証明対象：長さ $1$ の時間軸を付加)} .
+\end{aligned}
+$$
+ここで $\Sigma$ はビット列（自然数・記号など）の集合、
+$\Tset$ は \emph{時刻トークン} の集合（$\ell(t)=1$ を満たす任意の対象）である。
+\end{definition}
+
+\begin{definition}[埋め込みと射影]
+$$
+\begin{aligned}
+\iota &: \Rep\hookrightarrow\Prf,
+        &\iota(s_x,s_y)&:=\bigl((s_x,t_x),(s_y,t_y)\bigr),
+        &&t_x,t_y\in\Tset\text{ は任意};\\[2mm]
+\phi &: \Prf\twoheadrightarrow\Rep,
+        &\phi\bigl((s_x,t_x),(s_y,t_y)\bigr)&:=(s_x,s_y).
+\end{aligned}
+$$
+\end{definition}
+
+\begin{definition}[距離（公理化）]
+2つの写像
+\[
+  K:\Rep\cup\Prf\to\mathbb{N},
+  \qquad
+  \ell:\Rep\cup\Prf\to\{0,1\}
+\]
+を固定し、距離を
+\[
+  \|X\|\;:=\;K(X)+\ell(X)
+\]
+で定める。以下の取り決めを要請する。
+\begin{enumerate}[label=(D\arabic*)]
+  \item 任意の $x\in\Rep$ について $\ell(x)=0$、任意の $p\in\Prf$ について $\ell(p)=1$。
+  \item（時間消去は $K$ を変えない）任意の $p\in\Prf$ について
+        \[
+          K\bigl(\phi(p)\bigr)=K(p).
+        \]
+\end{enumerate}
+本稿では $K$ を完全なコルモゴロフ複雑性ではなく抽象的な \emph{記述長} として扱うため、
+上の同一性はモデリング仮定として許容される。
+\end{definition}
+
+\begin{definition}[モノイド型の性質]
+\begin{itemize}[nosep]
+  \item $\iota$ は \textbf{モノ射}（左キャンセル可能な単射）である；したがって情報は失われない：
+        $\iota(x)=\iota(y)\Rightarrow x=y$。
+  \item $\phi$ は \textbf{エピ射}（右キャンセル可能な全射）である；すべての静的対象は何らかの証明の像として得られる。
+  \item $\iota$ は \textbf{分裂モノ射}：
+        $\sigma:\Prf\to\Rep$ が存在して $\sigma\circ\iota=\operatorname{id}_{\Rep}$ を満たす。
+        例えば $\sigma((s_x,t_x),(s_y,t_y))=(s_x,s_y)$ と取れる。
+  \item $\phi$ は \textbf{分裂エピ射}：
+        $\rho:\Rep\to\Prf$ が存在して $\phi\circ\rho=\operatorname{id}_{\Rep}$ を満たす。
+        $\rho=\iota$ と取ればよい。
+  \item $\iota\dashv\phi$（随伴対をなす）；$\iota$ は時間を1単位付加し、$\phi$ はそれを除去する。
+\end{itemize}
+\end{definition}
+
+\begin{definition}[縮小性（時間消去）]
+任意の $p\in\Prf$ について
+\[
+  \|\phi(p)\| = \|p\|-1.
+\]
+これは (D1)--(D2) から直ちに従う：$\phi$ は $K$ を保ったまま「時間長」だけをちょうど1単位除去する。
+\end{definition}
+
+\begin{definition}[$\Rep$ 上の離散評価作用素]
+時間を持たない空間 $\Rep$ の内部で $\dfix$ への収束を語るため、写像
+\[
+  \operatorname{Eval}:\Rep\to\Rep
+\]
+を仮定し、次を満たすとする。
+\begin{enumerate}[label=(E\arabic*)]
+  \item（不動点）$\operatorname{Eval}(\dfix)=\dfix$。
+  \item（$\dfix$ から離れた点での厳密減少）任意の $x\in\Rep\setminus\{\dfix\}$ について
+        \[
+          \|\operatorname{Eval}(x)\| = \|x\|-1.
+        \]
+\end{enumerate}
+これは（例えば「記述を1ビット削る」ような）離散的な縮小ステップの類比と見なせ、
+極限主張を完全に形式化するために必要な唯一の追加要素である。
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{証明が「存在する」ことの形式的主張}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{theorem}[Catuskoti の $0$d$-$同型]\label{thm:c4-dfix}
+$x\in\Rep$ とする。静的空間内の列を
+\[
+  v_0:=x,\qquad v_{k+1}:=\operatorname{Eval}(v_k)\quad(k\ge 0)
+\]
+で定める。このとき $\{\|v_k\|\}_{k\ge0}$ は非負整数の狭義単調減少列であり、やがて $0$ に到達する。
+したがってある $N\in\mathbb{N}$ が存在して
+\[
+  v_N=\dfix,\qquad\text{ゆえに }\lim_{k\to\infty}v_k=\dfix.
+\]
+さらに、圏論的写像 $\iota:\Rep\hookrightarrow\Prf$ と $\phi:\Prf\twoheadrightarrow\Rep$ は時間軸の帳尻合わせを与える：
+$\iota$ は時間を1単位付加し、$\phi$ はそれを除去し、任意の $p\in\Prf$ に対して $\|\phi(p)\|=\|p\|-1$ を満たす。
+\end{theorem}
+\begin{proof}
+(E2) より、$v_k\neq\dfix$ ならば $\|v_{k+1}\|=\|v_k\|-1$；(E1) より、一度 $\dfix$ に到達すれば列は $\dfix$ に留まる。
+$\|v_0\|\in\mathbb{N}$ であり、$0$ に当たるまで各ステップで $1$ ずつ減少するので、$N=\|v_0\|$ ステップ後に $\|v_N\|=0$ を得る。
+距離 $0$ の元が一意であるという $\dfix$ の定義から $v_N=\dfix$。
+$\phi$ に関する主張は、(D1)--(D2) から導いた縮小性そのものである。
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{まとめ}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}[nosep]
+  \item 証明行為は、\textbf{モノ射} $\iota$（情報保存的な埋め込み）と \textbf{エピ射} $\phi$（情報回復的な射影）によって圏論的に捉えられる。
+  \item 両写像は \textbf{分裂}しており、元の静的データが厳密に回復できることを保証する。
+  \item 距離 $\|X\|=K(X)+\ell(X)$ は「情報＋時間」の量的指標を与える。評価写像 $\phi$ は \textbf{縮小}であり、この距離の単調減少を保証する。
+  \item $\phi\circ\iota$ を反復すると狭義単調減少する整数列が得られ、必ず一意な $0$ 次元不動点 $\dfix$ に到達する。
+  \item したがって「$(s_x,s_y)$ に対する証明が存在する」とは、上述の性質を満たす射 $\iota$ と $\phi$ の存在に他ならない。
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{補足}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{enumerate}
+  \item この圏論的図式は、従来の非形式的表現「時間軸を付加してから評価する」を数学的に明確化する。
+  \item 離散評価作用素 $\operatorname{Eval}$ はこの設定におけるバナッハ型縮小ステップの類比であり、一意な $0$ 次元不動点 $\dfix$ への収束を保証する。
+  \item 例えば $K$（文字列長など）や時刻トークン集合 $\Tset$（例えば単元集合 $\{*\}$）の具体例を与えることで、この抽象構成は実装可能なアルゴリズムへと落とし込める。
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,124 @@
+% !TEX program = lualatex
+\documentclass[12pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}} % 0d（中道不動点・空）
+\newcommand{\dist}{\|\cdot\|}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\newtheorem{theorem}{定理}[section]
+\newtheorem{definition}{定義}[section]
+
+\begin{document}
+
+\title{再帰的ゲーデル階層と再帰的タルスキ階層のメモ（0d への収束）}
+\author{}
+\date{}
+\maketitle
+
+\section{目的（メモの整理）}
+本ファイルは、
+\begin{itemize}
+  \item ゲーデルの不完全性定理の「再帰的適用」で得られる階層 $\{G_k\}$、
+  \item タルスキ階層（真理述語の再帰的付加）で得られる階層 $\{T_k\}$
+\end{itemize}
+が、距離 $\dist$ の観点から $0$ 次元不動点 $\dfix$ に同一化される、という主張の骨格をまとめたメモである。
+
+\section{距離と 0d 不動点}
+\begin{definition}[距離]
+任意の対象 $X$ に対して
+\[
+  \dist(X) := K(X)+\ell(X)
+\]
+と定める。ここで $K(X)$ は（厳密なコルモゴロフ複雑度というより）記述長、
+$\ell(X)$ は「時間軸」あるいは「メタレベル」の長さを表す（例：証明なら $1$、表現なら $0$）。
+\end{definition}
+
+\begin{definition}[$0$ 次元不動点]
+$\dist(X)=0$ を満たす一意な対象を $\dfix$ と書き、
+$0$ 次元自己参照不動点（中道不動点・空）と呼ぶ。
+\end{definition}
+
+\section{ゲーデル階層メモ}
+\begin{theorem}[ゲーデル再帰の極限は $\dfix$（スケッチ）]
+ゲーデルの不完全性定理を再帰的に適用して得られる列
+\[
+  G_{0}, G_{1}, G_{2}, \dots
+\]
+は、適切な仮定の下で $\dfix$ に収束（同一化）する。
+\end{theorem}
+
+\subsection*{構成（概略）}
+基礎体系 $S$ に対し、拡張体系 $S_{k}:=S\cup\{G_{0},\dots,G_{k}\}$ を考え、
+\[
+  G_{k+1}:=\text{``}\Prf_{S_{k}}(G_{k})\text{ が存在しない''}
+\]
+を（表現可能な）静的対象として定める、という形を想定する。
+
+\subsection*{距離の減少（想定している不等式）}
+証明手続きが「時間軸」を $1$ だけ付加する、などのモデリングの下で、
+ある定数 $c\ge0$ が存在して
+\[
+  \dist(G_{k+1})\le \dist(G_{k})-1+c
+\]
+のような単調減少型の不等式を仮定する。
+
+\subsection*{帰結（0d への同一化）}
+上の形の減少が十分強ければ
+\[
+  \lim_{k\to\infty}\dist(G_k)=0
+\]
+が従い、距離 $0$ の点が $\dfix$ で一意であるという約束から
+\[
+  \lim_{k\to\infty} G_k = \dfix
+\]
+と書ける。
+
+\section{タルスキ階層メモ}
+\begin{theorem}[タルスキ階層の極限は $\dfix$（スケッチ）]
+タルスキ階層
+\[
+  T_{0},\,T_{1},\,T_{2},\dots
+\]
+を真理述語の再帰的付加により構成したとき、その極限は（同様の仮定の下で）$\dfix$ に収束（同一化）する。
+\end{theorem}
+
+\subsection*{構成（概略）}
+基底言語 $L_0$ に真理述語を付加して $T_0=(L_0,Tr_0)$ とし、
+$T_k$ に対して 1 段メタの真理述語を付加して $T_{k+1}$ を得る、という手続きを想定する。
+
+\subsection*{距離の減少（想定している不等式）}
+真理レベル（メタレベル）の増加を $\ell$ によって数え、
+ある定数 $c\ge0$ が存在して
+\[
+  \dist(T_{k+1})\le \dist(T_k)-1+c
+\]
+のような評価を仮定する。
+
+\subsection*{帰結（0d への同一化）}
+同様に
+\[
+  \lim_{k\to\infty}\dist(T_k)=0
+  \quad\Rightarrow\quad
+  \lim_{k\to\infty} T_k = \dfix.
+\]
+
+\section{まとめ（同一化の式）}
+スケッチとしては、どちらの階層も「距離が $0$ に落ちる極限」は同じ点 $\dfix$ だ、という主張を
+\[
+\dfix
+= \lim_{k \to \infty} G_k
+= \lim_{k \to \infty} T_k
+\]
+と書いて表す。
+
+\end{document}

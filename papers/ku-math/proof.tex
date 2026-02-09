@@ -1,0 +1,222 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}               % optional, for bold symbols
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  Macros
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}}          % 0d – the unique fixed point
+\newcommand{\dist}{\|\cdot\|}            % distance symbol
+\newcommand{\Rep}{\mathcal{R}}           % Representable objects
+\newcommand{\Prf}{\mathcal{P}}           % Proof objects
+\newcommand{\Tset}{\mathcal{T}}          % set of time tokens
+
+%-------------------------------------------------
+%  Theorem environments
+%-------------------------------------------------
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+
+%-------------------------------------------------
+\begin{document}
+
+\title{Formalisation of ``Proof’’ via Monomorphisms, Epimorphisms and
+Contractions}
+\author{Masaomi Chiba}
+\date{2026-02-02}
+\maketitle
+
+\begin{abstract}
+We show that the act of proving can be described rigorously by
+\begin{itemize}[nosep]
+  \item a monomorphism (injective embedding) $\iota\colon\Rep\hookrightarrow\Prf$,
+  \item an epimorphism (surjective projection) $\phi\colon\Prf\twoheadrightarrow\Rep$,
+  \item and a contraction property of $\phi$ with respect to the distance
+        $\|X\|=K(X)+\ell(X)$.
+\end{itemize}
+Together these give a categorical picture of proof, guarantee loss‑free
+information transfer, and ensure monotone decrease of the distance until the
+unique $0$‑dimensional fixed point $\dfix$ is reached.
+We use this categorical core as the convergence mechanism behind the
+\emph{Catuskoti} (tetralemma) interpretation: distinct truth statuses are
+understood as collapsing, via evaluation, to the same $0$‑dimensional fixed
+point (``0d'') $\dfix$.
+In particular, we do not treat ``emptiness'' as a separate object: it is
+simply this $0$‑dimensional fixed point.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{What becomes more rigorous}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{definition}[Objects]
+$$
+\begin{aligned}
+\Rep &:= \{\, (s_x,s_y)\mid s_x,s_y\in\Sigma \,\}
+      &&\text{(static, time‑free information)}\\[2mm]
+\Prf &:= \{\, ((s_x,t_x),(s_y,t_y))
+          \mid (s_x,s_y)\in\Rep,\;t_x,t_y\in\Tset \,\}
+      &&\text{(proof objects, time‑axis of length $1$)} .
+\end{aligned}
+$$
+Here $\Sigma$ is a set of bit‑strings (natural numbers, symbols, …) and
+$\Tset$ is a set of \emph{time tokens} (any objects with $\ell(t)=1$).
+\end{definition}
+
+\begin{definition}[Embedding and projection]
+$$
+\begin{aligned}
+\iota &: \Rep\hookrightarrow\Prf,
+        &\iota(s_x,s_y)&:=\bigl((s_x,t_x),(s_y,t_y)\bigr),
+        &&t_x,t_y\in\Tset\text{ arbitrary};\\[2mm]
+\phi &: \Prf\twoheadrightarrow\Rep,
+        &\phi\bigl((s_x,t_x),(s_y,t_y)\bigr)&:=(s_x,s_y).
+\end{aligned}
+$$
+\end{definition}
+
+\begin{definition}[Distance (axiomatised)]
+We fix two maps
+\[
+  K:\Rep\cup\Prf\to\mathbb{N},
+  \qquad
+  \ell:\Rep\cup\Prf\to\{0,1\}
+\]
+and define the distance
+\[
+  \|X\|\;:=\;K(X)+\ell(X).
+\]
+We require the following conventions.
+\begin{enumerate}[label=(D\arabic*)]
+  \item $\ell(x)=0$ for all $x\in\Rep$ and $\ell(p)=1$ for all $p\in\Prf$.
+  \item (Time erasure does not change $K$.) For all $p\in\Prf$,
+        \[
+          K\bigl(\phi(p)\bigr)=K(p).
+        \]
+\end{enumerate}
+In this note, $K$ is treated as an abstract \emph{description length} rather
+than the full Kolmogorov complexity (so the above identity is admissible as a
+modelling assumption).
+\end{definition}
+
+\begin{definition}[Monoid‑type properties]
+\begin{itemize}[nosep]
+  \item $\iota$ is a \textbf{monomorphism} (left‑cancellable injection);
+        consequently no information is lost:
+        $\iota(x)=\iota(y)\Rightarrow x=y$.
+  \item $\phi$ is an \textbf{epimorphism} (right‑cancellable surjection);
+        every static object is the image of some proof.
+  \item $\iota$ is a \textbf{split monomorphism}:
+        there exists $\sigma:\Prf\to\Rep$ with $\sigma\circ\iota=\operatorname{id}_{\Rep}$.
+        One can take $\sigma((s_x,t_x),(s_y,t_y))=(s_x,s_y)$.
+  \item $\phi$ is a \textbf{split epimorphism}:
+        there exists $\rho:\Rep\to\Prf$ with $\phi\circ\rho=\operatorname{id}_{\Rep}$.
+        Take $\rho=\iota$.
+  \item $\iota\dashv\phi$ (they form an adjoint pair); $\iota$ adds a unit of time,
+        $\phi$ removes it.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Contraction (time erasure)]
+For every $p\in\Prf$,
+\[
+  \|\phi(p)\| = \|p\|-1.
+\]
+This is immediate from (D1)--(D2): $\phi$ removes exactly one unit of
+``time length'' while preserving $K$.
+\end{definition}
+
+\begin{definition}[A discrete evaluation operator on $\Rep$]
+To speak about convergence to $\dfix$ inside the time‑free space $\Rep$, we
+postulate a map
+\[
+  \operatorname{Eval}:\Rep\to\Rep
+\]
+with the following properties:
+\begin{enumerate}[label=(E\arabic*)]
+  \item (Fixed point) $\operatorname{Eval}(\dfix)=\dfix$.
+  \item (Strict decrease away from $\dfix$) For all $x\in\Rep\setminus\{\dfix\}$,
+        \[
+          \|\operatorname{Eval}(x)\| = \|x\|-1.
+        \]
+\end{enumerate}
+This can be seen as a discrete analogue of a contraction step (e.g.
+``delete one bit of description''), and is the only additional ingredient
+needed to make the limit claim fully formal.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Formal statement that a proof ``exists''}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{theorem}[Catuskoti $0$d$‑$isomorphism]\label{thm:c4-dfix}
+Let $x\in\Rep$. Define the sequence in the static space
+\[
+  v_0:=x,\qquad v_{k+1}:=\operatorname{Eval}(v_k)\quad(k\ge 0).
+\]
+Then $\{\|v_k\|\}_{k\ge0}$ is a strictly decreasing sequence of non‑negative
+integers until it reaches $0$, hence there exists $N\in\mathbb{N}$ such that
+\[
+  v_N=\dfix,\qquad\text{and therefore }\lim_{k\to\infty}v_k=\dfix.
+\]
+Moreover, the categorical maps $\iota:\Rep\hookrightarrow\Prf$ and
+$\phi:\Prf\twoheadrightarrow\Rep$ provide the time‑axis bookkeeping:
+$\iota$ adds one unit of time and $\phi$ removes it, satisfying
+$\|\phi(p)\|=\|p\|-1$ for all $p\in\Prf$.
+\end{theorem}
+\begin{proof}
+By (E2), if $v_k\neq\dfix$ then $\|v_{k+1}\|=\|v_k\|-1$; by (E1) the sequence
+stays at $\dfix$ once reached.
+Since $\|v_0\|\in\mathbb{N}$ and decreases by $1$ at each step until it hits
+$0$, after $N=\|v_0\|$ steps we obtain $\|v_N\|=0$.
+By definition of $\dfix$ as the unique element of distance $0$, we have
+$v_N=\dfix$.
+The statement about $\phi$ is exactly the contraction property proved from
+(D1)--(D2).
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Summary}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}[nosep]
+  \item The act of proving is captured categorically by a
+        \textbf{monomorphism} $\iota$ (information‑preserving embedding) and an
+        \textbf{epimorphism} $\phi$ (information‑recovering projection).
+  \item Both maps are \textbf{split}, guaranteeing exact recovery of the
+        original static data.
+  \item The distance $\|X\|=K(X)+\ell(X)$ provides a quantitative measure of
+        ``information + time''.  The evaluation map $\phi$ is a
+        \textbf{contraction}, ensuring monotone decrease of this distance.
+  \item Iterating $\phi\!\circ\!\iota$ yields a strictly decreasing integer
+        sequence that inevitably reaches the unique $0$‑dimensional fixed
+        point $\dfix$.
+  \item Hence the statement “a proof exists for $(s_x,s_y)$’’ is precisely the
+        existence of the morphisms $\iota$ and $\phi$ satisfying the
+        properties above.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Further Remarks}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{enumerate}
+  \item The categorical picture makes the previously informal phrase
+        “adding a time‑axis and then evaluating’’ mathematically precise.
+  \item The discrete evaluation operator $\operatorname{Eval}$ is the analogue
+        of a Banach contraction step in this setting; it guarantees
+        convergence to the unique $0$‑dimensional fixed point $\dfix$.
+  \item One may enrich the framework by specifying concrete choices for
+        $K$ (e.g. literal string length) and for the set of time tokens
+        $\Tset$ (e.g. a singleton $\{*\}$), which turns the abstract
+        construction into an implementable algorithm.
+\end{enumerate}
+
+\end{document}
