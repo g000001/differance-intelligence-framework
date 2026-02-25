@@ -1,0 +1,89 @@
+% !TEX program = lualatex
+\documentclass[a4paper,11pt]{article}
+
+\input{ttsc-adj-macros}
+
+\title{二諦随伴 \texorpdfstring{$F_n \dashv G_{2^n+1}$}{Fn dashv G(2^n+1)} の証明骨格}
+\author{千葉 将臣}
+\date{2026-02-22}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+二諦（世俗諦／究竟諦）を、擬スライス2-圏 $C/D_{\mathrm{fix}0}$ と固定対象 $D_{\mathrm{fix}0}$ により表現し、
+左lax 2-関手 $F_n:(C/D_{\mathrm{fix}0})\to C^D$（爆縮）と右2-関手 $G_{2^n+1}:C\to (C/D_{\mathrm{fix}0})$（奇数すくみ）との擬随伴
+$F_n \dashv G_{2^n+1}$ を与える。
+さらに、可逆2-射上の離散ノルム $\|\cdot\|:\mathrm{Inv2Cell}\to\mathbb{N}$ による整礎降下条件の下で、誤差セルが有限ステップで恒等へ縮退し、随伴が strict 化する枠組みを提案する。
+\end{abstract}
+
+\section{導入}
+本稿の目的は、二諦随伴 $F_n \dashv G_{2^n+1}$ を、(i) 擬スライス2-圏、(ii) Debt 2-モナドと EM 2-圏、(iii) lax 2-関手、という部品に分解して定義として完備化し、成立条件を仮定として整理することである。
+
+\section{前提：基底2-圏と固定対象}
+\begin{definition}[基底2-圏]
+基底2-圏 $C$ は、0-セル・1-射・2-射、および水平／垂直合成と whiskering を備える。
+\end{definition}
+
+\begin{definition}[固定対象]
+$D_{\mathrm{fix}0}$ を $C$ の固定対象（究竟諦）とする。
+\end{definition}
+
+\section{二諦擬スライス2-圏 \texorpdfstring{$C/D_{\mathrm{fix}0}$}{C/Dfix0}}
+\begin{definition}[擬スライス2-圏]
+擬スライス2-圏 $C/D_{\mathrm{fix}0}$ を以下で定義する。
+\begin{enumerate}
+  \item 0-セルは $(X,x)$（$x:X\to D_{\mathrm{fix}0}$）。
+  \item 1-セル $(h,\alpha_h):(X,x)\to(Y,y)$ は $h:X\to Y$ と可逆2-射 $\alpha_h:y\circ h\Rightarrow x$ からなる。
+  \item 2-セル $\Gamma:(h,\alpha_h)\Rightarrow(k,\alpha_k)$ は $\Gamma:h\Rightarrow k$ で、$\alpha_k\circ(y*\Gamma)=\alpha_h$ を満たす。
+\end{enumerate}
+\end{definition}
+
+\section{Debt 2-モナドと EM 2-圏 \texorpdfstring{$C^D$}{C\string^D}}
+\begin{definition}[Debt 2-モナド]
+Debt 2-モナド $D$ は 2-自己関手 $D:C\to C$ と 2-自然変換 $\eta:\id_C\Rightarrow D$, $\mu:D\circ D\Rightarrow D$ からなる（公理は標準的2-モナド公理）。
+\end{definition}
+
+\begin{definition}[EM 2-圏]
+EM 2-圏 $C^D$ の 0-セルは $D$-代数 $(X,\delta:DX\to X)$、1-射・2-射は代数構造と可換なものとする。
+\end{definition}
+
+\section{左lax 2-関手 \texorpdfstring{$F_n$}{Fn} と右2-関手 \texorpdfstring{$G_{2^n+1}$}{G(2\string^n+1)}}
+\begin{definition}[$F_n$（爆縮）]
+左lax 2-関手 $F_n:(C/D_{\mathrm{fix}0})\to C^D$ は、スライスの構造射（空へのベクトル）を段階的に圧縮し、未清算分（Debt）を 0-セル内部状態（$D$-代数構造）へ内在化する。
+また、比較2-射 $\mu_{\alpha,\beta}:F_n(\alpha)\circ F_n(\beta)\Rightarrow F_n(\alpha\circ\beta)$ を備え、$\mu_{\alpha,\beta}$ は $C^D$ の代数2-射である。
+\end{definition}
+
+\begin{definition}[$G_{2^n+1}$（奇数すくみ）]
+右2-関手 $G_{2^n+1}:C\to (C/D_{\mathrm{fix}0})$ は、対象 $Y$ に対し $\mathrm{Stale}_{2^n+1}(Y)$（特定図式の colimit）と普遍射 $\hat y:\mathrm{Stale}_{2^n+1}(Y)\to D_{\mathrm{fix}0}$ を与え、
+$G_{2^n+1}(Y):=(\mathrm{Stale}_{2^n+1}(Y),\hat y)$ と定める（構成は仮定として置く）。
+\end{definition}
+
+\section{二諦擬随伴 \texorpdfstring{$F_n \dashv G_{2^n+1}$}{Fn dashv G(2^n+1)}}
+\begin{theorem}[二諦随伴（擬随伴）]
+適切な普遍性（$G_{2^n+1}$）と爆縮性（$F_n$）の仮定の下で、擬自然同値
+\[
+\Phi_{X,Y}:\Hom_{C/D_{\mathrm{fix}0}}(X,G_{2^n+1}(Y))\simeq \Hom_{C^D}(F_n(X),Y)
+\]
+が構成でき、擬単位 $\eta$ と擬余単位 $\epsilon$、および修正子 $\lambda,\rho$ により擬三角等式が成り立つ。
+\end{theorem}
+
+\begin{remark}
+ここでは証明の詳細は、$\Phi$ の順逆構成をそれぞれ普遍性（colimit）と代数構造の内在化により与え、擬自然性と貼り合わせコヒーレンスを確認する形で補う。
+\end{remark}
+
+\section{ノルムによる整礎降下と strict 化}
+\begin{definition}[離散ノルム]
+可逆2-射のクラスにノルム $\|\cdot\|:\mathrm{Inv2Cell}\to\mathbb{N}$ を与える。
+特に誤差セル（$\mu,\lambda,\rho$）について、$\|\gamma\|=0\Rightarrow \gamma=\id$ を仮定する。
+\end{definition}
+
+\begin{theorem}[strict 化（条件付き）]
+反復により誤差セルのノルムが真に降下するなら、有限ステップで $\|\mu\|=\|\lambda\|=\|\rho\|=0$ に到達し、擬随伴は（当該段階で）strict 随伴へ縮退する。
+\end{theorem}
+
+\section{今後の課題}
+具体構成（$\neg^n$ と $\mathrm{Stale}_{2^n+1}$）を与え、(i) colimit の形状、(ii) anti-collusion 公理の位置づけ、(iii) ノルムの具体例、を明示する。
+
+\end{document}
+

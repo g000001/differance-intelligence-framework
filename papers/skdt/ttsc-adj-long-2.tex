@@ -1,0 +1,326 @@
+% !TEX program = lualatex
+\documentclass[a4paper,11pt]{article}
+
+\input{ttsc-adj-macros}
+
+\title{二諦随伴 \texorpdfstring{$F_n \dashv G_{2^n+1}$}{Fn dashv G(2^n+1)}：詳細版（後半）}
+\author{千葉 将臣}
+\date{2026-02-22}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+詳細版・後半では、右2-関手 $G_{2^n+1}$ の公理（奇数すくみ＝共謀防止つき colimit）を明示し、
+擬随伴データ（擬自然同値 $\Phi$、擬単位 $\eta$、擬余単位 $\epsilon$、修正子 $\lambda,\rho$）の構成骨格を与える。
+最後に、可逆2-射上の離散ノルム $\|\cdot\|:\mathrm{Inv2Cell}\to\mathbb{N}$ による整礎降下条件の下で、
+誤差セルが有限ステップで恒等へ縮退し、擬随伴が strict 随伴へ相転移することを定理として切り出す。
+\end{abstract}
+
+\tableofcontents
+
+\section{右2-関手 \texorpdfstring{$G_{2^n+1}$}{G(2\string^n+1)} の公理（奇数すくみ）}
+\subsection{Stalemate 図式と余極限}
+\begin{definition}[Stalemate 図式（具体形状の固定）]
+各 $n$ と各対象 $Y\in\mathrm{Ob}(C)$ に対し、頂点集合
+\[
+  V_n:=\{0,1,\dots,2^n\}
+\]
+を持つ完全有向グラフ（tournament）型の小圏 $J_n$ を固定する。
+その上で、図式
+\[
+  \mathsf{StaleGraph}_{2^n+1}(Y):J_n\to C
+\]
+を与える（各頂点には $Y$ のコピー、各有向辺には相互反証（refutation/defeat）を表す 1-射を置く）。
+この具体形状の固定により、$G_{2^n+1}$ は「存在仮定」ではなく構成的データとして扱える。
+\end{definition}
+
+\begin{definition}[反証射（defeat）の意味論（仕様）]
+各有向辺 $i\to j$ に対応する 1-射
+\[
+  r_{ij}:Y_i\to Y_j
+\]
+を「反証（refutation/defeat）」として解釈する。
+すなわち $r_{ij}$ は、文脈 $Y_i$ が文脈 $Y_j$ の内部矛盾・過剰仮定・未清算 Debt を指摘し、
+$Y_j$ をより拘束された（あるいは修正された）形へ押し込む作用を表す。
+トーナメントの奇数サイクルは、局所的な固定点（共謀）を作ることなく、相互反証を循環させることで安定化を強制する。
+\end{definition}
+
+\subsection{具体例：\texorpdfstring{$n=1$}{n=1}（3頂点のサイクル）}
+\begin{remark}
+$n=1$ では $V_1=\{0,1,2\}$ であり、3頂点の反証ネットワークを考える。
+典型的な奇数サイクルとして $0\to 1$, $1\to 2$, $2\to 0$ を取り、対応する反証射 $r_{01},r_{12},r_{20}$ を置く。
+このとき余錐条件 $\ell_1\circ r_{01}=\ell_0$, $\ell_2\circ r_{12}=\ell_1$, $\ell_0\circ r_{20}=\ell_2$ は
+相互反証の整合を意味し、colimit はこれらを同時に満たす「止揚対象」を与える。
+anti-collusion 公理は、この構成がある1頂点への自明な崩壊（共謀）に退行しないことを保証する役割を担う。
+\end{remark}
+
+\begin{definition}[Stale 対象（colimit）]
+$C$ が上記の形状 $J_n$ に関する余極限を持つと仮定し、
+\[
+  \mathrm{Stale}_{2^n+1}(Y):=\mathrm{colim}\bigl(\mathsf{StaleGraph}_{2^n+1}(Y)\bigr)
+\]
+と定める。
+\end{definition}
+
+\subsection{anti-collusion と接地射}
+\begin{definition}[anti-collusion（公理）]
+奇数次対称性 $2^n+1$ の図式に対し、「系全体を支配できる部分集合が存在しない」ことを anti-collusion 公理として仮定する。
+この公理は、普遍性から得られる接地射の（2-同型の範囲での）一意性を支える。
+\end{definition}
+
+\begin{definition}[接地射（構造射）]
+各 $Y$ に対し、普遍射（接地射）
+\[
+  \hat y:\mathrm{Stale}_{2^n+1}(Y)\to D_{\mathrm{fix}0}
+\]
+が与えられると仮定する。
+これにより
+\[
+  G_{2^n+1}(Y):=\bigl(\mathrm{Stale}_{2^n+1}(Y),\hat y\bigr)\in C/D_{\mathrm{fix}0}
+\]
+が定まる。
+\end{definition}
+
+\begin{definition}[$G_{2^n+1}$ の射への作用（仕様）]
+1-射 $k:Y\to Z$ に対し、誘導射 $\hat k:\mathrm{Stale}_{2^n+1}(Y)\to \mathrm{Stale}_{2^n+1}(Z)$ と
+可逆2-射
+\[
+  \alpha_k:\hat z\circ \hat k \Rightarrow \hat y
+\]
+が存在し、これにより $G_{2^n+1}(k):=(\hat k,\alpha_k)$ はスライスの1-セルとなる、と仮定する。
+\end{definition}
+
+\subsection{2-関手性のチェックポイント（雛形）}
+\begin{lemma}[\texorpdfstring{$G_{2^n+1}$}{G} の恒等射保存（雛形）]
+恒等射 $\id_Y$ に対し、誘導射 $\widehat{\id_Y}$ は（2-同型の範囲で）$\id_{\mathrm{Stale}_{2^n+1}(Y)}$ に一致する。
+\end{lemma}
+
+\begin{proof}
+colimit の普遍性から、恒等射による図式の自己写像が誘導する射は一意であり、恒等が得られる。
+（厳密な証明では、余錐の一意因子化を用いて示す。）
+\end{proof}
+
+\begin{lemma}[\texorpdfstring{$G_{2^n+1}$}{G} の合成保存（雛形）]
+合成 $k_2\circ k_1$ に対して、誘導射 $\widehat{k_2\circ k_1}$ は（2-同型の範囲で）$\hat k_2\circ \hat k_1$ に一致する。
+\end{lemma}
+
+\begin{proof}
+colimit の普遍性と、図式の自然性（$k$ が各頂点のコピーに作用する仕方）から従う。
+\end{proof}
+
+\subsection{colimit から接地射 \texorpdfstring{$\hat y$}{yhat} が出る条件}
+\begin{remark}
+本理論では $\hat y:\mathrm{Stale}_{2^n+1}(Y)\to D_{\mathrm{fix}0}$ を「普遍射として与える」と仮定した。
+構成的には、各頂点 $Y_i$ から $D_{\mathrm{fix}0}$ への候補射の族 $(t_i:Y_i\to D_{\mathrm{fix}0})$ が反証射と整合し（$t_j\circ r_{ij}=t_i$）、
+それが余錐をなすとき、colimit の普遍性により一意な射 $\hat y$ が誘導される。
+anti-collusion 公理は、この余錐の存在／一意性（あるいは 2-同型の範囲での一意性）を支える位置づけになる。
+\end{remark}
+
+\section{擬随伴データの構成：擬自然同値 \texorpdfstring{$\Phi$}{Phi}}
+\subsection{ホム圏（ホム群oid）の同値}
+\begin{definition}[擬自然同値の目標]
+0-セル $X\in C/D_{\mathrm{fix}0}$ と対象 $Y\in C$ に対し、ホム圏（ホム群oid）の同値
+\[
+  \Phi_{X,Y}:\Hom_{C^D}(F_n(X),Y)\;\simeq\; \Hom_{C/D_{\mathrm{fix}0}}(X,G_{2^n+1}(Y))
+\]
+を構成する（重要なのは hom-圏レベルの同値である）。
+\end{definition}
+
+\subsection{擬自然同値 \texorpdfstring{$\Phi$}{Phi} の型（仕様）}
+\begin{remark}
+$\Phi_{X,Y}$ は 1-射の対応だけでなく、2-射（差延）の対応を含む。
+実装上は「ホム圏の同値」として、関手 $\Phi_{X,Y}$ と擬逆 $\Psi_{X,Y}$、および単位・余単位の同型（自然同型）をデータとして持つのが標準的である。
+\end{remark}
+
+\subsection{unit/counit の誘導（雛形）}
+\begin{remark}
+擬随伴では、unit $\eta$ と counit $\epsilon$ は $\Phi$ とその擬逆から誘導できる。
+本稿では次を基本形とする：
+\[
+  \eta_X := \Phi_{X,F_n(X)}(\id_{F_n(X)}),
+  \qquad
+  \epsilon_Y := \Phi^{-1}_{G_{2^n+1}(Y),Y}(\id_{G_{2^n+1}(Y)}).
+\]
+以降、三角条件は修正子（可逆2-射）$\lambda,\rho$ により表現される。
+\end{remark}
+
+\section{擬単位・擬余単位と擬三角等式}
+\subsection{擬単位と擬余単位の定義}
+\begin{definition}[擬単位]
+擬単位 $\eta:\id \Rightarrow G_{2^n+1}\circ F_n$ は、$\Phi$ により
+\[
+  \eta_X := \Phi_{X,F_n(X)}(\id_{F_n(X)})
+\]
+として誘導されるものとする（型付けは設定に合わせて調整する）。
+\end{definition}
+
+\begin{definition}[擬余単位]
+擬余単位 $\epsilon:F_n\circ G_{2^n+1}\Rightarrow \id$ は、$\Phi^{-1}$ により
+\[
+  \epsilon_Y := \Phi^{-1}_{G_{2^n+1}(Y),Y}(\id_{G_{2^n+1}(Y)})
+\]
+として誘導されるものとする（型付けは設定に合わせて調整する）。
+\end{definition}
+
+\subsection{修正子 \texorpdfstring{$\lambda,\rho$}{lambda,rho}}
+\begin{definition}[擬三角等式（修正子）]
+擬随伴では、三角等式は厳密等式ではなく修正子（可逆2-射）
+\[
+  \lambda_X:\epsilon_{F_n(X)}\circ F_n(\eta_X)\Rightarrow \id_{F_n(X)},\qquad
+  \rho_Y:G_{2^n+1}(\epsilon_Y)\circ \eta_{G_{2^n+1}(Y)}\Rightarrow \id_{G_{2^n+1}(Y)}
+\]
+で与えられる。
+\end{definition}
+
+\subsection{三角修正子の貼り合わせ（pasting）図式（雛形）}
+\begin{remark}
+実際には $\lambda_X,\rho_Y$ は、2-圏の貼り合わせ計算により「どの部分が誤差として残るか」を明示する。
+証明支援系では、貼り合わせ図式が恒等2-射へ簡約されることをゴールとして、ノルム降下（Debt の深さの減少）を補題列で与える。
+\end{remark}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzcd}[column sep=huge, row sep=huge]
+F_n(X) \arrow[r, "F_n(\eta_X)"] \arrow[dr, "\id_{F_n(X)}"'] & F_n(G_{2^n+1}(F_n(X))) \arrow[d, "\epsilon_{F_n(X)}"] \\
+& F_n(X)
+\end{tikzcd}
+\caption{左三角修正子（雛形）}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzcd}[column sep=huge, row sep=huge]
+G_{2^n+1}(Y) \arrow[r, "\eta_{G_{2^n+1}(Y)}"] \arrow[dr, "\id_{G_{2^n+1}(Y)}"'] & G_{2^n+1}(F_n(G_{2^n+1}(Y))) \arrow[d, "G_{2^n+1}(\epsilon_Y)"] \\
+& G_{2^n+1}(Y)
+\end{tikzcd}
+\caption{右三角修正子（雛形）}
+\end{figure}
+
+\subsection{三角修正子の貼り合わせ（pasting）図式（雛形）}
+\begin{remark}
+実際には $\lambda_X,\rho_Y$ は、2-圏の貼り合わせ計算により「どの部分が誤差として残るか」を明示する。
+証明支援系では、貼り合わせ図式が恒等2-射へ簡約されることをゴールとして、ノルム降下（Debt の深さの減少）を補題列で与える。
+\end{remark}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzcd}[column sep=huge, row sep=huge]
+F_n(X) \arrow[r, "F_n(\eta_X)"] \arrow[dr, "\id_{F_n(X)}"'] & F_n(G_{2^n+1}(F_n(X))) \arrow[d, "\epsilon_{F_n(X)}"] \\
+& F_n(X)
+\end{tikzcd}
+\caption{左三角修正子（雛形）}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzcd}[column sep=huge, row sep=huge]
+G_{2^n+1}(Y) \arrow[r, "\eta_{G_{2^n+1}(Y)}"] \arrow[dr, "\id_{G_{2^n+1}(Y)}"'] & G_{2^n+1}(F_n(G_{2^n+1}(Y))) \arrow[d, "G_{2^n+1}(\epsilon_Y)"] \\
+& G_{2^n+1}(Y)
+\end{tikzcd}
+\caption{右三角修正子（雛形）}
+\end{figure}
+
+\section{ノルムによる整礎降下と strict 化}
+\subsection{ノルム公理}
+\begin{definition}[離散ノルム（公理）]
+可逆2-射のクラスにノルム $\|\cdot\|:\mathrm{Inv2Cell}\to\mathbb{N}$ を与える。
+本稿ではその具体像を「未解決 Debt の構文木深さ（structural depth）」として解釈する。
+次を仮定する。
+\begin{enumerate}
+  \item 非退化性：$\|\gamma\|=0 \Rightarrow \gamma=\id$（特に $\mu,\lambda,\rho$ に適用）。
+  \item 劣加法性：$\|\gamma\circ\delta\|\le \|\gamma\|+\|\delta\|$。
+  \item 降下：反復ステップで $\|\lambda^{(n+1)}\|<\|\lambda^{(n)}\|$、同様に $\rho,\mu$。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}[構造的深さと構造的帰納法]
+構造的深さとしての $\|\cdot\|$ を採用すると、降下（$\|\cdot\|$ が真に減少する）を示す補題は、
+証明支援系における structural induction / well-founded recursion の停止性証明へ直訳される。
+\end{remark}
+
+\subsection{降下補題（strict 化へ向けた雛形）}
+\begin{lemma}[比較セルの深さの降下（雛形）]
+反復ステップ（メタ否定と内在化）を1回進めるごとに、比較セル $\mu$ の未解決 Debt 深さは真に減少する：
+\[
+  \|\mu^{(n+1)}\| < \|\mu^{(n)}\|.
+\]
+\end{lemma}
+
+\begin{proof}
+本稿では公理（仕様）として置く。完全版では、$F_n$ が差延を圧縮する規則（Debt の構文木を1段浅くする）から従うことを示す。
+\end{proof}
+
+\begin{lemma}[三角修正子の深さの降下（雛形）]
+修正子 $\lambda,\rho$ についても同様に、反復ステップで未解決 Debt 深さが真に減少する：
+\[
+  \|\lambda^{(n+1)}\| < \|\lambda^{(n)}\|,
+  \qquad
+  \|\rho^{(n+1)}\| < \|\rho^{(n)}\|.
+\]
+\end{lemma}
+
+\begin{proof}
+本稿では公理（仕様）として置く。完全版では、貼り合わせ図式の簡約規則と Debt の構文木深さの定義から示す。
+\end{proof}
+
+\subsection{降下補題（strict 化へ向けた雛形）}
+\begin{lemma}[比較セルの深さの降下（雛形）]
+反復ステップ（メタ否定と内在化）を1回進めるごとに、比較セル $\mu$ の未解決 Debt 深さは真に減少する：
+\[
+  \|\mu^{(n+1)}\| < \|\mu^{(n)}\|.
+\]
+\end{lemma}
+
+\begin{proof}
+本稿では公理（仕様）として置く。完全版では、$F_n$ が差延を圧縮する規則（Debt の構文木を1段浅くする）から従うことを示す。
+\end{proof}
+
+\begin{lemma}[三角修正子の深さの降下（雛形）]
+修正子 $\lambda,\rho$ についても同様に、反復ステップで未解決 Debt 深さが真に減少する：
+\[
+  \|\lambda^{(n+1)}\| < \|\lambda^{(n)}\|,
+  \qquad
+  \|\rho^{(n+1)}\| < \|\rho^{(n)}\|.
+\]
+\end{lemma}
+
+\begin{proof}
+本稿では公理（仕様）として置く。完全版では、貼り合わせ図式の簡約規則と Debt の構文木深さの定義から示す。
+\end{proof}
+
+\subsection{具体例：\texorpdfstring{$n=1$}{n=1}（3頂点のサイクル）}
+\begin{remark}
+$n=1$ では $V_1=\{0,1,2\}$ であり、3頂点の反証ネットワークを考える。
+典型的な奇数サイクルとして $0\to 1$, $1\to 2$, $2\to 0$ を取り、対応する反証射 $r_{01},r_{12},r_{20}$ を置く。
+このとき余錐条件 $\ell_1\circ r_{01}=\ell_0$, $\ell_2\circ r_{12}=\ell_1$, $\ell_0\circ r_{20}=\ell_2$ は
+相互反証の整合を意味し、colimit はこれらを同時に満たす「止揚対象」を与える。
+anti-collusion 公理は、この構成がある1頂点への自明な崩壊（共謀）に退行しないことを保証する役割を担う。
+\end{remark}
+
+\subsection{停止性と strict 化}
+\begin{theorem}[整礎降下による停止性]
+ノルムが $\mathbb{N}$ に値を持ち、各ステップで真に降下するなら、有限回でノルム 0 に到達する。
+\end{theorem}
+
+\begin{theorem}[strict 化（相転移）]
+上の停止性と非退化性により、有限ステップで誤差セル（$\mu,\lambda,\rho$）は恒等へ縮退する。
+従って、当該段階で $F_n$ は strict 2-関手として振る舞い、擬随伴は strict 随伴へ縮退する。
+\end{theorem}
+
+\begin{remark}
+この strict 化は「$\epsilon$-$\delta$ 的極限」ではなく、整礎関係に基づく有限ステップの相転移として定式化される。
+Coq/Agda では well-founded recursion の停止性証明へ直訳できる。
+\end{remark}
+
+\section{結語：40ページ版への拡張点}
+本稿の骨格を完全証明へ拡張するには、次を補題列として充実させればよい。
+\begin{itemize}
+  \item EM 2-圏 $C^D$ の 2-射可換条件の明示と、$\mu$ が代数2-射であることの証明。
+  \item $\Phi$ の順逆構成の具体式（colimit のユニバーサル矢印としての記述）。
+  \item 擬自然性のコヒーレンス（貼り合わせ図式が恒等へ permute する）を図式計算で与える。
+  \item ノルムの具体的構成（Alethetic Complexity）と降下補題（圧縮性）を実装する。
+\end{itemize}
+
+\end{document}
+

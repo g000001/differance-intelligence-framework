@@ -1,0 +1,86 @@
+% !TEX program = lualatex
+\documentclass[a4paper,11pt]{article}
+
+\input{ttsc-adj-macros}
+
+\title{二諦随伴 \texorpdfstring{$F_n \dashv G_{2^n+1}$}{Fn dashv G(2^n+1)}：依存関係つきアウトライン}
+\author{千葉 将臣}
+\date{2026-02-22}
+
+\begin{document}
+\maketitle
+
+\section*{目的（10--15ページ版の仕様書）}
+\begin{itemize}
+  \item 二諦スライス2-圏 $C/D_{\mathrm{fix}0}$ と EM 2-圏 $C^D$ の間の左lax 2-関手 $F_n$、および右2-関手 $G_{2^n+1}$ を定義し、擬随伴（biadjunction）としてのデータを完備化する。
+  \item さらに、ノルム $\|\cdot\|:\mathrm{Inv2Cell}\to\mathbb{N}$ による整礎降下により、誤差セル（比較2-射・修正子）が有限ステップで恒等へ縮退する（strict化）条件を切り出す。
+\end{itemize}
+
+\section*{依存関係（Definitions / Assumptions / Theorems）}
+\subsection*{D0: 基底2-圏 $C$}
+\begin{itemize}
+  \item データ：0-セル、1-射、2-射、水平合成、垂直合成、whiskering、可逆2-射のクラス。
+  \item 依存：以降の全て。
+\end{itemize}
+
+\subsection*{D1: 固定対象 $D_{\mathrm{fix}0}$}
+\begin{itemize}
+  \item データ：$D_{\mathrm{fix}0}\in \mathrm{Ob}(C)$。
+  \item 役割：究竟諦（空）としての基点。スライス構成の基準点。
+  \item 依存：D2（スライス）。
+\end{itemize}
+
+\subsection*{D2: 擬スライス2-圏 $C/D_{\mathrm{fix}0}$（pseudo-slice）}
+\begin{itemize}
+  \item 0-セル：$(X,x)$、$x:X\to D_{\mathrm{fix}0}$。
+  \item 1-セル：$(h,\alpha_h):(X,x)\to(Y,y)$、$h:X\to Y$、$\alpha_h:y\circ h \Rightarrow x$（可逆）。
+  \item 2-セル：$\Gamma:(h,\alpha_h)\Rightarrow(k,\alpha_k)$、$\Gamma:h\Rightarrow k$ かつ $\alpha_k\circ(y*\Gamma)=\alpha_h$。
+  \item 依存：D0, D1。
+\end{itemize}
+
+\subsection*{D3: Debt 2-モナド $D$ と EM 2-圏 $C^D$}
+\begin{itemize}
+  \item データ：2-モナド $(D,\eta,\mu)$（2-射への作用を含む）。
+  \item $C^D$ の 0-セル：$D$-代数 $(X,\delta:DX\to X)$。
+  \item $C^D$ の 1-射：代数射（$\delta$ と可換）。
+  \item $C^D$ の 2-射：代数2-射（代数構造と可換）。
+  \item 依存：D0。
+\end{itemize}
+
+\subsection*{D4: 左lax 2-関手 $F_n:(C/D_{\mathrm{fix}0})\to C^D$（爆縮）}
+\begin{itemize}
+  \item 設計意図：構造射（空へのベクトル）を忘却せず、複雑度を段階的圧縮し Debt として 0-セル内部状態へ内在化する。
+  \item lax性：比較2-射 $\mu_{\alpha,\beta}:F_n(\alpha)\circ F_n(\beta)\Rightarrow F_n(\alpha\circ\beta)$ を持つ。
+  \item 代数性：$\mu_{\alpha,\beta}$ は $C^D$ の 2-射である（代数構造と可換）。
+  \item 依存：D2, D3。
+\end{itemize}
+
+\subsection*{D5: 右2-関手 $G_{2^n+1}:C\to (C/D_{\mathrm{fix}0})$（奇数すくみ）}
+\begin{itemize}
+  \item 構成（仮定）：$\mathrm{Stale}_{2^n+1}(Y)$ を特定図式の colimit として与え、射 $\hat y:\mathrm{Stale}_{2^n+1}(Y)\to D_{\mathrm{fix}0}$ を普遍性で得る。
+  \item 共謀防止（公理）：奇数次対称性により「支配部分集合」が存在しない、等。
+  \item 依存：D0, D1,（必要なら）colimit公理。
+\end{itemize}
+
+\subsection*{A1: 収束・圧縮のノルム（離散）}
+\begin{itemize}
+  \item ノルム：$\|\cdot\|:\mathrm{Inv2Cell}\to\mathbb{N}$。
+  \item 非退化：$\|\gamma\|=0\Rightarrow \gamma=\id$（少なくとも $\mu,\lambda,\rho$ に適用）。
+  \item 劣加法性：$\|\gamma\circ\delta\|\le \|\gamma\|+\|\delta\|$。
+  \item 降下：反復により $\|\lambda^{(n+1)}\|<\|\lambda^{(n)}\|$、同様に $\rho,\mu$。
+\end{itemize}
+
+\subsection*{T1: 二諦擬随伴（biadjunction）}
+\begin{itemize}
+  \item データ：擬自然同値 $\Phi$、擬単位 $\eta$、擬余単位 $\epsilon$、修正子 $\lambda,\rho$。
+  \item 条件：擬三角等式と擬自然性（$X$ 側・$Y$ 側）を満たす。
+\end{itemize}
+
+\subsection*{T2: Strict化（有限ステップで誤差セルが消える）}
+\begin{itemize}
+  \item A1 の整礎降下より、有限回で $\|\mu\|=\|\lambda\|=\|\rho\|=0$ に到達し、誤差セルが恒等へ縮退する。
+  \item 帰結：適切な段階で $F_n$ は（その段階の意味で）strict 2-関手化し、随伴の三角等式が等号として閉じる。
+\end{itemize}
+
+\end{document}
+

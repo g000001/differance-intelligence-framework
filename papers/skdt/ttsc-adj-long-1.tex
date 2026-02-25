@@ -1,0 +1,297 @@
+% !TEX program = lualatex
+\documentclass[a4paper,11pt]{article}
+
+\input{ttsc-adj-macros}
+
+\title{二諦随伴 \texorpdfstring{$F_n \dashv G_{2^n+1}$}{Fn dashv G(2^n+1)}：詳細版（前半）}
+\author{千葉 将臣}
+\date{2026-02-22}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、二諦（世俗諦／究竟諦）を擬スライス2-圏 $C/D_{\mathrm{fix}0}$ と固定対象 $D_{\mathrm{fix}0}$ により表現し、
+左lax 2-関手 $F_n:(C/D_{\mathrm{fix}0})\to C^D$（爆縮）と右2-関手 $G_{2^n+1}:C\to(C/D_{\mathrm{fix}0})$（奇数すくみ）との擬随伴を、
+証明支援系で実装可能な形へ近づけることを目的として定式化する。
+前半では、(i) 基底2-圏、(ii) 擬スライス2-圏、(iii) Debt 2-モナドと EM 2-圏、(iv) lax 2-関手の公理を整備する。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入：二諦随伴の設計要件}
+二諦随伴の左側 $F_n$ は、単なる forgetful（domain）ではなく、スライスの構造射が担っていた「空へのベクトル」を段階的に圧縮し、
+未清算分（Debt）を 0-セル内部状態へ内在化する操作として設計される。
+これにより、究竟諦のダイナミズムが世俗諦へ断絶なく引き継がれる（非二元的な接続）ことを目的とする。
+
+\paragraph{本稿の立場（短い版との違い）}
+短い版では成立条件を公理として列挙したが、本稿（詳細版）では、型付け・可換条件・比較セルの整合性を明示し、
+後半で擬随伴データの構成と strict 化の骨格を与える。
+
+\section{基底としての2-圏}
+\subsection{2-圏のデータ}
+\begin{definition}[2-圏（記法）]
+以降、2-圏 $C$ は次を備えるものとする。
+\begin{itemize}
+  \item 0-セル（対象）$\mathrm{Ob}(C)$。
+  \item 1-射の圏 $\Hom_C(X,Y)$（対象は 1-射、射は 2-射）。
+  \item 1-射の合成 $\circ$ と恒等 1-射 $\id_X$。
+  \item 2-射の垂直合成（$\cdot$ と書く）および水平合成（whiskering を含む）。
+\end{itemize}
+必要に応じて、結合則・単位則は strict ではなく可逆 2-射で与えられていてよい（双圏的設定）。
+\end{definition}
+
+\begin{remark}
+厳密さの選択（strict 2-圏か bicategory か）は、証明支援系への移植可能性に影響する。
+本稿では基底を strict 2-category として固定し、弱さ（誤差）は $F_n$ の lax 性（比較セル）にのみ局在させる。
+\end{remark}
+
+\subsection{可逆2-射のクラス}
+\begin{definition}[可逆2-射]
+2-射 $\alpha:f\Rightarrow g$ が可逆（invertible）であるとは、2-射 $\alpha^{-1}:g\Rightarrow f$ が存在し、
+$\alpha\cdot\alpha^{-1}=\id_g$ および $\alpha^{-1}\cdot\alpha=\id_f$ が成り立つことをいう。
+\end{definition}
+
+\section{記法：2-射の表示と Debt の「深さ」}
+\subsection{2-射の矢印記法}
+\begin{remark}
+本稿では、2-射を $f\Rightarrow g$ と書く。
+二重矢印が必要な場合は、記法として $f \Rightarrow g$ を用いる（「二重矢印」は見た目の強調であり意味は同じ）。
+\end{remark}
+
+\subsection{Debt の構文木深さ（直観）}
+\begin{remark}
+後半で導入するノルム $\|\cdot\|$ は、書換え回数ではなく「未解決 Debt の構文木深さ（structural depth）」として解釈する。
+ここでは前倒しで、深さが 0 のとき「未解決 Debt がない＝恒等に縮退する」ことが、証明支援系で扱いやすい形になる点だけ述べておく。
+\end{remark}
+
+\section{固定対象 \texorpdfstring{$D_{\mathrm{fix}0}$}{Dfix0} と二諦の分解}
+\begin{definition}[固定対象]
+固定対象 $D_{\mathrm{fix}0}\in\mathrm{Ob}(C)$ を選ぶ。
+哲学的には究竟諦（空）として解釈し、以後の構成は $D_{\mathrm{fix}0}$ への「関係」により対象を捉える。
+\end{definition}
+
+\begin{remark}
+本稿では $D_{\mathrm{fix}0}$ を終対象と仮定しない（各 $X$ からの射の一意性は要求しない）。
+ただし、二諦スライスの「表現可能性」を強くしたい場合は、終対象性を追加仮定にできる。
+\end{remark}
+
+\section{擬スライス2-圏 \texorpdfstring{$C/D_{\mathrm{fix}0}$}{C/Dfix0}}
+\subsection{0-セル・1-セル・2-セル}
+\begin{definition}[擬スライス2-圏]
+擬スライス2-圏 $C/D_{\mathrm{fix}0}$ を次のデータで定義する。
+\begin{enumerate}
+  \item 0-セルは $(X,x)$（$X\in\mathrm{Ob}(C)$、$x:X\to D_{\mathrm{fix}0}$）。
+  \item 1-セル $(h,\alpha_h):(X,x)\to(Y,y)$ は $h:X\to Y$ と可逆2-射 $\alpha_h:y\circ h\Rightarrow x$ の組。
+  \item 2-セル $\Gamma:(h,\alpha_h)\Rightarrow(k,\alpha_k)$ は 2-射 $\Gamma:h\Rightarrow k$ で、スライスのコヒーレンス
+  \[
+    \alpha_k\cdot (y*\Gamma)=\alpha_h
+  \]
+  を満たすもの。
+\end{enumerate}
+\end{definition}
+
+\subsection{合成と恒等}
+\begin{definition}[1-セルの合成]
+$(h,\alpha_h):(X,x)\to(Y,y)$、$(k,\alpha_k):(Y,y)\to(Z,z)$ の合成は
+$(k\circ h,\alpha_{k\circ h})$ とし、
+\[
+  \alpha_{k\circ h}:= \alpha_h\cdot (\alpha_k * h): z\circ(k\circ h)\Rightarrow x
+\]
+で定める。
+\end{definition}
+
+\begin{definition}[恒等1-セル]
+$(X,x)$ の恒等 1-セルは $(\id_X,\id_x)$ とする。
+\end{definition}
+
+\begin{remark}
+貼り合わせ（pasting）と whiskering の整合性を仮定することで、$C/D_{\mathrm{fix}0}$ は 2-圏（または双圏）となる。
+このコヒーレンスの詳細は標準的な pseudo-slice 構成に従う。
+\end{remark}
+
+\section{Debt 2-モナドと EM 2-圏 \texorpdfstring{$C^D$}{C\string^D}}
+\subsection{2-モナド}
+\begin{definition}[Debt 2-モナド]
+Debt 2-モナド $D$ は、2-自己関手 $D:C\to C$ と 2-自然変換
+$\eta:\id_C\Rightarrow D$（unit）、$\mu:D\circ D\Rightarrow D$（multiplication）からなり、
+2-モナド公理（単位律・結合律）が 2-射として成り立つものをいう。
+\end{definition}
+
+\begin{remark}[代数2-射の可換条件（雛形）]
+実装上は、例えば次の整合を要請する形になる（記法は系により異なる）：
+\[
+  \delta_Y\circ D(f) \LongRightarrow
+  \delta_Y\circ D(g)
+  \qquad\text{と}\qquad
+  f\circ\delta_X \LongRightarrow
+  g\circ\delta_X
+  \quad\text{が一致する。}
+\]
+ここで「一致」は strict 等号でもよいし、可逆2-射で弱化してもよいが、本稿の方針では strict 化の負担を避けるため、
+代数2-射の型として与える。
+\end{remark}
+
+\subsection{EM 2-圏の型}
+\begin{definition}[$D$-代数（0-セル）]
+$D$-代数は組 $(X,\delta)$（$X\in \mathrm{Ob}(C)$、$\delta:DX\to X$）で、次を満たす。
+\[
+  \delta\circ \eta_X=\id_X,\qquad \delta\circ D(\delta)=\delta\circ \mu_X.
+\]
+\end{definition}
+
+\begin{definition}[$D$-代数射（1-射）]
+$D$-代数 $(X,\delta_X)$ から $(Y,\delta_Y)$ への 1-射 $f:X\to Y$ は
+\[
+  f\circ \delta_X = \delta_Y\circ D(f)
+\]
+を満たすものとする（代数構造の可換性）。
+\end{definition}
+
+\begin{definition}[代数2-射（2-射）]
+代数射 $f,g:(X,\delta_X)\to(Y,\delta_Y)$ の間の 2-射 $\alpha:f\Rightarrow g$ は、
+$D$ の 2-関手性と whiskering により誘導される可換条件（$D(\alpha)$ を介した整合）を満たすものとする。
+\end{definition}
+
+\subsection{代数2-射の可換条件（明示）}
+\begin{definition}[代数2-射の可換条件（strict 版）]
+上の「整合」を strict に書くと、2-射 $\alpha:f\Rightarrow g$ に対して
+\[
+  (\alpha * \delta_X)
+  \;=\;
+  (\delta_Y * D(\alpha))
+\]
+が成り立つことを要請する、という形にできる。
+ここで $*$ は whiskering を表し、左辺は $f\circ \delta_X \Rightarrow g\circ \delta_X$、右辺は $\delta_Y\circ D(f)\Rightarrow \delta_Y\circ D(g)$ を与える。
+\end{definition}
+
+\begin{remark}
+Coq/Agda 実装では、この等式（あるいはそれに相当するパス）を代数2-射のレコードのフィールドとして持たせるのが自然である。
+\end{remark}
+
+\subsection{Debt モナドの計算的直観（仕様）}
+\begin{remark}
+Debt 2-モナド $D$ は、「未解決の反証・例外・自己参照の閉じ損ね」を対象へ付加する演算として解釈される。
+EM 2-圏 $C^D$ の対象 $(X,\delta:DX\to X)$ は、Debt を受け取って現在の状態へ統合する清算規則（ハンドラ）を備えた状態付き対象である。
+この節は、後半で $F_n$ が構造射を「忘却」せずに $(X_n,\delta_{X,x}^{(n)})$ として内在化することの意味論的背景になる。
+\end{remark}
+
+\subsection{爆縮としての \texorpdfstring{$F_n$}{Fn}：仕様の分解}
+\begin{definition}[$F_n$ の仕様（対象・射・Debt）]
+$F_n:(C/D_{\mathrm{fix}0})\to C^D$ の仕様を、次の3成分に分けて扱う。
+\begin{enumerate}
+  \item 対象成分：$(X,x)\mapsto X_n$（メタ否定 $n$ 回の純化）。
+  \item Debt 成分：$(X,x)\mapsto \delta_{X,x}^{(n)}:D(X_n)\to X_n$（構造射 $x$ の複雑度を内部化）。
+  \item 射成分：$(h,\alpha_h)\mapsto F_n(h,\alpha_h)$（差延 $\alpha_h$ の Debt を折り畳んだ代数射）。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+この分解により、「$F_n$ が domain forgetful に退行する」ことを防ぐ要件は 2) に集約される。
+\end{remark}
+
+\subsection{Debt モナドの計算的直観（仕様）}
+\begin{remark}
+Debt 2-モナド $D$ は、「未解決の反証・例外・自己参照の閉じ損ね」を対象へ付加する演算として解釈される。
+EM 2-圏 $C^D$ の対象 $(X,\delta:DX\to X)$ は、Debt を受け取って現在の状態へ統合する清算規則（ハンドラ）を備えた状態付き対象である。
+この節は、後半で $F_n$ が構造射を「忘却」せずに $(X_n,\delta_{X,x}^{(n)})$ として内在化することの意味論的背景になる。
+\end{remark}
+
+\subsection{爆縮としての \texorpdfstring{$F_n$}{Fn}：仕様の分解}
+\begin{definition}[$F_n$ の仕様（対象・射・Debt）]
+$F_n:(C/D_{\mathrm{fix}0})\to C^D$ の仕様を、次の3成分に分けて扱う。
+\begin{enumerate}
+  \item 対象成分：$(X,x)\mapsto X_n$（メタ否定 $n$ 回の純化）。
+  \item Debt 成分：$(X,x)\mapsto \delta_{X,x}^{(n)}:D(X_n)\to X_n$（構造射 $x$ の複雑度を内部化）。
+  \item 射成分：$(h,\alpha_h)\mapsto F_n(h,\alpha_h)$（差延 $\alpha_h$ の Debt を折り畳んだ代数射）。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+この分解により、「$F_n$ が domain forgetful に退行する」ことを防ぐ要件は 2) に集約される。
+\end{remark}
+
+\subsection{EM 2-圏が strict 2-category になるための補題（雛形）}
+\begin{lemma}[代数射の合成の閉性（雛形）]
+代数射 $f:(X,\delta_X)\to(Y,\delta_Y)$ と $g:(Y,\delta_Y)\to(Z,\delta_Z)$ の合成 $g\circ f:X\to Z$ は代数射である。
+\end{lemma}
+
+\begin{proof}
+代数射の可換条件 $f\circ \delta_X=\delta_Y\circ D(f)$ と $g\circ \delta_Y=\delta_Z\circ D(g)$ を合成し、
+$D$ の関手性（strict）を用いて計算すれば従う。
+\end{proof}
+
+\begin{lemma}[代数2-射の垂直合成の閉性（雛形）]
+代数2-射 $\alpha:f\Rightarrow g$ と $\beta:g\Rightarrow h$ の垂直合成 $\beta\cdot\alpha:f\Rightarrow h$ は代数2-射である。
+\end{lemma}
+
+\begin{proof}
+定義（whiskering の結合性と strictness）により、可換条件が合成に対して保存される。
+\end{proof}
+
+\begin{lemma}[代数2-射の水平合成（whiskering）の閉性（雛形）]
+代数2-射 $\alpha:f\Rightarrow g$ と任意の代数射 $k$ に対し、whiskering $k*\alpha$ および $\alpha*k$ は代数2-射である。
+\end{lemma}
+
+\begin{proof}
+$D$ の 2-関手性と、代数射の可換条件の自然性から従う。
+\end{proof}
+
+\begin{remark}
+ここは証明支援系実装で最も重要な「型の核」である。
+本稿では一般論に従い、$C^D$ を EM 2-圏として扱う（詳細な 2-射可換式は後半で必要箇所に限って展開する）。
+\end{remark}
+
+\subsection{比較セルの代数性（補題雛形）}
+\begin{lemma}[$\mu_{u,v}$ の代数2-射性（雛形）]
+比較2-射 $\mu_{u,v}:F_n(u)\circ F_n(v)\Rightarrow F_n(u\circ v)$ は、
+$C^D$ における代数2-射である。
+\end{lemma}
+
+\begin{proof}
+これは本理論の健全性条件（最適化・書換えが Debt 清算規則を破壊しない）に対応し、
+実装では $\mu_{u,v}$ の型付けとして与えるのが自然である。
+完全な証明は、$D$ の 2-関手性と代数射の可換条件を用いた図式追跡で与えられる。
+\end{proof}
+
+\section{左lax 2-関手 \texorpdfstring{$F_n$}{Fn} の仕様（爆縮＝内在化）}
+\subsection{対象への作用：構造射の内在化}
+\begin{definition}[$F_n$ の対象作用（仕様）]
+$F_n:(C/D_{\mathrm{fix}0})\to C^D$ は、0-セル $(X,x)$ に対し $D$-代数
+\[
+  F_n(X,x) = (X_n,\delta_{X,x}^{(n)})
+\]
+を割り当てる。ここで $X_n$ は「メタ否定 $n$ 回の爆縮により純化された対象」、$\delta_{X,x}^{(n)}:D(X_n)\to X_n$ は
+構造射 $x:X\to D_{\mathrm{fix}0}$ が持っていた複雑度（差延・Debt）を内部状態として反映する規則である。
+\end{definition}
+
+\begin{remark}
+この時点では $X_n$ を $\neg^n X$ と書いてよいが、後半では $D$-代数としての型（$\delta$）が主役となるため、
+対象を「状態付き」として扱う。
+\end{remark}
+
+\subsection{1-射・2-射への作用と lax 性}
+\begin{definition}[$F_n$ の lax 2-関手性（比較2-射）]
+$F_n$ は 1-射の合成に対して厳密である必要はなく、比較2-射
+\[
+  \mu_{u,v}: F_n(u)\circ F_n(v)\Rightarrow F_n(u\circ v)
+\]
+を備える lax 2-関手（または擬関手）とする。
+さらに $\mu_{u,v}$ は $C^D$ における代数2-射である（代数構造を保つ）。
+\end{definition}
+
+\begin{remark}
+直観的には、合成の圧縮過程で「情報欠落（Debt の再配置）」が生じ、その誤差が $\mu$ として記録される。
+\end{remark}
+
+\section{後半への橋渡し}
+後半（詳細版・後半）では次を扱う。
+\begin{itemize}
+  \item 右2-関手 $G_{2^n+1}$ の仮定（colimit と anti-collusion）。
+  \item 擬自然同値 $\Phi$ の構成（普遍性による誘導）と擬単位・擬余単位の定義。
+  \item 修正子 $\lambda,\rho$ と貼り合わせコヒーレンス。
+  \item ノルム $\|\cdot\|:\mathrm{Inv2Cell}\to\mathbb{N}$ による整礎降下と strict 化定理。
+\end{itemize}
+
+\end{document}
+

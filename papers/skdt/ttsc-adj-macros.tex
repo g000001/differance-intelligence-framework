@@ -1,0 +1,43 @@
+% !TEX program = lualatex
+% Common macros for TTSC Adjunction paper
+
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+\setmainjfont{HaranoAjiMincho}
+\setsansjfont{HaranoAjiGothic}
+
+\usepackage{fontspec}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{tikz-cd}
+\usepackage{hyperref}
+
+% Operators
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\id}{id}
+
+% Double arrow (avoid undefined \LongRightarrow in some setups)
+\providecommand{\LongRightarrow}{\Rightarrow}
+
+% Convenience notation (adjust if C is overloaded)
+\newcommand{\HomC}{\Hom_C}
+
+% hyperref-safe PDF bookmarks
+\pdfstringdefDisableCommands{%
+  \def\Phi{Phi}%
+  \def\eta{eta}%
+  \def\epsilon{epsilon}%
+  \def\Hom{Hom}%
+  \def\id{id}%
+  \def\mathrm#1{#1}%
+  \def\circ{o}%
+  \def\Rightarrow{=>}%
+  \def\/{/}%
+}
+
+% Theorem environments (shared)
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{補題}
+\newtheorem{definition}{定義}
+\newtheorem{remark}{注}
+
