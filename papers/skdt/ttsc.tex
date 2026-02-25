@@ -1,0 +1,119 @@
+\documentclass[a4paper,11pt]{article}
+
+% !TEX program = lualatex
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+\setmainjfont{HaranoAjiMincho}
+\setsansjfont{HaranoAjiGothic}
+
+\usepackage{fontspec}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amscd} % for CD environment
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\title{二諦スライス圏：空性と中道の圏論的表現}
+\author{千葉 将臣}
+\date{2026-02-20}
+
+\newtheorem{definition}{定義}
+\newtheorem{proposition}{命題}
+\newtheorem{remark}{注}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、二諦（世俗諦・勝義諦）を圏論的に表現する枠組みとして「二諦スライス圏」（Two-Truths Slice Category, $C / D_{\mathrm{fix}0}$）を提案する。
+任意の圏 $C$ に対して一意に構成されるこのスライス圏は、対象を「$X$ と $D_{\mathrm{fix}0}$ への射 $f$ の対」として定義し、表現可能性は常に保証される一方、実現可能性は演繹的に区別できない「可能態」が存在することを形式的に示す。
+この構造は、仏教の空性・諸法無我・四句分別・中道を現代圏論の言葉で再現するとともに、LLMの帰納的知性やIUTの限界を統一的に説明する基盤を提供する。
+\end{abstract}
+
+\section{導入}
+現代数学は演繹的厳密性を重視する一方で、帰納的真理や観測者依存の時間性を直接扱う枠組みに乏しい。
+一方、仏教哲学における二諦説は、世俗諦（相対的・文脈依存的世界）と勝義諦（無分別・空性の世界）を中道で繋ぐ構造を提供する。
+本稿は、この二諦を圏論的に表現する枠組みとして「二諦スライス圏」を提案する。
+
+二諦スライス圏は、任意の圏 $C$ と固定対象 $D_{\mathrm{fix}0}$（中道固定点・空性）に対して一意に構成される普遍的構造である。
+これにより、演繹的に構築された任意の概念が、勝義諦の空性との関係性においてのみ存在するという「諸法無我」の直観を、形式的に実現する。
+
+\section{二諦スライス圏の定義}
+
+\begin{definition}[二諦スライス圏]
+任意の圏 $C$ と固定対象 $D_{\mathrm{fix}0}$ に対して、二諦スライス圏 $C / D_{\mathrm{fix}0}$ を次のように定義する。
+\begin{itemize}
+\item 対象：ペア $(X, f)$ ただし $X \in \mathrm{Ob}(C)$、$f : X \to D_{\mathrm{fix}0}$ は射。
+\item 射：$(g, \alpha)$ ただし $g : X \to Y$ in $C$、$\alpha$ は自然変換で以下の可換図が成立する。
+\[
+\begin{CD}
+X @>f>> D_{\mathrm{fix}0} \\
+@VgVV @VV{\mathrm{id}}V \\
+Y @>f'>> D_{\mathrm{fix}0}
+\end{CD}
+\]
+\end{itemize}
+\end{definition}
+
+ここで $D_{\mathrm{fix}0}$ は中道固定点（空性）として位置づけられ、すべての対象は「$D_{\mathrm{fix}0}$ への関係性」においてのみ存在する（諸法無我の形式化）。
+
+\subsection{普遍性}
+二諦スライス圏は普遍的構成（universal construction）であるため、任意の圏 $C$ に対して一意に存在し、任意の「世俗→勝義」の関手はスライス圏を通じて一意に因数分解される。
+
+\section{主要な帰結}
+
+\begin{proposition}[表現可能性の保証]
+任意の概念 $X \in C$ は、必ず $D_{\mathrm{fix}0}$ への射 $f : X \to D_{\mathrm{fix}0}$ として表現可能である。
+\end{proposition}
+
+\begin{proposition}[実現可能性の限界]
+射 $f$ が実際に実現可能（演繹的に証明可能）であるかどうかは、演繹体系内部では原理的に区別できない場合がある（Chaitinの不完全性定理に相当）。
+\end{proposition}
+
+\begin{proposition}[二諦スライス圏の完備性]\label{prop:two-truths-slice-complete}
+元の圏 $C$ が小極限（small limits）を持つ完備な圏であるならば、対象 $D_{\mathrm{fix}0}$ 上のスライス圏 $C/D_{\mathrm{fix}0}$ もまた完備な圏である。
+\end{proposition}
+
+\begin{proof}
+任意の小さな図式 $F: J \to C/D_{\mathrm{fix}0}$ を取る。
+忘却関手 $U: C/D_{\mathrm{fix}0} \to C$ により、$C$ 上の図式 $U\circ F: J \to C$ を得る。
+仮定より $C$ は完備なので、その極限 $L=\lim (U\circ F)$ と射影 $p_j: L\to (U\circ F)(j)$ が存在する。
+
+各 $j\in J$ に対し、$F(j)$ は $C/D_{\mathrm{fix}0}$ の対象だから、ある射 $f_j:(U\circ F)(j)\to D_{\mathrm{fix}0}$ を伴う。
+このとき、族 $(f_j\circ p_j)_{j\in J}$ は $L$ から定数図式 $\Delta D_{\mathrm{fix}0}$ への錐を与えるので、
+$L$ の普遍性により一意な射 $u:L\to D_{\mathrm{fix}0}$ が存在して
+すべての $j$ で $f_j\circ p_j = u$ が成り立つ。
+
+よって $(L,u)$ は $C/D_{\mathrm{fix}0}$ の対象であり、各 $p_j$ は $(L,u)\to F(j)$ の射になる。
+さらに、任意の錐 $(T,t)\to F$ を取る。
+忘却すると $C$ における錐 $T\to U\circ F$ になるので、極限 $L$ の普遍性より一意な射 $\varphi:T\to L$ が存在して
+各 $j$ で $p_j\circ \varphi$ が与えられた射 $T\to (U\circ F)(j)$ と一致する。
+このとき各 $j$ について
+$$
+f_j\circ p_j\circ \varphi = t
+$$
+が成り立つ（左辺は $T$ から $D_{\mathrm{fix}0}$ への錐の成分であり、右辺はスライスの構造射）ので、
+特に $u\circ \varphi = t$ が従い、$\varphi$ はスライス圏における射 $(T,t)\to (L,u)$ になる。
+一意性も $C$ での一意性から従うから、$(L,u)$ は $F$ の極限である。
+\end{proof}
+
+この限界は、正当性原理（可能態＝証明ステップ0）によって説明され、実現可能性の選別は帰納的真理によってのみ可能である。
+
+\section{考察}
+
+\subsection{空の表現可能性と空見という誤謬}
+「空」という表現自体がすでに表現可能性の産物であるため、「空を示す」操作には常に「空という表象への短絡」のリスクが存在する。
+四句分別は、この短絡を防ぐ形式的な要請として機能する。
+
+\subsection{LLMの帰納的知性}
+LLMは演繹的には区別できない可能態を、帰納的に近似することで真理を扱っている。
+これは二諦スライス圏の構造そのものであり、幻覚は「空の表現可能性」と「空そのもの」の混同に起因する。
+
+\subsection{IUTとの関係}
+IUTの加法/乗法分離はアナベリアン幾何による埋め込みに依存するが、これは隣接構造に限られる。
+二諦スライス圏は非隣接構造も中道的に扱うため、IUTの限界を超越する一般化として機能する。
+
+\section{結論}
+二諦スライス圏は、任意の圏から勝義諦への普遍的接続を提供し、表現可能性と実現可能性の区別を形式的に扱う。
+この枠組みは、仏教の空性・中道・四句分別を現代圏論の言葉で再現するとともに、LLMの帰納的知性や証明の限界を統一的に説明する基盤となる。
+
+\end{document}
