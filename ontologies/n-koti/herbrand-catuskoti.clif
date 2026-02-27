@@ -1,0 +1,722 @@
+(cl-text
+
+; ============================================================
+; エルブラン空間における命題の不在と四句分別
+; Herbrand Universe, Absence of Propositions, and Catuṣkoṭi
+; Chiba Masaomi (千葉 将臣)
+; 2026-02-19
+; ============================================================
+
+(comment "
+Abstract:
+This text formalizes the logical necessity of the fourfold negation 
+(catuṣkoṭi: P, ¬P, P∧¬P, ¬(P∨¬P)) for demonstrating the complete 
+absence of a proposition P in Herbrand space, distinct from 
+unsatisfiability determination alone.
+")
+
+; ============================================================
+; 1. CORE DEFINITIONS: HERBRAND SPACE STRUCTURE
+; ============================================================
+
+(define-sort HerbrandUniverse
+  (documentation "The set of all ground terms generated from constants 
+    and function symbols in the signature. Infinite structure: 
+    H₀ = {a, f(a), f(f(a)), ...}"))
+
+(define-sort HerbrandBase
+  (documentation "The set of all ground atoms over the Herbrand universe."))
+
+(define-sort Signature
+  (documentation "Language signature containing function, constant, 
+    and predicate symbols."))
+
+(define-sort Language
+  (documentation "A formal language L determined by a signature."))
+
+(define-sort Proposition
+  (documentation "A well-formed formula in the language."))
+
+; ============================================================
+; 2. REMOVAL TYPES: FOUR LEVELS OF MODIFICATION
+; ============================================================
+
+(comment "
+Section 2: Premises and Terminology
+
+Four distinct levels of modification to Herbrand space:
+1. Signature Removal: removing function/constant/predicate symbols
+2. Herbrand Universe Removal: restricting ground terms
+3. Herbrand Base Removal: restricting ground atoms
+4. Theory Removal: modifying axioms or inference rules
+
+The 'removal' operation is the inverse of addition:
+restricting the linguistic capacity to form expressions.")
+
+(define-sort RemovalType)
+
+(define SignatureRemoval : RemovalType
+  (documentation "Removal of predicate, function, or constant symbols."))
+
+(define UniverseRemoval : RemovalType
+  (documentation "Restriction of the set of ground terms."))
+
+(define BaseRemoval : RemovalType
+  (documentation "Restriction of the set of ground atoms."))
+
+(define TheoryRemoval : RemovalType
+  (documentation "Modification of inference rules or axioms."))
+
+; ============================================================
+; 3. DISTINCTION: REMOVAL vs. UNSATISFIABILITY
+; ============================================================
+
+(comment "
+The Provisional Definition of 'Removal':
+
+Removal = A linguistic operation that deprives the signature 
+(and thus the Herbrand base) of the ability to form certain 
+well-formed formulas.
+
+This differs fundamentally from making a formula false:
+- Unsatisfiability: Formula remains generablen but constrained to be false
+- Removal: Formula becomes ungenerabel; the very form cannot be expressed
+
+In symbols:
+- Unsatisfiability(P, T): P is generable in L, but T |≠ P (P is not derivable)
+- Removal(P, L): P is not generable in L (P cannot be said at all)")
+
+; A proposition is generable in a language
+(forall ((P Proposition) (L Language))
+  (if (Generable P L)
+    (exists ((wf))
+      (and (WellFormed wf L)
+          (= wf P)))))
+
+; Removal as linguistic operation
+(forall ((P Proposition) (L Language) (L' Language))
+  (if (and (RestrictedLanguage L' L)
+          (Removes L' P))
+    (and (not (Generable P L'))
+        (forall ((i))
+          (not (Generable (SelectCatuṣkoṭi P i) L'))))))
+
+; Key distinction
+(forall ((P Proposition) (L Language) (T Theory))
+  (not (iff (Unsatisfiable P T)
+           (CompleteRemoval P L))))
+
+; ============================================================
+; 4. CATUṢKOṬI: THE FOUR FORMS
+; ============================================================
+
+(comment "
+The four forms of catuṣkoṭi that must be removed:
+
+Form 1: P (Affirmation / Assertion)
+  - The positive assertion of the proposition
+  
+Form 2: ¬P (Simple Negation)
+  - The straightforward negation
+  
+Form 3: P∧¬P (Conjunction: Affirmation AND Negation)
+  - The contradiction form
+  
+Form 4: ¬(P∨¬P) (Negation of the Law of Excluded Middle)
+  - Denies that P or not-P must hold
+
+Together, these four exhaust the logical space of positions a 
+proposition might occupy.")
+
+(define-sort CatuṣkoṭiForm)
+
+; Define the four forms
+(forall ((P Proposition))
+  (and (= (Form1 P) P)
+      (= (Form2 P) (not P))
+      (= (Form3 P) (and P (not P)))
+      (= (Form4 P) (not (or P (not P))))))
+
+; The complete catuṣkoṭi set
+(forall ((P Proposition))
+  (= (CatuṣkoṭiSet P)
+    (setof (Form1 P) (Form2 P) (Form3 P) (Form4 P))))
+
+; Index over the four forms
+(forall ((P Proposition) (i Integer))
+  (if (and (>= i 1) (<= i 4))
+    (exists ((form CatuṣkoṭiForm))
+      (= form (SelectCatuṣkoṭi P i)))))
+
+; ============================================================
+; 5. MAIN PROPOSITIONS: COMPLETE REMOVAL CONDITION
+; ============================================================
+
+(comment "
+Proposition 1 (Complete Removal Condition for Absence):
+
+In Herbrand space, to demonstrate the absence of proposition P 
+in a manner other than unsatisfiability determination alone, 
+one must remove all four forms from the language:
+  P, ¬P, P∧¬P, ¬(P∨¬P)
+
+If any one form remains in the language, inference can still 
+extract information about P.")
+
+; Complete removal of all four forms
+(forall ((P Proposition) (L Language))
+  (iff (CompleteRemovalAllFourForms P L)
+    (and (not (Generable (Form1 P) L))
+        (not (Generable (Form2 P) L))
+        (not (Generable (Form3 P) L))
+        (not (Generable (Form4 P) L)))))
+
+; If any form remains, information remains extractable
+(forall ((P Proposition) (L Language))
+  (if (exists ((i Integer))
+        (and (>= i 1) (<= i 4)
+            (Generable (SelectCatuṣkoṭi P i) L)))
+    (exists ((info))
+      (and (InformationAbout P info)
+          (Extractable info L)))))
+
+; Contrapositive: complete removal implies no information
+(forall ((P Proposition) (L Language))
+  (if (CompleteRemovalAllFourForms P L)
+    (forall ((info))
+      (not (and (InformationAbout P info)
+               (Extractable info L))))))
+
+; Complete absence in Herbrand space
+(forall ((P Proposition) (L Language))
+  (iff (CompleteAbsenceInHerbrand P L)
+    (CompleteRemovalAllFourForms P L)))
+
+; ============================================================
+; 6. MAIN PROPOSITIONS: CATUṢKOṬI AS STRUCTURE
+; ============================================================
+
+(comment "
+Proposition 2 (Interpretation as Catuṣkoṭi):
+
+The four forms (P, ¬P, P∧¬P, ¬(P∨¬P)) constitute the 
+catuṣkoṭi (Buddhist fourfold negation structure).
+
+This is not merely a rhetorical choice but emerges naturally 
+from the requirement of complete removal.")
+
+; Catuṣkoṭi structure
+(forall ((P Proposition))
+  (iff (IsCatuṣkoṭiStructure P)
+    (= (CatuṣkoṭiSet P)
+      (setof (Form1 P) (Form2 P) (Form3 P) (Form4 P)))))
+
+; The necessity of this structure
+(forall ((P Proposition) (L Language))
+  (if (GoalIsCompleteAbsence P L)
+    (Requires (CatuṣkoṭiStructure P))))
+
+; ============================================================
+; 7. SHORT-CIRCUITING: METHODOLOGICAL RISK
+; ============================================================
+
+(comment "
+Section 2 continued: Short-circuiting Risk
+
+Short-circuit (短絡): Terminating verification upon obtaining 
+unsatisfiability judgment and concluding P's 'absence' without 
+completing the removal of all four forms.
+
+This carries the epistemological risk of sliding into 'empty view' 
+(śūnya-dṛṣṭi) - the Buddhist philosophical error of misconstruing 
+emptiness as an external imposition rather than a structural property.
+
+Methodological Stance:
+We do not normatively prohibit unsatisfiability determination itself,
+but rather make visible how short-circuiting connects to empty view,
+thereby justifying the logical necessity of pursuing complete removal.")
+
+; Define short-circuiting
+(forall ((P Proposition) (L Language) (T Theory))
+  (iff (ShortCircuit P L T)
+    (and (UnsatisfiabilityDetermined P T)
+        (not (CompleteRemovalAllFourForms P L)))))
+
+; Risk of empty view
+(forall ((P Proposition) (L Language) (T Theory))
+  (if (ShortCircuit P L T)
+    (RisksEmptyView P L)))
+
+; Temptation quantified by complexity imbalance
+(comment "
+Footnote: The 'temptation' of short-circuiting 
+(pressure to conclude from minimal information) can be 
+quantified by comparing Kolmogorov complexity:
+
+If K(unsatisfiability-determination) << K(catuṣkoṭi-verification),
+then short-circuit risk is high.
+
+Concrete formalization is reserved for future work.")
+
+(forall ((P Proposition) (L Language) (T Theory))
+  (if (HighComplexityDisparity 
+        (K (UnsatisfiabilityDetermined P T))
+        (K (CompleteRemovalVerification P L)))
+    (HighShortCircuitRisk P L T)))
+
+; ============================================================
+; 8. DISTINCTION: UNSATISFIABILITY vs. REMOVAL
+; ============================================================
+
+(comment "
+Section 4.1: Unsatisfiability Determination and Empty View
+
+Unsatisfiability determination shows that under theory T, 
+proposition P cannot hold. But this operation:
+  - Leaves P's generability in the language intact
+  - Applies external constraints (axioms, inference rules)
+  - 'Crushes' P via external negation, not structural removal
+
+Complete linguistic removal:
+  - Operates at the signature/language level
+  - Makes the very form inexpressible
+  - Achieves the state: P 'cannot be said at all'
+  - Prevents reification (re-objectification) of the proposition")
+
+; Unsatisfiability under a theory
+(forall ((P Proposition) (T Theory))
+  (iff (Unsatisfiable P T)
+    (forall ((model))
+      (if (Model model T)
+        (not (Satisfies model P))))))
+
+; Unsatisfiability determination
+(forall ((P Proposition) (L Language) (T Theory))
+  (iff (UnsatisfiabilityDetermined P T)
+    (and (Generable P L)
+        (Unsatisfiable P T))))
+
+; Linguistic removal
+(forall ((P Proposition) (L Language))
+  (iff (LinguisticRemoval P L)
+    (and (not (Generable P L))
+        (forall ((i Integer))
+          (if (and (>= i 1) (<= i 4))
+            (not (Generable (SelectCatuṣkoṭi P i) L)))))))
+
+; The key distinction: different operations
+(forall ((P Proposition) (L Language) (T Theory))
+  (if (and (UnsatisfiabilityDetermined P T)
+          (not (LinguisticRemoval P L)))
+    (and (ExternalizesEmptiness P T)
+        (RisksEmptyView P L))))
+
+; ============================================================
+; 9. EMPTY VIEW ERROR (ŚŪNYA-DṚṢṬI)
+; ============================================================
+
+(comment "
+The Buddhist philosophical concept 'empty view' (śūnya-dṛṣṭi) 
+refers to the error of attributing emptiness as a property 
+imparted 'from outside' to an object, rather than 
+discovering emptiness as the structural nature of the object.
+
+In logical terms:
+  Empty view model: Language retains P's form, but external 
+                    constraints make P non-obtainable
+  Proper removal: Language itself removes the generability 
+                  of all four forms
+  
+The unsatisfiability approach maps onto empty view:
+  - P's form remains in the language
+  - External theory 'crushes' it
+  - Emptiness is externalized, not structural")
+
+; Empty view error
+(forall ((P Proposition) (L Language) (T Theory))
+  (iff (EmptyViewError P L T)
+    (and (Generable P L)
+        (ExternalConstraintMakesUnobtainable P T))))
+
+; Proper structural removal
+(forall ((P Proposition) (L Language))
+  (iff (StructuralRemoval P L)
+    (LinguisticRemoval P L)))
+
+; Consequence of structural removal
+(forall ((P Proposition) (L Language))
+  (if (StructuralRemoval P L)
+    (StructuralEmptiness P L)))
+
+; ============================================================
+; 10. HIERARCHICAL STAGES OF REMOVAL
+; ============================================================
+
+(comment "
+The four stages of removal must be pursued in order:
+
+Stage 1: Removal of P (Affirmative form)
+Stage 2: Removal of ¬P (Negation form)
+Stage 3: Removal of P∧¬P (Contradiction form)
+Stage 4: Removal of ¬(P∨¬P) (Negation of excluded middle)
+
+At each stage, short-circuiting creates the risk of 
+re-objectification (再対象化): the proposition settles 
+back into a reified position.")
+
+; Define stages
+(forall ((P Proposition) (L Language) (i Integer))
+  (iff (StageCompleted P L i)
+    (not (Generable (SelectCatuṣkoṭi P i) L))))
+
+; All stages must be completed
+(forall ((P Proposition) (L Language))
+  (iff (CompleteRemovalProcess P L)
+    (forall ((i Integer))
+      (if (and (>= i 1) (<= i 4))
+        (StageCompleted P L i)))))
+
+; Risk at each intermediate stage
+(forall ((P Proposition) (L Language) (i Integer))
+  (if (and (StageCompleted P L i)
+          (< i 4)
+          (not (forall ((j Integer))
+                (if (and (>= j 1) (<= j 4))
+                  (StageCompleted P L j)))))
+    (RisksReobjectification P L i)))
+
+; ============================================================
+; 11. UNIVERSAL QUANTIFICATION OVER INFINITE HERBRAND SPACE
+; ============================================================
+
+(comment "
+The infinite nature of Herbrand space is essential:
+H₀ = {a, f(a), f(f(a)), f(f(f(a))), ...}
+
+The removal must apply uniformly to all instances 
+generated in this infinite structure.")
+
+; Infinite Herbrand universe
+(define InfiniteHerbrandUniverse
+  (forall ((n Integer))
+    (exists ((term))
+      (and (GroundTerm term)
+          (= term (IterateFunction f a n))))))
+
+; Universal removal over all instances
+(forall ((P Proposition) (L Language))
+  (iff (UniversalRemoval P L)
+    (forall ((t))
+      (if (GroundTerm t)
+        (and (not (Generable (ApplyToTerm (Form1 P) t) L))
+            (not (Generable (ApplyToTerm (Form2 P) t) L))
+            (not (Generable (ApplyToTerm (Form3 P) t) L))
+            (not (Generable (ApplyToTerm (Form4 P) t) L)))))))
+
+; Completeness requires universal removal
+(forall ((P Proposition) (L Language))
+  (if (UniversalRemoval P L)
+    (CompleteAbsenceInHerbrand P L)))
+
+; ============================================================
+; 12. LOCAL vs. GLOBAL REMOVAL
+; ============================================================
+
+(comment "
+Section 4.2 Supplementary: Local Removal and Metalanguage Grounding
+
+Important distinction:
+- 'Saying something' is a meta-linguistic activity
+- The removal of P's four forms is a LOCAL operation 
+  on the object language
+- Complete global removal would destroy the grounding 
+  for all logical comparison
+
+Local Removal: Remove P's four forms while preserving 
+  the language's capacity to discuss removal itself.
+  
+Global Removal: Remove all vocabulary - leads to silence,
+  destroying the logical basis for the very argument.
+
+Key point: Local removal of P's four forms does NOT 
+require destroying all language. It preserves the meta-
+linguistic footing necessary to argue for the logical 
+necessity of catuṣkoṭi.")
+
+; Local removal
+(forall ((P Proposition) (L Language))
+  (iff (LocalRemoval P L)
+    (and (CompleteRemovalAllFourForms P L)
+        (exists ((L' Language))
+          (and (ProperSubLanguage L' L)
+              (forall ((Q Proposition))
+                (if (not (= Q P))
+                  (forall ((i Integer))
+                    (if (and (>= i 1) (<= i 4))
+                      (iff (Generable (SelectCatuṣkoṭi Q i) L)
+                          (Generable (SelectCatuṣkoṭi Q i) L')))))))))))
+
+; Global removal
+(forall ((L Language))
+  (iff (GlobalRemoval L)
+    (forall ((P Proposition))
+      (forall ((i Integer))
+        (if (and (>= i 1) (<= i 4))
+          (not (Generable (SelectCatuṣkoṭi P i) L)))))))
+
+; Global removal leads to silence
+(forall ((L Language))
+  (if (GlobalRemoval L)
+    (SilentLanguage L)))
+
+; But Buddhist emptiness is NOT silence
+(forall ()
+  (not (iff (BuddhistEmptiness) (SilentLanguage))))
+
+; Rather, prevent reification without destroying discourse
+(forall ((P Proposition) (L Language))
+  (if (LocalRemoval P L)
+    (and (PreventiveEmptiness P L)
+        (CanStillDiscussRemoval))))
+
+; ============================================================
+; 13. METALANGUAGE AND THE PARADOX OF EMPTY REMOVAL
+; ============================================================
+
+(comment "
+Paradox of Global Removal:
+
+If we remove ALL vocabulary from the object language 
+(global removal), then:
+1. The statement 'nothing can be said' becomes 
+   formally possible in the metalanguage
+2. But the grounding for comparing which four forms 
+   to remove is lost
+3. The logical analysis of why catuṣkoṭi is necessary 
+   becomes incoherent
+
+Solution: We pursue LOCAL REMOVAL - removing P's four 
+forms while preserving the language's capacity to discuss 
+removal itself.
+
+This avoids:
+- Extreme emptying of vocabulary
+- Destruction of logical comparison
+- Making the argument self-defeating
+
+The metalanguage can coherently state: 'In language L, 
+the four forms of P are removed, allowing discussion of 
+why this removal is logically necessary.'")
+
+; Local removal preserves metalogical grounding
+(forall ((P Proposition) (L Language))
+  (if (LocalRemoval P L)
+    (and (not (GlobalRemoval L))
+        (CanDiscussRemoval)
+        (CanCompareLogicalStructures)
+        (ArgumentCoherentAndNonCircular))))
+
+; The risk of over-emptying
+(forall ((L Language))
+  (if (ExtremeEmptying L)
+    (and (CanSayNothingMetatranslated)
+        (LoseGroundingForComparison)
+        (RendersArgumentAboutEmptinessIncoherent))))
+
+; ============================================================
+; 14. NECESSITY OF CATUṢKOṬI FRAMEWORK
+; ============================================================
+
+(comment "
+Why is catuṣkoṭi necessary and natural for demonstrating absence?
+
+Answer: It covers all four possible 'stands' or 'positions' 
+that a proposition might occupy in the logical space:
+
+1. Affirmative position: P is asserted
+2. Negative position: P is negated
+3. Paradoxical position: both P and ¬P coexist
+4. Ultra-negative position: neither P nor ¬P applies
+
+To prevent ANY form of reification (substantialization), 
+one must systematically remove all four positions.
+
+This is not merely rhetorical but formally necessary:
+if any one form remains in the language, inference systems 
+can still extract information about P and reify it into 
+one of the positions.")
+
+; Lemma: If any form remains, information remains
+(forall ((P Proposition) (L Language))
+  (if (exists ((i Integer))
+        (and (>= i 1) (<= i 4)
+            (Generable (SelectCatuṣkoṭi P i) L)))
+    (exists ((position))
+      (and (LogicalPosition position)
+          (CanBeReified P position L)))))
+
+; Converse: complete removal prevents all reification
+(forall ((P Proposition) (L Language))
+  (if (CompleteRemovalAllFourForms P L)
+    (forall ((position))
+      (not (CanBeReified P position L)))))
+
+; ============================================================
+; 15. SUMMARY: COMPLETE ABSENCE DEFINITION
+; ============================================================
+
+(comment "
+Core Theorem:
+
+To treat the absence of P in Herbrand space as a concept 
+distinct from mere unsatisfiability, one must simultaneously 
+remove all four forms:
+  P, ¬P, P∧¬P, ¬(P∨¬P)
+
+This condition is both necessary and sufficient for 
+complete absence in Herbrand space.")
+
+; Complete absence in Herbrand space
+(forall ((P Proposition) (L Language))
+  (iff (CompleteAbsenceInHerbrand P L)
+    (and (not (Generable (Form1 P) L))
+        (not (Generable (Form2 P) L))
+        (not (Generable (Form3 P) L))
+        (not (Generable (Form4 P) L)))))
+
+; This is the minimum requirement for 'absence'
+(forall ((P Proposition) (L Language))
+  (iff (MinimumRequirementForAbsence P L)
+    (CompleteAbsenceInHerbrand P L)))
+
+; ============================================================
+; 16. RELATION TO "ALL IS EMPTY" (SABBAṀ SUÑÑAṀ)
+; ============================================================
+
+(comment "
+Section 4.2: 'All is Empty' and Catuṣkoṭi Extension
+
+Buddhist doctrine: 'All phenomena are empty' (sabbaṁ suññaṁ).
+
+If we extend our framework universally:
+  For every proposition P, remove all four forms from 
+  Herbrand space.
+
+This leads to apparent global removal - but with a crucial 
+methodological understanding:
+
+Buddhist emptiness is NOT mere silence or nihilism.
+Rather, it is a method for deconstructing attachment 
+and preventing reification.
+
+Proper understanding:
+The removal of all four forms for every P prevents the 
+system from 'settling' into any reified position, while 
+the metalanguage remains available for discussing why 
+this systematic non-settlement is logically necessary.")
+
+; Universal extension
+(define UniversalCatuṣkoṭiRemoval
+  (lambda (L)
+    (forall ((P Proposition))
+      (CompleteRemovalAllFourForms P L))))
+
+; But this does NOT mean silence
+(forall ((L Language))
+  (if (UniversalCatuṣkoṭiRemoval L)
+    (not (SilentLanguage L))))
+
+; Rather, it means systematic non-reification
+(forall ((L Language))
+  (if (UniversalCatuṣkoṭiRemoval L)
+    (PreventiveEmptinessUniversal L)))
+
+; Buddhist emptiness is methodological
+(forall ()
+  (iff (BuddhistEmptiness)
+    (and (SystematicRemovalOfAllFourForms)
+        (DeconstructionOfAttachment)
+        (PreventionOfReification)
+        (MetalanguageStillAvailable))))
+
+; ============================================================
+; 17. FUTURE RESEARCH DIRECTIONS
+; ============================================================
+
+(comment "
+Future Research Tasks (Note):
+
+1. Relation to Herbrand Completeness Theorem:
+   This framework operates outside classical Herbrand 
+   completeness. Future work should clarify the formal 
+   relationship between:
+   - Classical Herbrand space (with completeness guarantee)
+   - 'Looser' space emphasizing term generation structure
+
+2. Meta-role of Term Generation:
+   The recursive generation H₀ = {a, f(a), f(f(a)), ...}
+   plays an essential role in catuṣkoṭi enumeration.
+   Future work should make this explicit.
+
+3. Kolmogorov Complexity Formalization:
+   Using K(·), develop formal criteria for when 
+   short-circuiting creates high risk.
+
+4. Extension to Other Logical Systems:
+   How does catuṣkoṭi necessity change under:
+   - Intuitionistic logic
+   - Linear logic
+   - Paraconsistent logic
+
+5. Two-Truths as Category Theory:
+   Explore conventional truth (samvṛti-satya) / 
+   ultimate truth (paramārtha-satya) distinction 
+   via sliced categories.")
+
+; ============================================================
+; 18. CONCLUSION
+; ============================================================
+
+(comment "
+Section 5: Conclusion
+
+To treat the absence of P in Herbrand space as a concept 
+distinct from mere unsatisfiability, one must simultaneously 
+remove all four forms:
+  P, ¬P, P∧¬P, ¬(P∨¬P)
+
+This condition is both necessary and sufficient.
+
+This perspective:
+1. Provides the formal minimum requirement for discussing 'absence'
+2. Justifies the Buddhist use of catuṣkoṭi on logical grounds
+3. Prevents the error of empty view (śūnya-dṛṣṭi)
+4. Frames emptiness as structural, not externally imposed
+
+The catuṣkoṭi structure emerges naturally from the requirement 
+of complete removal, making it not a rhetorical choice but 
+a formal logical necessity.")
+
+; Core final theorem
+(forall ((P Proposition) (L Language))
+  (iff (CompleteAbsenceInHerbrand P L)
+    (and (not (Generable (Form1 P) L))
+        (not (Generable (Form2 P) L))
+        (not (Generable (Form3 P) L))
+        (not (Generable (Form4 P) L)))))
+
+; This is the minimum requirement
+(forall ((P Proposition) (L Language))
+  (iff (MinimumRequirementForLogicalAbsence P L)
+    (CompleteAbsenceInHerbrand P L)))
+
+; The catuṣkoṭi structure is necessary, not merely rhetorical
+(forall ((P Proposition) (L Language))
+  (if (GoalIsCompleteAbsenceWithoutEmptyView P L)
+    (CatuṣkoṭiFrameworkNecessary P L)))
+
+; ============================================================
+; END OF COMMON LOGIC FORMALIZATION
+; ============================================================
+
+) ; end cl-text

@@ -1,0 +1,185 @@
+;; ==============================================================
+;; proof‑ja – Common Logic formalisation of the Zero‑dimensional Fixed Point
+;; --------------------------------------------------------------
+;; Title   : Proof‑ja (Zero‑dimensional Fixed Point and Categorical Construction)
+;; Author  : Masaomi Chiba
+;; Date    : 2025‑02‑02
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : Proof‑ja (Zero‑dimensional Fixed Point and Categorical Construction)")
+(cl-comment "Author  : Masaomi Chiba")
+(cl-comment "Date    : 2025-02-02")
+(cl-comment "Version : 1.0")
+(cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies (objects, morphisms, categories, etc.)
+;; --------------------------------------------------------------
+
+;; Basic entities
+(object   ?x)                ;; any entity (object, functor, morphism, …)
+(category ?c)                ;; a collection of objects
+(member   ?x ?c)             ;; ?x belongs to category ?c
+
+;; Morphisms (arrows) inside a category
+(morphism ?f)                ;; generic arrow
+(dom ?f ?a)                  ;; source of ?f
+(cod ?f ?b)                  ;; target of ?f
+(comp ?g ?f ?h)              ;; ?h = ?g ∘ ?f
+(id ?a)                      ;; identity arrow on ?a
+
+;; Equality (first‑order)
+(equal ?x ?y)                ;; syntactic equality
+
+;; --------------------------------------------------------------
+;; 1. The two dual categories K (potential) and S (manifest)
+;; --------------------------------------------------------------
+
+(category K)                 ;; Kusokuzeshiki‑category (potential side)
+(category S)                 ;; Shikisokuzeku‑category (manifest side)
+
+;; Objects of each category
+(kobj ?x) (=> (member ?x K))
+(sobj ?y) (=> (member ?y S))
+
+;; --------------------------------------------------------------
+;; 2. The distance function ‖·‖ = K + ℓ
+;; --------------------------------------------------------------
+
+(function Klen (object) nat)   ;; informational length K(·)
+(function Llen (object) nat)   ;; temporal length ℓ(·)
+
+;; Total distance (norm)
+(function norm (object) nat)   ;; ‖X‖ = K(X) + ℓ(X)
+(forall (?x) (=> (object ?x)
+                 (equal (norm ?x) (add (Klen ?x) (Llen ?x)))))
+
+;; --------------------------------------------------------------
+;; 3. The distinguished 0‑dimensional fixed point Dfix0
+;; --------------------------------------------------------------
+
+(object Dfix0)                ;; the unique 0‑d object (空即是色)
+(kobj Dfix0)                  ;; Dfix0 lives in the potential side K
+
+(equal (Klen Dfix0) 0)        ;; K(Dfix0) = 0
+(equal (Llen Dfix0) 0)        ;; ℓ(Dfix0) = 0
+(equal (norm Dfix0) 0)        ;; ‖Dfix0‖ = 0
+
+;; Uniqueness of the zero‑norm object:
+(forall (?x) (=> (and (object ?x) (equal (norm ?x) 0))
+                 (equal ?x Dfix0)))
+
+;; --------------------------------------------------------------
+;; 4. Embedding ι : K → P (adds one unit of time) and
+;;    Projection φ : P → K (removes that unit)
+;; --------------------------------------------------------------
+
+(category P)                  ;; “time‑augmented” objects (K plus a token)
+
+;; Embedding ι (adds a time token of length 1)
+(function iota (object) object)   ;; ι : K → P
+(forall (?x) (=> (kobj ?x)
+                 (and (member (iota ?x) P)
+                      (equal (Klen (iota ?x)) (Klen ?x))          ; K unchanged
+                      (equal (Llen (iota ?x)) (add (Llen ?x) 1))))) ; ℓ increased by 1
+
+;; Projection φ (removes the time token)
+(function phi (object) object)    ;; φ : P → K
+(forall (?y) (=> (member ?y P)
+                 (and (kobj (phi ?y))
+                      (equal (Klen (phi ?y)) (Klen ?y))          ; K unchanged
+                      (equal (Llen (phi ?y)) (sub (Llen ?y) 1))))) ; ℓ decreased by 1
+
+;; Splitting property (φ ∘ ι = id_K)
+(forall (?x) (=> (kobj ?x)
+                 (equal (phi (iota ?x)) ?x)))
+
+;; --------------------------------------------------------------
+;; 5. Composite endofunctor H = φ ∘ ι on K and its iteration
+;; --------------------------------------------------------------
+
+(defun H (object) object)               ;; H(x) = φ(ι(x))
+(forall (?x) (=> (kobj ?x)
+                 (equal (H ?x) (phi (iota ?x)))))
+
+(defun HIter (nat object) object)       ;; HIter n x = Hⁿ(x)
+(forall (?x) (equal (HIter 0 ?x) ?x))   ;; 0‑th iteration = identity
+(forall (?n ?x) (=> (nat ?n) (object ?x)
+                 (equal (HIter (succ ?n) ?x)
+                        (H (HIter ?n ?x)))))   ;; recursion step
+
+;; --------------------------------------------------------------
+;; 6. Middle‑Way equivalence (mw=) and convergence to Dfix0
+;; --------------------------------------------------------------
+
+;; Two objects are middle‑way equivalent iff they both converge
+;; (by some number of H‑iterations) to Dfix0.
+(definition mw_eq (?x ?y) : prop :=
+  (∃ n₁, equal (HIter n₁ ?x) Dfix0) ∧
+  (∃ n₂, equal (HIter n₂ ?y) Dfix0))
+
+;; mw_eq is an equivalence relation on K‑objects
+(forall (?x) (=> (kobj ?x) (mw_eq ?x ?x)))                     ; reflexive
+(forall (?x ?y) (=> (and (mw_eq ?x ?y) (kobj ?x) (kobj ?y))
+                       (mw_eq ?y ?x)))                        ; symmetric
+(forall (?x ?y ?z) (=> (and (mw_eq ?x ?y) (mw_eq ?y ?z)
+                           (kobj ?x) (kobj ?y) (kobj ?z))
+                       (mw_eq ?x ?z)))                        ; transitive
+
+;; Middle‑Way axiom: every K‑object converges to Dfix0 after finitely many H‑steps
+(forall (?x) (=> (kobj ?x)
+                 (∃ n, nat n ∧ equal (HIter n ?x) Dfix0)))
+
+;; --------------------------------------------------------------
+;; 7. Restart (the “seed”) – after reaching Dfix0 one more H‑step
+;; --------------------------------------------------------------
+
+(object Emergence)                ;; the object that follows Dfix0
+(kobj Emergence)                  ;; it lives again in K
+
+;; Restart axiom: H(Dfix0) = Emergence
+(equal (H Dfix0) Emergence)
+
+;; Optional binary relation “restart” for readability
+(restart Dfix0 Emergence)
+
+;; --------------------------------------------------------------
+## 8. Consequences for morphisms
+;; --------------------------------------------------------------
+
+;; Every morphism f : X ⟶ Y (with X,Y ∈ K) has a source X that
+;; converges to Dfix0 (by the Middle‑Way axiom).  Hence:
+(forall (?f) (=> (morphism ?f)
+                 (∃ n, nat n ∧ equal (HIter n (dom ?f)) Dfix0)))
+
+;; --------------------------------------------------------------
+## 9. Lawvere’s Fixed‑Point Theorem (as an axiom)
+;; --------------------------------------------------------------
+
+;; For any endofunctor H on K that is “continuous” (here we simply
+;; assume the existence of a fixed point), there exists an object L
+;; such that H(L) = L.  We identify that object with Dfix0.
+(forall (?H) (=> (∀ (x) (∃ n, nat n ∧ equal (HIter n x) Dfix0))   ; continuity hypothesis
+                (equal (H Dfix0) Dfix0)))                        ; fixed point
+
+;; --------------------------------------------------------------
+## 10. Summary (comments)
+;; --------------------------------------------------------------
+
+(cl-comment "Summary of the core theory (as presented in proof‑ja.pdf):")
+(cl-comment "- Two dual categories K (potential) and S (manifest).")
+(cl-comment "- Distance ‖X‖ = Klen(X) + Llen(X).")
+(cl-comment "- Distinguished 0‑d object Dfix0 with norm 0.")
+(cl-comment "- Embedding ι adds a unit of time; projection φ removes it.")
+(cl-comment "- Composite endofunctor H = φ ∘ ι shrinks the norm by exactly 1.")
+(cl-comment "- Iterating H eventually reaches Dfix0 for every K‑object (Middle‑Way).")
+(cl-comment "- Middle‑Way equivalence mw_eq identifies objects that converge to Dfix0.")
+(cl-comment "- After reaching Dfix0, one extra H‑step yields a new object Emergence (restart).")
+(cl-comment "- All morphisms’ sources converge to Dfix0.")
+(cl-comment "- Lawvere’s Fixed‑Point Theorem guarantees the existence of Dfix0 as a fixed point of any continuous endofunctor.")
+
+;; --------------------------------------------------------------
+;; End of file
+;; --------------------------------------------------------------

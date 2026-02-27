@@ -1,0 +1,189 @@
+;; ==============================================================
+;; Dfix0 – 0-dimensional Fixed Point (Common Logic Formalisation)
+;; --------------------------------------------------------------
+;; Title   : Dfix0 – The Ultimate 0-Dimensional Fixed Point
+;; Author  : (your name)
+;; Date    : 2024-10-08
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : Dfix0 – The Ultimate 0-Dimensional Fixed Point")
+(cl-comment "Author  : (your name)")
+(cl-comment "Date    : 2024-10-08")
+(cl-comment "Version : 1.0")
+(cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies (objects, morphisms, categories, etc.)
+;; --------------------------------------------------------------
+
+;; Basic notions
+(object   ?x)                ;; any entity (object, morphism, functor, …)
+(category ?c)                ;; a collection of objects
+(member   ?x ?c)             ;; ?x belongs to category ?c
+
+;; Morphisms (arrows) inside a category
+(morphism ?f)                ;; generic arrow
+(dom ?f ?a)                  ;; source of ?f
+(cod ?f ?b)                  ;; target of ?f
+
+;; Composition and identities (standard categorical structure)
+(comp ?g ?f ?h)              ;; ?h = ?g ∘ ?f
+(id ?a)                      ;; identity arrow on ?a
+
+;; Equality (first-order)
+(equal ?x ?y)                ;; syntactic equality
+
+;; --------------------------------------------------------------
+;; 1. Distance function ‖·‖ = K + ℓ
+;; --------------------------------------------------------------
+
+;; Information-length (K) – abstract non-negative integer
+(function K (object) nat)    ;; K : Obj → ℕ
+
+;; Time-length (ℓ) – abstract non-negative integer
+(function L (object) nat)    ;; ℓ : Obj → ℕ   (named L to avoid clash with the letter ell)
+
+;; Total distance (norm)
+(function norm (object) nat) ;; ‖X‖ = K(X) + L(X)
+
+;; Definition of the norm (as a derived function)
+(forall (?x) (=> (object ?x)
+                 (equal (norm ?x) (add (K ?x) (L ?x)))))   ; add = ordinary addition on ℕ
+
+;; --------------------------------------------------------------
+;; 2. The distinguished 0-dimensional object Dfix0
+;; --------------------------------------------------------------
+
+(object Dfix0)               ;; the unique 0-d fixed point
+(member Dfix0 KObj)          ;; Dfix0 lives in the “potential” category KObj
+(category KObj)              ;; we introduce a category for the “potential” side
+
+;; Dfix0 has zero information-length and zero time-length
+(equal (K Dfix0) 0)
+(equal (L Dfix0) 0)
+(equal (norm Dfix0) 0)
+
+;; Uniqueness of the 0-distance object:
+;; Any object whose norm is 0 must be identical to Dfix0.
+(forall (?x) (=> (and (object ?x) (equal (norm ?x) 0))
+                 (equal ?x Dfix0)))
+
+;; --------------------------------------------------------------
+;; 3. Embedding ι : K → P (adds a unit of time)
+;;    Projection φ : P → K (removes the unit of time)
+;; --------------------------------------------------------------
+
+;; We model the “potential” objects (K) and the “time-augmented” objects (P)
+(category K)                 ;; K = potential objects
+(category P)                 ;; P = objects together with a time token
+
+;; Embedding ι (adds a time token of length 1)
+(function iota (object) object)   ;; ι : K → P
+(forall (?x) (=> (member ?x K)
+                 (and (member (iota ?x) P)               ; result lies in P
+                      (equal (K (iota ?x)) (K ?x))        ; information unchanged
+                      (equal (L (iota ?x)) (add (L ?x) 1))))) ; time increased by 1
+
+;; Projection φ (removes the time token)
+(function phi (object) object)    ;; φ : P → K
+(forall (?y) (=> (member ?y P)
+                 (and (member (phi ?y) K)                ; result lies back in K
+                      (equal (K (phi ?y)) (K ?y))        ; information unchanged
+                      (equal (L (phi ?y)) (sub (L ?y) 1))))) ; time decreased by 1
+
+;; Round-trip property (splitting, i.e. φ ∘ ι = id_K)
+(forall (?x) (=> (member ?x K)
+                 (equal (phi (iota ?x)) ?x)))
+
+;; --------------------------------------------------------------
+;; 4. Iterated application of the composite φ ∘ ι
+;; --------------------------------------------------------------
+
+;; Define the composite endofunctor H = φ ∘ ι on K
+(function H (object) object)   ;; H(x) = φ(ι(x))
+(forall (?x) (=> (member ?x K)
+                 (equal (H ?x) (phi (iota ?x)))))
+
+;; Iteration of H (n times)
+(function HIter (nat object) object)
+(forall (?x) (equal (HIter 0 ?x) ?x))                     ; 0-th iteration = identity
+(forall (?n ?x) (=> (nat ?n) (object ?x)
+                 (equal (HIter (succ ?n) ?x)
+                        (H (HIter ?n ?x)))))           ; recursion step
+
+;; --------------------------------------------------------------
+;; 5. Middle-Way equivalence (mw=) and convergence to Dfix0
+;; --------------------------------------------------------------
+
+;; Two objects are middle-way equivalent iff they both converge
+;; (by some number of H-iterations) to Dfix0.
+(definition mw_eq (?x ?y) : prop :=
+  (∃ n₁, equal (HIter n₁ ?x) Dfix0) ∧
+  (∃ n₂, equal (HIter n₂ ?y) Dfix0))
+
+;; mw_eq is an equivalence relation on K-objects
+(forall (?x) (=> (member ?x K) (mw_eq ?x ?x)))                     ; reflexive
+(forall (?x ?y) (=> (and (mw_eq ?x ?y) (member ?x K) (member ?y K))
+                       (mw_eq ?y ?x)))                            ; symmetric
+(forall (?x ?y ?z) (=> (and (mw_eq ?x ?y) (mw_eq ?y ?z)
+                           (member ?x K) (member ?y K) (member ?z K))
+                       (mw_eq ?x ?z)))                            ; transitive
+
+;; Every K-object converges to Dfix0 after finitely many H-steps.
+;; This is the “Middle-Way” (dynamic stability) axiom.
+(forall (?x) (=> (member ?x K)
+                 (∃ n, nat n ∧ equal (HIter n ?x) Dfix0)))
+
+;; --------------------------------------------------------------
+;; 6. “Restart” – the seed that appears after one extra H-step
+;; --------------------------------------------------------------
+
+;; After we have reached Dfix0, applying H once more yields a new
+;; object we call **Emergence** (the “seed” for the next cycle).
+(object Emergence)                ;; the object that follows Dfix0
+(member Emergence K)              ;; it lives again in K
+
+;; Restart axiom: H(Dfix0) = Emergence
+(equal (H Dfix0) Emergence)
+
+;; Optional binary relation “restart” for readability
+(restart Dfix0 Emergence)
+
+;; --------------------------------------------------------------
+;; 7. Consequences for morphisms
+;; --------------------------------------------------------------
+
+;; Every morphism f : X ⟶ Y (with X,Y ∈ K) has a source X that
+;; converges to Dfix0 (by the Middle-Way axiom).  Hence we can state:
+(forall (?f) (=> (morphism ?f)
+                 (∃ n, nat n ∧ equal (HIter n (dom ?f)) Dfix0)))
+
+;; --------------------------------------------------------------
+;; 8. Lawvere’s Fixed-Point Theorem (as an axiom)
+;; --------------------------------------------------------------
+
+;; For any endofunctor H on K that is “continuous” (here we simply
+;; assume the existence of a fixed point), there exists an object L
+;; such that H(L) = L.  We identify that object with Dfix0.
+(forall (?H) (=> (∀ (x) (∃ n, nat n ∧ equal (HIter n x) Dfix0))   ; continuity hypothesis
+                (equal (H Dfix0) Dfix0)))                        ; fixed point
+
+;; --------------------------------------------------------------
+;; 9. Summary of the core properties (as comments)
+;; --------------------------------------------------------------
+
+(cl-comment "Summary of Dfix0:")
+(cl-comment "- Dfix0 is the unique object with norm 0 (K=0, ℓ=0).")
+(cl-comment "- It is a fixed point of the composite φ∘ι (i.e. H(Dfix0)=Dfix0).")
+(cl-comment "- Every K-object converges to Dfix0 after finitely many H-iterations.")
+(cl-comment "- Two objects are middle-way equivalent (mw_eq) iff they both converge to Dfix0.")
+(cl-comment "- Applying H once more to Dfix0 yields a new object Emergence (the ‘restart’).")
+(cl-comment "- All morphisms in K have sources that converge to Dfix0.")
+(cl-comment "- Lawvere’s Fixed-Point Theorem guarantees the existence of Dfix0 as a fixed point of any continuous endofunctor.")
+
+;; --------------------------------------------------------------
+;; End of file
+;; --------------------------------------------------------------
+

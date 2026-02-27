@@ -1,0 +1,217 @@
+;; ==============================================================
+;; EESR – Exhaustive Expansion Self-Reference Generation Rule
+;; --------------------------------------------------------------
+;; Title   : Exhaustive Expansion Self-Reference Generation Rule (EESR)
+;; Author  : Masaomi Chiba
+;; Date    : 2025-12-08
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : Exhaustive Expansion Self-Reference Generation Rule (EESR)")
+(cl-comment "Author  : Masaomi Chiba")
+(cl-comment "Date    : 2025-12-08")
+(cl-comment "Version : 1.0")
+(cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies (objects, natural numbers, arithmetic)
+;; --------------------------------------------------------------
+
+;; Generic objects (formal systems, codes, valuations, etc.)
+(object   ?x)
+
+;; Natural numbers (Peano encoding)
+(object zero)                     ;; 0
+(object succ)                     ;; successor function (unary)
+(nat zero)                        ;; zero is a natural number
+(forall (?n) (=> (nat ?n) (nat (succ ?n))))   ;; closure under succ
+
+;; Arithmetic primitives (addition, subtraction, ≤)
+(function add (nat nat) nat)      ;; add(m,n)
+(function sub (nat nat) nat)      ;; sub(m,n)  (defined only when m≥n)
+(function leq (nat nat) bool)     ;; leq(m,n)  ⇔ m ≤ n
+
+;; --------------------------------------------------------------
+;; 1. Formal systems and basic membership
+;; --------------------------------------------------------------
+
+(category FormalSystem)           ;; the class of all formal systems
+(member S FormalSystem)           ;; S denotes a generic formal system
+
+;; Membership of an object in a formal system
+(predicate Member (object object) bool)   ;; Member(x,S) ⇔ x ∈ S
+
+;; --------------------------------------------------------------
+;; 2. Exhaustion operator  Exh(S)
+;; --------------------------------------------------------------
+
+;; Finite subsystems of S (indexed by a natural number n)
+(function SubSys (object nat) object)   ;; SubSys(S,n) is a finite fragment S_n ⊆ S
+
+;; Valuations / cases over a finite subsystem
+;; For each n we have a set of all 2^n possible truth-assignments.
+;; We model a valuation as an object; the predicate ValuationOver
+;; records that a valuation belongs to the exhaustive set for a given subsystem.
+(predicate ValuationOver (object object nat) bool)   ;; ValuationOver(v, S, n)
+
+;; Exhaustive expansion of S:
+;; Exh(S) is the union over all n of the sets of valuations over S_n.
+(predicate ExhaustionMember (object object) bool)   ;; ExhaustionMember(v,S) ⇔ v ∈ Exh(S)
+
+;; Definition of ExhaustionMember via the two auxiliary predicates above:
+(forall (?v ?S) (=> (and (member ?S FormalSystem)
+                        (exists (?n) (and (nat ?n)
+                                          (ValuationOver ?v ?S ?n))))
+                 (ExhaustionMember ?v ?S)))
+
+;; --------------------------------------------------------------
+;; 3. Self-reference operator  Self(S)
+;; --------------------------------------------------------------
+
+;; Coding (Gödel-encoding) of a formal system
+(function Code (object) object)   ;; Code(S) = ⌜S⌝
+
+;; Self(S) = S ∪ {⌜S⌝}
+;; We capture this by a predicate SelfMember.
+(predicate SelfMember (object object) bool)   ;; SelfMember(x,S) ⇔ x ∈ Self(S)
+
+;; Definition:
+(forall (?x ?S) (=> (member ?S FormalSystem)
+                 (or (Member ?x ?S)               ; x already in S
+                     (equal ?x (Code ?S)))))      ; or x is the code of S
+
+;; --------------------------------------------------------------
+;; 4. Fixed-point predicate
+;; --------------------------------------------------------------
+
+;; A fixed point of a system S is an element of S that is invariant
+;; under the “interpretation” of S.  Since we do not formalise the
+;; interpretation function, we keep the predicate abstract.
+(predicate FixedPoint (object object) bool)   ;; FixedPoint(x,S)
+
+;; --------------------------------------------------------------
+;; 5. Incompleteness trigger
+;; --------------------------------------------------------------
+
+;; “Exh(Self(S)) ⇒ ¬∃x∈S . FixedPoint(x,S)”
+;; First we express that Exh(Self(S)) is non-empty:
+(predicate NonEmptyExhSelf (object) bool)   ;; NonEmptyExhSelf(S) ⇔ ∃v ExhaustionMember(v,Self(S))
+
+(forall (?S) (=> (member ?S FormalSystem)
+                 (NonEmptyExhSelf ?S)))
+;; Definition of NonEmptyExhSelf:
+(forall (?S) (=> (member ?S FormalSystem)
+                 (iff (NonEmptyExhSelf ?S)
+                      (exists (?v) (ExhaustionMember ?v (Self ?S))))))
+
+;; Incompleteness axiom:
+(forall (?S) (=> (and (member ?S FormalSystem)
+                     (NonEmptyExhSelf ?S))
+                 (not (exists (?x) (and (Member ?x ?S)
+                                        (FixedPoint ?x ?S)))))
+
+
+;; --------------------------------------------------------------
+;; 6. Representability and meta-projection Φ
+;; --------------------------------------------------------------
+
+;; Representability: a system S is representable inside a larger system T
+(predicate Representable (object object) bool)   ;; Representable(S,T)
+
+;; Subset relation (all members of A are members of B)
+(predicate Subset (object object) bool)   ;; Subset(A,B)
+
+;; Definition of Subset:
+(forall (?A ?B) (=> (and (member ?A FormalSystem) (member ?B FormalSystem))
+                    (iff (Subset ?A ?B)
+                         (forall (?x) (=> (Member ?x ?A) (Member ?x ?B))))))
+
+;; Minimal meta-projection Φ(S):
+;; Φ(S) is the *least* system S⁺ such that S ⊂ S⁺ and S is representable in S⁺.
+(function Phi (object) object)   ;; Φ : FormalSystem → FormalSystem
+
+;; Axioms characterising Φ:
+;; (i) Extension: S ⊂ Φ(S)
+(forall (?S) (=> (member ?S FormalSystem)
+                 (Subset ?S (Phi ?S))))
+;; (ii) Proper inclusion (strict):
+(forall (?S) (=> (member ?S FormalSystem)
+                 (not (equal ?S (Phi ?S)))))
+
+;; (iii) Representability:
+(forall (?S) (=> (member ?S FormalSystem)
+                 (Representable ?S (Phi ?S))))
+
+;; (iv) Minimality: any other extension T satisfying (i) and (ii) must
+;;      contain Φ(S) as a subset.
+(forall (?S ?T) (=> (and (member ?S FormalSystem)
+                         (member ?T FormalSystem)
+                         (Subset ?S ?T)
+                         (Representable ?S ?T))
+                 (Subset (Phi ?S) ?T)))
+
+;; --------------------------------------------------------------
+;; 7. Recursive construction of the hierarchy S_k
+;; --------------------------------------------------------------
+
+;; Sequence of formal systems indexed by natural numbers:
+(function S_of_nat (nat) object)   ;; S_k = S_of_nat(k)
+
+;; Base case (k = 0) – an arbitrary initial system S₀.
+;; We leave it uninterpreted; users may instantiate it later.
+(constant S0 object)
+(equal (S_of_nat zero) S0)
+
+;; Helper: compose Exhaustion and Self into a single system.
+(function ExhSelf (object) object)   ;; ExhSelf(S) = Exh(Self(S))
+
+;; Definition of ExhSelf as a system whose members are exactly the
+;; exhaustion members of Self(S).
+(forall (?S) (=> (member ?S FormalSystem)
+                 (forall (?x) (iff (Member ?x (ExhSelf ?S))
+                                   (ExhaustionMember ?x (Self ?S))))))
+
+;; Recurrence rule (the core EESR generation rule):
+;;   S_{k+1} = Φ( Exh( Self( S_k ) ) )
+(forall (?k) (=> (nat ?k)
+                 (equal (S_of_nat (succ ?k))
+                        (Phi (ExhSelf (S_of_nat ?k))))))
+
+;; --------------------------------------------------------------
+;; 8. One-line summary (as a comment)
+;; --------------------------------------------------------------
+
+(cl-comment "One-line summary of the EESR rule:")
+(cl-comment "Self + Exhaustion ⇒ No internal fixed point ⇒ Meta-lift (Φ).")
+
+;; --------------------------------------------------------------
+;; 9. Optional derived lemmas (sketches)
+;; --------------------------------------------------------------
+
+;; Lemma: For every k, the system S_{k+1} properly extends S_k.
+(forall (?k) (=> (nat ?k)
+                 (Subset (S_of_nat ?k) (S_of_nat (succ ?k)))))
+
+;; Lemma: Each S_k lacks an internal fixed point (by repeated use of the
+;;        incompleteness trigger).
+(forall (?k) (=> (nat ?k)
+                 (not (exists (?x) (and (Member ?x (S_of_nat ?k))
+                                        (FixedPoint ?x (S_of_nat ?k))))))
+
+;; --------------------------------------------------------------
+;; 10. Closing remarks (comments)
+;; --------------------------------------------------------------
+
+(cl-comment "The above CLIF file faithfully mirrors the LaTeX sketch:")
+(cl-comment "- Exhaustion operator (union of all 2ⁿ valuations over finite fragments).")
+(cl-comment "- Self-reference operator (adds the Gödel-code ⌜S⌝).")
+(cl-comment "- Incompleteness trigger (Exh(Self(S)) forces loss of internal fixed points).")
+(cl-comment "- Meta-projection Φ yields the minimal representable extension.")
+(cl-comment "- Recursive hierarchy S₀, S₁, … is defined by S_{k+1}=Φ(Exh(Self(S_k))).")
+(cl-comment "All axioms are first-order, so the theory lives inside Classical First-Order Logic,")
+(cl-comment "the native fragment of Common Logic.")
+
+;; --------------------------------------------------------------
+;; End of file
+;; --------------------------------------------------------------

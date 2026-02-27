@@ -1,0 +1,51 @@
+(cl-text Catuskoti-16Phase-Architecture
+
+    ;; 1. 四句分別の基本相の定義 (Base Phases)
+    (forall (x)
+        (iff (BasePhase x)
+            (or (= x True) (= x False) (= x Both) (= x Neither))))
+
+    ;; 2. 16位相マトリックスの定義 (16-Phase Matrix)
+    ;; 1ワードの4bitタグが表現する16の知性相。
+    ;; 実装形態（Implementation）と論理要素（Logic Element）の並置。
+    (forall (tag)
+        (iff (IntellectualPhase tag)
+            (exists (impl logic)
+                (and (BasePhase impl)
+                     (BasePhase logic)
+                     (= tag (pair impl logic))))))
+
+    ;; 3. 拡張ワードの定義 (Extended Word Structure)
+    ;; 64bitデータ(Color)と8bitタグ(Void/Status)の結合。
+    (forall (w)
+        (iff (ExtendedWord w)
+            (exists (data tag_phase tag_mgmt)
+                (and (64BitData data)
+                     (IntellectualPhase tag_phase)
+                     (ManagementTag tag_mgmt)
+                     (= w (combine data tag_phase tag_mgmt))))))
+
+    ;; 4. 中道演算子 (Middle-Way Equality: mweq) の定義
+    ;; データとタグが不動点整列 (fpa) されている状態。
+    (forall (w)
+        (iff (mweq_state w)
+            (and (ExtendedWord w)
+                 (Justified (data_of w) (tag_of w)) ;; 正当性証明
+                 (= (limit (Difference w) t_inf) 0)))) ;; Dfix0への収束
+
+    ;; 5. 制御フローの圧縮 (Control Flow Compression)
+    ;; 分岐 (Rule) や 並列 (Concurrent) が空間的に並置されていることを定義。
+    (forall (w_in w_out)
+        (if (and (mweq_state w_in) (Execute w_in))
+            (exists (final_state)
+                (and (mweq_state final_state)
+                     (ConvergeTo final_state w_out)
+                     ;; 時間軸(t)の消費を伴わない空間的解決
+                     (ZeroTimeTransition w_in final_state)))))
+
+    ;; 6. 内省と自己書き換え (Introspection & Intercession)
+    ;; 位相 (Neither, Neither) が OS そのものを書き換える。
+    (forall (w_meta)
+        (if (= (phase_of w_meta) (pair Neither Neither))
+            (and (SelfModifying w_meta)
+                 (AletheticReset (SystemState))))))

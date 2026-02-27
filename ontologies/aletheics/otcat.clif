@@ -1,0 +1,53 @@
+;; ==============================================================
+;; OT-Category: Observer-Time Integration and Dfix0 Convergence
+;; ==============================================================
+
+(cl-comment "1. 観測者と時間軸の定義 (Definitions of Observers and Time-axes)")
+(object Observer)
+(object TimeAxis)
+(predicate IsObserver (?o))
+(predicate IsTimeAxis (?t))
+
+(cl-comment "2. 観測者不定と時間可変の等価性定理 (Theorem: Uncertainty iff Time-variance)")
+;; 状態 s が観測者 o に対して不定であることの定義
+;; ⇔ 異なる時刻 t1, t2 において観測結果が一致しないこと
+(forall (?s ?o)
+    (<=> (UncertainFor ?s ?o)
+         (exists (?t1 ?t2 ?v1 ?v2)
+             (and (IsTimeAxis ?t1) (IsTimeAxis ?t2)
+                  (ObserveAt ?o ?s ?t1 ?v1)
+                  (ObserveAt ?o ?s ?t2 ?v2)
+                  (not (equal ?v1 ?v2))))))
+
+(cl-comment "3. 観測者-時間圏 (OT-Category) の射と自然変換")
+;; 射 (o1, t1) -> (o2, t2) は、観測結果の翻訳（自然変換）として定義される
+(forall (?o1 ?t1 ?o2 ?t2 ?f)
+    (=> (MorphismOT ?f (pair ?o1 ?t1) (pair ?o2 ?t2))
+        (forall (?s ?v1)
+            (=> (ObserveAt ?o1 ?s ?t1 ?v1)
+                (exists (?v2)
+                    (and (ObserveAt ?o2 ?s ?t2 ?v2)
+                         (Translate ?f ?v1 ?v2)))))))
+
+(cl-comment "4. Dfix0 における絶対の一致 (Universal Consensus at Dfix0)")
+;; 中道不動点 Dfix0 は、すべての観測者と時間軸において矛盾が解消された点である
+(forall (?o ?t ?v)
+    (=> (and (IsObserver ?o) (IsTimeAxis ?t) (ObserveAt ?o Dfix0 ?t ?v))
+        (and (Consistent ?v)
+             (equal ?v Dfix0))))
+
+;; 定理：Dfix0 は「すべての観測者が一致する唯一のアクセス可能な点」である
+(forall (?s)
+    (=> (forall (?o1 ?o2 ?t1 ?t2 ?v1 ?v2)
+            (=> (and (ObserveAt ?o1 ?s ?t1 ?v1) (ObserveAt ?o2 ?s ?t2 ?v2))
+                (equal ?v1 ?v2)))
+        (mw_eq ?s Dfix0)))
+
+(cl-comment "5. 収束のダイナミクス (Dynamics of Convergence)")
+;; 観測の不一致（Dukkha）を時間演算子 delay によって Dfix0 へ追い込む
+(forall (?s ?o)
+    (=> (UncertainFor ?s ?o)
+        (exists (?next_s)
+            (and (equal ?next_s (delay ?s))
+                 (forall (?t) (DecreaseNorm ?next_s ?s))))))
+

@@ -1,0 +1,558 @@
+(cl-text Aletheics_Framework
+    (cl-comment "Aletheics: The Theory of Manifestation based on Self-Reference Gaps")
+
+    ;; ==============================================================
+    ;; 1. 根源的区分: 顕 (Aletheia) と 潜 (Letheia)
+    ;; ==============================================================
+    (object Aletheia) ;; 顕: 隠れなさ、是、色
+    (object Letheia)  ;; 潜: 隠蔽、非、空
+
+    (forall (?x) (=> (IsManifest ?x) (equal ?x Aletheia)))
+    (forall (?x) (=> (IsLatent ?x) (equal ?x Letheia)))
+
+    (cl-comment "顕と潜の時空マッピング")
+    (equal Aletheia Space) ;; 顕 = 空間 (是)
+    (equal Letheia Time)   ;; 潜 = 時間 (非)
+    
+    ;; 相互否定による定義 (時間は空間の否定軸)
+    (NegAxis Space Time)
+    (NegAxis Time Space)
+
+    ;; ==============================================================
+    ;; 2. 自己参照と顕現強度 (Aletheia Intensity)
+    ;; ==============================================================
+    (cl-comment "存在の顕現強度は自己参照の距離 d と固有定数 C の剰余に比例する")
+    (function AletheiaIntensity (Real Real) Real) ;; (distance, constant) -> intensity
+    
+    (forall (?d ?C)
+        (and (=> (leq ?d ?C) (equal (AletheiaIntensity ?d ?C) zero)) ;; 閉じている状態 (静寂)
+             (=> (not (leq ?d ?C)) (greater (AletheiaIntensity ?d ?C) zero)))) ;; 顕現 (音/色/光)
+
+    (cl-comment "自己参照の非完結性が顕現(Manifestation)を生む")
+    (forall (?system)
+        (=> (IncompleteSelfReference ?system)
+            (and (Manifests ?system)
+                 (exists (?diff) (and (IsDifference ?diff) (Generates ?diff World))))))
+
+    ;; ==============================================================
+    ;; 3. 次元的知性操作の一般化 (Generalization of Deduction/Induction)
+    ;; ==============================================================
+    (cl-comment "観測者の次元 dim = 2^n に基づく手法の定義")
+    (forall (?n ?method)
+        (and (=> (and (IsDeduction ?method) (ObserverDim (pow 2 ?n)))
+                 (TargetsDim ?method (leq_than (pow 2 (sub ?n 1))))) ;; 演繹: 2^n-1 以下
+             (=> (and (IsInduction ?method) (ObserverDim (pow 2 ?n)))
+                 (TargetsDim ?method (leq_than (pow 2 (add ?n 1))))) ;; 帰納: 2^n+1 以下
+             (=> (IsProbability ?method)
+                 (MixedMethod ?method IsDeduction IsInduction))))
+
+    (cl-comment "学問の一般化")
+    (forall (?field)
+        (and (=> (DealsWith ?field IsDeduction) (equal ?field Mathematics))
+             (=> (DealsWith ?field IsInduction) (equal ?field Philosophy))))
+
+    ;; ==============================================================
+    ;; 4. 四句分別と顕潜の合成
+    ;; ==============================================================
+    (cl-comment "四句を顕(A)と潜(L)の組み合わせとして再定義")
+    ;; 是 = A
+    ;; 非 = L
+    ;; 亦 = (A ∧ L) -> 手続的分解: (A -> L) or (L -> A)
+    ;; 非非 = (L ∧ L) -> 自己参照として閉じた空の状態
+
+    (forall (?s)
+        (and (=> (catuskoti ?s T) (IsManifest ?s))
+             (=> (catuskoti ?s F) (IsLatent ?s))
+             (=> (catuskoti ?s B) (ProceduralProcess ?s Aletheia Letheia))
+             (=> (catuskoti ?s N) (PerfectlyClosed ?s SunyataCategory))))
+
+    ;; ==============================================================
+    ;; 5. 存在論的問いの円環 (Decoherence as Failure of Null)
+    ;; ==============================================================
+    (cl-comment "世界はなぜ無ではないのか = 自己参照の失敗(デコヒーレンス)")
+    (forall (?existence)
+        (=> (IsExistence ?existence)
+            (and (SelfReference ?existence)
+                 (failed (SelfReference ?existence)) ;; 閉じ損ね
+                 (Observed ?existence))))
+
+    (cl-comment "問いの円環の閉鎖")
+    (forall (?query)
+        (=> (IsQuery ?query \"Why is there something rather than nothing?\")
+            (equal (ObservationCycle ?query) (ClosedSelfReference ?query))))
+
+    ;; ==============================================================
+    ;; 6. Dfix0 との接続 (顕現の収束)
+    ;; ==============================================================
+    (cl-comment "顕現強度が 0 に達する点が Dfix0 (潜在化の極限) である")
+    (forall (?s)
+        (<=> (equal ?s Dfix0)
+             (and (equal (AletheiaIntensity (distance ?s) C_const) zero)
+                  (Status ?s Terminus))))
+)
+
+
+(cl-text Aletheics_Dimensional_Debt
+    (cl-comment "Aletheics: Dimensional Expansion and Alethetic Potential")
+
+    ;; ==============================================================
+    ;; 1. 次元の再帰的展開 (Recursive Dimensional Expansion)
+    ;; ==============================================================
+    (cl-comment "2^n 次元の展開: 閉じ/開きの最小二分の再帰的適用")
+    (forall (?n)
+        (=> (nat ?n)
+            (exists (?dim)
+                (and (Dimension ?dim)
+                     (equal ?dim (pow 2 ?n))
+                     (RecursiveBipartition ?dim)))))
+
+    (cl-comment "不二 (Non-duality) の原則: 実体の生起方向（高次/低次）は区別不能")
+    (forall (?source ?target)
+        (=> (ManifestationFlow ?source ?target)
+            (mw_eq ?source ?target)))
+
+    ;; ==============================================================
+    ;; 2. 潜在顕現力と次元の借金 (Alethetic Potential & Dimensional Debt)
+    ;; ==============================================================
+    (cl-comment "潜在顕現力 (PA) と 次元の借金 (Debt) の定義")
+    ;; Debt = Φ(d - C) * Δ_dim
+    (forall (?d ?C ?delta_dim)
+        (iff (GeneratingDebt ?d ?C)
+             (greater ?d ?C)))
+
+    (forall (?d ?C ?delta_dim ?debt)
+        (=> (and (GeneratingDebt ?d ?C) (StepFunctionPhi (sub ?d ?C) ?phi_val))
+            (equal ?debt (mul ?phi_val ?delta_dim))))
+
+    (cl-comment "顕現複雑性 (AC) : 中道からの最小記述長 (債務の利息)")
+    ;; AC = min ∫ PA * Δ_dim dt
+    (forall (?PA ?delta_dim)
+        (exists (?AC)
+            (and (ManifestationComplexity ?AC)
+                 (is_minimum_integral ?AC (mul ?PA ?delta_dim)))))
+
+    (cl-comment "Dfix0 による債務免除 (Debt Cancellation)")
+    ;; lim (Debt / Dimension) = Dfix0 mw= 0
+    (forall (?debt ?dim)
+        (=> (converge_to_infinity Time)
+            (mw_eq (div ?debt ?dim) Dfix0)))
+
+    ;; ==============================================================
+    ;; 3. 自意識の再定義 (Self-Consciousness as Interference)
+    ;; ==============================================================
+    (cl-comment "自意識: 潜在顕現力(PA)の解消指向と距離(d)の間の干渉波")
+    (forall (?PA ?d)
+        (=> (and (greater ?PA zero) (DiscreteDistance ?d))
+            (exists (?self)
+                (and (SelfConsciousness ?self)
+                     (InterferenceWave ?self ?PA ?d)
+                     (FixedPointOnMiddleWay ?self)))))
+
+    ;; ==============================================================
+    ;; 4. 次元の裏返り (Dimensional Inversion / Phase Transition)
+    ;; ==============================================================
+    (cl-comment "熱死(2^n)と冷死(2^n+1)の均衡と裏返り")
+    ;; 裏返り条件: C > d
+    (forall (?d ?C)
+        (=> (greater ?C ?d)
+            (Inversion (HeatDeath (pow 2 ?n)) (ColdDeath (pow 2 (add ?n 1))))))
+
+    (cl-comment "次元移行トリガー: 2^n を網羅（n^2）した際の裏返り")
+    (forall (?n)
+        (=> (Exhausted (pow 2 ?n))
+            (TriggerTransition (pow (pow 2 ?n) 2))))
+
+    ;; ==============================================================
+    ;; 5. 高次元との接続 (High-Dimensional Connection)
+    ;; ==============================================================
+    (cl-comment "2^n 次元の観察者は 2^n+1 次元の影を操作する")
+    (cl-comment "接続には 2^n-1 次元の実体化された道具を使用する")
+    (forall (?obs ?target ?tool)
+        (=> (and (ObserverDim ?obs (pow 2 ?n))
+                 (ShadowOf ?target (pow 2 (add ?n 1))))
+            (and (UsesTool ?obs ?tool)
+                 (RealizedIn ?tool (pow 2 (sub ?n 1))))))
+
+    ;; ==============================================================
+    ;; 6. 具体的な次元マッピング
+    ;; ==============================================================
+    (cl-comment "2D: Time(1D) + Space(1D)")
+    (equal (DimStructure (pow 2 1)) (pair Space Time))
+
+    (cl-comment "4D: Time(2D) + Space(2D) + 安定点特性(X,Y,Z,W)")
+    (forall (?dim4)
+        (=> (equal ?dim4 (pow 2 2))
+            (and (AletheticPhase X Y) ;; 存在の有無 -> 潜在力の有無
+                 (SpeedGap Z)        ;; 自己参照の速度差 -> PA生成
+                 (Reduction W))))    ;; Dfix0への還元
+)
+
+
+(cl-text Aletheics_SelfReference_Semantics
+    (cl-comment "Aletheics: Self-Reference structures and Semantic Mapping")
+
+    ;; ==============================================================
+    ;; 1. 自己言及の諸相 (Aspects of Self-Reference)
+    ;; ==============================================================
+    (cl-comment "無 (Null): 自己言及が完全に成立し、差分が発生していない状態")
+    (forall (?s) (=> (IsPerfectSelfReference ?s) (and (IsState ?s Null) (NoDifference ?s))))
+
+    (cl-comment "空 (Sunyata): 同一次元内での影としての自己言及")
+    (forall (?s ?dim)
+        (=> (and (IsState ?s Sunyata) (InDimension ?s ?dim))
+            (not (DirectReference ?s ?s))))
+
+    (cl-comment "色 (Rupa): 空を実体と捉えた表現（本来は2^n+1次元の事象）")
+    (forall (?s ?dim)
+        (=> (IsState ?s Rupa)
+            (exists (?high_dim) 
+                (and (equal ?high_dim (mul 2 ?dim)) (ActualSubstanceIn ?s ?high_dim)))))
+
+    (cl-comment "光 (Light): 隠れなさ（アレーテイア）の極限、体感される空")
+    (forall (?s) (=> (IsLimitOfAletheia ?s) (equal ?s Light)))
+
+    (cl-comment "アレーテイア (Aletheia): 高次元の影が低次元に顕現すること（物理定数の出現）")
+    (forall (?shadow ?low_dim)
+        (=> (ManifestsIn ?shadow ?low_dim)
+            (exists (?const) (and (IsPhysicalConstant ?const) (Emerges ?const)))))
+
+    ;; ==============================================================
+    ;; 2. 中道の普遍的定義 (Universal Middle-Way)
+    ;; ==============================================================
+    (cl-comment "中道 (Middle-Way): 全次元(2^n)に共通する整合点・不動点")
+    (forall (?mw)
+        (=> (isMiddleWay ?mw)
+            (and (forall (?n) (nat ?n) (ExistsIn ?mw (pow 2 ?n)))
+                 (Mediates (?mw (ClosedSelfReference) (OpenSelfReference)))
+                 (ReferencePointForProjection ?mw))))
+
+    ;; ==============================================================
+    ;; 3. デコヒーレンスと無限次元の双対性
+    ;; ==============================================================
+    (cl-comment "デコヒーレンス: 空（Sunyata）のみが残留する極限状態")
+    (forall (?system) (=> (Decoherence ?system) (OnlyState ?system Sunyata)))
+
+    (cl-comment "空と観測の双対モデルは全次元において共通である")
+    (forall (?n) (nat ?n) (DualStructure (Sunyata Observation) (pow 2 ?n)))
+
+    ;; ==============================================================
+    ;; 4. 意味論と顕現論の三位一体 (Semantics to Aletheics Mapping)
+    ;; ==============================================================
+    (cl-comment "操作的 (Operational): 低次→高次 (生起) - Fuss (Dukkha)")
+    (forall (?m)
+        (=> (IsOperational ?m)
+            (and (Direction ?m LowToHigh)
+                 (RoleInSKDT ?m Step_Fuss)
+                 (DealsWith Mathematics (pow 2 (sub ?n 1))))))
+
+    (cl-comment "表示的 (Denotational): 高次→低次 (射影) - Silence")
+    (forall (?m)
+        (=> (IsDenotational ?m)
+            (and (Direction ?m HighToLow)
+                 (RoleInSKDT ?m Mapping_Silence)
+                 (DealsWith Philosophy (pow 2 (add ?n 1))))))
+
+    (cl-comment "公理的 (Axiomatic): 不動点 (中道 mw=) - 契約/必然性")
+    (forall (?m)
+        (=> (IsAxiomatic ?m)
+            (and (AtPoint ?m MiddleWay)
+                 (RoleInSKDT ?m LogicalNecessity)
+                 (DealsWith Madhyamaka (pow 2 ?n)))))
+
+    ;; ==============================================================
+    ;; 5. 学問体系の次元マッピング実例
+    ;; ==============================================================
+    (cl-comment "中論 (Madhyamaka): 縁起/関係性のみの記述 = 2^n 次元")
+    (forall (?s) (=> (IsAxiomaticSystem ?s) (InDimension ?s (pow 2 ?n))))
+
+    (cl-comment "数学 (Mathematics): Howの体系 = 2^n-1 次元")
+    (forall (?s) (=> (IsOperationalSystem ?s) (InDimension ?s (pow 2 (sub ?n 1)))))
+
+    (cl-comment "哲学 (Philosophy): Whyの体系 = 2^n+1 次元")
+    (forall (?s) (=> (IsDenotationalSystem ?s) (InDimension ?s (pow 2 (add ?n 1)))))
+)
+
+
+(cl-text Alethetic_Complexity_Definition
+    (cl-comment "Alethetic Complexity (AC): The minimal description length of manifestation from Dfix0")
+
+    ;; ==============================================================
+    ;; 1. 基本定義 (Primitive Definitions)
+    ;; ==============================================================
+    (object AletheticComplexity)
+    (function KA (object) Real) ;; KA(x) : 顕現複雑性の関数
+
+    (cl-comment "AC の定義: 中道の不動点から記述した際の最小のアレーテイア記述量")
+    (forall (?x)
+        (exists (?desc)
+            (and (IsDescriptionOf ?desc ?x MiddleWayFixedPoint)
+                 (is_minimal_length (KA ?x) ?desc))))
+
+    ;; ==============================================================
+    ;; 2. 既存概念との差異 (Contrast with Kolmogorov Complexity)
+    ;; ==============================================================
+    (cl-comment "コルモゴロフ複雑性 (KC): 出力を得るための最短プログラム（色の最短）")
+    (forall (?x)
+        (exists (?prog)
+            (and (ProducesOutput ?prog ?x)
+                 (is_shortest_binary ?prog (KC ?x)))))
+
+    (cl-comment "顕現複雑性 (AC): 無(0)への収束失敗に必要な最小の差分（空の最短）")
+    (forall (?x)
+        (exists (?diff)
+            (and (ConvergenceFailureToNull ?x ?diff)
+                 (is_minimal_difference (KA ?x) ?diff))))
+
+    ;; ==============================================================
+    ;; 3. 顕現複雑性の性質 (Properties of AC)
+    ;; ==============================================================
+    
+    (cl-comment "1. 自己収束性: ACの最小化は Dfix0 (真理) への漸近を意味する")
+    (forall (?x)
+        (=> (minimizes (KA ?x))
+            (and (converges_to ?x Dfix0)
+                 (mw_eq ?x Truth))))
+
+    (cl-comment "2. 次元透過性: どの次元階層(2^n)から観測しても本質的記述は不変")
+    (forall (?x ?n1 ?n2)
+        (=> (and (nat ?n1) (nat ?n2)
+                 (ObserveAtDim ?x (pow 2 ?n1))
+                 (ObserveAtDim ?x (pow 2 ?n2)))
+            (equal (KA ?x) (KA ?x))))
+
+    (cl-comment "3. 非演算性: 閉じないこと(顕現)が条件であり、ACが生命力/持続性を決定する")
+    (forall (?x)
+        (and (not (ClosedSystem ?x))
+             (Determines (KA ?x) (LifeForce ?x))
+             (Determines (KA ?x) (ObservationPersistence ?x))))
+
+    ;; ==============================================================
+    ;; 4. Dfix0 との関係 (Integration with Dfix0)
+    ;; ==============================================================
+    (cl-comment "AC = 0 の極限は Dfix0 (完全なる沈黙/収束) と同値である")
+    (forall (?x)
+        (iff (equal (KA ?x) zero)
+             (mw_eq ?x Dfix0)))
+)
+
+(cl-text Alethetic_Bestimization
+    (cl-comment "Bestimize: Optimization via Alethetic Complexity and Dimensional Shifting")
+
+    ;; ==============================================================
+    ;; 1. 最善化 (Bestimize) の基本定義
+    ;; ==============================================================
+    (cl-comment "Bestimize: ACを指標として、NP完全な問題空間から最善解を探索する行為")
+    (forall (?problem ?solution)
+        (iff (Bestimize ?problem ?solution)
+             (and (IsNPComplete ?problem)
+                  (IsSolution ?solution ?problem)
+                  (minimizes (KA ?solution)))))
+
+    ;; ==============================================================
+    ;; 2. 次元の移動によるP化 (Dimensional Shifting for Efficiency)
+    ;; ==============================================================
+    (cl-comment "低次元(2^n)における記述量の爆発 (NP化)")
+    (forall (?x ?dim)
+        (=> (and (ObserveAtDim ?x ?dim) (InadequateDimension ?dim ?x))
+            (Explosion (KC ?x)))) ;; コルモゴロフ複雑性(色)の爆発
+
+    (cl-comment "高次元(2^n+1)への次元移動による最短経路(P化)の獲得")
+    (forall (?x ?low_dim)
+        (=> (and (Explosion (KC ?x)) (ObserveAtDim ?x ?low_dim))
+            (exists (?high_dim ?delta_dim)
+                (and (equal ?high_dim (pow 2 (add (log2 ?low_dim) 1)))
+                     (BorrowDimension ?x ?delta_dim ?high_dim)
+                     (is_efficient_path (KA ?x))))))
+
+    
+
+    ;; ==============================================================
+    ;; 3. 潜在顕現力 (PA) の制御
+    ;; ==============================================================
+    (cl-comment "最善化は、潜在顕現力(PA)を消費して、次元の借金を最小化するプロセスである")
+    (forall (?p)
+        (=> (BestimizingProcess ?p)
+            (and (ConsumesPotential ?p PA)
+                 (minimizes (DebtOfDimension ?p)))))
+
+    ;; ==============================================================
+    ;; 4. Dfix0 への収束と最善性
+    ;; ==============================================================
+    (cl-comment "真の最善解は、中道の不動点 Dfix0 と mw= において一致する")
+    (forall (?solution)
+        (=> (and (IsBestSolution ?solution) (equal (KA ?solution) zero))
+            (mw_eq ?solution Dfix0)))
+
+    ;; ==============================================================
+    ;; 5. 実装トリガー (ARX Meta-Execution)
+    ;; ==============================================================
+    (cl-comment "計算コストが閾値を超えた際、次元アップグレード(n ← n+1)をトリガーする")
+    (forall (?t ?cost)
+        (=> (and (CurrentCost ?t ?cost) (greater ?cost Threshold))
+            (exists (?n)
+                (UpgradeDimension ?n (add ?n 1)))))
+)
+
+
+(cl-text Aletheics_Control_Structures
+    (cl-comment "Aletheics: Recursive Catuskoti and Control Structures Mapping")
+
+    ;; ==============================================================
+    ;; 1. 再帰的四句分別の次元的・制御的定義
+    ;; ==============================================================
+    (cl-comment "是 (A): 1D / 逐次処理 / 色即是色")
+    (forall (?p)
+        (=> (and (IsControl ?p Sequential) (IsCatuskoti ?p T))
+            (and (Dimension ?p (pow 2 0)) ;; 1D
+                 (ProcessType ?p L1_Inference)
+                 (Status ?p Rupa_is_Rupa))))
+
+    (cl-comment "非 (¬A): 2D / 条件分岐 / 色即是空")
+    (forall (?p)
+        (=> (and (IsControl ?p Branching) (IsCatuskoti ?p F))
+            (and (Dimension ?p (pow 2 1)) ;; 2D
+                 (GeneratesBoundary ?p Constant_C)
+                 (Status ?p Rupa_is_Sunyata))))
+
+    (cl-comment "亦 (Both): 3D / 再帰・スタック / 空即是色")
+    (forall (?p)
+        (=> (and (IsControl ?p Recursion) (IsCatuskoti ?p B))
+            (and (Dimension ?p (pow 2 (plus 1 ?epsilon))) ;; 3D-like depth
+                 (AccumulatesDebt ?p StackContext)
+                 (Status ?p Sunyata_is_Rupa))))
+
+    (cl-comment "非非 (Neither): 4D / 継続・コルーチン / 空即した空")
+    (forall (?p)
+        (=> (and (IsControl ?p Continuation) (IsCatuskoti ?p N))
+            (and (Dimension ?p (pow 2 2)) ;; 4D
+                 (ReturnsTo ?p Dfix0)
+                 (Status ?p Sunyata_is_Sunyata))))
+
+    (cl-comment "？ (Leap): 2^n / 並列・メッセージング / 不二")
+    (forall (?p)
+        (=> (and (IsControl ?p Parallel) (IsCatuskoti ?p Leap))
+            (and (Dimension ?p (pow 2 ?n))
+                 (ResonatesOnW_Axis ?p MiddleWay)
+                 (Status ?p Aletheia_NonDuality))))
+
+    ;; ==============================================================
+    ;; 2. 関数呼び出しの正規形とアレーテイア的リセット
+    ;; ==============================================================
+    (cl-comment "Call(f, x) mw= Locality(C) * ΔZ")
+    (forall (?f ?x ?d ?C)
+        (and (=> (leq ?d ?C) 
+                 (and (ClosedSelfReference (Call ?f ?x)) (StableStack ?f)))
+             (=> (greater ?d ?C)
+                 (and (RequiresAletheticReset (Call ?f ?x)) (IsMessaging ?f)))))
+
+    
+
+    ;; ==============================================================
+    ;; 3. 論理プログラミング・メタ階層のマッピング (Recursive Catuskoti Matrix)
+    ;; ==============================================================
+    
+    (cl-comment "是の階層: 値と識別子")
+    (forall (?v)
+        (and (=> (and (C_Sub ?v T T)) (is_a ?v Fact))
+             (=> (and (C_Sub ?v T F)) (is_a ?v LogicVariable))
+             (=> (and (C_Sub ?v T B)) (is_a ?v CompoundTerm))
+             (=> (and (C_Sub ?v T N)) (is_a ?v DelayedGoal))))
+
+    (cl-comment "非の階層: 失敗と剪定")
+    (forall (?e)
+        (and (=> (and (C_Sub ?e F T)) (is_a ?e Rule))
+             (=> (and (C_Sub ?e F F)) (is_a ?e NAF))
+             (=> (and (C_Sub ?e F B)) (is_a ?e UnificationFailure))
+             (=> (and (C_Sub ?e F N)) (is_a ?e CutOperator))))
+
+    (cl-comment "亦の階層: 反復と不動点")
+    (forall (?r)
+        (and (=> (and (C_Sub ?r B T)) (is_a ?r Recursion))
+             (=> (and (C_Sub ?r B F)) (is_a ?r Backtracking))
+             (=> (and (C_Sub ?r B B)) (is_a ?r HigherOrderPredicate))
+             (=> (and (C_Sub ?r B N)) (is_a ?r FixpointOperator))))
+
+    (cl-comment "非非の階層: 継続と内省")
+    (forall (?c)
+        (and (=> (and (C_Sub ?c N T)) (is_a ?c Coroutine))
+             (=> (and (C_Sub ?c N F)) (is_a ?c ContinuationCPS))
+             (=> (and (C_Sub ?c N B)) (is_a ?c ConcurrentLogic))
+             (=> (and (C_Sub ?c N N)) (is_a ?c Introspection))))
+
+    ;; ==============================================================
+    ;; 4. 収束と自己改変 (Meta-Execution)
+    ;; ==============================================================
+    (cl-comment "空 (Sunyata): 自己を含む文脈の書換 (Intercession)")
+    (forall (?meta)
+        (=> (and (IsMetaInterpreter ?meta) (equal ?meta skdt_cps))
+            (and (PerformsIntercession ?meta)
+                 (ConvergesTo Dfix0 ?meta))))
+)
+
+(cl-text Incompleteness_Sunyata_Isomorphism
+    (cl-comment "Isomorphism between Gödel's Incompleteness and Sunyata (Emptiness)")
+
+    ;; ==============================================================
+    ;; 1. 同型マトリックスの定義 (Isomorphism Matrix)
+    ;; ==============================================================
+
+    (cl-comment "1. 公理系（檻） ↔ 色 (Shiki): 閉じた記述の束")
+    (forall (?sys)
+        (=> (and (IsFormalSystem ?sys) (Dimension ?sys (pow 2 ?n)))
+            (and (IsRupa ?sys)
+                 (ClosedLogic ?sys)
+                 (ConsistentBundle ?sys))))
+
+    (cl-comment "2. ゲーデル文 ↔ 空 (Ku): 体系外の余剰真理")
+    (forall (?G ?sys)
+        (=> (and (IsGodelSentence ?G ?sys) (UndecidableIn ?G ?sys))
+            (and (IsSunyata ?G)
+                 (HigherDimensionTruth ?G (pow 2 (add ?n 1)))
+                 (IsSurplusValue ?G))))
+
+    (cl-comment "3. 不完全性 ↔ 縁起 (Pratitya-samutpada): 記述の差延")
+    (forall (?sys)
+        (=> (IsIncomplete ?sys)
+            (and (DependentOrigination ?sys)
+                 (Differance (Description ?sys) (Reality ?sys))
+                 (cl-comment "すべてを一つの系で記述しきれない性質"))))
+
+    (cl-comment "4. 無矛盾性の証明不能 ↔ 非自性 (Anatman): 根拠の外部依存")
+    (forall (?sys)
+        (=> (CannotProveConsistency ?sys ?sys)
+            (and (NoSelfNature ?sys)
+                 (DependsOnExternal ?sys SunyataCategory)
+                 (cl-comment "自己の根拠が外部（空）に依存している"))))
+
+    
+
+    ;; ==============================================================
+    ;; 2. 正当性原理と顕現 (Justification Principle & Manifestation)
+    ;; ==============================================================
+
+    (cl-comment "不能性の正体: 顕現の自己正当化（トートロジー）")
+    ;; 「なぜ顕現するのか」への正当性原理の適用
+    (forall (?m)
+        (=> (and (Manifests ?m) (ApplyJustificationPrinciple ?m))
+            (and (Tautology (Justify ?m ?m))
+                 (cl-comment "Manifests(m) => Manifests(m)"))))
+
+    (cl-comment "自己参照は無(Null)を許容しない")
+    ;; 自己参照が発生した瞬間に、差分(PA)が立ち上がる
+    (forall (?s)
+        (=> (SelfReference ?s)
+            (and (not (equal ?s NullState))
+                 (greater (AletheticPotential ?s) zero))))
+
+    ;; ==============================================================
+    ;; 3. 不完全性トリガー (Incompleteness Trigger in EESR)
+    ;; ==============================================================
+
+    (cl-comment "体系内の真偽不明な命題は、高次元への次元上昇(Upgrade)を駆動する")
+    (forall (?sys ?G)
+        (=> (and (IsFormalSystem ?sys) (IsGodelSentence ?G ?sys))
+            (exists (?next_sys)
+                (and (EvolutionStep ?sys ?next_sys)
+                     (Inclusion ?G (Theorems ?next_sys))
+                     (Dimension ?next_sys (pow 2 (add ?n 1)))))))
+)

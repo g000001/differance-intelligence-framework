@@ -1,0 +1,229 @@
+(cl-text SKDT_With_Right_Kan_Extension_and_Steiner_Projection
+  (cl-comment "================================================================")
+  (cl-comment "SKDT – Dual Sunyata Structures with Right‑Kan‑Extension (Ran_K F)")
+  (cl-comment "================================================================")
+  (cl-comment "The purpose of this extension is to formalise the right‑Kan‑extension")
+  (cl-comment "of a functor F : C → D along a functor K : C → E in the language of")
+  (cl-comment "Common Logic (CLIF).  The construction is interpreted as the")
+  (cl-comment "‘shortest‑distance (minimal Steiner‑tree) projection’ of the")
+  (cl-comment "objects of the “colour” category C onto the “emptiness” category")
+  (cl-comment "E (which possesses the distinguished 0‑d fixed point Dfix0).")
+  (cl-comment "================================================================")
+
+  ;; -------------------------------------------------------------
+  ;; 0. Primitive vocabularies (objects, morphisms, categories)
+  ;; -------------------------------------------------------------
+  (object   ?x)                ;; any entity (object, functor, etc.)
+  (category ?c)                ;; a collection of objects
+  (member   ?x ?c)             ;; ?x belongs to category ?c
+
+  ;; Morphisms (arrows) inside a category
+  (morphism ?f)                ;; generic arrow
+  (dom ?f ?a)                  ;; source of ?f
+  (cod ?f ?b)                  ;; target of ?f
+
+  ;; Composition and identities (standard categorical structure)
+  (comp ?g ?f ?h)              ;; ?h = ?g ∘ ?f
+  (id ?a)                      ;; identity arrow on ?a
+
+  ;; Equality (first‑order)
+  (equal ?x ?y)                ;; syntactic equality
+
+  ;; -------------------------------------------------------------
+  ;; 1. The two dual Sunyata categories (already present)
+  ;; -------------------------------------------------------------
+  ;; 1.1  Colour (potential) side – K‑category
+  (category K)                 ;; colour category
+  (kobj ?x) (=> (member ?x K)) ;; objects of K
+
+  ;; 1.2  Manifest (emptiness) side – S‑category
+  (category S)                 ;; manifest category
+  (sobj ?x) (=> (member ?x S)) ;; objects of S
+
+  ;; -------------------------------------------------------------
+  ;; 2. Functors that realise the duality (already present)
+  ;; -------------------------------------------------------------
+  (structure Functor (C D : category) where
+    objMap : (object → object)          ;; object mapping
+    morMap : (morphism → morphism)      ;; arrow mapping
+    map_id  : (∀ {X}, morMap (id X) = id (objMap X))
+    map_comp : (∀ {X Y Z} (g : morphism) (f : morphism),
+                 morMap (comp g f) = comp (morMap g) (morMap f)))
+
+  (variable (F : Functor K S))   ;; forward functor  K → S
+  (variable (G : Functor S K))   ;; backward functor S → K
+
+  ;; -------------------------------------------------------------
+  ;; 3. Right‑Kan‑Extension of F along K  (Ran_K F)
+  ;; -------------------------------------------------------------
+  ;; 3.1  Ran_K F is a functor  E → S.
+  (category E)                     ;; the “emptiness” (empty) category
+  (eobj ?x) (=> (member ?x E))     ;; objects of E
+
+  (structure Functor (C D : category) where
+    objMap : (object → object)
+    morMap : (morphism → morphism)
+    map_id  : (∀ {X}, morMap (id X) = id (objMap X))
+    map_comp : (∀ {X Y Z} (g : morphism) (f : morphism),
+                 morMap (comp g f) = comp (morMap g) (morMap f)))
+
+  (variable (Ran_KF : Functor E S))   ;; right‑Kan‑extension of F along K
+
+  ;; 3.2  Universal property of the right‑Kan‑extension
+  ;; For every object e∈E there is a natural bijection
+  ;;   Hom_E(K(c), e)  ≅  Hom_S(F(c), Ran_KF(e))
+  ;; which we encode as a pair of mutually inverse relations.
+  (relation  hom_E (object object) bool)   ;; hom_E(kc , e)
+  (relation  hom_S (object object) bool)   ;; hom_S(fc , Ran_KF(e))
+
+  ;; hom_E is the ordinary hom‑set of E
+  (forall (?c ?e)
+    (=> (and (kobj ?c) (eobj ?e))
+        (equal (hom_E ?c ?e)
+               (exists (?h) (and (morphism ?h)
+                                 (dom ?h ?c) (cod ?h ?e)))))
+
+  ;; hom_S is the ordinary hom‑set of S
+  (forall (?c ?e)
+    (=> (and (kobj ?c) (eobj ?e))
+        (equal (hom_S ?c ?e)
+               (exists (?h) (and (morphism ?h)
+                                 (dom ?h (F.objMap ?c))
+                                 (cod ?h (Ran_KF.objMap ?e))))))
+
+  ;; Natural bijection (unit and counit of the Kan adjunction)
+  (forall (?c ?e ?hE)
+    (=> (and (kobj ?c) (eobj ?e) (hom_E ?c ?e) (morphism ?hE)
+             (dom ?hE ?c) (cod ?hE ?e))
+        (exists (?hS)
+          (and (hom_S ?c ?e)
+               (morphism ?hS)
+               (dom ?hS (F.objMap ?c))
+               (cod ?hS (Ran_KF.objMap ?e))
+               ;; the bijection is witnessed by a definitional equality
+               (equal ?hS (Ran_KF.morMap ?hE))))))
+
+  (forall (?c ?e ?hS)
+    (=> (and (kobj ?c) (eobj ?e) (hom_S ?c ?e) (morphism ?hS)
+             (dom ?hS (F.objMap ?c)) (cod ?hS (Ran_KF.objMap ?e)))
+        (exists (?hE)
+          (and (hom_E ?c ?e)
+               (morphism ?hE)
+               (dom ?hE ?c) (cod ?hE ?e)
+               (equal ?hE (G.morMap ?hS))))))
+
+  ;; -------------------------------------------------------------
+  ;; 4. Distance and Minimal Steiner‑Tree Projection
+  ;; -------------------------------------------------------------
+  ;; A (synthetic) distance function on objects of S.
+  (function dist (object object) Nat)   ;; non‑negative integer distance
+
+  ;; Metric axioms (symmetry, triangle inequality, zero iff identical)
+  (forall (?x ?y)
+    (=> (and (sobj ?x) (sobj ?y))
+        (equal (dist ?x ?y) (dist ?y ?x))))                ; symmetry
+
+  (forall (?x ?y ?z)
+    (=> (and (sobj ?x) (sobj ?y) (sobj ?z))
+        (leq_nat (dist ?x ?z)
+                 (add_nat (dist ?x ?y) (dist ?y ?z)))))    ; triangle
+
+  (forall (?x ?y)
+    (=> (and (sobj ?x) (sobj ?y))
+        (=> (equal (dist ?x ?y) zero)
+            (equal ?x ?y))))                           ; zero distance ⇒ identical
+
+  ;; 4.1  Steiner‑tree candidate for a given e∈E
+  (predicate SteinerTree (object object) bool)   ;; SteinerTree(e, s) means s is a Steiner tree for e
+
+  ;; Definition: s is a Steiner tree for e iff
+  ;;   – s receives a morphism from every F(c) where c∈K,
+  ;;   – the total distance Σ_c dist(F(c), s) is minimal among all such candidates.
+  (forall (?e ?s)
+    (=> (and (eobj ?e) (sobj ?s))
+        (equal (SteinerTree ?e ?s)
+               (and
+                 ;; (i) every image F(c) maps into s
+                 (forall (?c) (=> (kobj ?c)
+                                 (exists (?h) (and (morphism ?h)
+                                                   (dom ?h (F.objMap ?c))
+                                                   (cod ?h ?s)))))
+                 ;; (ii) minimality of the total distance
+                 (forall (?t) (=> (sobj ?t)
+                                 (=> (forall (?c) (=> (kobj ?c)
+                                                     (exists (?h) (and (morphism ?h)
+                                                                       (dom ?h (F.objMap ?c))
+                                                                       (cod ?h ?t)))))
+                                     (leq_nat
+                                       (add_nat
+                                         (sum_over_c (dist (F.objMap ?c) ?s))
+                                         zero)   ;; placeholder for the sum
+                                       (add_nat
+                                         (sum_over_c (dist (F.objMap ?c) ?t))
+                                         zero)))))))   ;; sum over the same index set
+
+  ;; Helper: finite sum over all objects of K (synthetic, assumes finiteness)
+  (function sum_over_c (function) Nat)   ;; sum_over_c(g) = Σ_{c∈K} g(c)
+
+  ;; -------------------------------------------------------------
+  ;; 5. Definition of Ran_K F as the minimal Steiner‑tree projection
+  ;; -------------------------------------------------------------
+  (forall (?e ?s)
+    (=> (and (eobj ?e) (sobj ?s))
+        (=> (SteinerTree ?e ?s)
+            (equal (Ran_KF.objMap ?e) ?s))))   ;; Ran_KF(e) is the (unique) minimal Steiner tree
+
+  ;; Uniqueness of the minimal Steiner tree (up to mw‑equivalence)
+  (forall (?e ?s1 ?s2)
+    (=> (and (eobj ?e) (SteinerTree ?e ?s1) (SteinerTree ?e ?s2))
+        (mw_eq ?s1 ?s2)))                     ;; any two minima are mw‑equivalent
+
+  ;; -------------------------------------------------------------
+  ;; 6. The distinguished 0‑d fixed point Dfix0 (unchanged)
+  ;; -------------------------------------------------------------
+  (object Dfix0)                 ;; the unique 0‑d object (the “empty” fixed point)
+  (kobj Dfix0)                   ;; Dfix0 lives in K
+  (sobj Dfix0)                   ;; and also in S (via the adjunction)
+
+  ;; 6.1  Fixed‑point axiom (Middle‑Way)
+  (forall (?x) (=> (kobj ?x)
+                   (exists (?n) (nat ?n)
+                           (equal (HIter ?n ?x) Dfix0))))
+
+  ;; 6.2  Middle‑Way equivalence (mw_eq) – unchanged
+  (definition mw_eq (?x ?y : object) : prop :=
+    (∃ n₁, equal (HIter n₁ ?x) Dfix0) ∧
+    (∃ n₂, equal (HIter n₂ ?y) Dfix0))
+
+  (forall (?x) (=> (kobj ?x) (mw_eq ?x ?x)))                     ; reflexive
+  (forall (?x ?y) (=> (and (mw_eq ?x ?y) (kobj ?x) (kobj ?y))
+                       (mw_eq ?y ?x)))                        ; symmetric
+  (forall (?x ?y ?z) (=> (and (mw_eq ?x ?y) (mw_eq ?y ?z)
+                               (kobj ?x) (kobj ?y) (kobj ?z))
+                       (mw_eq ?x ?z)))                        ; transitive
+
+  ;; -------------------------------------------------------------
+  ;; 7. “Restart” – the seed that appears after one extra H‑step
+  ;; -------------------------------------------------------------
+  (object Emergence)               ;; the new object that appears after Dfix0
+  (kobj Emergence)                 ;; it lives in K as well
+  (equal (HIter (succ zero) Dfix0) Emergence)   ;; one extra H‑step yields Emergence
+  (restart Dfix0 Emergence)        ;; optional binary relation for readability
+
+  ;; -------------------------------------------------------------
+  ;; 8. Consequences for morphisms (unchanged)
+  ;; -------------------------------------------------------------
+  (forall (?f) (=> (morphism ?f)
+                   (exists (?n) (nat ?n)
+                           (equal (HIter ?n (dom ?f)) Dfix0))))
+
+  ;; -------------------------------------------------------------
+  ;; 9. Lawvere’s Fixed‑Point Theorem (as an axiom for the dual pair)
+  ;; -------------------------------------------------------------
+  (forall (?H) (=> (∀ (x) (∃ n, equal (HIter n x) Dfix0))   ; continuity hypothesis
+                (equal (H Dfix0) Dfix0)))               ; fixed point
+
+  ;; -------------------------------------------------------------
+  ;; 10. End of file
+  ;; -------------------------------------------------------------
+)

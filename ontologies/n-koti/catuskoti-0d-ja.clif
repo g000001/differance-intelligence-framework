@@ -1,0 +1,346 @@
+;; ==============================================================
+;; Catuskoti‑0d‑ja – Common Logic formalisation
+;; --------------------------------------------------------------
+;; Title   : 四句分別と 0‑d 固定点（空即是色） の形式化
+;; Author  : (your name)
+;; Date    : 2024‑10‑08
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : 四句分別と 0‑d 固定点（空即是色） の形式化")
+(cl-comment "Author  : (your name)")
+(cl-comment "Date    : 2024-10-08")
+(cl-comment "Version : 1.0")
+(cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies
+;; --------------------------------------------------------------
+
+;; Basic notions
+(object   ?x)                ;; any entity (object, sub‑category, etc.)
+(category ?c)                ;; a collection of objects
+(member   ?x ?c)             ;; ?x belongs to category ?c
+
+;; Morphisms (used for the embedding / projection pair)
+(morphism ?f)                ;; generic arrow
+(dom ?f ?a)                  ;; source of ?f
+(cod ?f ?b)                  ;; target of ?f
+(comp ?g ?f ?h)              ;; ?h = ?g ∘ ?f
+(id ?a)                      ;; identity arrow on ?a
+
+;; Equality (first‑order)
+(equal ?x ?y)                ;; syntactic equality
+
+;; --------------------------------------------------------------
+;; 1. The four Catuskoti truth values (T, F, B, N)
+;; --------------------------------------------------------------
+
+(object T)   (catuskoti T T)   (jp_name T "是")   (tib_name T "ནང་སྟོང་པ་ཉིད།")
+(object F)   (catuskoti F F)   (jp_name F "非")   (tib_name F "ཕྱི་སྟོང་པ་ཉད།")
+(object B)   (catuskoti B B)   (jp_name B "亦")   (tib_name B "ཕྱི་ནང་སྟོང་པ་ཉད།")
+(object N)   (catuskoti N N)   (jp_name N "非非") (tib_name N "སྟོང་པ་ཉད་སྟོང་པ་ཉད།")
+
+;; --------------------------------------------------------------
+;; 2. The Belnap‑Dunn lattice (information‑order ⊑ᵢ and truth‑order ⊑ₜ)
+;; --------------------------------------------------------------
+
+;; Information order (⊑ᵢ)
+(info_le N T) (info_le N F) (info_le T B) (info_le F B)
+
+;; Truth order (⊑ₜ)
+(truth_le T B) (truth_le N T) (truth_le N F)
+
+;; --------------------------------------------------------------
+;; 3. The 0‑dimensional fixed point Dfix0 (空即是色)
+;; --------------------------------------------------------------
+
+(object Dfix0)                ;; the unique 0‑d object
+;; Dfix0 has zero informational length K and zero temporal length ℓ
+(function K (object) nat)    ;; informational length
+(function L (object) nat)    ;; temporal length
+(equal (K Dfix0) 0)
+(equal (L Dfix0) 0)
+
+;; Norm (distance) ‖X‖ = K(X) + L(X)
+(function norm (object) nat)
+(forall (?x) (=> (object ?x)
+                 (equal (norm ?x) (add (K ?x) (L ?x)))))
+
+;; Uniqueness of the zero‑norm object
+(forall (?x) (=> (and (object ?x) (equal (norm ?x) 0))
+                 (equal ?x Dfix0)))
+
+;; --------------------------------------------------------------
+;; 4. Embedding ι : K → P (adds one unit of time) and
+;;    Projection φ : P → K (removes that unit)
+;; --------------------------------------------------------------
+
+(category K)                  ;; “potential” side (objects with only K‑information)
+(category P)                  ;; “time‑augmented” side (objects with an extra time token)
+
+;; Embedding ι
+(function iota (object) object)   ;; ι : K → P
+(forall (?x) (=> (member ?x K)
+                 (and (member (iota ?x) P)
+                      (equal (K (iota ?x)) (K ?x))          ; K unchanged
+                      (equal (L (iota ?x)) (add (L ?x) 1))))) ; ℓ increased by 1
+
+;; Projection φ
+(function phi (object) object)    ;; φ : P → K
+(forall (?y) (=> (member ?y P)
+                 (and (member (phi ?y) K)
+                      (equal (K (phi ?y)) (K ?y))          ; K unchanged
+                      (equal (L (phi ?y)) (sub (L ?y) 1))))) ; ℓ decreased by 1
+
+;; Splitting property: φ ∘ ι = id_K
+(forall (?x) (=> (member ?x K)
+                 (equal (phi (iota ?x)) ?x)))
+
+;; --------------------------------------------------------------
+;; 5. The composite endofunctor H = φ ∘ ι on K and its iteration
+;; --------------------------------------------------------------
+
+(defun H (object) object)               ;; H(x) = φ(ι(x))
+(forall (?x) (=> (member ?x K)
+                 (equal (H ?x) (phi (iota ?x)))))
+
+(defun HIter (nat object) object)       ;; HIter n x = Hⁿ(x)
+(forall (?x) (equal (HIter 0 ?x) ?x))   ;; 0‑th iteration = identity
+(forall (?n ?x) (=> (nat ?n) (object ?x)
+                 (equal (HIter (succ ?n) ?x)
+                        (H (HIter ?n ?x)))))   ;; recursion step
+
+;; --------------------------------------------------------------
+;; 6. Middle‑Way equivalence (mw=) and convergence to Dfix0
+;; --------------------------------------------------------------
+
+;; Two objects are middle‑way equivalent iff they both converge
+;; (by some number of H‑iterations) to Dfix0.
+(definition mw_eq (?x ?y) : prop :=
+  (∃ n₁, equal (HIter n₁ ?x) Dfix0) ∧
+  (∃ n₂, equal (HIter n₂ ?y) Dfix0))
+
+;; mw_eq is an equivalence relation on K‑objects
+(forall (?x) (=> (member ?x K) (mw_eq ?x ?x)))                     ; reflexive
+(forall (?x ?y) (=> (and (mw_eq ?x ?y) (member ?x K) (member ?y K))
+                       (mw_eq ?y ?x)))                            ; symmetric
+(forall (?x ?y ?z) (=> (and (mw_eq ?x ?y) (mw_eq ?y ?z)
+                           (member ?x K) (member ?y K) (member ?z K))
+                       (mw_eq ?x ?z)))                            ; transitive
+
+;; Middle‑Way axiom: every K‑object converges to Dfix0 after finitely many H‑steps
+(forall (?x) (=> (member ?x K)
+                 (∃ n, nat n ∧ equal (HIter n ?x) Dfix0)))
+
+;; --------------------------------------------------------------
+;; 7. Restart (the “seed”) – after reaching Dfix0 one more H‑step
+;; --------------------------------------------------------------
+
+(object Emergence)                ;; the object that appears after the extra step
+(member Emergence K)              ;; it lives again in K
+
+;; Axiom: H(Dfix0) = Emergence
+(equal (H Dfix0) Emergence)
+
+;; Optional binary relation “restart” for readability
+(restart Dfix0 Emergence)
+
+;; --------------------------------------------------------------
+;; 8. Consequence for morphisms (any arrow’s source converges)
+;; --------------------------------------------------------------
+
+(forall (?f) (=> (morphism ?f)
+                 (∃ n, nat n ∧ equal (HIter n (dom ?f)) Dfix0)))
+
+;; --------------------------------------------------------------
+;; 9. The sixteen emptinesses (四句分別の十六空) as sub‑categories
+;; --------------------------------------------------------------
+
+;; Each emptiness is a *sub‑category* (i.e. an object that belongs to a
+;; higher‑level category).  We record the Japanese name, the Tibetan
+;; transliteration, the logical role, and the Catuskoti value it
+;; corresponds to.
+
+;; ---- Group 1 (是‑group) ----
+(object T1) (jp_name T1 "内空") (tib_name T1 "ནང་སྟོང་པ་ཉད།")
+          (role T1 "inner emptiness – the subject (五蘊) is taken as existing")
+          (catuskoti T1 T) (member T1 G_T)
+
+(object T2) (jp_name T2 "外空") (tib_name T2 "ཕྱི་སྟོང་པ་ཉད།")
+          (role T2 "outer emptiness – the object (色・形) is taken as existing")
+          (catuskoti T2 F) (member T2 G_T)
+
+(object T3) (jp_name T3 "内外空") (tib_name T3 "ཕྱི་ནང་སྟོང་པ་ཉད།")
+          (role T3 "inner‑outer emptiness – both subject and object are taken as existing")
+          (catuskoti T3 B) (member T3 G_T)
+
+(object T4) (jp_name T4 "空空") (tib_name T4 "སྟོང་པ་ཉད་སྟོང་པ་ཉད།")
+          (role T4 "emptiness‑emptiness – the very notion of emptiness is taken as existing")
+          (catuskoti T4 N) (member T4 G_T)
+
+;; ---- Group 2 (非‑group) ----
+(object F1) (jp_name F1 "大空") (tib_name F1 "ཆེན་པོ་སྟོང་པ་ཉད།")
+          (role F1 "great emptiness – the absolute void is taken as non‑existent")
+          (catuskoti F1 T) (member F1 G_F)
+
+(object F2) (jp_name F2 "勝義空") (tib_name F2 "དོན་དམ་པ་སྟོང་པ་ཉད།")
+          (role F2 "ultimate‑meaning emptiness – nirvāṇa reduced to mere nothingness")
+          (catuskoti F2 F) (member F2 G_F)
+
+(object F3) (jp_name F3 "有為空") (tib_name F3 "འདུས་བྱས་སྟོང་པ་ཉད།")
+          (role F3 "constructed emptiness – all created things are deemed void")
+          (catuskoti F3 B) (member F3 G_F)
+
+(object F4) (jp_name F4 "無為空") (tib_name F4 "འདུས་མ་བྱས་སྟོང་པ་ཉད།")
+          (role F4 "non‑constructed emptiness – conceptual non‑action is taken as void")
+          (catuskoti F4 N) (member F4 G_F)
+
+;; ---- Group 3 (亦‑group) ----
+(object B1) (jp_name B1 "畢竟空") (tib_name B1 "མཐའ་ལས་འདས་པ་སྟོང་པ་ཉད།")
+          (role B1 "ultimate‑co‑emptiness – opposing concepts coexist as existent")
+          (catuskoti B1 T) (member B1 G_B)
+
+(object B2) (jp_name B2 "無始空") (tib_name B2 "ཐོག་མ་དང་མཐའ་མ་མེད་པ་སྟོང་པ་ཉད།")
+          (role B2 "no‑beginning emptiness – beginning and end coexist")
+          (catuskoti B2 F) (member B2 G_B)
+
+(object B3) (jp_name B3 "散空") (tib_name B3 "དོར་བ་མེད་པ་སྟོང་པ་ཉད།")
+          (role B3 "scattered emptiness – discrete existence and continuity coexist")
+          (catuskoti B3 B) (member B3 G_B)
+
+(object B4) (jp_name B4 "自性空") (tib_name B4 "རང་བཞིན་སྟོང་པ་ཉད།")
+          (role B4 "essential‑nature emptiness – presence/absence of essence coexist")
+          (catuskoti B4 N) (member B4 G_B)
+
+
+;; ---- Group 4 (非非‑group) ----
+(object N1) (jp_name N1 "一切法空") (tib_name N1 "ཆོས་ཐམས་ཅད་སྟོང་པ་ཉད།")
+          (role N1 "all dharmas emptiness – all phenomena are taken as beyond existence")
+          (catuskoti N1 T) (member N1 G_N)
+
+(object N2) (jp_name N2 "自相空") (tib_name N2 "རང་གི་མཚན་ཉད་སྟོང་པ་ཉད།")
+          (role N2 "self‑characteristic emptiness – individual features are beyond existence")
+          (catuskoti N2 F) (member N2 G_N)
+
+(object N3) (jp_name N3 "不可得空") (tib_name N3 "མི་དམིགས་པ་སྟོང་པ་ཉད།")
+          (role N3 "unobtainable emptiness – worldly phenomena cannot be attained as existent")
+          (catuskoti N3 B) (member N3 G_N)
+
+(object N4) (jp_name N4 "無物自性空") (tib_name N4 "དངོས་པོ་མེད་པའི་ངོ་བོ་ཉད་སྟོང་པ་ཉད།")
+          (role N4 "non‑substantial self‑nature emptiness – the worldly object is denied, but the ultimate self‑nature remains")
+          (catuskoti N4 N) (member N4 G_N)
+
+;; --------------------------------------------------------------
+;; 10. Definition of the four groups as categories
+;; --------------------------------------------------------------
+
+(category G_T)   (jp_name G_T "是‑group")   (tib_name G_T "Group of 是")
+(category G_F)   (jp_name G_F "非‑group")   (tib_name G_F "Group of 非")
+(category G_B)   (jp_name G_B "亦‑group")   (tib_name G_B "Group of 亦")
+(category G_N)   (jp_name G_N "非非‑group") (tib_name G_N "Group of 非非")
+
+;; --------------------------------------------------------------
+;; 11. Constraints: each group contains exactly one member of each
+;;     Catuskoti value (T, F, B, N)
+;; --------------------------------------------------------------
+
+;; Helper: “has‑value” predicate for brevity
+(has_value ?x ?v) (=> (member ?x ?c) (catuskoti ?x ?v))
+
+;; Group G_T
+(forall (?x) (=> (member ?x G_T) (or (catuskoti ?x T)
+                                      (catuskoti ?x F)
+                                      (catuskoti ?x B)
+                                      (catuskoti ?x N))))
+;; Ensure each value appears at least once in G_T
+(exists (?x) (and (member ?x G_T) (catuskoti ?x T)))
+(exists (?x) (and (member ?x G_T) (catuskoti ?x F)))
+(exists (?x) (and (member ?x G_T) (catuskoti ?x B)))
+(exists (?x) (and (member ?x G_T) (catuskoti ?x N)))
+
+;; Group G_F
+(forall (?x) (=> (member ?x G_F) (or (catuskoti ?x T)
+                                      (catuskoti ?x F)
+                                      (catuskoti ?x B)
+                                      (catuskoti ?x N))))
+(exists (?x) (and (member ?x G_F) (catuskoti ?x T)))
+(exists (?x) (and (member ?x G_F) (catuskoti ?x F)))
+(exists (?x) (and (member ?x G_F) (catuskoti ?x B)))
+(exists (?x) (and (member ?x G_F) (catuskoti ?x N)))
+
+;; Group G_B
+(forall (?x) (=> (member ?x G_B) (or (catuskoti ?x T)
+                                      (catuskoti ?x F)
+                                      (catuskoti ?x B)
+                                      (catuskoti ?x N))))
+(exists (?x) (and (member ?x G_B) (catuskoti ?x T)))
+(exists (?x) (and (member ?x G_B) (catuskoti ?x F)))
+(exists (?x) (and (member ?x G_B) (catuskoti ?x B)))
+(exists (?x) (and (member ?x G_B) (catuskoti ?x N)))
+
+;; Group G_N
+(forall (?x) (=> (member ?x G_N) (or (catuskoti ?x T)
+                                      (catuskoti ?x F)
+                                      (catuskoti ?x B)
+                                      (catuskoti ?x N))))
+(exists (?x) (and (member ?x G_N) (catuskoti ?x T)))
+(exists (?x) (and (member ?x G_N) (catuskoti ?x F)))
+(exists (?x) (and (member ?x G_N) (catuskoti ?x B)))
+(exists (?x) (and (member ?x G_N) (catuskoti ?x N)))
+
+;; --------------------------------------------------------------
+;; 12. Disjointness of the four groups
+;; --------------------------------------------------------------
+
+(forall (?x) (=> (and (member ?x G_T) (member ?x G_F)) false))
+(forall (?x) (=> (and (member ?x G_T) (member ?x G_B)) false))
+(forall (?x) (=> (and (member ?x G_T) (member ?x G_N)) false))
+(forall (?x) (=> (and (member ?x G_F) (member ?x G_B)) false))
+(forall (?x) (=> (and (member ?x G_F) (member ?x G_N)) false))
+(forall (?x) (=> (and (member ?x G_B) (member ?x G_N)) false))
+
+;; --------------------------------------------------------------
+;; 13. Example queries (commented out – uncomment to use)
+;; --------------------------------------------------------------
+
+;; 13.1  List all sub‑categories belonging to the value B (亦)
+;; (exists (?x) (and (member ?x G_T) (catuskoti ?x B)))
+;; (exists (?x) (and (member ?x G_F) (catuskoti ?x B)))
+;; (exists (?x) (and (member ?x G_B) (catuskoti ?x B)))
+;; (exists (?x) (and (member ?x G_N) (catuskoti ?x B)))
+
+;; 13.2  Retrieve the Tibetan name of the “内空” entry
+;; (tib_name T1 ?tib)
+
+;; 13.3  Show the role description for every member of the “非‑group”
+;; (forall (?x) (=> (member ?x G_F) (and (jp_name ?x ?jn) (role ?x ?rl))))
+
+;; --------------------------------------------------------------
+;; 14. Closing remarks
+;; --------------------------------------------------------------
+
+(cl-comment "The above CLIF file captures the full taxonomy presented in")
+(cl-comment "'catuskoti‑0d‑ja.pdf':")
+(cl-comment "- Four logical values (是, 非, 亦, 非非) as first‑order objects.")
+(cl-comment "- Two partial orders (information and truth) forming the Belnap‑Dunn lattice.")
+(cl-comment "  These orders are encoded by the predicates info_le and truth_le.")
+(cl-comment "- The distinguished 0‑d fixed point Dfix0 with norm 0 (K=0, ℓ=0).")
+(cl-comment "- Embedding ι and projection φ, their composite H = φ∘ι, and its iteration.")
+(cl-comment "- Middle‑Way equivalence mw_eq defined via convergence to Dfix0.")
+(cl-comment "- Restart axiom: after reaching Dfix0, one more H‑step yields Emergence.")
+(cl-comment "- Sixteen emptinesses are represented as objects (T1…N4) with")
+(cl-comment "  Japanese names, Tibetan transliterations, logical roles and")
+(cl-comment "  their associated Catuskoti value.")
+(cl-comment "- Four groups (是‑group, 非‑group, 亦‑group, 非非‑group) are modelled")
+(cl-comment "  as categories G_T, G_F, G_B, G_N, each containing exactly one")
+(cl-comment "  member of each Catuskoti value, and the groups are pairwise disjoint.")
+(cl-comment "All constraints are expressed as first‑order axioms, so the")
+(cl-comment "entire theory resides within classical first‑order logic,")
+(cl-comment "making it amenable to automated reasoning tools that support")
+(cl-comment "the Common Logic Interchange Format.")
+
+;; --------------------------------------------------------------
+;; End of file
+;; --------------------------------------------------------------

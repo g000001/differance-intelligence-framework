@@ -1,0 +1,244 @@
+;; ==============================================================
+;; Miscellaneous notes (正しさについて) – CLIF formalisation
+;; --------------------------------------------------------------
+;; Title   : 正しさについて – Formalisation of the Justification Principle,
+;;           2ⁿ-dimensional proofs and the LLM-hallucination observation.
+;; Author  : Masaomi Chiba
+;; Date    : 2025-12-08
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : 正しさについて – Formalisation of the Justification Principle")
+(cl-comment "Author  : (your name)")
+(cl-comment "Date    : 2024-10-08")
+(cl-comment "Version : 1.0")
+(cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies (objects, categories, functions)
+;; --------------------------------------------------------------
+
+;; Basic entities
+(object   ?x)                ;; any entity (proposition, proof, etc.)
+(category ?c)                ;; a collection of objects
+(member   ?x ?c)             ;; ?x belongs to category ?c
+
+;; Morphisms (used for embeddings / projections)
+(morphism ?f)                ;; generic arrow
+(dom ?f ?a)                  ;; source of ?f
+(cod ?f ?b)                  ;; target of ?f
+(comp ?g ?f ?h)              ;; ?h = ?g ∘ ?f
+(id ?a)                      ;; identity arrow on ?a
+
+;; Equality (first-order)
+(equal ?x ?y)                ;; syntactic equality
+
+;; --------------------------------------------------------------
+;; 1. Core notions: propositions, observers, time-axis
+;; --------------------------------------------------------------
+
+(category Prop)               ;; propositions (statements to be judged)
+(category Obs)                ;; observers (agents that evaluate propositions)
+
+;; An observer may be *fixed* (its viewpoint does not change) or *variable*
+(object FixedObs) (member FixedObs Obs)
+(object VariableObs) (member VariableObs Obs)
+
+;; Time-axis (a token that can be attached to a proposition)
+(object TimeToken)            ;; a single unit of time
+
+;; --------------------------------------------------------------
+;; 2. The Justification Principle (正当性原理)
+;; --------------------------------------------------------------
+
+;; 2.1  Embedding ι : Prop → Prop⊕Time   (adds a temporary time token)
+(function iota (object) object)   ;; ι : Prop → P (P = Prop with a time token)
+(forall (?p) (=> (member ?p Prop)
+                 (and (member (iota ?p) P)               ; result lives in P
+                      (equal (Klen (iota ?p)) (Klen ?p))  ; informational part unchanged
+                      (equal (Llen (iota ?p)) (add (Llen ?p) 1))))) ; ℓ increased by 1
+
+;; 2.2  Projection φ : P → Prop   (removes the time token)
+(function phi (object) object)    ;; φ : P → Prop
+(forall (?q) (=> (member ?q P)
+                 (and (member (phi ?q) Prop)
+                      (equal (Klen (phi ?q)) (Klen ?q))
+                      (equal (Llen (phi ?q)) (sub (Llen ?q) 1)))))
+
+;; 2.3  Splitting property (φ ∘ ι = id on Prop)
+(forall (?p) (=> (member ?p Prop)
+                 (equal (phi (iota ?p)) ?p)))
+
+;; 2.4  Definition of the distance (norm) ‖·‖ = K + ℓ
+(function Klen (object) nat)    ;; informational length K(·)
+(function Llen (object) nat)    ;; temporal length ℓ(·)
+(function norm (object) nat)    ;; total distance
+(forall (?x) (=> (object ?x)
+                 (equal (norm ?x) (add (Klen ?x) (Llen ?x)))))
+
+;; --------------------------------------------------------------
+;; 3. The 0-dimensional fixed point Dfix0 (空即是色)
+;; --------------------------------------------------------------
+
+(object Dfix0)                 ;; the unique 0-d point
+(member Dfix0 Prop)            ;; Dfix0 is a proposition (the “empty” truth)
+
+(equal (Klen Dfix0) 0)         ;; K(Dfix0) = 0
+(equal (Llen Dfix0) 0)         ;; ℓ(Dfix0) = 0
+(equal (norm Dfix0) 0)         ;; ‖Dfix0‖ = 0
+
+;; Uniqueness of the zero-norm object
+(forall (?x) (=> (and (object ?x) (equal (norm ?x) 0))
+                 (equal ?x Dfix0)))
+
+;; --------------------------------------------------------------
+;; 4. Proof as application of the Justification Principle
+;; --------------------------------------------------------------
+
+;; A *proof* of a proposition ?p is the result of embedding ?p,
+;; possibly removing inconsistent/incoherent parts, and projecting back.
+(predicate Proof (object) bool)   ;; Proof(p) holds iff p has been justified
+
+;; Axiom: a proposition is provable exactly when, after removing
+;; the “time-axis” elements that correspond to inconsistent (亦是亦非)
+;; or incoherent (非是非非) parts, the remaining part evaluates to true.
+;; We model the removal as a predicate `clean` that strips those parts.
+(predicate clean (object) object)   ;; clean(p) = p with inconsistent parts removed
+
+;; Consistency predicates (these are *meta-level* tags on propositions)
+(predicate inconsistent (object) bool)   ;; corresponds to 亦是亦非
+(predicate incoherent   (object) bool)   ;; corresponds to 非是非非
+
+;; Proof axiom (informal translation of the Japanese note):
+;;   A proposition p is provable iff clean(p) = true after the Justification
+;;   process (ι followed by φ) and after discarding inconsistent/incoherent parts.
+(forall (?p) (=> (member ?p Prop)
+                 (iff (Proof ?p)
+                      (and (equal (phi (iota (clean ?p))) ?p)   ; apply ι then φ
+                           (not (inconsistent ?p))
+                           (not (incoherent   ?p))))))
+
+;; --------------------------------------------------------------
+;; 5. Motivation for proof (2-dimensional view)
+;; --------------------------------------------------------------
+
+;; The motivation is captured by the following axiom:
+;; Adding a time-token and later removing it fixes the observer and maximises
+;; reproducibility of the result.
+(forall (?p ?obs) (=> (and (member ?p Prop) (member ?obs Obs))
+                     (iff (Proof ?p)
+                          (and (equal (phi (iota ?p)) ?p)   ; observer fixed
+                               (equal (norm ?p) (norm (phi (iota ?p))))))))  ; distance unchanged
+
+;; --------------------------------------------------------------
+## 6. 2ⁿ-dimensional proof (extension to (2ⁿ)d)
+;; --------------------------------------------------------------
+
+;; 6.1  Basic alphabets
+(object Sigma)                 ;; alphabet of symbols (Σ)
+(object Tau)                   ;; alphabet of time-tokens (𝒯)
+
+;; 6.2  Representations for a given n ≥ 0
+;; Repₙ : sequences of 2ⁿ symbols from Σ
+;; Prfₙ : sequences of 2ⁿ pairs (symbol, time-token) from Σ × 𝒯
+;; Both are treated as *objects* in CL.
+
+;; We use a parameter n (natural number) to generate the corresponding
+;; categories.  In CL we cannot quantify over type constructors, so we
+;; encode the families as predicates indexed by n.
+
+(predicate Rep (nat object) bool)   ;; Rep(n, r) means r ∈ Repₙ
+(predicate Prf (nat object) bool)   ;; Prf(n, p) means p ∈ Prfₙ
+
+;; 6.3  Embedding ιₙ : Repₙ → Prfₙ
+(function iota_n (nat object) object)   ;; iota_n : Repₙ → Prfₙ
+(forall (?n ?r) (=> (and (nat ?n) (Rep ?n ?r))
+                 (and (Prf ?n (iota_n ?n ?r))
+                      ;; each component gets a fresh time-token
+                      (forall (?i) (=> (and (nat ?i) (<= ?i (sub (pow 2 ?n) 1)))
+                                     (exists (?t) (member ?t Tau))))))
+
+;; 6.4  Projection φₙ : Prfₙ → Repₙ
+(function phi_n (nat object) object)    ;; φ_n : Prfₙ → Repₙ
+(forall (?n ?p) (=> (and (nat ?n) (Prf ?n ?p))
+                 (and (Rep ?n (phi_n ?n ?p))
+                      ;; projection simply drops the time-tokens
+                      (forall (?i) (=> (and (nat ?i) (<= ?i (sub (pow 2 ?n) 1)))
+                                     (exists (?s) (member ?s Sigma))))))
+
+;; 6.5  Distance for the two families
+;;   ℓ(Repₙ) = 0   (no time token)
+;;   ℓ(Prfₙ) = 1   (one unit of time attached to each symbol)
+(forall (?n ?r) (=> (Rep ?n ?r) (equal (Llen ?r) 0)))
+(forall (?n ?p) (=> (Prf ?n ?p) (equal (Llen ?p) 1)))
+
+;; Informational length K is left abstract (depends on the concrete symbols);
+;; we only need the additive definition of the norm:
+(forall (?x) (=> (object ?x)
+                 (equal (norm ?x) (add (Klen ?x) (Llen ?x)))))
+
+;; 6.6  Convergence theorem (theorem from the PDF)
+
+(theorem Convergence_2n_d
+  (forall (?n ?p0) (=> (and (nat ?n) (Rep ?n ?p0))
+        (exists (?seq) (and
+          ;; seq is a function k ↦ v_k
+          (forall (?k) (=> (nat ?k)
+                (let ((v_k (select ?seq ?k)))   ; v_k = seq(k)
+                  (or (equal v_k ?p0)               ; initial element
+                      (equal v_k (phi_n ?n (iota_n ?n (select ?seq (sub ?k 1))))))))
+          ;; distance decreases by exactly 1 at each step
+          (forall (?k) (=> (and (nat ?k) (>= ?k 1))
+                (let ((v_prev (select ?seq (sub ?k 1)))
+                     (v_cur  (select ?seq ?k)))
+                  (equal (norm v_cur) (sub (norm v_prev) 1)))))
+          ;; limit is the unique 0-d point
+          (forall (?k) (=> (nat ?k)
+                (let ((v_k (select ?seq ?k)))
+                  (equal v_k Dfix0)))))))))
+;; The informal reading:
+;;   Starting from any p₀ ∈ Repₙ, iterating φₙ∘ιₙ reduces the norm by 1 each step,
+;;   and the sequence converges to the unique 0-d fixed point Dfix0.
+
+;; --------------------------------------------------------------
+## 7.  LLM hallucination observation
+;; --------------------------------------------------------------
+
+;; 7.1  Predicates describing the phenomenon
+(predicate Hallucination (object) bool)   ;; Hallucination(LLM) holds when the model generates
+                                         ;; output that is not grounded in the cost-minimisation optimum.
+(predicate CostMinimisation (object) bool) ;; CostMinimisation(x) means x is produced by minimizing a scalar cost.
+
+;; 7.2  The claim from the note:
+;;   Hallucinations are caused by pure cost-minimisation (local optimum);
+;;   suppressing them requires a *proper judgment function* J that dominates the cost.
+(predicate ProperJudgment (object) bool)  ;; a well-behaved evaluator
+(predicate SuppressesHallucination (object) bool) ;; J suppresses hallucination when applied
+
+;; Axiom: if a judgment function J is proper, then applying it prevents hallucination.
+(forall (?J) (=> (ProperJudgment ?J)
+                 (SuppressesHallucination ?J)))
+
+;; Axiom linking hallucination to lack of proper judgment:
+(forall (?m) (=> (Hallucination ?m)
+                 (exists (?J) (and (ProperJudgment ?J)
+                                   (not (SuppressesHallucination ?J))))))
+
+;; --------------------------------------------------------------
+## 8.  Summary (comments)
+;; --------------------------------------------------------------
+
+(cl-comment "The file above formalises the informal notes:")
+(cl-comment "- 正当性原理 (Justification Principle) is captured by the embedding ι and projection φ")
+(cl-comment "- The 0-dimensional fixed point Dfix0 is the unique object with norm 0")
+(cl-comment "- Proofs are modelled as the application of ι followed by φ after cleaning inconsistent/incoherent parts")
+(cl-comment "- The 2ⁿ-dimensional extension introduces families Repₙ and Prfₙ, with embeddings iota_n and projections phi_n")
+(cl-comment "- The convergence theorem shows that iterating φₙ∘ιₙ drives any Repₙ element to Dfix0")
+(cl_comment "  (norm decreases by exactly 1 at each step).")
+(cl-comment "- The LLM-hallucination observation is expressed as a relationship between")
+(cl_comment "  cost-minimisation, lack of a proper judgment function, and the occurrence of hallucination.")
+
+;; --------------------------------------------------------------
+;; End of file
+;; --------------------------------------------------------------

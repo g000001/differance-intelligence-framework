@@ -1,0 +1,196 @@
+(cl-text Negation_as_Meta_Operation
+  (cl-comment "==============================================================")
+  (cl-comment "Negation as a meta‑operation viewed from a higher dimension")
+  (cl-comment "==============================================================")
+
+  ;; -------------------------------------------------------------
+  ;; 0. 基本的な型・関数
+  ;; -------------------------------------------------------------
+  (object Nat)                     ;; 自然数（次元指数）
+  (object Real)                    ;; 実数（距離・スコア等）
+  (object Space)                   ;; 空間軸（是）
+  (object Time)                    ;; 時間軸（非）
+
+  ;; 次元を 2 のべき乗で表す関数
+  (function pow2 (Nat) Nat)        ;; pow2(n) = 2ⁿ
+  (equal (pow2 zero) (succ zero)) ;; 2⁰ = 1
+  (forall (?n) (=> (nat ?n)
+                   (equal (pow2 (succ ?n))
+                          (mul_nat (succ (succ zero)) (pow2 ?n))))) ;; 2^{n+1}=2·2ⁿ
+
+  ;; 任意の対象に対して「次元」を付与する関数
+  (function dim (object) Nat)     ;; dim(x) = 2ⁿ という自然数
+
+  ;; -------------------------------------------------------------
+  ;; 1. 否定 (neg) の定義
+  ;; -------------------------------------------------------------
+  (function neg (object) object)   ;; 否定は対象を別次元へ写す
+  (cl-comment "neg は次元を 1 段階上げ、同時に情報量（norm）を 1 減少させる")
+  (forall (?x ?n)
+    (=> (and (object ?x) (nat ?n) (equal (dim ?x) (pow2 ?n)))
+        (and (object (neg ?x))
+             (equal (dim (neg ?x)) (pow2 (add_nat ?n (succ zero))))))) ;; dim ↑ 1
+
+  ;; -------------------------------------------------------------
+  ;; 2. メタ次元から見た否定の解釈
+  ;; -------------------------------------------------------------
+  (cl-comment "上位次元から見ると、neg は単なる「写像」(meta‑operation) である")
+  (cl-comment "すなわち、neg(x) は x の情報を higher‑dimensional space に投影する操作")
+  (predicate MetaView (object object) bool)   ;; MetaView(higher, lower) が成り立つ
+
+  (forall (?x ?y)
+    (=> (and (object ?x) (object ?y) (equal ?y (neg ?x)))
+        (MetaView ?y ?x)))                     ;; lower → higher が meta‑view
+
+  ;; -------------------------------------------------------------
+  ;; 3. 中道等価 (mw_eq) と 0‑d 固定点 Dfix0
+  ;; -------------------------------------------------------------
+  (object Dfix0)                               ;; 0‑d の空（中道固定点）
+  (predicate mw_eq (object object) bool)       ;; Middle‑Way 等価
+
+  (cl-comment "mw_eq は iterate_GF の反復で Dfix0 に収束すれば成立する")
+  (forall (?z)
+    (=> (and (object ?z) (equal (norm ?z) zero))
+        (mw_eq ?z Dfix0)))
+
+  ;; -------------------------------------------------------------
+  ;; 4. 例示的な次元階層と否定の系列
+  ;; -------------------------------------------------------------
+  (cl-comment "P は基底次元 2ⁿ、¬P は 2ⁿ⁺¹、¬¬P は 2ⁿ⁺² …")
+  (object P)                                   ;; 任意の命題
+  (forall (?n)
+    (=> (nat ?n)
+        (and (equal (dim P) (pow2 ?n))
+             (equal (dim (neg P)) (pow2 (add_nat ?n (succ zero))))   ;; ¬P
+             (equal (dim (neg (neg P))) (pow2 (add_nat ?n (succ (succ zero))))) ;; ¬¬P
+             (equal (dim (neg (neg (neg P)))) (pow2 (add_nat ?n (succ (succ (succ zero))))) ;; ¬¬¬P
+             (equal (dim (neg (neg (neg (neg P))))) (pow2 (add_nat ?n (succ (succ (succ (succ zero))))))))) ));; ¬¬¬¬P
+
+  (cl-comment "4 回の否定は次元 2ⁿ⁺⁴ に到達し、これが Dfix0 と mw_eq で同一視できる")
+  (forall (?n)
+    (=> (nat ?n)
+        (mw_eq (neg (neg (neg (neg P)))) Dfix0)))
+
+  ;; -------------------------------------------------------------
+  ;; 5. まとめ
+  ;; -------------------------------------------------------------
+  (cl-comment "以上により、‘否定は上位次元から見たメタ操作’ という概念は")
+  (cl-comment "  - NegAxis (Space ↔ Time) による相互否定")
+  (cl-comment "  - dim と pow2 による階層的次元表現")
+  (cl-comment "  - neg が次元を 1 上げる写像であり、MetaView で上位次元からの視点を表す")
+  (cl-comment "  - 4 回の neg が Dfix0（空）へ収束し、mw_eq によって等価とみなされる")
+  (cl-comment "この構造が、四句分別や Alethetic 論理における ‘否定＝次元上昇のメタ操作’ を形式的に定義するものです。")
+)
+
+
+(cl-text Meta_Negation_and_ZeroD_Convergence
+  (cl-comment "==============================================================")
+  (cl-comment "Meta‑Negation (否定の多重適用) – 0d（空）への収束を表す CLIF")
+  (cl-comment "==============================================================")
+
+  ;; -------------------------------------------------------------
+  ;; 0. 基本型・算術
+  ;; -------------------------------------------------------------
+  (object Nat)                     ;; 自然数
+  (object Real)                    ;; 実数（スコア等）
+
+  ;; Peano arithmetic for Nat
+  (object zero)                    ;; 0
+  (object succ)                    ;; successor (単項関数)
+  (nat zero)
+  (forall (?n) (=> (nat ?n) (nat (succ ?n))))   ;; closure
+
+  ;; 基本演算
+  (function add_nat (Nat Nat) Nat)   ;; 加算
+  (function mul_nat (Nat Nat) Nat)   ;; 乗算
+  (function leq_nat (Nat Nat) bool) ;; ≤
+
+  ;; 2 のべき乗
+  (function pow2 (Nat) Nat)          ;; pow2(n) = 2^n
+  (equal (pow2 zero) (succ zero))    ;; 2^0 = 1
+  (forall (?n) (=> (nat ?n)
+                   (equal (pow2 (succ ?n))
+                          (mul_nat (succ (succ zero)) (pow2 ?n))))) ;; 2^{n+1}=2·2^n
+
+  ;; log2_dim : dim(p) = 2^n → n
+  (function log2_dim (object) Nat)   ;; 逆関数（次元の指数を返す）
+
+  ;; -------------------------------------------------------------
+  ;; 1. 対象と次元の関係
+  ;; -------------------------------------------------------------
+  (object P)                         ;; 任意の命題（基底対象）
+
+  ;; dim(p) は 2 のべき乗で表される
+  (predicate HasDim (object Nat) bool)   ;; HasDim(p, n) ⇔ dim(p) = 2^n
+
+  ;; 基底命題の次元を設定（例として n = 3 → dim = 2^3 = 8）
+  (assert (HasDim P (succ (succ (succ zero)))))   ;; dim(P) = 2^3 = 8
+
+  ;; log2_dim の定義（dim が 2^n であることを前提に n を返す）
+  (forall (?x ?n)
+    (=> (and (HasDim ?x ?n) (nat ?n))
+        (equal (log2_dim ?x) ?n)))
+
+  ;; -------------------------------------------------------------
+  ;; 2. 基本否定 (neg) とメタ否定 (meta_neg) の定義
+  ;; -------------------------------------------------------------
+  (function neg (object) object)   ;; 基本否定（次元 +1）
+
+  ;; 基本否定の次元上昇（1 回の neg が次元を 2 倍にする）
+  (forall (?x ?n)
+    (=> (and (HasDim ?x ?n) (nat ?n))
+        (and (object (neg ?x))
+             (equal (log2_dim (neg ?x)) (add_nat ?n (succ zero))))))   ;; log2_dim ↑ 1
+
+  (function meta_neg (Nat object) object)   ;; meta_neg(k, p) = k 回メタ否定
+
+  ;; 0 回のメタ否定はそのまま
+  (equal (meta_neg zero ?p) ?p)
+
+  ;; 再帰的に定義：meta_neg(k+1, p) = neg(meta_neg(k, p))
+  (forall (?k ?p)
+    (=> (and (nat ?k) (object ?p))
+        (equal (meta_neg (succ ?k) ?p)
+               (neg (meta_neg ?k ?p)))))
+
+  ;; meta_neg が次元を 2^k 倍に上昇させることの証明
+  (forall (?k ?p ?n)
+    (=> (and (nat ?k) (object ?p) (HasDim ?p ?n))
+        (and (HasDim (meta_neg ?k ?p)
+                      (add_nat ?n ?k))                ;; log2_dim ↑ k
+             (equal (pow2 (add_nat ?n ?k))
+                    (pow2 (log2_dim (meta_neg ?k ?p))))))) ;; dim = 2^{n+k}
+
+  ;; -------------------------------------------------------------
+  ;; 3. 四句分別と meta_neg の対応
+  ;; -------------------------------------------------------------
+  (object Is)      (object Not)      (object Both)      (object Neither)
+
+  (equal Is      P)                                          ;; 是 = 基底命題
+  (equal Not     (meta_neg (succ zero) P))                   ;; 非 = 1 回メタ否定
+  (equal Both    (meta_neg (succ (succ zero)) P))            ;; 亦是亦非 = 2 回メタ否定
+  (equal Neither (meta_neg (succ (succ (succ zero))) P))     ;; 非是非非 = 3 回メタ否定
+
+  ;; -------------------------------------------------------------
+  ;; 4. 0‑d 固定点 Dfix0 と Middle‑Way 等価 (mw_eq)
+  ;; -------------------------------------------------------------
+  (object Dfix0)                                            ;; 0‑d の空（中道固定点）
+
+  ;; mw_eq の定義は別モジュールで与えられていると仮定
+  ;; (predicate mw_eq (object object) bool)
+
+  ;; 4 回メタ否定は Dfix0 と Middle‑Way 等価
+  (forall (?p)
+    (=> (object ?p)
+        (mw_eq (meta_neg (succ (succ (succ (succ zero)))) ?p) Dfix0)))
+
+  ;; -------------------------------------------------------------
+  ;; 5. まとめ（コメント）
+  ;; -------------------------------------------------------------
+  (cl-comment "この CLIF スニペットは、")
+  (cl-comment "- 基本否定 neg が次元指数を +1 すること、")
+  (cl-comment "- meta_neg(k,p) が k 回の neg を再帰的に適用し、")
+  (cl-comment "- その結果次元は 2^{n+k} に上昇すること、")
+  (cl-comment "- 4 回のメタ否定 (k=4) が 0‑d 固定点 Dfix0 と Middle‑Way 等価 (mw_eq) になること")
+  (cl-comment "を形式的に表現しています。")
+)

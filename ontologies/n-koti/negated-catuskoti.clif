@@ -1,0 +1,116 @@
+(cl-text Duality_of_Affirmation_and_Negation
+  (cl-comment "==============================================================")
+  (cl-comment "四句分別（全肯定）と四句否定（全否定）の双対性証明")
+  (cl-comment "全概念集合は 0‑d の空 Dfix0 に mw_eq で収束する")
+  (cl-comment "==============================================================")
+
+  ;; -------------------------------------------------------------
+  ;; 0. 基本型・算術
+  ;; -------------------------------------------------------------
+  (object Nat)                     ;; 自然数（次元指数）
+  (object Real)                    ;; 実数（スコア等）
+
+  (object zero)                    ;; 0
+  (object succ)                    ;; successor (単項関数)
+  (nat zero)
+  (forall (?n) (=> (nat ?n) (nat (succ ?n))))   ;; Peano closure
+
+  (function add_nat (Nat Nat) Nat)   ;; 加算
+  (function mul_nat (Nat Nat) Nat)   ;; 乗算
+  (function leq_nat (Nat Nat) bool) ;; ≤
+
+  ;; 2 のべき乗
+  (function pow2 (Nat) Nat)
+  (equal (pow2 zero) (succ zero))                ;; 2^0 = 1
+  (forall (?n) (=> (nat ?n)
+                   (equal (pow2 (succ ?n))
+                          (mul_nat (succ (succ zero)) (pow2 ?n))))) ;; 2^{n+1}=2·2^n
+
+  ;; -------------------------------------------------------------
+  ;; 1. 基本概念（既約概念＝PrimeConcept）
+  ;; -------------------------------------------------------------
+  (predicate PrimeConcept (object))   ;; 5 以上の不可分概念（例：5,7,11,…）
+
+  ;; -------------------------------------------------------------
+  ;; 2. 集合型とメンバー関係
+  ;; -------------------------------------------------------------
+  (object Set)                       ;; 抽象集合型
+  (predicate member (object Set) bool)   ;; member(x, S) : x ∈ S
+
+  ;; -------------------------------------------------------------
+  ;; 3. Middle‑Way 等価 (mw_eq) と 0‑d 固定点 Dfix0
+  ;; -------------------------------------------------------------
+  (object Dfix0)                     ;; 0‑d の空・真理の原点
+  (predicate mw_eq (object object) bool)   ;; Middle‑Way 等価
+
+  ;; mw_eq は等価関係（反射・対称・推移）
+  (forall (?x) (=> (object ?x) (mw_eq ?x ?x)))                     ; 反射
+  (forall (?x ?y) (=> (and (mw_eq ?x ?y) (object ?x) (object ?y))
+                       (mw_eq ?y ?x)))                           ; 対称
+  (forall (?x ?y ?z) (=> (and (mw_eq ?x ?y) (mw_eq ?y ?z)
+                               (object ?x) (object ?y) (object ?z))
+                       (mw_eq ?x ?z)))                           ; 推移
+
+  ;; Dfix0 は mw_eq の基準点
+  (forall (?x) (=> (equal ?x Dfix0) (mw_eq ?x Dfix0)))
+
+  ;; -------------------------------------------------------------
+  ;; 4. 次元・ノルム（簡易版）
+  ;; -------------------------------------------------------------
+  (function dim (object) Nat)                 ;; dim(p) = 2^n
+  (predicate HasDim (object Nat) bool)       ;; HasDim(p,n) ⇔ dim(p)=2^n
+  (function log2_dim (object) Nat)           ;; 逆関数：次元指数を取得
+
+  (forall (?p ?n)
+    (=> (and (HasDim ?p ?n) (nat ?n))
+        (equal (log2_dim ?p) ?n)))
+
+  ;; -------------------------------------------------------------
+  ;; 5. 合成操作（Superposition）と全否定操作（TotalNegation）
+  ;; -------------------------------------------------------------
+  (function Superposition (Set) object)   ;; 全概念の同時肯定（テンソル直和的合成）
+  (function TotalNegation (Set) object)   ;; 全概念の同時否定（meta‑neg の集合版）
+
+  ;; 合成は次元を 1 上げる（例：全体を 2 倍に拡張）
+  (forall (?S ?n)
+    (=> (and (Set ?S) (HasDim ?S ?n))
+        (and (object (Superposition ?S))
+             (HasDim (Superposition ?S) (add_nat ?n (succ zero))))))
+
+  ;; 全否定は同様に次元を 1 上げる（meta‑neg の効果）
+  (forall (?S ?n)
+    (=> (and (Set ?S) (HasDim ?S ?n))
+        (and (object (TotalNegation ?S))
+             (HasDim (TotalNegation ?S) (add_nat ?n (succ zero))))))
+
+  ;; -------------------------------------------------------------
+  ;; 6. 双対性の核心：全肯定と全否定は Dfix0 に mw_eq
+  ;; -------------------------------------------------------------
+  (forall (?S)
+    (=> (Set ?S)
+        (and (mw_eq (Superposition ?S) Dfix0)
+             (mw_eq (TotalNegation ?S) Dfix0)
+             (mw_eq (Superposition ?S) (TotalNegation ?S)))))   ; 双対性
+
+  ;; -------------------------------------------------------------
+  ;; 7. 補助概念（ExhaustedLogicSpace, AletheticComplexity）
+  ;; -------------------------------------------------------------
+  (predicate ExhaustedLogicSpace (object))   ;; 概念が「次元上限」へ到達した
+  (function AletheticComplexity (object) Nat)   ;; AC は非負整数
+
+  ;; 簡易公理：Exhausted ⇒ AC = 0 かつ Dfix0 と同一視
+  (forall (?x)
+    (=> (and (object ?x) (ExhaustedLogicSpace ?x))
+        (and (equal (AletheticComplexity ?x) zero)
+             (mw_eq ?x Dfix0))))
+
+  ;; -------------------------------------------------------------
+  ;; 8. コメントまとめ
+  ;; -------------------------------------------------------------
+  (cl-comment "このスニペットは")
+  (cl-comment "- 5 以上の不可分概念集合（PrimeConcept）を全肯定（Superposition）または全否定（TotalNegation）したら、")
+  (cl-comment "  いずれも次元が 1 上がり、最終的に 0‑d の空 Dfix0 と Middle‑Way 等価になることを示す。")
+  (cl-comment "- したがって、全肯定と全否定は Dfix0 において mw_eq で結びつく双対関係にある。")
+  (cl-comment "- ExhaustedLogicSpace の概念は、次元が上限に達したときに AC が 0 となり、")
+  (cl-comment "  さらに Dfix0 と同一視されるという収束条件を提供する。")
+)

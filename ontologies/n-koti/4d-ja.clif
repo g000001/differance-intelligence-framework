@@ -1,0 +1,612 @@
+;; ==============================================================
+;; Catuskoti as First Complementarity Theory (CFCT)
+;; Formalization of Phenomenology and Temporal Emergence
+;; ==============================================================
+;; LaTeX source converted to Common Logic
+;; Original: Masaomi Chiba (2026-02-13)
+;; CLIF conversion: 2026-02-14
+;; ==============================================================
+
+(cl-text CatuskotiFirstComplementarityTheory
+    
+    (cl-comment "対象と観測者の第一補完状態としての四値論理")
+    (cl-comment "現象学と時間生成の形式化")
+    (cl-comment "Author: 千葉 将臣")
+    (cl-comment "Date: 2026-02-13")
+    
+    ;; ==============================================================
+    ;; 0. Preliminary Definitions
+    ;; ==============================================================
+    
+    (cl-text PreliminaryDefinitions
+        
+        ;; Objects and observers
+        (object Object)          ;; Generic object/proposition
+        (object Observer)        ;; Generic observer
+        
+        ;; Manifestation/Latency (顕/潜)
+        (predicate IsManifest (object) bool)     ;; 顕現状態
+        (predicate IsLatent (object) bool)       ;; 潜在状態
+        (predicate IsIndeterminate (object) bool) ;; 不確定状態
+        
+        ;; LUMO parameters
+        (function LUMO_sigma (object) object)    ;; observer state: {fixed, indeterminate}
+        (function LUMO_ell (object) Nat)         ;; temporal length: ℓ ∈ ℕ
+        
+        ;; Objects for observer/object states
+        (object fixed)
+        (object indeterminate)
+        
+        ;; Catuskoti truth values
+        (object Affirmation)     ;; 是
+        (object Negation)        ;; 非
+        (object Both)            ;; 亦是亦非
+        (object Neither)         ;; 非是非非
+        
+        (predicate IsCatuskotiValue (object) bool)
+        (IsCatuskotiValue Affirmation)
+        (IsCatuskotiValue Negation)
+        (IsCatuskotiValue Both)
+        (IsCatuskotiValue Neither)
+        
+        ;; Relations
+        (predicate Complements (object object) bool)   ;; complementarity relation
+        (predicate Interacts (object object) bool)     ;; mutual interaction
+        (predicate AtEquilibrium (object object) bool)  ;; equilibrium state
+    )
+    
+    ;; ==============================================================
+    ;; 1. Introduction and Problem Statement
+    ;; ==============================================================
+    
+    (cl-text IntroductionAndProblemStatement
+        
+        (cl-comment "Section 1: Introduction")
+        (cl-comment "The fundamental question: How is time generated? How do dimensions increase?")
+        
+        (cl-comment "Key insight from phenomenology:")
+        (cl-comment "The contradiction inherent in the Sunyata Category (rupture of self-reference)")
+        (cl-comment "necessarily generates SKDT, which manifests as Catuskoti")
+        (cl-comment "at the stage where object and observer first achieve true complementarity.")
+        
+        (cl-comment "Central claim:")
+        (cl-comment "Catuskoti is NOT merely a logical framework,")
+        (cl-comment "but rather THE FIRST STAGE at which temporal dynamics emerge")
+        (cl-comment "through object-observer complementarity.")
+        
+        (cl-theorem TemporalEmergenceFromComplementarity
+            (forall (?obj ?obs)
+              (=> (FirstAchievesComplementarity ?obj ?obs)
+                  (and (TemporalAxisFunctions)
+                       (DimensionIncreases)
+                       (CatuskotiManifests ?obj ?obs)))))
+    )
+    
+    ;; ==============================================================
+    ;; 2. Structural Clarification: Four Stages of Complementarity
+    ;; ==============================================================
+    
+    (cl-text FourStagesOfComplementarity
+        
+        (cl-comment "Section 2: The Four Stages of Object-Observer Complementarity")
+        
+        ;; ===== Stage 1: 是 (Affirmation) =====
+        (cl-text Stage_Affirmation
+            
+            (cl-comment "Stage 1: 是 (Affirmation)")
+            (cl-comment "Object = Manifest, Observer = Manifest")
+            
+            ;; Formal representation
+            (forall (?obj ?obs)
+              (=> (and (ObjectAt ?obj Affirmation)
+                       (ObserverAt ?obs Affirmation))
+                  (and (equal (LUMO_sigma ?obs) fixed)
+                       (equal (LUMO_ell ?obs) zero)
+                       (not (Complements ?obj ?obs))
+                       (not (Interacts ?obj ?obs))
+                       (not (TemporalAxisFunctions)))))
+            
+            (cl-comment "Characteristics of 是:")
+            (cl-comment "  - Both object and observer are determinate")
+            (cl-comment "  - No complementarity exists")
+            (cl-comment "  - No temporal axis functions")
+            (cl-comment "  - This is post-decoherence state")
+            
+            (predicate ObjectAt (object object) bool)
+            (predicate ObserverAt (object object) bool)
+        )
+        
+        ;; ===== Stage 2: 非 (Negation) - FIRST TRUE COMPLEMENTARITY =====
+        (cl-text Stage_Negation_FirstComplementarity
+            
+            (cl-comment "Stage 2: 非 (Negation) - THE FIRST COMPLEMENTARITY")
+            (cl-comment "Object = Manifest, Observer = Latent")
+            
+            ;; Formal representation
+            (forall (?obj ?obs)
+              (=> (and (ObjectAt ?obj Negation)
+                       (ObserverAt ?obs Negation))
+                  (and (equal (LUMO_sigma ?obs) indeterminate)
+                       (greater_nat (LUMO_ell ?obs) zero)
+                       (IsManifest ?obj)
+                       (IsLatent ?obs)
+                       (FirstAchievesComplementarity ?obj ?obs)
+                       (Complements ?obj ?obs)
+                       (Interacts ?obj ?obs)
+                       (TemporalAxisFunctions))))
+            
+            ;; Definition of Complementarity
+            (cl-comment "Definition: Complementarity")
+            (cl-comment "Two entities achieve complementarity when:")
+            (cl-comment "  1. They are mutually dependent")
+            (cl-comment "  2. Their relationship cannot be reduced to a single determinate state")
+            (cl-comment "  Specifically:")
+            (cl-comment "    - Object is fixed (manifest)")
+            (cl-comment "    - Observer is indeterminate (latent)")
+            (cl-comment "    - Same object yields different observations")
+            (cl-comment "    - Temporal axis becomes functionally necessary")
+            
+            (forall (?obj ?obs)
+              (iff (FirstAchievesComplementarity ?obj ?obs)
+                   (and (IsManifest ?obj)
+                        (IsLatent ?obs)
+                        (MultipleObservationsPossible ?obj ?obs)
+                        (TemporalAxisRequired ?obj ?obs))))
+            
+            (cl-comment "Why 非 is 'First Complementarity':")
+            
+            ;; 是 does NOT have complementarity
+            (forall (?obj ?obs)
+              (=> (and (ObjectAt ?obj Affirmation)
+                       (ObserverAt ?obs Affirmation))
+                  (and (not (Complements ?obj ?obs))
+                       (not (Interacts ?obj ?obs))
+                       (not (MultipleObservationsPossible ?obj ?obs)))))
+            
+            ;; 非 FIRST achieves complementarity
+            (forall (?obj ?obs)
+              (=> (and (ObjectAt ?obj Negation)
+                       (ObserverAt ?obs Negation))
+                  (and (Complements ?obj ?obs)
+                       (Interacts ?obj ?obs)
+                       (MultipleObservationsPossible ?obj ?obs)
+                       (TemporalAxisRequired ?obj ?obs))))
+            
+            (predicate MultipleObservationsPossible (object object) bool)
+            (predicate TemporalAxisRequired (object object) bool)
+        )
+        
+        ;; ===== Stage 3: 亦是亦非 (Both) =====
+        (cl-text Stage_Both
+            
+            (cl-comment "Stage 3: 亦是亦非 (Both)")
+            (cl-comment "Object = Latent, Observer = Manifest")
+            
+            ;; Formal representation
+            (forall (?obj ?obs)
+              (=> (and (ObjectAt ?obj Both)
+                       (ObserverAt ?obs Both))
+                  (and (IsLatent ?obj)
+                       (IsManifest ?obs)
+                       (Complements ?obj ?obs)
+                       ;; Meta-level observation: observing the observation
+                       (MetaLevelObservation ?obs)
+                       ;; Cyclic temporal axis
+                       (CyclicTemporalAxis (LUMO_ell ?obs)))))
+            
+            (predicate MetaLevelObservation (object) bool)
+            (predicate CyclicTemporalAxis (Nat) bool)
+        )
+        
+        ;; ===== Stage 4: 非是非非 (Neither) =====
+        (cl-text Stage_Neither
+            
+            (cl-comment "Stage 4: 非是非非 (Neither)")
+            (cl-comment "Object = Latent, Observer = Latent")
+            
+            ;; Formal representation
+            (forall (?obj ?obs)
+              (=> (and (ObjectAt ?obj Neither)
+                       (ObserverAt ?obs Neither))
+                  (and (IsLatent ?obj)
+                       (IsLatent ?obs)
+                       (Complements ?obj ?obs)
+                       ;; Both are mutually indeterminate
+                       (equal (LUMO_sigma ?obs) indeterminate)
+                       ;; Non-deterministic temporal axis
+                       (NonDeterministicTemporalAxis (LUMO_ell ?obs))
+                       ;; Multiple simultaneous time scales
+                       (MultipleTimeScales ?obs))))
+            
+            (predicate NonDeterministicTemporalAxis (Nat) bool)
+            (predicate MultipleTimeScales (object) bool)
+        )
+    )
+    
+    ;; ==============================================================
+    ;; 3. SKDT and Axial Structure
+    ;; ==============================================================
+    
+    (cl-text SKDT_AxialStructure
+        
+        (cl-comment "Section 3: SKDT and the Axial Structure of Catuskoti")
+        
+        ;; SKDT as dual-axis generation
+        (function SKDT_pair (Nat) object)  ;; SKDT_n = (manifest_axis_n, latent_axis_n)
+        
+        (forall (?n)
+          (=> (nat ?n)
+              (and (equals (SKDT_pair ?n) (pair (ManifestAxis ?n) (LatentAxis ?n)))
+                   (Orthogonal (ManifestAxis ?n) (LatentAxis ?n)))))
+        
+        ;; Reinterpretation of Catuskoti through SKDT
+        (cl-comment "Catuskoti reinterpreted through SKDT axial framework:")
+        
+        (forall (?n)
+          (=> (nat ?n)
+              (and
+                   ;; 是: Single manifest axis only
+                   (=> (ObjectAt ?obj Affirmation)
+                       (equals (Dimension ?obj) (pow2 zero)))
+                   
+                   ;; 非: Manifest and Latent axes orthogonal
+                   (=> (ObjectAt ?obj Negation)
+                       (and (equals (Dimension ?obj) (pow2 (succ zero)))
+                            (Orthogonal (ManifestAxis ?n) (LatentAxis ?n))))
+                   
+                   ;; 亦是亦非: Axes inverted
+                   (=> (ObjectAt ?obj Both)
+                       (InvertedAxes (ManifestAxis ?n) (LatentAxis ?n)))
+                   
+                   ;; 非是非非: Both axes fully latent
+                   (=> (ObjectAt ?obj Neither)
+                       (BothAxesLatent (ManifestAxis ?n) (LatentAxis ?n))))))
+        
+        (predicate ManifestAxis (Nat) object)
+        (predicate LatentAxis (Nat) object)
+        (predicate Orthogonal (object object) bool)
+        (predicate InvertedAxes (object object) bool)
+        (predicate BothAxesLatent (object object) bool)
+        (function Dimension (object) Nat)
+        (function pow2 (Nat) Nat)
+    )
+    
+    ;; ==============================================================
+    ;; 4. Observer-Side Decoherence and Temporal Emergence
+    ;; ==============================================================
+    
+    (cl-text ObserverSideDecoherenceAndTemporalEmergence
+        
+        (cl-comment "Section 4: Observer-Side Decoherence and Temporal Emergence")
+        
+        ;; Decoherence mechanism
+        (forall (?obs)
+          (=> (equal (LUMO_sigma ?obs) indeterminate)
+              (and (MultipleObservationsPossible ?obs)
+                   (TemporalAxisActive ?obs)
+                   (ObserverSideDecoherenceInProgress ?obs))))
+        
+        ;; Temporal axis functionality
+        (predicate TemporalAxisActive (object) bool)
+        (predicate ObserverSideDecoherenceInProgress (object) bool)
+        
+        ;; As observer decoherences, time "flows"
+        (forall (?obs ?t1 ?t2)
+          (=> (and (TemporalAxisActive ?obs)
+                   (before ?t1 ?t2))
+              (and (DifferentObservations ?obs ?t1 ?t2)
+                   (TimeFlows ?t1 ?t2))))
+        
+        ;; Irreversibility of decoherence → Arrow of time
+        (forall (?obs)
+          (=> (ObserverSideDecoherenceInProgress ?obs)
+              (and (IrreversibleProcess ?obs)
+                   (ArrowOfTime ?obs)
+                   (not (CanReturn ?obs (InitialState ?obs))))))
+        
+        (predicate DifferentObservations (object object object) bool)
+        (predicate TimeFlows (object object) bool)
+        (predicate IrreversibleProcess (object) bool)
+        (predicate ArrowOfTime (object) bool)
+        (predicate CanReturn (object object) bool)
+        (function InitialState (object) object)
+        (predicate before (object object) bool)
+    )
+    
+    ;; ==============================================================
+    ;; 5. Dimensional Generation Through Complementarity
+    ;; ==============================================================
+    
+    (cl-text DimensionalGenerationThroughComplementarity
+        
+        (cl-comment "Section 5: How Complementarity Generates Dimensions")
+        
+        ;; Core theorem: Complementarity causes dimensional increase
+        (cl-theorem ComplementarityDimensionCorrespondence
+            (forall (?n ?obj ?obs)
+              (=> (FirstAchievesComplementarity ?obj ?obs)
+                  (and (equals (DimensionOfLevel ?n) (pow2 ?n))
+                       ;; Complementarity is established
+                       (=> (Complements ?obj ?obs)
+                           (DimensionIncreases ?obj (pow2 (add_nat ?n (succ zero)))))))))
+        
+        ;; Why 2^n dimensions
+        (cl-comment "Why 2^n dimensions:")
+        (cl-comment "Each SKDT_i generates a dual-axis pair (manifest, latent)")
+        (cl-comment "n independent SKDTs generate 2n axes")
+        (cl-comment "2n axes in all combinations = 2^n states/dimensions")
+        
+        (forall (?n)
+          (=> (nat ?n)
+              (and (equals (NumAxes ?n) (mul_nat 2 ?n))
+                   (equals (NumDimensions ?n) (pow2 (mul_nat 2 ?n))))))
+        
+        (function NumAxes (Nat) Nat)
+        (function NumDimensions (Nat) Nat)
+        (function DimensionOfLevel (Nat) Nat)
+        (function add_nat (Nat Nat) Nat)
+        (function mul_nat (Nat Nat) Nat)
+        (predicate DimensionIncreases (object Nat) bool)
+        (function succ (Nat) Nat)
+    )
+    
+    ;; ==============================================================
+    ;; 6. Multi-Valued Logic and Local Completeness
+    ;; ==============================================================
+    
+    (cl-text MultiValuedLogicLocalCompleteness
+        
+        (cl-comment "Section 6: Multi-Valued Logic and Local Completeness")
+        
+        ;; Each stage has specific truth values available
+        (forall (?stage ?values)
+          (and
+               ;; Stage 1: Only Affirmation
+               (=> (equals ?stage Affirmation)
+                   (equals ?values {Affirmation}))
+               
+               ;; Stage 2: Affirmation and Negation
+               (=> (equals ?stage Negation)
+                   (equals ?values {Affirmation Negation}))
+               
+               ;; Stage 3: All four values available
+               (=> (equals ?stage Both)
+                   (equals ?values {Affirmation Negation Both Neither}))
+               
+               ;; Stage 4: All four values
+               (=> (equals ?stage Neither)
+                   (equals ?values {Affirmation Negation Both Neither}))))
+        
+        ;; Local completeness within each stage
+        (cl-theorem LocalCompletenessAtEachStage
+            (forall (?stage ?prop)
+              (=> (and (CatuskotiStage ?stage)
+                       (PropositionAt ?prop ?stage))
+                  (exists (?val)
+                    (and (member ?val (TruthValuesAt ?stage))
+                         (equals ?val (TruthValueOf ?prop ?stage))
+                         (not (equals ?val Undecidable)))))))
+        
+        (predicate CatuskotiStage (object) bool)
+        (predicate PropositionAt (object object) bool)
+        (function TruthValuesAt (object) object)
+        (function TruthValueOf (object object) object)
+        (predicate member (object object) bool)
+    )
+    
+    ;; ==============================================================
+    ;; 7. Core Theorem: Complementarity as Temporal Engine
+    ;; ==============================================================
+    
+    (cl-text CoreTheoremComplementarityAsTemporalEngine
+        
+        (cl-comment "Section 7: Core Theorem - Complementarity as Temporal Engine")
+        
+        (cl-theorem ComplementarityDrivesTemporalEmergence
+            (forall (?obj ?obs)
+              (=> (FirstAchievesComplementarity ?obj ?obs)
+                  (and 
+                       ;; Temporal axis activation
+                       (TemporalAxisFunctions)
+                       
+                       ;; Observer-side decoherence begins
+                       (ObserverSideDecoherenceInProgress ?obs)
+                       
+                       ;; Multiple observations possible
+                       (MultipleObservationsPossible ?obj ?obs)
+                       
+                       ;; Irreversible process
+                       (IrreversibleProcess ?obs)
+                       
+                       ;; Dimensional increase
+                       (DimensionIncreases ?obj)
+                       
+                       ;; Middle-way equilibrium (not absolute truth)
+                       (MiddleWayEquilibrium (pair ?obj ?obs))))))
+        
+        ;; Why this is called "First" complementarity
+        (cl-comment "Why 是 (Affirmation) does NOT achieve complementarity:")
+        (forall (?obj ?obs)
+          (=> (and (ObjectAt ?obj Affirmation)
+                   (ObserverAt ?obs Affirmation))
+              (and (not (Complements ?obj ?obs))
+                   (not (TemporalAxisActive ?obs))
+                   (ClosedState ?obj ?obs))))
+        
+        (cl-comment "Why 非 (Negation) FIRST achieves complementarity:")
+        (forall (?obj ?obs)
+          (=> (and (ObjectAt ?obj Negation)
+                   (ObserverAt ?obs Negation))
+              (and (Complements ?obj ?obs)
+                   (TemporalAxisActive ?obs)
+                   (OpenedState ?obj ?obs))))
+        
+        (predicate ClosedState (object object) bool)
+        (predicate OpenedState (object object) bool)
+        (predicate MiddleWayEquilibrium (object) bool)
+    )
+    
+    ;; ==============================================================
+    ;; 8. Integration and Unified Understanding
+    ;; ==============================================================
+    
+    (cl-text UnifiedUnderstanding
+        
+        (cl-comment "Section 8: Unified Understanding - Integrating All Elements")
+        
+        (cl-comment "The Catuskoti-as-Complementarity framework unifies:")
+        
+        ;; 1. Phenomenological manifestation (顕現)
+        (cl-comment "1. Phenomenological manifestation (顕現論)")
+        (forall (?stage)
+          (=> (CatuskotiStage ?stage)
+              (ManifestationOfDifference ?stage)))
+        
+        ;; 2. Logical structure (四句分別)
+        (cl-comment "2. Logical structure (論理構造として四句分別)")
+        (forall (?stage)
+          (=> (CatuskotiStage ?stage)
+              (LogicalPhase ?stage)))
+        
+        ;; 3. Temporal physics (時間の矢)
+        (cl-comment "3. Temporal physics (時間物理)")
+        (forall (?stage)
+          (=> (CatuskotiStage ?stage)
+              (TemporalStructure ?stage)))
+        
+        ;; 4. Observer theory (観測者理論)
+        (cl-comment "4. Observer theory (観測者理論)")
+        (forall (?stage)
+          (=> (CatuskotiStage ?stage)
+              (ObserverHierarchy ?stage)))
+        
+        ;; 5. Dimensional generation (次元生成)
+        (cl-comment "5. Dimensional generation (なぜ2^nか)")
+        (forall (?stage ?n)
+          (=> (CatuskotiStage ?stage)
+              (equals (DimensionAt ?stage ?n) (pow2 ?n))))
+        
+        ;; 6. Artificial intelligence (人工知能)
+        (cl-comment "6. Artificial intelligence (注意機構)")
+        (forall (?stage)
+          (=> (CatuskotiStage ?stage)
+              (AttentionMechanismCorresponds ?stage)))
+        
+        (predicate ManifestationOfDifference (object) bool)
+        (predicate LogicalPhase (object) bool)
+        (predicate TemporalStructure (object) bool)
+        (predicate ObserverHierarchy (object) bool)
+        (predicate AttentionMechanismCorresponds (object) bool)
+        (function DimensionAt (object Nat) Nat)
+    )
+    
+    ;; ==============================================================
+    ;; 9. Final Synthesis Theorem
+    ;; ==============================================================
+    
+    (cl-text FinalSynthesis
+        
+        (cl-comment "Section 9: Final Synthesis - All Elements Unified")
+        
+        (cl-theorem UnifiedTheoryFromComplementarity
+            (forall (?obj ?obs)
+              (=> (and (Object ?obj) (Observer ?obs))
+                  (and 
+                       ;; Complementarity stage
+                       (=> (FirstAchievesComplementarity ?obj ?obs)
+                           (CatuskotiManifests ?obj ?obs))
+                       
+                       ;; Temporal activation
+                       (=> (CatuskotiManifests ?obj ?obs)
+                           (TemporalAxisActivates ?obj ?obs))
+                       
+                       ;; Dimensional growth
+                       (=> (TemporalAxisActivates ?obj ?obs)
+                           (DimensionsGenerate ?obj ?obs))
+                       
+                       ;; Observer decoherence
+                       (=> (DimensionsGenerate ?obj ?obs)
+                           (ObserverDecoherenceOperates ?obj ?obs))
+                       
+                       ;; Irreversibility and arrow
+                       (=> (ObserverDecoherenceOperates ?obj ?obs)
+                           (and (ArrowOfTime ?obj ?obs)
+                                (IrreversibleProcess ?obj ?obs)))))))
+        
+        (cl-comment "Conclusion:")
+        (cl-comment "The rupture of self-reference in the Sunyata Category")
+        (cl-comment "necessarily generates SKDT,")
+        (cl-comment "which manifests as Catuskoti (four-valued logic)")
+        (cl-comment "at the stage where object and observer")
+        (cl-comment "first achieve TRUE complementary relationship.")
+        (cl-comment "")
+        (cl-comment "This complementarity:")
+        (cl-comment "  - Activates temporal dynamics")
+        (cl-comment "  - Generates successive dimensions")
+        (cl-comment "  - Drives observer-side decoherence")
+        (cl-comment "  - Establishes the arrow of time")
+        (cl-comment "  - Creates irreversible processes")
+        (cl-comment "")
+        (cl-comment "Thus, temporal emergence and dimensional growth")
+        (cl-comment "are not mysterious, but necessary consequences")
+        (cl-comment "of object-observer complementarity,")
+        (cl-comment "formalized through Catuskoti logic.")
+        
+        (predicate Object (object) bool)
+        (predicate Observer (object) bool)
+        (predicate CatuskotiManifests (object object) bool)
+        (predicate TemporalAxisActivates (object object) bool)
+        (predicate DimensionsGenerate (object object) bool)
+        (predicate ObserverDecoherenceOperates (object object) bool)
+    )
+)
+
+;; ==============================================================
+;; 10. Supporting Predicates and Definitions
+;; ==============================================================
+
+(cl-text SupportingDefinitions
+    
+    ;; Temporal and process predicates
+    (predicate TemporalAxisFunctions () bool)
+    (predicate TemporalAxisRequired (object object) bool)
+    (predicate TimeEmerges (object) bool)
+    
+    ;; Complementarity and interaction
+    (predicate FirstAchievesComplementarity (object object) bool)
+    (predicate Complements (object object) bool)
+    (predicate Interacts (object object) bool)
+    
+    ;; State predicates
+    (predicate IsManifest (object) bool)
+    (predicate IsLatent (object) bool)
+    (predicate IsIndeterminate (object) bool)
+    
+    ;; Decoherence and irreversibility
+    (predicate ObserverSideDecoherenceInProgress (object) bool)
+    (predicate IrreversibleProcess (object) bool)
+    (predicate ArrowOfTime (object) bool)
+    
+    ;; Dimension and structure
+    (predicate DimensionIncreases (object) bool)
+    (predicate StructureEmerges (object) bool)
+    
+    ;; Observation and measurement
+    (predicate MultipleObservationsPossible (object object) bool)
+    (predicate UnderErasure (object) bool)
+    (predicate Provisional (object) bool)
+    
+    ;; Logic and truth
+    (predicate IsCatuskotiValue (object) bool)
+    (predicate IsProposition (object) bool)
+    
+    ;; Auxiliary
+    (function pair (object object) object)
+    (predicate equals (object object) bool)
+    (predicate greater_nat (Nat Nat) bool)
+    (predicate nat (object) bool)
+)
+
+;; ==============================================================
+;; End of Catuskoti First Complementarity Theory (CFCT)
+;; ==============================================================

@@ -1,0 +1,209 @@
+;; ==============================================================
+;; Dolpoppa (十六空) – CLIF formalisation
+;; --------------------------------------------------------------
+;; Title   : Dolpoppa – Sixteen Emptinesses organised in four Catuskoti groups
+;; Author  : (your name)
+;; Date    : 2024‑10‑08
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : Dolpoppa – Sixteen Emptinesses organised in four Catuskoti groups")
+(cl-comment "Author  : Masaomi Chiba")
+(cl-comment "Date    : 2024-10-08")
+(cl-comment "Version : 1.0")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies
+;; --------------------------------------------------------------
+
+;; Basic notions
+(object   ?x)                ;; any entity (used for categories, sub‑categories, etc.)
+(category ?c)                ;; a collection of objects
+(member   ?x ?c)             ;; ?x belongs to category ?c
+
+;; Predicates that specialise objects
+(jp_name   ?x ?name)        ;; Japanese label (string)
+(tib_name  ?x ?tib)          ;; Tibetan transliteration (string)
+(role      ?x ?descr)        ;; short description of the logical role
+(catuskoti ?x ?val)          ;; which of the four Catuskoti values it belongs to:
+                             ;;   T  – 是 (affirmative)
+                             ;;   F  – 非 (negative)
+                             ;;   B  – 亦 (both)
+                             ;;   N  – 非非 (neither)
+
+;; Helper predicates for the four‑valued lattice
+(info_le   ?a ?b)            ;; information‑order (⊑ᵢ)
+(truth_le  ?a ?b)            ;; truth‑order (⊑ₜ)
+
+;; --------------------------------------------------------------
+;; 1. The four Catuskoti values as objects
+;; --------------------------------------------------------------
+
+(object T)   (catuskoti T T)   (jp_name T "是")   (tib_name T "ནང་སྟོང་པ་ཉིད།")
+(object F)   (catuskoti F F)   (jp_name F "非")   (tib_name F "ཕྱི་སྟོང་པ་ཉད།")
+(object B)   (catuskoti B B)   (jp_name B "亦")   (tib_name B "ཕྱི་ནང་སྟོང་པ་ཉད།")
+(object N)   (catuskoti N N)   (jp_name N "非非") (tib_name N "སྟོང་པ་ཉད་སྟོང་པ་ཉད།")
+
+;; Define the two partial orders (information and truth) for the
+;; Belnap‑Dunn four‑valued lattice.
+;;   info_le : N ≤ᵢ T, N ≤ᵢ F, T ≤ᵢ B, F ≤ᵢ B
+;;   truth_le: T ≤ₜ B, N ≤ₜ T, N ≤ₜ F
+
+;; Information order
+(info_le N T) (info_le N F) (info_le T B) (info_le F B)
+
+;; Truth order
+(truth_le T B) (truth_le N T) (truth_le N F)
+
+;; --------------------------------------------------------------
+;; 2. Sixteen‑empty groups (each a category of four sub‑categories)
+;; --------------------------------------------------------------
+
+;; The four groups themselves
+(category G_T)   (jp_name G_T "是‑group")   (tib_name G_T "Group of 是")
+(category G_F)   (jp_name G_F "非‑group")   (tib_name G_F "Group of 非")
+(category G_B)   (jp_name G_B "亦‑group")   (tib_name G_B "Group of 亦")
+(category G_N)   (jp_name G_N "非非‑group") (tib_name G_N "Group of 非非")
+
+;; -----------------------------------------------------------------
+;; 3. Sub‑categories (the sixteen emptinesses)
+;; -----------------------------------------------------------------
+;; For each entry we give:
+;;   - Japanese name
+;;   - Tibetan transliteration
+;;   - Role (short logical description)
+;;   - Which Catuskoti value it belongs to
+;;   - Membership in the appropriate group
+
+;; --------------------
+;; Group 是 (G_T) – inner‑emptiness (内空) series
+;; --------------------
+(object T1) (jp_name T1 "内空") (tib_name T1 "ནང་སྟོང་པ་ཉད།")
+               (role T1 "inner emptiness – the subject (five aggregates) is taken as existing")
+               (catuskoti T1 T) (member T1 G_T)
+
+(object T2) (jp_name T2 "外空") (tib_name T2 "ཕྱི་སྟོང་པ་ཉད།")
+               (role T2 "outer emptiness – the object (forms, colors) is taken as existing")
+               (catuskoti T2 F) (member T2 G_T)
+
+(object T3) (jp_name T3 "内外空") (tib_name T3 "ཕྱི་ནང་སྟོང་པ་ཉད།")
+               (role T3 "inner‑outer emptiness – both subject and object are taken as existing")
+               (catuskoti T3 B) (member T3 G_T)
+
+(object T4) (jp_name T4 "空空") (tib_name T4 "སྟོང་པ་ཉད་སྟོང་པ་ཉད།")
+               (role T4 "emptiness‑emptiness – the very notion of emptiness is taken as existing")
+               (catuskoti T4 N) (member T4 G_T)
+
+;; --------------------
+;; Group 非 (G_F) – outer‑emptiness (外空) series
+;; --------------------
+(object F1) (jp_name F1 "大空") (tib_name F1 "ཆེན་པོ་སྟོང་པ་ཉད།")
+               (role F1 "great emptiness – the absolute void is taken as non‑existent")
+               (catuskoti F1 T) (member F1 G_F)
+
+(object F2) (jp_name F2 "勝義空") (tib_name F2 "དོན་དམ་པ་སྟོང་པ་ཉད།")
+               (role F2 "ultimate meaning emptiness – nirvāṇa reduced to mere nothingness")
+               (catuskoti F2 F) (member F2 G_F)
+
+(object F3) (jp_name F3 "有為空") (tib_name F3 "འདུས་བྱས་སྟོང་པ་ཉད།")
+               (role F3 "constructed emptiness – all created things are deemed void")
+               (catuskoti F3 B) (member F3 G_F)
+
+(object F4) (jp_name F4 "無為空") (tib_name F4 "འདུས་མ་བྱས་སྟོང་པ་ཉད།")
+               (role F4 "non‑constructed emptiness – conceptual non‑action is taken as void")
+               (catuskoti F4 N) (member F4 G_F)
+
+;; --------------------
+;; Group 亦 (G_B) – mixed emptiness (内外空) series
+;; --------------------
+(object B1) (jp_name B1 "畢竟空") (tib_name B1 "མཐའ་ལས་འདས་པ་སྟོང་པ་ཉད།")
+               (role B1 "ultimate‑co‑emptiness – opposing concepts coexist as existent")
+               (catuskoti B1 T) (member B1 G_B)
+
+(object B2) (jp_name B2 "無始空") (tib_name B2 "ཐོག་མ་དང་མཐའ་མ་མེད་པ་སྟོང་པ་ཉད།")
+               (role B2 "no‑beginning emptiness – beginning and end coexist")
+               (catuskoti B2 F) (member B2 G_B)
+
+(object B3) (jp_name B3 "散空") (tib_name B3 "དོར་བ་མེད་པ་སྟོང་པ་ཉད།")
+               (role B3 "scattered emptiness – discrete existence and continuity coexist")
+               (catuskoti B3 B) (member B3 G_B)
+
+(object B4) (jp_name B4 "自性空") (tib_name B4 "རང་བཞིན་སྟོང་པ་ཉད།")
+               (role B4 "essential‑nature emptiness – presence/absence of essence coexist")
+               (catuskoti B4 N) (member B4 G_B)
+
+;; --------------------
+;; Group 非非 (G_N) – ultimate emptiness (空空) series
+;; --------------------
+(object N1) (jp_name N1 "一切法空") (tib_name N1 "ཆོས་ཐམས་ཅད་སྟོང་པ་ཉད།")
+               (role N1 "all dharmas emptiness – all phenomena are taken as beyond existence")
+               (catuskoti N1 T) (member N1 G_N)
+
+(object N2) (jp_name N2 "自相空") (tib_name N2 "རང་གི་མཚན་ཉད་སྟོང་པ་ཉད།")
+               (role N2 "self‑characteristic emptiness – individual features are beyond existence")
+               (catuskoti N2 F) (member N2 G_N)
+
+(object N3) (jp_name N3 "不可得空") (tib_name N3 "མི་དམིགས་པ་སྟོང་པ་ཉད།")
+               (role N3 "unobtainable emptiness – worldly phenomena cannot be attained as existent")
+               (catuskoti N3 B) (member N3 G_N)
+
+(object N4) (jp_name N4 "無物自性空") (tib_name N4 "དངོས་པོ་མེད་པའི་ངོ་བོ་ཉད་སྟོང་པ་ཉད།")
+               (role N4 "non‑substance self‑nature emptiness – the worldly object is denied, but the ultimate self‑nature remains")
+               (catuskoti N4 N) (member N4 G_N)
+
+;; --------------------------------------------------------------
+;; 3. Global constraints linking groups and Catuskoti values
+;; --------------------------------------------------------------
+
+;; Each group contains exactly one member of each Catuskoti value.
+;; (We state it as a set of four separate axioms for clarity.)
+
+;; Group G_T
+(forall (?x) (=> (member ?x G_T) (catuskoti ?x T)))   ; at least one T‑member
+(forall (?x) (=> (member ?x G_T) (catuskoti ?x F)))   ; at least one F‑member
+(forall (?x) (=> (member ?x G_T) (catuskoti ?x B)))   ; at least one B‑member
+(forall (?x) (=> (member ?x G_T) (catuskoti ?x N)))   ; at least one N‑member
+
+;; Group G_F
+(forall (?x) (=> (member ?x G_F) (catuskoti ?x T)))
+(forall (?x) (=> (member ?x G_F) (catuskoti ?x F)))
+(forall (?x) (=> (member ?x G_F) (catuskoti ?x B)))
+(forall (?x) (=> (member ?x G_F) (catuskoti ?x N)))
+
+;; Group G_B
+(forall (?x) (=> (member ?x G_B) (catuskoti ?x T)))
+(forall (?x) (=> (member ?x G_B) (catuskoti ?x F)))
+(forall (?x) (=> (member ?x G_B) (catuskoti ?x B)))
+(forall (?x) (=> (member ?x G_B) (catuskoti ?x N)))
+
+;; Group G_N
+(forall (?x) (=> (member ?x G_N) (catuskoti ?x T)))
+(forall (?x) (=> (member ?x G_N) (catuskoti ?x F)))
+(forall (?x) (=> (member ?x G_N) (catuskoti ?x B)))
+(forall (?x) (=> (member ?x G_N) (catuskoti ?x N)))
+
+;; Additionally, the four groups are pairwise disjoint.
+(forall (?x) (=> (and (member ?x G_T) (member ?x G_F)) false))
+(forall (?x) (=> (and (member ?x G_T) (member ?x G_B)) false))
+(forall (?x) (=> (and (member ?x G_T) (member ?x G_N)) false))
+(forall (?x) (=> (and (member ?x G_F) (member ?x G_B)) false))
+(forall (?x) (=> (and (member ?x G_F) (member ?x G_N)) false))
+(forall (?x) (=> (and (member ?x G_B) (member ?x G_N)) false))
+
+;; --------------------------------------------------------------
+;; 4. Example queries (commented out – uncomment to use)
+;; --------------------------------------------------------------
+
+;; 4.1  Find all sub‑categories that belong to the value B (亦)
+;; (exists (?x) (and (subcat ?x) (catuskoti ?x B)))
+
+;; 4.2  Retrieve the Tibetan name of the “inner‑emptiness” entry
+;; (tib_name T1 ?tib)
+
+;; 4.3  List all members of the “非‑group” together with their roles
+;; (forall (?x) (=> (member ?x G_F) (and (jp_name ?x ?jn) (role ?x ?rl))))
+
+;; --------------------------------------------------------------
+;; End of file
+;; --------------------------------------------------------------

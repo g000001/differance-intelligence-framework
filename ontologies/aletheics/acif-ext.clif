@@ -1,0 +1,129 @@
+(cl-text PhysicalConstantsMiddleWayExtension
+  (cl-comment "================================================================")
+  (cl-comment "Extension: Physical Constants as Middle-Way Fixed Points")
+  (cl-comment "Integration of 'Physical Constants as Middle-Way Fixed Points' paper")
+  (cl-comment "with SKDT-ACIF Unified Theory (Parts 1-18)")
+  (cl-comment "Date: 2026-02-18")
+  (cl-comment "Author: Masaomi Chiba")
+  (cl-comment "================================================================")
+
+  ;; =====================================================================
+  ;; 1. Coherence Energy Functional (core of the paper)
+  ;; =====================================================================
+  (function coherence_energy (object) Real)
+  (function self_consistency (object) Real)      ;; SC(x)
+  (function cross_linearity (object) Real)       ;; CL(x)
+  (function observer_dependence (object) Real)   ;; OD(x)
+
+  (forall (?x)
+    (=> (object ?x)
+        (equal (coherence_energy ?x)
+               (add_real (add_real (self_consistency ?x)
+                                   (cross_linearity ?x))
+                         (observer_dependence ?x)))))
+
+  ;; Link to Alethetic Complexity and Dimensional Debt (Part 18)
+  (forall (?x)
+    (=> (object ?x)
+        (equal (self_consistency ?x) (KA ?x))))          ;; KA = Alethetic Complexity
+
+  (forall (?x)
+    (=> (object ?x)
+        (equal (cross_linearity ?x) (DebtOfDimension ?x)))) ;; DebtOfDimension from Part 18
+
+  (forall (?x)
+    (=> (object ?x)
+        (equal (observer_dependence ?x)
+               (mul_real (toReal (LUMO_ell (ObserverAtLevel ?x)))
+                         (observer_level_factor ?x)))))
+
+  ;; Minimal-coherence fixed point (the paper's x*)
+  (predicate is_minimal_coherence_fixed_point (object) bool)
+  (forall (?x)
+    (iff (is_minimal_coherence_fixed_point ?x)
+         (and (minimize (coherence_energy ?x))
+              (mw_eq ?x Dfix0))))
+
+  ;; =====================================================================
+  ;; 2. Ranki (stochastic proposals under indeterminate state)
+  ;; =====================================================================
+  (predicate Ranki (object object) bool)  ;; Ranki(E, proposal)
+  (predicate GeneratesRanki (object object) bool) ;; observer generates Ranki from emptiness
+
+  (forall (?E ?r)
+    (=> (and (object ?E) (object ?r))
+        (iff (Ranki ?E ?r)
+             (and (equal (LUMO_sigma ?E) indeterminate)
+                  (greater_nat (LUMO_ell ?E) zero)
+                  (member ?r (AvailableTruthValuesAt (ObserverAtLevel ?E)))))))
+
+  (forall (?obs ?E)
+    (=> (and (IsObserver ?obs) (object ?E))
+        (GeneratesRanki ?obs ?E)))
+
+  ;; =====================================================================
+  ;; 3. Physical Projection Functor (π_phys : Dfix0 → physical constants)
+  ;; =====================================================================
+  (function pi_phys (object) object)  ;; physical projection of Dfix0
+  (forall (?const)
+    (=> (IsPhysicalConstant ?const)
+        (mw_eq ?const (pi_phys Dfix0))))
+
+  ;; Explicit mapping for known constants (examples)
+  (object c_light) (IsPhysicalConstant c_light)
+  (object h_planck) (IsPhysicalConstant h_planck)
+  (object G_grav) (IsPhysicalConstant G_grav)
+  (object Lambda_cosmo) (IsPhysicalConstant Lambda_cosmo)
+
+  (equal (pi_phys Dfix0) c_light)   ;; example anchor; can be generalized
+  (equal (pi_phys (NegateAt (succ zero) Dfix0)) h_planck)  ;; Emergence level
+
+  ;; =====================================================================
+  ;; 4. Bridge to Physical Resource Mapping (Part 18)
+  ;; =====================================================================
+  (forall (?debt ?const)
+    (=> (and (greater_real ?debt zero) (IsPhysicalConstant ?const))
+        (equal (h_aletheia)
+               (mul_real (coherence_energy ?const)
+                         (physical_energy_cost ?debt)))))
+
+  (forall (?debt ?const)
+    (=> (and (greater_real ?debt zero) (IsPhysicalConstant ?const))
+        (equal (tau_unit)
+               (mul_real (coherence_energy ?const)
+                         (physical_time_cost ?debt)))))
+
+  (forall (?debt ?const)
+    (=> (and (greater_real ?debt zero) (IsPhysicalConstant ?const))
+        (equal (sigma_unit)
+               (mul_real (coherence_energy ?const)
+                         (physical_space_cost ?debt)))))
+
+  ;; Physical constants appear constant because they are minimal-coherence fixed points
+  (forall (?const)
+    (=> (IsPhysicalConstant ?const)
+        (and (is_minimal_coherence_fixed_point ?const)
+             (mw_approx ?const Dfix0 1e-10))))  ;; pragmatically exact within ε
+
+  ;; =====================================================================
+  ;; 5. Middle-Way Equivalence in Physics (mweq)
+  ;; =====================================================================
+  (forall (?A ?B)
+    (iff (mweq ?A ?B)   ;; paper's \mweq
+         (and (converges_to ?A Dfix0)
+              (converges_to ?B Dfix0)
+              (mw_eq ?A ?B))))
+
+  ;; Physical constants satisfy mweq with Dfix0
+  (forall (?const)
+    (=> (IsPhysicalConstant ?const)
+        (mweq ?const Dfix0)))
+
+  (cl-comment "================================================================")
+  (cl-comment "This extension makes the paper's framework a direct continuation")
+  (cl-comment "of SKDT-ACIF: coherence_energy = KA + Debt + ObserverDependence")
+  (cl-comment "Ranki = LUMO indeterminate generation")
+  (cl-comment "Physical constants = π_phys(Dfix0) = minimal-coherence fixed points")
+  (cl-comment "All previous parts (LUMO, Debt, Bestimize, BreathingProcess) remain intact.")
+  (cl-comment "================================================================")
+)

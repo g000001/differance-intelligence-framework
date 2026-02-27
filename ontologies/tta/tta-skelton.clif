@@ -1,0 +1,335 @@
+(cl-text
+
+; Title: 二諦随伴 F_n ⊣ G_{2^n+1} の証明骨格
+; Author: 千葉 将臣
+; Date: 2026-02-21
+
+; ==============================================================================
+; 定義と前提
+; ==============================================================================
+
+; 基底圏 C、不動点 Dfix0、スライス圏 C/Dfix0 の公理化
+(forall (C Dfix0)
+  (=> (Category C)
+      (exists (SliceCategory)
+        (and (Category SliceCategory)
+             (= SliceCategory (SliceCategoryOf C Dfix0))))))
+
+; スライス圏の対象：ペア (X, x) where x: X → Dfix0
+(forall (SliceObj X x)
+  (=> (SliceObject SliceObj)
+      (exists (BaseObj StructuralMap)
+        (and (member BaseObj SliceObj)
+             (member StructuralMap SliceObj)
+             (Arrow StructuralMap BaseObj Dfix0)))))
+
+; スライス圏の1-射：ペア (h, α_h) where h: X → Y, α_h: y ∘ h ⇒ x
+(forall (SliceArrow1 h alpha_h X Y)
+  (=> (Slice1Arrow SliceArrow1)
+      (and (Arrow h X Y)
+           (NaturalTransformation2Cell alpha_h))))
+
+; ==============================================================================
+; 主定理：二諦随伴の成立
+; ==============================================================================
+
+(define MainTheorem
+  "二諦随伴 F_n ⊣ G_{2^n+1} の成立")
+
+(forall (n C Dfix0 Fn G2n+1)
+  (=> (and (NatNumber n)
+           (Category C)
+           (FixedObject Dfix0 C)
+           (= Fn (LeftFunctor n C Dfix0))
+           (= G2n+1 (RightFunctor n C Dfix0)))
+      (Adjunction Fn G2n+1)))
+
+; ==============================================================================
+; 2-圏としての二諺スライス圏の定義
+; ==============================================================================
+
+(define-sort 0Cell)      ; 対象（0-セル）
+(define-sort 1Cell)      ; 1-射（1-セル）
+(define-sort 2Cell)      ; 2-射（2-セル）
+
+; 0-セル：(X, x) where X ∈ Ob(C), x: X → Dfix0
+(forall (Obj X x)
+  (=> (0Cell_SliceCategory Obj)
+      (and (member X C)
+           (Arrow x X Dfix0))))
+
+; 1-セル：(h, α_h) where h: X → Y, α_h: y ∘ h ⇒ x（可逆2-射）
+(forall (Arrow1 h alpha X Y x y)
+  (=> (1Cell_SliceCategory Arrow1 X Y)
+      (and (Arrow h X Y)
+           (2CellInvertible alpha (VerticalComposition y h) x))))
+
+; 1-射の合成：(k, α_k) ∘ (h, α_h) = (k ∘ h, α_{k∘h})
+(forall (h alpha_h k alpha_k X Y Z x y z Composite)
+  (=> (and (1Cell_SliceCategory (pair h alpha_h) X Y)
+           (1Cell_SliceCategory (pair k alpha_k) Y Z)
+           (= Composite (Compose1Cells (pair k alpha_k) (pair h alpha_h))))
+      (exists (alpha_composite)
+        (and (2CellInvertible alpha_composite
+              (VerticalComposition z (Compose1 k h)) x)
+             (= Composite (pair (Compose1 k h) alpha_composite))
+             (= alpha_composite (VerticalCompose alpha_h
+                                  (HorizontalCompose alpha_k h)))))))
+
+; 恒等1-射：id_{(X,x)} = (id_X, id_x)
+(forall (Obj x y)
+  (=> (0Cell_SliceCategory (pair Obj x))
+      (= (IdentityArrow (pair Obj x))
+         (pair (IdentityArrow Obj) (IdentityArrow x)))))
+
+; 2-セル：Γ: (h, α_h) ⇒ (k, α_k) である2-射 Γ: h ⇒ k with コヒーレンス条件
+(forall (TwoCellSlice Gamma h alpha_h k alpha_k X Y x y)
+  (=> (and (2Cell_SliceCategory TwoCellSlice h k)
+           (= h (Arrows.1stComponent (pair h alpha_h)))
+           (= k (Arrows.1stComponent (pair k alpha_k))))
+      (exists (Coherence)
+        (and (2Cell Gamma h k)
+             (= Coherence (VerticalCompose alpha_k
+                             (HorizontalCompose y Gamma)))
+             (= Coherence alpha_h)))))
+
+; ==============================================================================
+; 2-関手 F_n: C/Dfix0 → C（左随伴：メタ否定による爆縮）
+; ==============================================================================
+
+(define-sort MetaNegation)
+
+(forall (n X FnX)
+  (=> (and (NatNumber n) (0Cell_SliceCategory X))
+      (exists (FnX)
+        (and (member FnX C)
+             (= FnX (MetaNegationIter n (Ob1 X)))))))
+
+; F_n の1-射への作用：(h, α_h) ↦ h
+(forall (n h alpha_h X Y FnX FnY FnArrow)
+  (=> (and (NatNumber n)
+           (1Cell_SliceCategory (pair h alpha_h) X Y)
+           (= FnX (Fn n X))
+           (= FnY (Fn n Y))
+           (= FnArrow (Fn n (pair h alpha_h))))
+      (and (Arrow FnArrow FnX FnY)
+           (= FnArrow (PurifiedArrow n h)))))
+
+; F_n の2-射への作用：Γ: h ⇒ k ↦ Γ
+(forall (n Gamma h k FnGamma)
+  (=> (and (NatNumber n)
+           (2Cell_SliceCategory Gamma h k)
+           (= FnGamma (Fn n Gamma)))
+      (and (2Cell FnGamma h k)
+           (= FnGamma Gamma))))
+
+; ==============================================================================
+; 補題：差延の圧縮（Alethetic Compression）
+; ==============================================================================
+
+(define AletheticComplexityNorm
+  "差延 α の情報量ノルム ∥·∥")
+
+(forall (alpha FnAlpha)
+  (=> (and (2CellInvertible alpha _ _)
+           (not (= alpha IdentityCell)))
+      (< (AletheticComplexityNorm (ApplyFn alpha))
+         (AletheticComplexityNorm alpha))))
+
+; ==============================================================================
+; 2-関手 G_{2^n+1}: C → C/Dfix0（右随伴：奇数すくみによる安定化）
+; ==============================================================================
+
+(define-sort Stalemate)
+(define-sort AntiCollusion)
+
+; 奇数次対称性による完全グラフ構造と共謀防止
+(forall (n Y Stale_Graph)
+  (=> (and (NatNumber n) (member Y C))
+      (exists (Stale_Graph)
+        (and (CompleteSymmetricGraph Stale_Graph (+ (Exponent 2 n) 1))
+             (AntiCollusionProperty Stale_Graph)))))
+
+; G_{2^n+1} の対象への作用：Y ↦ (Stale_{2^n+1}(Y), ŷ)
+(forall (n Y G2nY Stale_Y yhat)
+  (=> (and (NatNumber n) (member Y C))
+      (exists (Stale_Y yhat)
+        (and (Colimit Stale_Y (Stale_Graph n Y))
+             (Arrow yhat Stale_Y Dfix0)
+             (UniversalProperty yhat)
+             (= G2nY (pair Stale_Y yhat))
+             (0Cell_SliceCategory G2nY)))))
+
+; 共謀防止の公理：奇数次対称グラフには系全体を支配できる部分集合が存在しない
+(forall (Graph n Subset)
+  (=> (and (CompleteSymmetricGraph Graph (+ (Exponent 2 n) 1))
+           (ProperSubset Subset Graph))
+      (not (CanDominateWhole Subset Graph))))
+
+; G_{2^n+1} の1-射への作用：k: Y → Z ↦ ĝ: Stale_{2^n+1}(Y) → Stale_{2^n+1}(Z)
+(forall (n k Y Z Stale_Y Stale_Z Gk alpha_k)
+  (=> (and (NatNumber n)
+           (Arrow k Y Z)
+           (= Stale_Y (Stale_Component (G2n+1 n Y)))
+           (= Stale_Z (Stale_Component (G2n+1 n Z)))
+           (= Gk (G2n+1 n k)))
+      (exists (alpha_k)
+        (and (Arrow Gk Stale_Y Stale_Z)
+             (2CellInvertible alpha_k
+              (VerticalComposition (yhat n Z) Gk)
+              (yhat n Y))))))
+
+; G_{2^n+1} の2-射への作用：β: k ⇒ l ↦ 整合的な2-射
+(forall (n beta k l Gbeta)
+  (=> (and (NatNumber n)
+           (2Cell beta k l)
+           (= Gbeta (G2n+1 n beta)))
+      (and (2Cell Gbeta (G2n+1 n k) (G2n+1 n l))
+           (CoherentWith Gbeta
+            (alpha_Sequence n (G2n+1 n k) (G2n+1 n l))))))
+
+; ==============================================================================
+; 擬随伴の同値 Φ: Hom(F_n(X), Y) ≅ Hom(X, G_{2^n+1}(Y))
+; ==============================================================================
+
+(forall (n X Y Phi PhiInverse)
+  (=> (and (NatNumber n)
+           (0Cell_SliceCategory X)
+           (member Y C))
+      (exists (Phi PhiInverse)
+        (and (PseudoNaturalEquivalence Phi
+              (Hom-SliceCategory (Fn n X) Y)
+              (Hom-BaseCategory X (G2n+1 n Y)))
+             (PseudoInverse Phi PhiInverse)
+             (= (Compose Phi PhiInverse) (IdentityEquivalence))
+             (= (Compose PhiInverse Phi) (IdentityEquivalence))))))
+
+; Φ の順方向の構成：(h, α_h) ↦ k
+(forall (n X Y h alpha_h k)
+  (=> (and (NatNumber n)
+           (1Cell_SliceCategory (pair h alpha_h) (Fn n X) Y))
+      (exists (k)
+        (and (Arrow k X (Stale_Component (G2n+1 n Y)))
+             (= k (Phi-Forward n X Y (pair h alpha_h)))
+             (UniversalProperty-Induced k
+              h alpha_h (Stale_Component (G2n+1 n Y)))))))
+
+; Φ の逆方向の構成：k ↦ (h, α_h)
+(forall (n X Y k h alpha_h)
+  (=> (and (NatNumber n)
+           (Arrow k X (Stale_Component (G2n+1 n Y))))
+      (exists (h alpha_h)
+        (and (Arrow h (Fn n X) Y)
+             (2CellInvertible alpha_h
+              (VerticalComposition (yhat n Y) h) (x n X))
+             (= (pair h alpha_h) (Phi-Inverse n X Y k))))))
+
+; ==============================================================================
+; 擬単位 η: id_{C/Dfix0} ⇒ G_{2^n+1} ∘ F_n
+; ==============================================================================
+
+(forall (n X eta_X)
+  (=> (and (NatNumber n)
+           (0Cell_SliceCategory X))
+      (exists (eta_X)
+        (and (1Cell_SliceCategory eta_X X (G2n+1 n (Fn n X)))
+             (= eta_X (PseudoUnit n X))
+             (= eta_X (Phi-Forward n X (Fn n X)
+                        (IdentityArrow (Fn n X))))))))
+
+; ==============================================================================
+; 擬余単位 ε: F_n ∘ G_{2^n+1} ⇒ id_{C/Dfix0}
+; ==============================================================================
+
+(forall (n Y epsilon_Y)
+  (=> (and (NatNumber n)
+           (member Y C))
+      (exists (epsilon_Y)
+        (and (1Cell_SliceCategory epsilon_Y
+              (Fn n (G2n+1 n Y)) Y)
+             (= epsilon_Y (PseudoCounit n Y))
+             (= epsilon_Y (Phi-Inverse n (G2n+1 n Y) Y
+                            (IdentityArrow (G2n+1 n Y))))))))
+
+; ==============================================================================
+; 三角等式（擬可換）
+; ==============================================================================
+
+; 左三角等式：ε_{F_n(X)} ∘ F_n(η_X) ⇒ id_{F_n(X)}
+(forall (n X lambda_X)
+  (=> (and (NatNumber n)
+           (0Cell_SliceCategory X))
+      (exists (lambda_X)
+        (and (2Cell_SliceCategory lambda_X
+              (VerticalCompose (PseudoCounit n (Fn n X))
+                               (Fn n (PseudoUnit n X)))
+              (IdentityArrow (Fn n X)))
+             (2CellInvertible lambda_X _ _)
+             (= lambda_X (LeftTriangleMap n X))))))
+
+; 右三角等式：G_{2^n+1}(ε_Y) ∘ η_{G_{2^n+1}(Y)} ⇒ id_{G_{2^n+1}(Y)}
+(forall (n Y rho_Y)
+  (=> (and (NatNumber n)
+           (member Y C))
+      (exists (rho_Y)
+        (and (2Cell_SliceCategory rho_Y
+              (VerticalCompose (G2n+1 n (PseudoCounit n Y))
+                               (PseudoUnit n (G2n+1 n Y)))
+              (IdentityArrow (G2n+1 n Y)))
+             (2CellInvertible rho_Y _ _)
+             (= rho_Y (RightTriangleMap n Y))))))
+
+; ==============================================================================
+; Φ の擬自然性
+; ==============================================================================
+
+; X 側の擬自然性：文脈変化に対する不変性
+(forall (n X' X Y u h xi_uh)
+  (=> (and (NatNumber n)
+           (1Cell_SliceCategory u X' X)
+           (Arrow h (Fn n X) Y)
+           (= xi_uh (PseudoNaturality-X n X' X Y u h)))
+      (and (2Cell_SliceCategory xi_uh
+             (Phi-Forward n X' Y (VerticalCompose h (Fn n u)))
+             (VerticalCompose (Phi-Forward n X Y h) u))
+           (2CellInvertible xi_uh _ _))))
+
+; Y 側の擬自然性：ターゲット変化に対する追従性
+(forall (n X Y Y' v h zeta_vh)
+  (=> (and (NatNumber n)
+           (Arrow v Y Y')
+           (Arrow h (Fn n X) Y)
+           (= zeta_vh (PseudoNaturality-Y n X Y Y' v h)))
+      (and (2Cell_SliceCategory zeta_vh
+             (Phi-Forward n X Y' (VerticalCompose v h))
+             (VerticalCompose (G2n+1 n v) (Phi-Forward n X Y h)))
+           (2CellInvertible zeta_vh _ _))))
+
+; ==============================================================================
+; コヒーレンス条件の統括
+; ==============================================================================
+
+; 全体的なコヒーレンス：すべての2-射が整合的に可換
+(forall (n)
+  (=> (NatNumber n)
+      (forall (Diagram)
+        (=> (PasteDiagram-SliceCategory n Diagram)
+            (PermutableToIdentity Diagram)))))
+
+; ==============================================================================
+; 結論：二諺随伴の成立
+; ==============================================================================
+
+(define Conclusion
+  (forall (n C Dfix0 Fn G2n+1)
+    (=> (and (NatNumber n)
+             (Category C)
+             (FixedObject Dfix0 C)
+             (= Fn (LeftFunctor n C Dfix0))
+             (= G2n+1 (RightFunctor n C Dfix0)))
+        (and (PseudoAdjunction Fn G2n+1)
+             (UniversalProperty-Holds Fn G2n+1)
+             (CoherentWith (Phi n) (TriangleIdentities n))
+             (TriangleIdentities-PseudoCommute n)))))
+
+)

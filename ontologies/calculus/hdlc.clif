@@ -1,0 +1,375 @@
+;; ==============================================================
+;; HDLC – High-Dimensional Lyapunov Convergence
+;; --------------------------------------------------------------
+;; Title   : High-Dimensional Lyapunov Convergence (HDLC)
+;; Author  : (your name)
+;; Date    : 2025-12-08
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : High-Dimensional Lyapunov Convergence (HDLC)")
+(cl-comment "Author  : (your name)")
+(cl-comment "Date    : 2024-10-08")
+(cl-comment "Version : 1.0")
+(cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies (objects, numbers, arithmetic)
+;; --------------------------------------------------------------
+
+;; Generic objects (states, vectors, systems, etc.)
+(object   ?x)
+
+;; Real numbers (we treat ℝ as a sort of objects)
+(object   Real)
+
+;; Natural numbers (Peano encoding)
+(object zero)                     ;; 0
+(object succ)                     ;; successor (unary)
+(nat zero)                        ;; zero is a natural number
+(forall (?n) (=> (nat ?n) (nat (succ ?n))))   ;; closure under succ
+
+;; Arithmetic primitives (addition, subtraction, multiplication, ≤)
+(function add (Real Real) Real)          ;; addition
+(function sub (Real Real) Real)          ;; subtraction (defined when minuend ≥ subtrahend)
+(function mul (Real Real) Real)          ;; multiplication
+(function leq (Real Real) bool)          ;; ≤
+
+;; Exponentiation of 2 (2ⁿ)
+(function pow2 (nat) nat)                ;; pow2(n) = 2ⁿ
+;; Axioms for pow2 (recursive definition)
+(equal (pow2 zero) (succ zero))          ;; 2⁰ = 1
+(forall (?n) (=> (nat ?n)
+                 (equal (pow2 (succ ?n))
+                        (mul (succ (succ zero)) (pow2 ?n))))) ;; 2^{n+1}=2·2ⁿ
+
+;; --------------------------------------------------------------
+;; 1. Primary variables and constants
+;; --------------------------------------------------------------
+
+;; Instability (entropy, “苦”) as a time-dependent real-valued function
+(function D (Real) Real)                 ;; D(t) : ℝ → ℝ_{\ge 0}
+
+;; Fixed point (the 0-dimensional “空即是色” point)
+(object dfix)                            ;; D_{\text{fix0}}
+(equal (D (zero)) 0)                     ;; at time 0 the instability is 0 at the fixed point
+;; Uniqueness of the zero-norm point (expressed later via norm)
+
+;; Dimension depth n (natural number) and derived effective dimension d = 2ⁿ
+(object n)                               ;; depth
+(nat n)                                  ;; n is a natural number
+(function d (nat) nat)                   ;; d = 2ⁿ
+(equal (d n) (pow2 n))
+
+;; Input alethetic complexity (AC_in) – a non-negative real
+(object AC_in)                           ;; \mathrm{AC}_{\mathrm{in}}
+;; Positive scaling constant κ > 0
+(object kappa)                           ;; κ
+;; Initial instability D₀ = κ·AC_in
+(object D0)                              ;; D₀
+(equal D0 (mul kappa AC_in))
+
+;; --------------------------------------------------------------
+;; ## 2. State space and Lyapunov candidate
+;; --------------------------------------------------------------
+
+;; Continuous time variable t ∈ ℝ
+(object t)                               ;; time
+
+;; State vector x(t) ∈ ℝᵈ (d = 2ⁿ)
+(function x (Real) object)               ;; x(t) : ℝ → ℝᵈ (treated as an abstract object)
+
+;; Euclidean norm on ℝᵈ (used for the Lyapunov candidate)
+(function euclid_norm (object) Real)      ;; ||·||₂
+;; We do not give an explicit definition – it is a primitive.
+
+;; Lyapunov candidate V(x) = ½‖x‖₂²
+(function V (object) Real)
+(forall (?y) (=> (object ?y)
+                 (equal (V ?y) (mul (half) (mul (euclid_norm ?y) (euclid_norm ?y)))))   ;; half = 1/2
+
+;; Instability D(t) is identified with V(x(t))
+(forall (?t) (=> (object ?t)
+                 (equal (D ?t) (V (x ?t)))))
+
+;; --------------------------------------------------------------
+;; ## 3. Negation-of-Self-Identity (Soku-Hi) per axis
+;; --------------------------------------------------------------
+
+;; Standard basis vectors e_k (k = 1 … d)
+(function e (nat) object)                ;; e(k) ∈ ℝᵈ
+;; Axiom: the family {e(k)} is orthonormal – omitted (primitive).
+
+;; Axis-wise sign-flip (reflection) operator ¬_k
+(function neg_k (nat object) object)     ;; neg_k(k, x) flips the k-th component of x
+;; Definition (mirrored reflection):
+(forall (?k ?y) (=> (and (nat ?k) (object ?y))
+                 (equal (neg_k ?k ?y)
+                        (sub ?y (mul (succ (succ zero))
+                                      (mul (inner_product ?y (e ?k)) (e ?k))))))   ;; inner_product is primitive
+
+;; Component extraction A_k(x) = ⟨x, e_k⟩ e_k
+(function A_k (nat object) object)
+(forall (?k ?y) (=> (and (nat ?k) (object ?y))
+                 (equal (A_k ?k ?y)
+                        (mul (inner_product ?y (e ?k)) (e ?k)))))   ;; inner_product primitive
+
+;; Collision term A_k ⊗ ¬A_k (formal symbol, we only need its norm later)
+(predicate collision (nat object) bool)   ;; collision(k,x) abbreviates A_k ⊗ ¬A_k
+
+;; --------------------------------------------------------------
+;; ## 4. fpa-norm (fixed-point-alignment norm)
+;; --------------------------------------------------------------
+
+;; The fpa-norm measures how well the “是/非” pair aligns toward the fixed point.
+(function fpa_norm (nat object) Real)    ;; ‖A_k ⊗ ¬A_k‖_{fpa}
+;; Concrete example (Equation (9) in the paper):
+(forall (?k ?y) (=> (and (nat ?k) (object ?y))
+                 (equal (fpa_norm ?k ?y)
+                        (mul (succ (succ zero))
+                             (abs (inner_product ?y (e ?k)))))))   ;; 2·|⟨x,e_k⟩|
+
+;; --------------------------------------------------------------
+;; ## 5. Intensity functions λ_k(x) and alignment function align_fpa
+;; --------------------------------------------------------------
+
+;; λ_k : ℝᵈ → ℝ_{\ge 0}  (non-negative intensity of the negation on axis k)
+(function lambda_k (nat object) Real)
+;; Example (Equation (15)):
+(forall (?k ?y) (=> (and (nat ?k) (object ?y))
+                 (equal (lambda_k ?k ?y)
+                        (mul alpha (abs (inner_product ?y (e ?k)))))))   ;; α > 0
+
+;; Alignment function align_fpa : ℝᵈ → [0,1]
+(function align_fpa (object) Real)
+;; Example (Equation (14)):
+(forall (?y) (=> (object ?y)
+                 (equal (align_fpa ?y)
+                        (max zero
+                             (div (inner_product (u ?y) (neg (x ?y)))   ;; u(x) is a control/update vector
+                                  (mul (euclid_norm (u ?y)) (euclid_norm (x ?y))))))))   ;; clamp to [0,1]
+
+;; Primitive control vector field u : ℝᵈ → ℝᵈ
+(function u (object) object)
+
+;; --------------------------------------------------------------
+;; ## 6. Total pressure Λ_total(x)
+;; --------------------------------------------------------------
+
+(function Lambda_total (object) Real)
+(forall (?y) (=> (object ?y)
+                 (equal (Lambda_total ?y)
+                        (let ((sum 0))
+                          (forall (?k) (=> (nat ?k)
+                                            (let ((term (mul (lambda_k ?k ?y)
+                                                            (align_fpa ?y))))
+                                              (equal sum (add sum term)))))))))
+
+;; --------------------------------------------------------------
+;; ## 7. Phase factor Φ(n)
+;; --------------------------------------------------------------
+
+(function Phi (nat) Real)                ;; Φ(n) ∈ (0,1]
+;; Axioms (Equation (12)):
+(forall (?n) (=> (nat ?n)
+                 (and (leq zero (Phi ?n))          ;; Φ(n) > 0
+                      (leq (Phi ?n) (succ zero))))) ;; Φ(n) ≤ 1
+
+;; Additional qualitative constraints:
+(equal (Phi (succ (succ zero))) (succ zero))   ;; Φ(2) ≈ 1 (for n≥2)
+;; For n=1 we only require Φ(1) « 1 (very small).  We leave it as a free parameter.
+
+;; --------------------------------------------------------------
+;; ## 8. Core dynamical equation (HDLC ODE)
+;; --------------------------------------------------------------
+
+;; Derivative predicate: Derivative(f, t, v) means f'(t) = v
+(predicate Derivative (function Real) Real Real bool)
+
+;; ODE for instability D(t):
+(forall (?t) (=> (object ?t)
+                 (=> (Derivative D ?t ?v)
+                     (equal ?v (mul (neg (Phi n))
+                                    (mul (Lambda_total (x ?t)) (D ?t)))))))
+
+;; Integral solution (Equation (10)):
+;; D(t) = D₀·exp( - ∫₀ᵗ Λ_total(x(τ))·Φ(n) dτ )
+;; We capture it as a derived predicate Solution:
+(predicate Solution (Real Real) bool)   ;; Solution(t, D(t))
+
+(forall (?t) (=> (object ?t)
+                 (=> (Solution ?t (D ?t))
+                     (equal (D ?t)
+                            (mul D0
+                                 (exp (neg (mul (Phi n)
+                                                (integral zero ?t (lambda (τ) (Lambda_total (x τ))))))))))))
+
+;; --------------------------------------------------------------
+;; ## 9. Exponential upper bound (near-ideal regime)
+;; --------------------------------------------------------------
+
+;; Assume a uniform lower bound λ_min > 0 for Λ_total:
+(object lambda_min)                     ;; λ_min > 0
+;; Axiom:
+(forall (?y) (=> (object ?y)
+                 (leq lambda_min (Lambda_total ?y))))
+
+;; Upper bound theorem (Equation (11)):
+(forall (?t) (=> (object ?t)
+                 (leq (D ?t)
+                      (mul D0 (exp (neg (mul lambda_min (mul (Phi n) ?t))))))))
+
+;; --------------------------------------------------------------
+;; ## 10. Dimensional phase transition (qualitative description)
+;; --------------------------------------------------------------
+
+;; Predicate indicating whether the current dimension n is “low” (n=1) or “high” (n≥2)
+(predicate LowDim (nat) bool)
+(equal (LowDim (succ zero)) true)          ;; n=1 is low
+(forall (?n) (=> (and (nat ?n) (>= ?n (succ (succ zero))))   ;; n≥2
+                (equal (LowDim ?n) false)))
+
+;; Consequence: when LowDim(n) holds, Φ(n) is very small → possible divergence.
+;; When LowDim(n) is false, Φ(n)≈1 → exponential decay guaranteed.
+(forall (?n) (=> (LowDim ?n)
+                 (leq (Phi n) epsilon_small)))   ;; epsilon_small ≪ 1 (parameter)
+
+;; --------------------------------------------------------------
+;; ## 11. ARX – meta-execution (recursive application of HDLC)
+;; --------------------------------------------------------------
+
+;; ARX takes the current triple (n, basis {e_k}, negation operators {neg_k})
+;; and returns an upgraded triple (n', {e'_k}, {neg'_k}) with n' > n.
+(function ARX (nat) nat)                ;; we only model the dimension increase
+
+;; Trigger condition (Equation (18)):
+;; η(t) = - D'(t) / D(t)   (instantaneous decay rate)
+(function eta (Real) Real)
+(forall (?t) (=> (object ?t)
+                 (=> (Derivative D ?t ?v)
+                     (equal (eta ?t)
+                            (div (neg ?v) (D ?t))))))
+
+;; Parameters for ARX trigger
+(object epsilon)                       ;; small positive threshold
+(object Delta_tau)                     ;; observation window length
+(object delta)                         ;; residual instability threshold
+
+;; ARX trigger predicate:
+(predicate Trigger_ARX (Real) bool)    ;; true at time t if ARX should fire
+(forall (?t) (=> (object ?t)
+                 (=> (and (leq (integral (sub ?t Delta_tau) ?t (lambda (τ) (eta τ))) epsilon)
+                          (leq delta (D ?t)))
+                     (Trigger_ARX ?t))))
+
+;; Effect of ARX (dimension increase):
+(forall (?t) (=> (Trigger_ARX ?t)
+                 (equal (ARX n) (succ n))))   ;; simplest: increment n by 1
+
+;; --------------------------------------------------------------
+;; ## 12. Middle-Way equivalence (mw-equivalence)
+;; --------------------------------------------------------------
+
+;; The “Middle-Way” equivalence ≈_mw is a binary relation on objects.
+(predicate mw_eq (object object) bool)
+
+;; Definition: two objects are mw-equivalent iff they both converge (by repeated
+;; application of the composite H = φ∘ι) to the 0-d fixed point dfix.
+;; We reuse the H-iteration defined later.
+
+;; --------------------------------------------------------------
+;; 13. Embedding / projection pair (ι, φ) and composite H
+;; --------------------------------------------------------------
+
+;; 13.1  Embedding ι : Prop → P  (adds one unit of “time”)
+(function iota (object) object)          ;; ι : Prop → P
+(forall (?p) (=> (member ?p Prop)
+                 (and (member (iota ?p) P)                     ; result lives in P
+                      (equal (Klen (iota ?p)) (Klen ?p))      ; informational length unchanged
+                      (equal (Llen (iota ?p)) (add (Llen ?p) (succ zero)))))) ; ℓ increased by 1
+
+;; 13.2  Projection φ : P → Prop  (removes one unit of “time”)
+(function phi (object) object)           ;; φ : P → Prop
+(forall (?q) (=> (member ?q P)
+                 (and (member (phi ?q) Prop)                ; result lives back in Prop
+                      (equal (Klen (phi ?q)) (Klen ?q))    ; informational length unchanged
+                      (equal (Llen (phi ?q)) (sub (Llen ?q) (succ zero)))))) ; ℓ decreased by 1
+
+;; 13.3  Splitting property (φ ∘ ι = id on Prop)
+(forall (?p) (=> (member ?p Prop)
+                 (equal (phi (iota ?p)) ?p)))
+
+;; 13.4  Composite endofunctor H = φ ∘ ι on Prop
+(function H (object) object)            ;; H(x) = φ(ι(x))
+(forall (?p) (=> (member ?p Prop)
+                 (equal (H ?p) (phi (iota ?p)))))
+
+;; 13.5  Iteration of H (denoted HIter)
+(function HIter (nat object) object)    ;; HIter n x = Hⁿ(x)
+(forall (?x) (equal (HIter zero ?x) ?x))                     ; 0-th iteration = identity
+(forall (?n ?x) (=> (nat ?n) (object ?x)
+                 (equal (HIter (succ ?n) ?x)
+                        (H (HIter ?n ?x)))))               ; recursion step
+
+;; 13.6  Norm reduction by one at each H-step (ideal case c = 0)
+(forall (?x) (=> (member ?x Prop)
+                 (equal (norm (H ?x)) (sub (norm ?x) (succ zero)))))   ; ‖H(x)‖ = ‖x‖ − 1
+
+;; More generally, allowing a non-negative constant c (as in the paper):
+(constant c nat)                     ;; c ≥ 0
+(forall (?c) (=> (nat ?c) (leq zero ?c)))   ; c is non-negative
+
+(forall (?x) (=> (member ?x Prop)
+                 (leq (norm (H ?x))
+                      (add (sub (norm ?x) (succ zero)) c))))   ; ‖H(x)‖ ≤ ‖x‖ − 1 + c
+
+;; 13.7  Middle-Way equivalence (mw-equivalence)
+;; Two objects are mw-equivalent iff they both converge (by some number of H-steps)
+;; to the unique 0-d fixed point dfix.
+(predicate mw_eq (object object) bool)
+(forall (?a ?b) (=> (and (mw_eq ?a ?b)
+                         (member ?a Prop) (member ?b Prop))
+                     (and (exists (?na) (nat ?na) (equal (HIter ?na ?a) dfix))
+                          (exists (?nb) (nat ?nb) (equal (HIter ?nb ?b) dfix)))))
+
+;; mw_eq is an equivalence relation on Prop:
+(forall (?x) (=> (member ?x Prop) (mw_eq ?x ?x)))                     ; reflexive
+(forall (?x ?y) (=> (and (mw_eq ?x ?y) (member ?x Prop) (member ?y Prop))
+                       (mw_eq ?y ?x)))                             ; symmetric
+(forall (?x ?y ?z) (=> (and (mw_eq ?x ?y) (mw_eq ?y ?z)
+                               (member ?x Prop) (member ?y Prop) (member ?z Prop))
+                       (mw_eq ?x ?z)))                             ; transitive
+
+;; 13.8  Convergence to the 0-d fixed point
+;; For any object p ∈ Prop, repeated application of H eventually reaches dfix.
+(forall (?p) (=> (member ?p Prop)
+                 (exists (?k) (nat ?k) (equal (HIter ?k ?p) dfix))))
+
+;; --------------------------------------------------------------
+## 14. Summary of the formalisation (comments)
+;; --------------------------------------------------------------
+
+(cl-comment "The CLIF file above encodes the entire LaTeX manuscript:")
+(cl-comment "- Primary variables (D(t), n, d = 2ⁿ, AC_in, κ, D₀).")
+(cl-comment "- State space ℝᵈ with Lyapunov candidate V(x) = ½‖x‖₂², identified with D(t).")
+(cl-comment "- Axis-wise negation operator ¬_k (sign flip) and collision term A_k ⊗ ¬A_k.")
+(cl-comment "- fpa-norm measuring alignment of “是/非” pairs toward the fixed point.")
+(cl-comment "- Intensity functions λ_k(x) and alignment function align_fpa(x,dfix).")
+(cl-comment "- Total pressure Λ_total(x) = Σ_k λ_k(x)·align_fpa(x,dfix).")
+(cl-comment "- Phase factor Φ(n) controlling dimensional damping (Φ(1)≪1, Φ(n)→1 for n≥2).")
+(cl-comment "- Core ODE: Ḋ(t) = −Φ(n)·Λ_total(x(t))·D(t) and its exponential solution.")
+(cl-comment "  The exponential upper bound follows from a uniform lower bound λ_min on Λ_total.")
+(cl-comment "- Dimensional phase transition: low-dim (n=1) may diverge, high-dim (n≥2) converges.")
+(cl-comment "- ARX meta-execution: when the instantaneous decay rate η(t) falls below a threshold,")
+(cl-comment "  the system upgrades its dimension (n←n+1) to restore convergence.")
+(cl-comment "- Embedding ι and projection φ implement the time-axis mechanism; their composite H")
+(cl-comment "  reduces the norm by exactly 1 (or ≤1+c) at each step, guaranteeing eventual arrival")
+(cl-comment "  at the unique 0-d fixed point dfix.")
+(cl-comment "- Middle-Way equivalence mw_eq relates any two objects that converge to dfix.")
+(cl-comment "All definitions are first-order; the theory fits within the standard Common Logic")
+(cl-comment "  fragment, making it amenable to automated reasoning tools (EYE, cwm, etc.).")
+
+;; --------------------------------------------------------------
+;; End of file
+;; ----------------------------

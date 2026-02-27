@@ -1,0 +1,195 @@
+;; ==============================================================
+;; SKDT – Dual Sunyata Structures and Emergent Category Theory
+;; --------------------------------------------------------------
+;; Title   : Emergence of Category Theory from Dual Sunyata Structures
+;; Author  : Masaomi Chiba
+;; Date    : 2025‑12‑01
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : Emergence of Category Theory from Dual Sunyata Structures")
+(cl-comment "Author  : Masaomi Chiba")
+(cl-comment "Date    : 2025-12-01")
+(cl-comment "Version : 1.0")
+(cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies (objects, morphisms, categories)
+;; --------------------------------------------------------------
+
+;; Basic notions
+(object   ?x)                ;; any entity (object, functor, etc.)
+(category ?c)                ;; a collection of objects
+(member   ?x ?c)             ;; ?x belongs to category ?c
+
+;; Morphisms (arrows) inside a category
+(morphism ?f)                ;; generic arrow
+(dom ?f ?a)                  ;; source of ?f
+(cod ?f ?b)                  ;; target of ?f
+
+;; Composition and identities (as in a standard category)
+(comp ?g ?f ?h)              ;; ?h = ?g ∘ ?f
+(id ?a)                      ;; identity arrow on ?a
+
+;; Equality (first‑order)
+(equal ?x ?y)                ;; syntactic equality
+
+;; --------------------------------------------------------------
+;; 1. The two dual Sunyata categories
+;; --------------------------------------------------------------
+
+;; 1.1  The “potential” side – Kusokuzeshiki‑category (K)
+(category K)                 ;; K is a category
+;; We leave the concrete carrier types unspecified; we only need the interface.
+;; Objects of K will be denoted by the predicate (kobj ?x)
+(kobj ?x) (=> (member ?x K))
+
+;; 1.2  The “manifest” side – Shikisokuzeku‑category (S)
+(category S)                 ;; S is a category
+(sobj ?x) (=> (member ?x S))
+
+;; --------------------------------------------------------------
+;; 2. Functors that realise the duality
+;; --------------------------------------------------------------
+
+;; 2.1  Forward functor F : K → S  (realises potential into manifest)
+(structure Functor (C D : category) where
+  objMap : (object → object)   ;; maps objects of C to objects of D
+  morMap : (morphism → morphism)  ;; maps arrows of C to arrows of D
+  map_id  : (∀ {X}, morMap (id X) = id (objMap X))
+  map_comp : (∀ {X Y Z} (g : morphism) (f : morphism),
+                morMap (comp g f) = comp (morMap g) (morMap f)))
+
+;; Declare the two functors as parameters of the theory
+(variable (F : Functor K S))
+(variable (G : Functor S K))
+
+;; 2.2  Compatibility (adjunction) – we postulate that F ⊣ G
+;;   (i.e. F is left adjoint to G).  In CL we express the unit and counit
+;;   as binary relations; the triangular identities are given as axioms.
+
+(object η)   ;; unit : Id_K ⇒ G ∘ F
+(object ε)   ;; counit : F ∘ G ⇒ Id_S
+
+;; Unit and counit are natural transformations; we only need their
+;; component equations for objects.
+(forall (?x) (=> (kobj ?x)
+                 (equal (η ?x) (id ?x))))   ; unit acts as identity on K‑objects
+(forall (?y) (=> (sobj ?y)
+                 (equal (ε ?y) (id ?y))))   ; counit acts as identity on S‑objects
+
+;; Triangular identities (the usual adjunction equations)
+(forall (?x) (=> (kobj ?x)
+                 (equal (comp (G.morMap (F.morMap (id ?x))) (η ?x))
+                        (id ?x))))
+(forall (?y) (=> (sobj ?y)
+                 (equal (comp (ε ?y) (F.morMap (G.morMap (id ?y))))
+                        (id ?y))))
+
+;; --------------------------------------------------------------
+;; 3. The composite endofunctor H = G ∘ F on K
+;; --------------------------------------------------------------
+
+(definition H (x : object) : object :=
+  G.objMap (F.objMap x))
+
+;; Iteration of H (used for fixed‑point construction)
+(definition HIter : nat → object → object
+| 0     x => x
+| (n+1) x => H (HIter n x))
+
+;; --------------------------------------------------------------
+;; 4. The distinguished 0‑d fixed point Dfix0
+;; --------------------------------------------------------------
+
+(object Dfix0)                 ;; the unique 0‑d object (the “empty” fixed point)
+(kobj Dfix0)                   ;; Dfix0 lives in K
+
+;; 4.1  Fixed‑point axiom (Middle‑Way)
+;; Every object of K converges, after finitely many H‑iterations,
+;; to Dfix0.  This is the “Middle‑Way” (mw‑equivalence) condition.
+(forall (?x) (=> (kobj ?x)
+                 (exists (?n) (nat ?n)
+                         (equal (HIter ?n ?x) Dfix0))))
+
+;; 4.2  Middle‑Way equivalence (mw‑eq)
+;; Two objects are mw‑equivalent iff they both converge to Dfix0.
+(definition mw_eq (?x ?y : object) : prop :=
+  (∃ n₁, equal (HIter n₁ ?x) Dfix0) ∧
+  (∃ n₂, equal (HIter n₂ ?y) Dfix0))
+
+;; mw_eq is an equivalence relation
+(forall (?x) (=> (kobj ?x) (mw_eq ?x ?x)))                     ; reflexive
+(forall (?x ?y) (=> (and (mw_eq ?x ?y) (kobj ?x) (kobj ?y))
+                       (mw_eq ?y ?x)))                        ; symmetric
+(forall (?x ?y ?z) (=> (and (mw_eq ?x ?y) (mw_eq ?y ?z) (kobj ?x) (kobj ?y) (kobj ?z))
+                       (mw_eq ?x ?z)))                        ; transitive
+
+;; --------------------------------------------------------------
+;; 5. Emergent meta‑category C (the “category of structuring actions”)
+;; --------------------------------------------------------------
+
+(category C)                     ;; the meta‑category that emerges
+;; Its objects are the *structures* that arise from the interaction
+;; of K and S via the dual functors.  For the moment we treat C
+;; abstractly; we only need the existence of a functor
+;;   E : K → C   (the “emergence” functor)
+(structure Functor (C D : category) where
+  objMap : object → object
+  morMap : morphism → morphism
+  map_id  : (∀ {X}, morMap (id X) = id (objMap X))
+  map_comp : (∀ {X Y Z} (g : morphism) (f : morphism),
+                morMap (comp g f) = comp (morMap g) (morMap f)))
+
+(variable (E : Functor K C))
+
+;; --------------------------------------------------------------
+;; 6. “Restart” – the seed that appears after one extra H‑step
+;; --------------------------------------------------------------
+
+(object Emergence)               ;; the new object that appears after Dfix0
+(kobj Emergence)                 ;; it lives in K as well
+
+;; Axiom: one more application of H to Dfix0 yields Emergence
+(equal (HIter (succ 0) Dfix0) Emergence)
+
+;; Optional: we can view this as a binary relation “restart”
+(restart Dfix0 Emergence)
+
+;; --------------------------------------------------------------
+;; 7. Consequences for morphisms
+;; --------------------------------------------------------------
+
+;; Every morphism f : X ⟶ Y (with X,Y ∈ K) has a source X that converges
+;; to Dfix0 (by the Middle‑Way axiom).  Hence we can state:
+
+(forall (?f) (=> (morphism ?f)
+                 (exists (?n) (nat ?n)
+                         (equal (HIter ?n (dom ?f)) Dfix0))))
+
+;; --------------------------------------------------------------
+;; 8. Lawvere’s Fixed‑Point Theorem (as an axiom for the dual pair)
+;; --------------------------------------------------------------
+
+;; For any endofunctor H on K that is “continuous” (here we simply
+;; assume the existence of a fixed point), there is an object L with
+;; H(L) = L.  We identify that object with Dfix0.
+(forall (?H) (=> (∀ (x) (∃ n, equal (HIter n x) Dfix0))   ; continuity hypothesis
+                (equal (H Dfix0) Dfix0)))               ; fixed point
+
+;; --------------------------------------------------------------
+;; 9. Example derivations (optional, as comments)
+;; --------------------------------------------------------------
+
+;; 9.1  From the Middle‑Way axiom we can derive that Dfix0 is
+;;      mw‑equivalent to itself:
+;; (mw_eq Dfix0 Dfix0) holds trivially by the definition of mw_eq.
+
+;; 9.2  Using the restart axiom we obtain a *cycle*:
+;;   Dfix0 ──H──► Emergence ──H*──► … ──H*──► Dfix0
+;;   (where H* denotes any number of further iterations).
+
+;; --------------------------------------------------------------
+;; 10. End of file
+;; --------------------------------------------------------------

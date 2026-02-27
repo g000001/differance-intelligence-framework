@@ -1,0 +1,599 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; 般若心経（Prajñāpāramitā-Hṛdaya Sutra）
+;; 共通論理（Common Logic）による完全形式化
+;;
+;; 統合版：
+;;   1. 五蘊の空性と相互依存性
+;;   2. 色即是空・空即是色（中道等価 mw_eq）
+;;   3. 諸法の八不（不生・不滅・不垢・不浄・不増・不減）
+;;   4. 十八界の三つ組構造
+;;   5. 十二因縁の時間軸展開
+;;   6. 四諦のシステマティック相互関係
+;;   7. 四句否定による Dfix0（0-d空）への収束
+;;   8. 無所得（NoAttainment）= Dfix0 の統合
+;;   9. 呪文（Gate Gate Paragate Parasamgate Bodhi Svaha）の四段階否定
+;;  10. 次元昇華理論との統合（2^n → 2^(n+4)）
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+/*
+आर्यावलोकितेश्वरो बोधिसत्त्वो गंभीरायां प्रज्ञापारमितायां चर्यां चरमाणो व्यवलोकयति स्म । पंचस्कन्धाः । तांश्च स्वभावशून्यान्पश्यति स्म । इह शारिपुत्र रूपं शून्यता शून्यतैव रूपं रूपान्न पृथक्शून्यता शून्यताया न पृथग्रूपं यद्रूपं सा शून्यता या शून्यता तद्रूपं । एवमेव वेदनासंज्ञासंस्कारविज्ञानानि । इह शारिपुत्र सर्वधर्माः शून्यतालक्षणा अनुत्पन्ना अनिरुद्धा अमला न विमला नोना न परिपूर्णाः । तस्माच्छारिपुत्र शून्यतायां न रूपं न वेदना न संज्ञा न संस्कारा न विज्ञानानि । न चक्षुःश्रोत्रघ्राणजिह्वाकायमनांसी । न रूपशब्दगंधरसस्प्रष्टव्यधर्माः । न चक्षुर्धातुर्यावन्न मनोविज्ञानधातुः । न विद्या नाविद्या न विद्याक्षयो नाविद्याक्षयो यावन्न जरामरणं न जरामरणक्षयो न दुःखसमुदयनिरोधमार्गा न ज्ञानं न प्राप्तिः ॥ तस्मादप्राप्तित्वाद्बोधिसत्त्वाणां प्रज्ञापारमितामाश्रित्य विहरत्यचित्तावरणः । चित्तावरणनास्तित्वादत्रस्तो विपर्यासातिक्रान्तो निष्ठनिर्वाणः ।। त्र्यध्वव्यवस्थिताः सर्वबुद्धाः प्रज्ञापारमितामाश्रित्यानुत्तरां सम्यक्सम्बोधिमभिसंबुद्धाः ।। तस्माज्ज्ञातव्यं प्रज्ञापारमिता महामन्त्रो महाविद्यामन्त्रो ऽनुत्तरमन्त्रो ऽसमसममन्त्रः सर्वदुःखप्रशमनः । सत्यममिथ्यत्वात् । प्रज्ञपारमितायामुक्तो मन्त्रः । तद्यथा गते गते पारगते पारसंगते बोधि स्वाहा ।। इति प्रज्ञापारमिताहृदयं समाप्तम्
+*/
+
+
+(cl-text Prajnaparamita_Hrdaya_Complete
+
+  ;;===========================================================================
+  ;; SECTION 0: メタデータ・基本型
+  ;;===========================================================================
+  
+  (cl-comment "=====================================")
+  (cl-comment "般若心経の共通論理化")
+  (cl-comment "2024年統合版")
+  (cl-comment "=====================================")
+
+  ;; 基本的な自然数・次元システム（Peano 算術）
+  (object zero)
+  (object succ)
+  (nat zero)
+  (forall (?n) (=> (nat ?n) (nat (succ ?n))))
+
+  (function add_nat (nat nat) nat)
+  (function mul_nat (nat nat) nat)
+  (function pow2 (nat) nat)  ;; 2^n
+  (function leq_nat (nat nat) bool)
+
+  ;; 基本的な集合操作
+  (function list (object) object)
+  (function member (object object) bool)
+  (forall (?x ?L) (=> (member ?x (list ?x)) true))
+
+  ;;===========================================================================
+  ;; SECTION 1: 中道等価（Middle-Way Equivalence）と 0-d 固定点
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "1. 中道等価と Dfix0")
+  (cl-comment "=====================================")
+
+  ;; 0-d の空・真理の原点
+  (object Dfix0)
+
+  ;; 中道等価 (mw_eq)：等価関係として定義
+  (predicate mw_eq (object object) bool)
+
+  ;; mw_eq は反射性・対称性・推移性を満たす等価関係
+  (forall (?x)
+    (=> (object ?x)
+        (mw_eq ?x ?x)))
+
+  (forall (?x ?y)
+    (=> (and (mw_eq ?x ?y) (object ?x) (object ?y))
+        (mw_eq ?y ?x)))
+
+  (forall (?x ?y ?z)
+    (=> (and (mw_eq ?x ?y) (mw_eq ?y ?z)
+             (object ?x) (object ?y) (object ?z))
+        (mw_eq ?x ?z)))
+
+  ;; Dfix0 は唯一の 0-ノルム点
+  (forall (?x)
+    (=> (and (object ?x) (equal (norm ?x) 0))
+        (equal ?x Dfix0)))
+
+  ;;===========================================================================
+  ;; SECTION 2: 五蘊（五陰）とその空性
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "2. 五蘊の定義と空性")
+  (cl-comment "=====================================")
+
+  ;; 五蘊の個別オブジェクト
+  (object Rupa)      ;; 色（Form）
+  (object Vedana)    ;; 受（Sensation）
+  (object Samjna)    ;; 想（Perception）
+  (object Samskara)  ;; 行（Formation）
+  (object Vijnana)   ;; 識（Consciousness）
+
+  ;; 五蘊の述語
+  (predicate Skandha (object) bool)
+  (forall (?s)
+    (=> (or (equal ?s Rupa) (equal ?s Vedana) (equal ?s Samjna)
+             (equal ?s Samskara) (equal ?s Vijnana))
+        (Skandha ?s)))
+
+  ;; 各蘊が 2^0（基底次元）から開始
+  (function dim (object) nat)
+  (predicate HasDim (object nat) bool)
+
+  (forall (?s)
+    (=> (Skandha ?s)
+        (and (HasDim ?s zero)
+             (equal (dim ?s) (pow2 zero)))))
+
+  ;; ===========================
+  ;; 2.1: 色即是空・空即是色
+  ;; ===========================
+
+  (cl-comment "色即是空・空即是色：Form mw= Emptiness")
+
+  (forall (?r)
+    (=> (equal ?r Rupa)
+        (and (mw_eq ?r Dfix0)          ;; 色即是空
+             (mw_eq Dfix0 ?r)          ;; 空即是色
+             (not (separate ?r Dfix0))))) ;; 不異
+
+  ;; 他の四蘊も同様に空と等価
+  (forall (?s)
+    (=> (Skandha ?s)
+        (mw_eq ?s Dfix0)))  ;; 受想行識亦復如是
+
+  ;; ===========================
+  ;; 2.2: 五蘊の相互依存性
+  ;; ===========================
+
+  (cl-comment "五蘊は相互に条件付けされている")
+
+  (predicate MutuallyDependent (object object) bool)
+  (predicate InteractionOf (object object) object)
+
+  (forall (?s1 ?s2)
+    (=> (and (Skandha ?s1) (Skandha ?s2) (not (equal ?s1 ?s2)))
+        (and
+          ;; 相互依存性
+          (MutuallyDependent ?s1 ?s2)
+          (MutuallyDependent ?s2 ?s1)
+
+          ;; 相互作用が空へ
+          (mw_eq (InteractionOf ?s1 ?s2) Dfix0)
+
+          ;; 相互作用の次元は高まる
+          (> (dim (InteractionOf ?s1 ?s2))
+             (dim ?s1))
+          (> (dim (InteractionOf ?s1 ?s2))
+             (dim ?s2)))))
+
+  ;;===========================================================================
+  ;; SECTION 3: 諸法の八不（Eight Negations）
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "3. 諸法の八不")
+  (cl-comment "=====================================")
+
+  ;; 任意の「法」（現象）
+  (predicate Dharma (object) bool)
+
+  ;; 八つの属性
+  (predicate Arising (object) bool)      ;; 生
+  (predicate Ceasing (object) bool)      ;; 滅
+  (predicate Impure (object) bool)       ;; 垢
+  (predicate Pure (object) bool)         ;; 浄
+  (predicate Increase (object) bool)     ;; 増
+  (predicate Decrease (object) bool)     ;; 減
+  (predicate Permanent (object) bool)    ;; 常
+  (predicate Impermanent (object) bool)  ;; 無常
+
+  ;; 不生不滅・不垢不浄・不増不減
+  (forall (?f)
+    (=> (Dharma ?f)
+        (and
+          ;; 不生：生起の否定
+          (mw_eq (neg (Arising ?f)) Dfix0)
+
+          ;; 不滅：滅の否定
+          (mw_eq (neg (Ceasing ?f)) Dfix0)
+
+          ;; 不垢：不浄性の否定
+          (mw_eq (neg (Impure ?f)) Dfix0)
+
+          ;; 不浄：純浄性の否定
+          (mw_eq (neg (Pure ?f)) Dfix0)
+
+          ;; 不増：増加の否定
+          (mw_eq (neg (Increase ?f)) Dfix0)
+
+          ;; 不減：減少の否定
+          (mw_eq (neg (Decrease ?f)) Dfix0)
+
+          ;; 常にはあらず・無常にもあらず
+          (mw_eq (neg (Permanent ?f)) Dfix0)
+          (mw_eq (neg (Impermanent ?f)) Dfix0))))
+
+  ;;===========================================================================
+  ;; SECTION 4: 十八界（Eighteen Dhatus）の三つ組構造
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "4. 十八界の三つ組構造")
+  (cl-comment "=====================================")
+
+  ;; 感官・対象・識を含む述語
+  (predicate SensoryGate (object) bool)      ;; 眼耳鼻舌身意
+  (predicate SensoryObject (object) bool)    ;; 色声香味触法
+  (predicate SensoryConsciousness (object) bool) ;; 眼識等
+
+  ;; 三つ組構造：感官 × 対象 × 識
+  (predicate SensoryTrinity (object object object) bool)
+  (predicate ConditionedBySensation (object object object) bool)
+  (predicate SensoryExperience (object object object) object)
+
+  (forall (?organ ?object ?consciousness)
+    (=> (SensoryTrinity ?organ ?object ?consciousness)
+        (and
+          ;; 三つが相互に条件付けされている
+          (ConditionedBySensation ?consciousness ?organ ?object)
+
+          ;; 各々は 2^1 の次元
+          (HasDim ?organ (succ zero))
+          (HasDim ?object (succ zero))
+          (HasDim ?consciousness (succ zero))
+
+          ;; しかし相互作用は空へ収束
+          (mw_eq (SensoryExperience ?organ ?object ?consciousness) Dfix0)
+
+          ;; 相互作用の次元は高まる
+          (equal (dim (SensoryExperience ?organ ?object ?consciousness))
+                 (pow2 (succ (succ (succ (succ (succ zero)))))))))) ;; 2^5=32次元
+
+  ;;===========================================================================
+  ;; SECTION 5: 十二因縁（Twelve Nidanas）の時間軸展開
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "5. 十二因縁の時間軸")
+  (cl-comment "=====================================")
+
+  ;; 十二因縁の述語
+  (predicate Nidana (object) bool)
+  (predicate TwelveNidanas (object) bool)
+  (predicate IsEmpty (object) bool)
+  (predicate Conditions (object object) bool)
+  (predicate TemporallyOrderedNidana (nat object object) bool)
+  (predicate NidanaChain (nat) object)
+  (predicate TimelineItself (object) bool)
+
+  ;; 無明・行・識・名色・六処・触・受・愛・取・有・生・老死
+  (object Avidya)      ;; 無明（Ignorance）
+  (object Samskara)    ;; 行（Formation）
+  (object Vijnana2)    ;; 識（Consciousness）
+  (object Namarupa)    ;; 名色（Name-Form）
+  (object Salayatana)  ;; 六処（Six Sense Gates）
+  (object Sparsa)      ;; 触（Contact）
+  (object Vedana2)     ;; 受（Sensation）
+  (object Trsna)       ;; 愛（Craving）
+  (object Upadana)     ;; 取（Attachment）
+  (object Bhava)       ;; 有（Becoming）
+  (object Jati)        ;; 生（Birth）
+  (object Jaramarana)  ;; 老死（Old Age & Death）
+
+  (forall (?t ?n_current ?n_next)
+    (=> (TemporallyOrderedNidana ?t ?n_current ?n_next)
+        (and
+          ;; 因果的な条件付け
+          (Conditions ?n_current ?n_next)
+
+          ;; しかし実体性がない
+          (IsEmpty ?n_current)
+          (IsEmpty ?n_next)
+
+          ;; 時間軸を通じて段階的に空へ
+          (forall (?time_step)
+            (=> (nat ?time_step)
+                (mw_eq (NidanaChain ?time_step) Dfix0)))
+
+          ;; 時間軸そのものが空
+          (mw_eq (TimelineItself) Dfix0))))
+
+  ;;===========================================================================
+  ;; SECTION 6: 四諦（Four Noble Truths）の相互関係
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "6. 四諦のシステマティック相互関係")
+  (cl-comment "=====================================")
+
+  ;; 四諦の対象
+  (object Dukkha)       ;; 苦（Suffering）
+  (object Samudaya)     ;; 集（Cause）
+  (object Nirodha)      ;; 滅（Cessation）
+  (object Magga)        ;; 道（Path）
+
+  ;; 四諦システムの述語
+  (predicate FourNobleTruths (object) bool)
+  (predicate FourNobleTruthsSystem (object object object object) bool)
+  (predicate Explains (object object) bool)
+  (predicate Possible (object) bool)
+  (predicate Enables (object object) bool)
+  (predicate TruthSystem (object object object object) object)
+  (predicate Exists (object) bool)
+  (predicate separate (object object) bool)
+
+  (forall (?suffering ?cause ?cessation ?path)
+    (=> (FourNobleTruthsSystem ?suffering ?cause ?cessation ?path)
+        (and
+          ;; 苦が存在するなら、その原因も存在
+          (iff (Exists ?suffering)
+            (and (Explains ?cause ?suffering)
+                 (Possible ?cessation)
+                 (Enables ?path ?cessation)))
+
+          ;; しかし全体が空
+          (mw_eq (TruthSystem ?suffering ?cause ?cessation ?path) Dfix0)
+
+          ;; 苦と道は分離不可能
+          (not (separate ?suffering ?path))
+          (not (separate ?cause ?cessation)))))
+
+  ;;===========================================================================
+  ;; SECTION 7: メタ否定による Dfix0 への収束
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "7. メタ否定関数と四句否定")
+  (cl-comment "=====================================")
+
+  ;; 基本的な否定演算子
+  (function neg (object) object)
+  (predicate neg_pred (object) bool)
+
+  ;; メタ否定関数（再帰的定義）
+  (function meta_neg (nat object) object)
+  (function NegateAt (nat object) object)
+
+  ;; meta_neg の再帰定義
+  (equal (meta_neg zero ?x) ?x)
+  (forall (?k ?x)
+    (=> (and (nat ?k) (object ?x))
+        (equal (meta_neg (succ ?k) ?x)
+               (neg (meta_neg ?k ?x)))))
+
+  ;; NegateAt も同様に定義（同義語）
+  (equal (NegateAt zero ?x) ?x)
+  (forall (?k ?x)
+    (=> (and (nat ?k) (object ?x))
+        (equal (NegateAt (succ ?k) ?x)
+               (neg (NegateAt ?k ?x)))))
+
+  ;; 各段階でのノルム減少
+  (function norm (object) nat)
+
+  (forall (?x ?k)
+    (=> (and (object ?x) (nat ?k))
+        ;; k段階での否定後のノルムは単調減少
+        (=> (< ?k (norm ?x))
+            (< (norm (NegateAt ?k ?x))
+               (norm (NegateAt (sub_nat ?k (succ zero)) ?x))))))
+
+  ;; 四句否定（4段階）での Dfix0 到達
+  (forall (?d)
+    (=> (or (SensoryGate ?d) (TwelveNidanas ?d) (FourNobleTruths ?d))
+        (mw_eq (NegateAt (succ (succ (succ (succ zero)))) ?d) Dfix0)))
+
+  ;;===========================================================================
+  ;; SECTION 8: 呪文（Mantra）の四段階否定プロセス
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "8. 呪文：Gate Gate Paragate Parasamgate Bodhi Svaha")
+  (cl-comment "Gate（行く）の4段階による次元昇華")
+  (cl-comment "=====================================")
+
+  ;; 呪文の出発点・到達点
+  (object Bodhi)           ;; 菩提（觉悟の本質）
+  (object Shunyata)        ;; 空性
+  (object Svaha)           ;; スヴァハー（承認・着地）
+  (object Mantra)          ;; 呪文そのもの
+
+  ;; 到達・承認の述語
+  (predicate Arrival (object) bool)
+  (predicate Affirmed (object) bool)
+  (predicate Path (object object) bool)
+
+  ;; 四段階の否定シーケンス
+  (forall (?initial_state)
+    (=> (equal ?initial_state Bodhi)
+        (and
+          ;; 第1段階：Gate（行く） = 第1メタ否定
+          ;; 2^0 → 2^1
+          (equal ?state_1 (NegateAt (succ zero) ?initial_state))
+
+          ;; 第2段階：Gate（また行く） = 第2メタ否定
+          ;; 2^1 → 2^2
+          (equal ?state_2 (NegateAt (succ (succ zero)) ?state_1))
+
+          ;; 第3段階：Paragate（彼岸に行く） = 第3メタ否定
+          ;; 2^2 → 2^3
+          (equal ?state_3 (NegateAt (succ (succ (succ zero))) ?state_2))
+
+          ;; 第4段階：Parasamgate（完全に彼岸に行く） = 第4メタ否定
+          ;; 2^3 → 2^4
+          (equal ?state_4 (NegateAt (succ (succ (succ (succ zero)))) ?state_3))
+
+          ;; 4回のメタ否定の結果は Dfix0 と等価
+          (mw_eq ?state_4 Dfix0)
+
+          ;; 到達を記録
+          (Arrival Dfix0)
+
+          ;; Svaha（スヴァハー）= 承認・着地
+          (Affirmed Dfix0)
+
+          ;; 呪文の完全な経路
+          (Path Bodhi Dfix0))))
+
+  ;;===========================================================================
+  ;; SECTION 9: 無所得（No Attainment）= Dfix0
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "9. 無所得（NoAttainment）")
+  (cl-comment "無所得ゆえに完全性へ到達")
+  (cl-comment "=====================================")
+
+  ;; 無所得
+  (object NoAttainment)
+  (equal NoAttainment Dfix0)
+
+  ;; 菩薩（Bodhisattva）
+  (predicate Bodhisattva (object) bool)
+  (predicate Attains (object object) bool)
+  (predicate DirectlyExperiences (object object) bool)
+  (predicate UltimateWisdom (object) bool)
+  (predicate AnythingSpecific (object) bool)
+
+  ;; 菩薩は「無得を得る」ことで完全性へ到達
+  (forall (?bodhisattva)
+    (=> (Bodhisattva ?bodhisattva)
+        (and
+          ;; 何も特定のものを得ない
+          (not (Attains ?bodhisattva AnythingSpecific))
+
+          ;; しかし「無所得」を得ている
+          (Attains ?bodhisattva NoAttainment)
+
+          ;; つまり空そのものを直接経験
+          (DirectlyExperiences ?bodhisattva Dfix0)
+
+          ;; この「無得」が最高の叡智
+          (iff (Attains ?bodhisattva NoAttainment)
+               (UltimateWisdom ?bodhisattva)))))
+
+  ;;===========================================================================
+  ;; SECTION 10: 全体的な統合
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "10. 全体的な空性への統合")
+  (cl-comment "=====================================")
+
+  ;; 普遍的な空性
+  (predicate UniversalEmptiness (object) bool)
+  (predicate EightNegations (object) bool)
+  (predicate ApplyNegation (object nat) object)
+
+  ;; 八不の完全なシーケンス
+  (forall (?f)
+    (=> (Dharma ?f)
+        (and
+          ;; 不生（第1段階）
+          (mw_eq (NegateAt (succ zero) (Arising ?f)) Dfix0)
+
+          ;; 不滅（第2段階）
+          (mw_eq (NegateAt (succ (succ zero)) (Ceasing ?f)) Dfix0)
+
+          ;; 不垢（第3段階）
+          (mw_eq (NegateAt (succ (succ (succ zero))) (Impure ?f)) Dfix0)
+
+          ;; 不浄（第4段階）
+          (mw_eq (NegateAt (succ (succ (succ (succ zero)))) (Pure ?f)) Dfix0)
+
+          ;; 八不全体が Dfix0 へ
+          (EightNegations ?f)
+          (mw_eq (EightNegations ?f) Dfix0))))
+
+  ;; すべての「法」（現象）が段階的に空へ収束
+  (forall (?dharma)
+    (=> (UniversalEmptiness ?dharma)
+        (and
+          ;; (1) 五蘊として段階的に空へ
+          (forall (?s)
+            (=> (Skandha ?s)
+                (mw_eq (ApplyNegation ?s (succ (succ (succ (succ zero))))) Dfix0)))
+
+          ;; (2) 十八界として相互作用として空へ
+          (forall (?trinity)
+            (=> (SensoryTrinity ?trinity)
+                (mw_eq (ApplyNegation ?trinity (succ (succ (succ (succ zero))))) Dfix0)))
+
+          ;; (3) 十二因縁として時間軸として空へ
+          (forall (?chain)
+            (=> (Nidana ?chain)
+                (mw_eq (ApplyNegation ?chain (succ (succ (succ (succ zero))))) Dfix0)))
+
+          ;; (4) 四諦としてシステム全体として空へ
+          (forall (?system)
+            (=> (FourNobleTruths ?system)
+                (mw_eq (ApplyNegation ?system (succ (succ (succ (succ zero))))) Dfix0)))
+
+          ;; すべては Dfix0
+          (mw_eq ?dharma Dfix0))))
+
+  ;;===========================================================================
+  ;; SECTION 11: 次元昇華理論との統合
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "11. 次元昇華：2^n → 2^(n+4)")
+  (cl-comment "=====================================")
+
+  ;; 基底次元から Dfix0 への経路
+  (forall (?x ?n)
+    (=> (and (object ?x) (nat ?n) (equal (dim ?x) (pow2 ?n)))
+        (and
+          ;; 第1段階：否定により次元が 2^(n+1) へ
+          (equal (dim (NegateAt (succ zero) ?x)) (pow2 (succ ?n)))
+
+          ;; 第2段階：さらに否定により 2^(n+2) へ
+          (equal (dim (NegateAt (succ (succ zero)) ?x)) (pow2 (succ (succ ?n))))
+
+          ;; 第3段階：さらに否定により 2^(n+3) へ
+          (equal (dim (NegateAt (succ (succ (succ zero))) ?x))
+                 (pow2 (succ (succ (succ ?n)))))
+
+          ;; 第4段階：最終的に Dfix0（0-d）へ到達
+          (mw_eq (NegateAt (succ (succ (succ (succ zero)))) ?x) Dfix0))))
+
+  ;;===========================================================================
+  ;; SECTION 12: サマリー・確認文
+  ;;===========================================================================
+
+  (cl-comment "=====================================")
+  (cl-comment "最終確認")
+  (cl-comment "=====================================")
+
+  (cl-comment "色即是空・空即是色 (Form mw= Emptiness)")
+  (cl-comment "受想行識亦復如是 (Sensation, Perception, Formation, Consciousness likewise)")
+
+  (cl-comment "無眼耳鼻舌身意 (No eyes, ears, nose, tongue, body, mind)")
+  (cl-comment "無色声香味触法 (No forms, sounds, odors, tastes, tangibles, objects of mind)")
+
+  (cl-comment "無眼界乃至無意識界 (No eye-realm up to no mind-consciousness-realm)")
+
+  (cl-comment "無無明亦無無明尽 (No ignorance, also no ending of ignorance)")
+  (cl-comment "乃至無老死亦無老死尽 (Likewise no old age and death, also no ending of old age and death)")
+
+  (cl-comment "無苦集滅道 (No suffering, no cause, no cessation, no path)")
+
+  (cl-comment "無智亦無得 (No knowledge, no attainment)")
+
+  (cl-comment "以無所得故 (Because of no attainment)")
+  (cl-comment "菩提薩埵 (The Bodhisattva)")
+  (cl-comment "依般若波羅蜜多心經 (Relying on the Heart of the Prajnaparamita)")
+  (cl-comment "得阿耨多羅三藐三菩提 (Attains the Highest, Perfect, Complete Enlightenment)")
+
+  (cl-comment "故知般若波羅蜜多是大神呪 (Therefore the Prajnaparamita Mantra is the Great Mantra)")
+  (cl-comment "是大明呪 (The Mantra of Great Radiance)")
+  (cl-comment "是無上呪 (The Unsurpassable Mantra)")
+  (cl-comment "是無等等呪 (The Mantra of the Highest Equality)")
+
+  (cl-comment "能除一切苦 (Able to relieve all suffering)")
+
+  (cl-comment "真実不虚 (True and not false)")
+
+  (cl-comment "故說般若波羅蜜多呪 (Therefore the Mantra of Prajnaparamita is spoken)")
+  (cl-comment "即說咒曰 (Thus the mantra is chanted)")
+  (cl-comment "掲諦掲諦 波羅掲諦 波羅僧掲諦 菩提薩婆訶")
+  (cl-comment "(Gate Gate Paragate Parasamgate Bodhi Svaha)")
+
+  (cl-comment "Go, go, go beyond, go altogether beyond, O Awakening, Hail!)")
+
+  (cl-comment "般若心経 (Heart Sutra) ~ Complete")
+
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; END OF PRAJNAPARAMITA HRDAYA SUTRA - COMMON LOGIC FORMALIZATION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

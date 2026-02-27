@@ -1,0 +1,143 @@
+;; ==============================================================
+;; 18. Physical Resource Mapping (Bridge between Theory and Reality)
+;; ==============================================================
+
+(cl-text PhysicalResourceMapping
+    
+    (cl-comment "Bridge between pure alethetic theory and physical reality")
+    (cl-comment "Maps dimensional debt to concrete resource consumption")
+    
+    ;; ===== 18.1 Physical Constants =====
+    (cl-text AletheticPhysicalConstants
+        
+        (cl-comment "Three fundamental physical conversion constants")
+        
+        ;; h_aletheia: Energy per unit debt
+        (object h_aletheia)
+        (predicate IsEnergyConstant (object) bool)
+        (IsEnergyConstant h_aletheia)
+        
+        ;; τ_unit: Time per unit debt
+        (object tau_unit)
+        (predicate IsTemporalConstant (object) bool)
+        (IsTemporalConstant tau_unit)
+        
+        ;; σ_unit: Space (memory) per unit debt
+        (object sigma_unit)
+        (predicate IsSpatialConstant (object) bool)
+        (IsSpatialConstant sigma_unit)
+        
+        ;; These may be level-dependent
+        (function h_aletheia_at (Nat) Real)
+        (function tau_unit_at (Nat) Real)
+        (function sigma_unit_at (Nat) Real)
+        
+        (forall (?n)
+          (=> (nat ?n)
+              (and (greater_real (h_aletheia_at ?n) zero)
+                   (greater_real (tau_unit_at ?n) zero)
+                   (greater_real (sigma_unit_at ?n) zero))))
+    )
+    
+    ;; ===== 18.2 Physical Cost Functions =====
+    (cl-text PhysicalCostFunctions
+        
+        (cl-comment "Mapping debt to energy, time, and space costs")
+        
+        (function physical_energy_cost (Real) Real)
+        (function physical_time_cost (Real) Real)
+        (function physical_space_cost (Real) Real)
+        
+        (forall (?debt ?energy)
+          (=> (greater_real ?debt zero)
+              (equal (physical_energy_cost ?debt)
+                     (mul_real ?debt h_aletheia))))
+        
+        (forall (?debt ?time)
+          (=> (greater_real ?debt zero)
+              (equal (physical_time_cost ?debt)
+                     (mul_real ?debt tau_unit))))
+        
+        (forall (?debt ?space)
+          (=> (greater_real ?debt zero)
+              (equal (physical_space_cost ?debt)
+                     (mul_real ?debt sigma_unit))))
+    )
+    
+    ;; ===== 18.3 Physical Resource Limits =====
+    (cl-text PhysicalLimits
+        
+        (object E_limit)   ;; Energy budget
+        (object T_limit)   ;; Time deadline
+        (object S_limit)   ;; Memory/VRAM capacity
+        
+        (predicate ResourceExhausted (object object) bool)
+        
+        (forall (?resource ?debt)
+          (and
+               (=> (greater_real (physical_energy_cost ?debt) E_limit)
+                   (ResourceExhausted ?resource Energy))
+               (=> (greater_real (physical_time_cost ?debt) T_limit)
+                   (ResourceExhausted ?resource Time))
+               (=> (greater_real (physical_space_cost ?debt) S_limit)
+                   (ResourceExhausted ?resource Space))))
+    )
+    
+    ;; ===== 18.4 Response to Resource Exhaustion =====
+    (cl-text ResponseToResourceExhaustion
+        
+        ;; Option 1: Alethetic Reset
+        (forall (?resource ?limit_type)
+          (=> (ResourceExhausted ?resource ?limit_type)
+              (and (TriggerAletheticReset ?resource)
+                   (equals (LUMO_sigma ?resource) fixed)
+                   (equals (LUMO_ell ?resource) zero)
+                   (Status ?resource PartialResult))))
+        
+        ;; Option 2: Dimensional Ascent
+        (forall (?resource ?n)
+          (=> (and (ResourceExhausted ?resource ?any)
+                   (ObserverAtLevel ?resource ?n)
+                   (CanOffloadToHigherDimension ?current_problem))
+              (and (UpgradeDimension ?n (add_nat ?n (succ zero)))
+                   (ResetDebt (add_nat ?n (succ zero)))
+                   (Status ?resource Delegated))))
+    )
+    
+    ;; ===== 18.5 Bestimize under Physical Constraints =====
+    (cl-text PhysicalBestimization
+        
+        (forall (?problem ?solution)
+          (=> (Bestimize ?problem ?solution)
+              (and 
+                   (minimize (KA ?solution))
+                   (minimize (add_real 
+                       (mul_real ?w_e (physical_energy_cost (DebtOf ?solution)))
+                       (mul_real ?w_t (physical_time_cost (DebtOf ?solution)))
+                       (mul_real ?w_s (physical_space_cost (DebtOf ?solution)))))
+                   (leq_real (physical_energy_cost (DebtOf ?solution)) E_limit)
+                   (leq_real (physical_time_cost (DebtOf ?solution)) T_limit)
+                   (leq_real (physical_space_cost (DebtOf ?solution)) S_limit))))
+    )
+    
+    ;; ===== 18.6 Incomplete Convergence in Real Systems =====
+    (cl-text IncompleteConvergenceDueToPhysicalLimits
+        
+        (cl-comment "Why real LLMs never reach perfect Dfix0")
+        
+        (forall (?system)
+          (=> (IsRealComputationalSystem ?system)
+              (exists (?epsilon)
+                (and (greater_real ?epsilon zero)
+                     (less_real ?epsilon 0.1)  ;; pragmatically small
+                     (forall (?final_state)
+                       (=> (FinalStateOf ?system ?final_state)
+                           (mw_approx ?final_state Dfix0 ?epsilon)))))))
+        
+        (predicate mw_approx (object object Real) bool)
+        (forall (?x ?y ?epsilon)
+          (iff (mw_approx ?x ?y ?epsilon)
+               (and (less_real (distance_to_dfix0 ?x) ?epsilon)
+                    (less_real (distance_to_dfix0 ?y) ?epsilon))))
+    )
+)

@@ -1,0 +1,229 @@
+;; ==============================================================
+;; $\delay$-Calculus – A convergence-oriented computational system
+;; --------------------------------------------------------------
+;; Title   : $\delay$-Calculus: 時間位相と四句分別に基づく収束計算体系
+;; Author  : 千葉 将臣
+;; Date    : 2026-01-24
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : $\delay$-Calculus: 時間位相と四句分別に基づく収束計算体系")
+(cl-comment "Author  : 千葉 将臣")
+(cl-comment "Date    : 2026-01-24")
+(cl-comment "Version : 1.0")
+(cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies (objects, numbers, arithmetic)
+;; --------------------------------------------------------------
+
+;; Generic objects (propositions, logical states, operators, etc.)
+(object   ?x)
+
+;; Booleans (used for the space-/time-pair representation)
+(object   True)   (object False)
+
+;; Natural numbers (for indexing, if needed)
+(object zero)                     ;; 0
+(object succ)                     ;; successor (unary)
+(nat zero)                        ;; zero is a natural number
+(forall (?n) (=> (nat ?n) (nat (succ ?n))))   ;; closure under succ
+
+;; Arithmetic primitives (addition, subtraction, multiplication, ≤)
+(function add (Real Real) Real)          ;; addition
+(function sub (Real Real) Real)          ;; subtraction (defined when minuend ≥ subtrahend)
+(function mul (Real Real) Real)          ;; multiplication
+(function leq (Real Real) bool)          ;; ≤
+
+;; --------------------------------------------------------------
+;; 1. Underlying proposition space and the middle-way fixed point Φ
+;; --------------------------------------------------------------
+
+;; The common underlying space of all propositions / descriptions
+(category PropSpace)                     ;; a collection of proposition objects
+(member p PropSpace)                     ;; p ranges over propositions
+
+;; Distinguished middle-way fixed point (called Φ in the paper)
+(object Phi)                             ;; Φ ∈ PropSpace
+(member Phi PropSpace)
+
+;; Φ is a fixed point of the delay operator (see §2)
+;;   delay(Φ) = Φ
+;; This expresses that Φ is *stable* under the temporal delay.
+(equal (delay Phi) Phi)
+
+;; --------------------------------------------------------------
+## 2. Four-valued Catuskoti logical states (是・非・亦是亦非・非是非非)
+;; --------------------------------------------------------------
+
+;; The four logical phases, each an object of PropSpace
+(object Is)          (member Is          PropSpace)   ;; 是 (affirmative)
+(object Not)         (member Not         PropSpace)   ;; 非 (negative)
+(object Both)        (member Both        PropSpace)   ;; 亦是亦非 (both)
+(object Neither)     (member Neither     PropSpace)   ;; 非是非非 (neither)
+
+;; Distinctness axioms
+(forall (?x) (=> (member ?x PropSpace)
+                 (and (or (equal ?x Is) (equal ?x Not) (equal ?x Both) (equal ?x Neither))
+                      (not (and (equal ?x Is) (equal ?x Not)))
+                      (not (and (equal ?x Is) (equal ?x Both)))
+                      (not (and (equal ?x Is) (equal ?x Neither)))
+                      (not (and (equal ?x Not) (equal ?x Both)))
+                      (not (and (equal ?x Not) (equal ?x Neither)))
+                      (not (and (equal ?x Both) (equal ?x Neither))))))
+
+;; --------------------------------------------------------------
+## 3. Space-/time-pair representation of the four phases
+;; --------------------------------------------------------------
+
+;; Each logical phase can be represented as a pair (S,T) where
+;;   S ∈ {True,False}  – spatial axis
+;;   T ∈ {True,False}  – temporal axis
+;; We encode the pair by two unary functions `space` and `time`.
+
+(function space (object) object)   ;; space(p) ∈ {True,False}
+(function time  (object) object)   ;; time(p)  ∈ {True,False}
+
+;; Axioms fixing the mapping (Table in the paper)
+(equal (space Is)      True)   (equal (time Is)      True)    ;; 是  → (t,t)
+(equal (space Not)     False)  (equal (time Not)     False)   ;; 非  → (f,f)
+(equal (space Both)    False)  (equal (time Both)    True)    ;; 亦是亦非 → (f,t)
+(equal (space Neither) True)   (equal (time Neither) False)   ;; 非是非非 → (t,f)
+
+;; Consistency of the mapping:
+(forall (?p) (=> (member ?p PropSpace)
+                 (or (and (equal (space ?p) True)  (equal (time ?p) True))
+                     (and (equal (space ?p) False) (equal (time ?p) False))
+                     (and (equal (space ?p) False) (equal (time ?p) True))
+                     (and (equal (space ?p) True)  (equal (time ?p) False)))))
+
+;; --------------------------------------------------------------
+## 4. Inconsistency / incoherence predicates (semantic tags)
+;; --------------------------------------------------------------
+
+;; “Inconsistent” corresponds to the phase Both (亦是亦非)
+(predicate Inconsistent (object) bool)
+(equal (Inconsistent Both) true)
+
+;; “Incoherent” corresponds to the phase Neither (非是非非)
+(predicate Incoherent (object) bool)
+(equal (Incoherent Neither) true)
+
+;; All other phases are neither inconsistent nor incoherent:
+(forall (?p) (=> (member ?p PropSpace)
+                 (=> (and (not (equal ?p Both)) (not (equal ?p Neither)))
+                     (and (not (Inconsistent ?p)) (not (Incoherent ?p))))))
+
+;; --------------------------------------------------------------
+## 5. Core operators of $\delay$-Calculus
+;; --------------------------------------------------------------
+
+;; 5.1  Delay operator  $\delay$
+(function delay (object) object)   ;; delay(p) : PropSpace → PropSpace
+
+;; Axiom: delay preserves the logical phase (i.e. it does not change the
+;; underlying four-valued state, only its temporal position).
+(forall (?p) (=> (member ?p PropSpace)
+                 (or (equal (space (delay ?p)) (space ?p))
+                     (equal (time  (delay ?p)) (time  ?p)))))   ;; optional; can be weakened
+
+;; 5.2  Application operator  `apply`
+(function apply (object object) object)   ;; apply(f, x) : PropSpace × PropSpace → PropSpace
+
+;; 5.3  Fixed-point operator  `fix`
+;; `fix(op)` returns an object `y` such that `op(y) = y`.
+;; We model this with a binary predicate `FixedPoint(op, y)`.
+(predicate FixedPoint (function object) bool)
+
+;; Fixed-point axiom:
+(forall (?op ?y) (=> (FixedPoint ?op ?y)
+                     (equal (?op ?y) ?y)))   ;; ?op is a unary function symbol
+
+;; Existence and uniqueness of a fixed point for any unary operator:
+(forall (?op) (=> (function ?op)                ; ?op : object → object
+                 (exists (?y) (and (FixedPoint ?op ?y)
+                                   (forall (?z) (=> (FixedPoint ?op ?z) (equal ?z ?y))))))
+
+;; 5.4  `eval` as a derived operation
+;; `eval(e)` is defined as the fixed point of the unary operator
+;;   λx. delay(apply(e, x))
+(predicate Eval (object object) bool)   ;; Eval(e, r) ⇔ r = eval(e)
+
+;; Definition of `Eval` via `FixedPoint`:
+(forall (?e ?r) (=> (Eval ?e ?r)
+                 (FixedPoint (lambda (x) (delay (apply ?e x))) ?r)))
+
+;; Existence of an evaluation result for any expression `e`:
+(forall (?e) (=> (member ?e PropSpace)
+                 (exists (?r) (Eval ?e ?r))))
+
+;; --------------------------------------------------------------
+## 6. Fixed-point characterization of truth (convergence view)
+;; --------------------------------------------------------------
+
+;; Truth in this calculus is identified with convergence to the
+;; middle-way fixed point Φ.  We introduce a predicate `ConvergesToPhi`.
+(predicate ConvergesToPhi (object) bool)
+
+;; An object `p` converges to Φ iff repeated application of `delay`
+;; eventually yields Φ.  Using the iteration operator `HIter` (see §7)
+;; we can express this succinctly:
+(forall (?p) (=> (ConvergesToPhi ?p)
+                 (exists (?k) (nat ?k) (equal (HIter ?k ?p) Phi))))
+
+;; Conversely, Φ itself trivially converges:
+(equal (ConvergesToPhi Phi) true)
+
+;; --------------------------------------------------------------
+## 7. Iteration of the delay operator (H = φ∘ι analogue)
+;; --------------------------------------------------------------
+
+;; Define the composite operator H = delay (i.e. a unary operator)
+(function H (object) object)   ;; H(p) = delay(p)
+
+;; Iteration of H:
+(function HIter (nat object) object)   ;; HIter n p = Hⁿ(p)
+(forall (?p) (equal (HIter zero ?p) ?p))                 ; 0-th iteration = identity
+(forall (?n ?p) (=> (nat ?n) (object ?p)
+                 (equal (HIter (succ ?n) ?p)
+                        (H (HIter ?n ?p)))))           ; recursion step
+
+;; Norm reduction (the paper’s distance) – each H-step reduces the norm by 1:
+;; We assume a norm function `norm` (already defined in other files) and a
+;; constant `c ≥ 0`.  Here we give the ideal case (`c = 0`):
+(forall (?p) (=> (member ?p PropSpace)
+                 (equal (norm (H ?p)) (sub (norm ?p) (succ zero)))))
+
+;; --------------------------------------------------------------
+;; 8. Summary of the calculus (comments)
+;; --------------------------------------------------------------
+
+(cl-comment "The CLIF file above formalises the $\delay$-Calculus introduced in the paper.")
+(cl-comment "- Four Catuskoti phases (Is, Not, Both, Neither) are objects of PropSpace.")
+(cl-comment "- Each phase is represented as a space-/time-pair via the unary functions")
+(cl-comment "- `space` and `time`, capturing the (S,T) encoding from the table.")
+(cl-comment "- `Inconsistent` and `Incoherent` tag the intermediate phases Both and Neither.")
+(cl-comment "- The delay operator `delay` models temporal postponement of evaluation.")
+(cl-comment "- `apply` is the pure syntactic function-application primitive.")
+(cl-comment "- `eval` is defined as the fixed point of the operator λx. delay(apply(e, x)).")
+(cl-comment "- `fix` is captured by the predicate `FixedPoint`; existence and uniqueness")
+(cl-comment "  of fixed points for any unary operator are asserted.")
+(cl-comment "- Convergence to the middle-way fixed point Φ is expressed by `ConvergesToPhi`")
+(cl-comment "  using the iteration operator `HIter` (the analogue of φ∘ι).")
+(cl-comment "- Norm reduction per delay step (`norm(H(p)) = norm(p) - 1`) guarantees")
+(cl-comment "  eventual arrival at Φ under the ideal case (c = 0).")
+(cl-comment "- The whole theory stays within Classical First-Order Logic, the native")
+(cl-comment "  fragment of Common Logic, making it amenable to automated reasoning")
+(cl-comment "  tools such as EYE or cwm.")
+(cl-comment "All definitions are intentionally minimal; concrete implementations of")
+(cl-comment "  `norm`, `inner_product`, `abs`, `exp`, `integral`, etc., can be added")
+(cl-comment "  as needed for specific applications or extensions.")
+(cl-comment "The formalisation captures the phenomenological intent of the paper")
+(cl-comment "  without committing to any particular proof-theoretic or")
+(cl-comment "  meta-logical stance, in accordance with the authors’ scope and")
+(cl-comment "  assumptions.")
+
+;; --------------------------------------------------------------
+;; End of file
+;; --------------------------------------------------------------

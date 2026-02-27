@@ -1,0 +1,176 @@
+;; ==============================================================
+;; Recursive Gödel and Tarski hierarchies – CLIF formalisation
+;; --------------------------------------------------------------
+;; Title   : 再帰的ゲーデル階層と再帰的タルスキ階層のメモ（0d への収束）
+;; Author  : (your name)
+;; Date    : 2024-10-08
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : 再帰的ゲーデル階層と再帰的タルスキ階層のメモ（0d への収束）")
+(cl-comment "Author  : (your name)")
+(cl-comment "Date    : 2024-10-08")
+(cl-comment "Version : 1.0")
+(cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies (objects, natural numbers, arithmetic)
+;; --------------------------------------------------------------
+
+;; Generic objects (propositions, theories, etc.)
+(object   ?x)
+
+;; Natural numbers (Peano encoding)
+(object zero)                     ;; 0
+(object succ)                     ;; successor function (unary)
+(nat zero)                        ;; zero is a natural number
+(forall (?n) (=> (nat ?n) (nat (succ ?n))))   ;; closure under succ
+
+;; Arithmetic primitives (addition, subtraction, ≤)
+(function add (nat nat) nat)      ;; add(m,n)
+(function sub (nat nat) nat)      ;; sub(m,n)  (defined only when m≥n)
+(function leq (nat nat) bool)     ;; leq(m,n)  ⇔ m ≤ n
+
+;; --------------------------------------------------------------
+;; 1. Distance ‖·‖ = K + ℓ
+;; --------------------------------------------------------------
+
+;; Informational length K(·) – “description length”
+(function Klen (object) nat)
+
+;; Temporal length ℓ(·) – “time-axis / meta-level length”
+(function Llen (object) nat)
+
+;; Total distance (norm) ‖X‖ = K(X) + ℓ(X)
+(function norm (object) nat)
+(forall (?x) (=> (object ?x)
+                 (equal (norm ?x) (add (Klen ?x) (Llen ?x)))))
+
+;; --------------------------------------------------------------
+;; 2. The 0-dimensional fixed point 𝔡 (空即是色)
+;; --------------------------------------------------------------
+
+(object dfix)                     ;; the unique 0-d point (written \mathfrak{0})
+(kobj dfix)                       ;; we regard it as an object of the “potential” side
+
+(equal (Klen dfix) 0)            ;; K(dfix) = 0
+(equal (Llen dfix) 0)            ;; ℓ(dfix) = 0
+(equal (norm dfix) 0)            ;; ‖dfix‖ = 0
+
+;; Uniqueness of the zero-norm object:
+(forall (?x) (=> (and (object ?x) (equal (norm ?x) 0))
+                 (equal ?x dfix)))
+
+;; --------------------------------------------------------------
+;; 3. Gödel hierarchy  G₀, G₁, G₂, …
+;; --------------------------------------------------------------
+
+;; A function that maps a natural index k to the k-th Gödel-stage object
+(function G (nat) object)        ;; G(k) ∈ Obj
+
+;; Constant c ≥ 0 that appears in the monotone-decrease inequality
+(constant c nat)
+;; c is non-negative
+(forall (?c) (=> (nat ?c) (leq zero ?c)))   ; 0 ≤ c
+
+;; Axiom: distance strictly (up to the constant c) decreases by at least 1
+(forall (?k) (=> (nat ?k)
+                 (let ((gk  (G ?k))
+                       (gkp (G (succ ?k))))
+                   (leq (sub (norm gk) (add (norm gkp) (sub (add one c) one)))   ; norm(g_{k+1}) ≤ norm(g_k) - 1 + c
+                   )))   ; note: we use “leq” to express “≤”
+
+;; For simplicity we also state the “ideal” strict decrease (without the constant)
+;; which is the case when c = 0.
+(forall (?k) (=> (nat ?k)
+                 (let ((gk  (G ?k))
+                       (gkp (G (succ ?k))))
+                   (equal (norm gkp) (sub (norm gk) 1)))))
+
+;; --------------------------------------------------------------
+;; 4. Tarski hierarchy  T₀, T₁, T₂, …
+;; --------------------------------------------------------------
+
+(function T (nat) object)        ;; T(k) ∈ Obj
+
+;; Same monotone-decrease condition for the Tarski hierarchy
+(forall (?k) (=> (nat ?k)
+                 (let ((tk  (T ?k))
+                       (tkp (T (succ ?k))))
+                   (leq (sub (norm tk) (add (norm tkp) (sub (add one c) one)))   ; ≤ norm(t_k) - 1 + c
+                   )))
+
+;; Ideal strict decrease (c = 0) version
+(forall (?k) (=> (nat ?k)
+                 (let ((tk  (T ?k))
+                       (tkp (T (succ ?k))))
+                   (equal (norm tkp) (sub (norm tk) 1)))))
+
+;; --------------------------------------------------------------
+## 5. Convergence predicates (sketch of the limit argument)
+;; --------------------------------------------------------------
+
+;; A sequence is a function from ℕ to objects.
+;; We reuse the already-declared G and T as concrete sequences.
+
+;; Predicate “ConvergesToZero(f)” says that the sequence f eventually
+;; reaches the unique 0-d point dfix and stays there forever.
+(predicate ConvergesToZero (function) bool)
+
+;; Formalisation of the convergence condition:
+;;   (i) the norm drops by exactly 1 at each step,
+;;   (ii) there exists a stage where the norm becomes 0,
+;;   (iii) thereafter the value is constantly dfix.
+(forall (?f) (=> (ConvergesToZero ?f)
+                 (and
+                   ;; (i) monotone drop by 1
+                   (forall (?k) (=> (nat ?k)
+                                    (let ((xk  (apply ?f ?k))
+                                          (xkp (apply ?f (succ ?k))))
+                                      (equal (norm xkp) (sub (norm xk) 1)))))
+                   ;; (ii) existence of a zero-norm stage
+                   (exists (?n) (=> (nat ?n)
+                                    (equal (norm (apply ?f ?n)) 0)))
+                   ;; (iii) constancy after the zero-norm stage
+                   (forall (?m ?n) (=> (and (nat ?m) (nat ?n) (leq ?n ?m))
+                                      (equal (apply ?f ?m) dfix))))))
+
+;; Assert that the Gödel and Tarski sequences satisfy the convergence predicate.
+(ConvergesToZero G)
+(ConvergesToZero T)
+
+;; From the definition of ConvergesToZero we can derive the limit statements
+;; (these are not new axioms; they follow from the predicate definition):
+;;   lim_{k→∞} G(k) = dfix   and   lim_{k→∞} T(k) = dfix
+;; In CL we express them as explicit equalities for all sufficiently large indices:
+
+(forall (?k) (=> (nat ?k)
+                 (=> (leq (norm (G ?k)) 0)   ; once the norm hits 0…
+                     (equal (G ?k) dfix))))
+
+(forall (?k) (=> (nat ?k)
+                 (=> (leq (norm (T ?k)) 0)
+                     (equal (T ?k) dfix))))
+
+;; --------------------------------------------------------------
+## 6. Summary (comments)
+;; --------------------------------------------------------------
+
+(cl-comment "The above CLIF file captures the skeleton of the LaTeX memo:")
+(cl-comment "- Distance ‖·‖ = K + ℓ (informational + temporal length).")
+(cl-comment "- Unique 0-dimensional fixed point dfix (norm 0).")
+(cl-comment "- Two hierarchies G_k (Gödel) and T_k (Tarski) are modeled as functions")
+(cl-comment "  G : ℕ → Obj and T : ℕ → Obj.")
+(cl-comment "- Both hierarchies satisfy a monotone-decrease inequality")
+(cl-comment "  norm(next) ≤ norm(current) – 1 + c (with c ≥ 0).")
+(cl-comment "- Under the ideal case c = 0 the norm drops by exactly 1 each step.")
+(cl-comment "- ConvergenceToZero predicate expresses that a sequence eventually")
+(cl-comment "  reaches dfix and stays there; both G and T satisfy it.")
+(cl-comment "- Consequently the limits of both sequences are identified with dfix.")
+(cl_comment "All axioms are first-order, so the theory lives inside Classical First-Order Logic,")
+(cl_comment "the native fragment of Common Logic.")
+
+;; --------------------------------------------------------------
+;; End of file
+;; --------------------------------------------------------------

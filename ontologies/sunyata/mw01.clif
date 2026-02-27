@@ -1,0 +1,68 @@
+(cl-text Mulamadhyamakakarika_Chapter01
+  (cl-comment "==============================================================")
+  (cl-comment "中論 第1章 「観因縁品」 – 八不中道と四縁の否定")
+  (cl-comment "発生（生）の自性を四句否定し、Dfix0（空）へ収束させる")
+  (cl-comment "==============================================================")
+
+  ;; -------------------------------------------------------------
+  ;; 1. 八不中道 (The Eight Negations) の定義
+  ;; -------------------------------------------------------------
+  (cl-comment "不生・不滅・不断・不常・不一・不異・不来・不出")
+  (cl-comment "これらは対象の属性を neg (meta_neg 1) することで中道へ導く操作である")
+
+  (predicate EightNegations (object))
+  (forall (?x)
+    (=> (EightNegations ?x)
+        (and (mw_eq (neg (Arising ?x)) Dfix0)     ;; 不生
+             (mw_eq (neg (Ceasing ?x)) Dfix0)     ;; 不滅
+             (mw_eq (neg (Permanent ?x)) Dfix0)   ;; 不常
+             (mw_eq (neg (Interrupted ?x)) Dfix0) ;; 不断
+             (mw_eq (neg (Identical ?x)) Dfix0)   ;; 不一
+             (mw_eq (neg (Different ?x)) Dfix0)   ;; 不異
+             (mw_eq (neg (Coming ?x)) Dfix0)      ;; 不来
+             (mw_eq (neg (Going ?x)) Dfix0))))    ;; 不出
+
+  ;; -------------------------------------------------------------
+  ;; 2. 四句分別による「生（発生）」の解体
+  ;; -------------------------------------------------------------
+  (cl-comment "諸法はいかなる所においても、自らから、他から、両方から、")
+  (cl-comment "あるいは無因から生じることはない。")
+
+  (object Production) ;; 「生」という事象
+  
+  (forall (?p)
+    (=> (equal ?p Production)
+        (and 
+          (cl-comment "1. 自生 (Self-origination) の否定")
+          (mw_eq (meta_neg 1 (FromSelf ?p)) Dfix0)
+
+          (cl-comment "2. 他生 (Other-origination) の否定")
+          (mw_eq (meta_neg 1 (FromOther ?p)) Dfix0)
+
+          (cl-comment "3. 共生 (Both) の否定")
+          (mw_eq (meta_neg 2 (FromBoth ?p)) Dfix0)
+
+          (cl-comment "4. 無因生 (Causeless) の否定")
+          (mw_eq (meta_neg 3 (FromNoCause ?p)) Dfix0))))
+
+  ;; -------------------------------------------------------------
+  ;; 3. 四縁 (Four Conditions) のパッキング
+  ;; -------------------------------------------------------------
+  (cl-comment "因縁・次第縁・所縁縁・増上縁を検討し、そこに実体的な「生」を認めない")
+
+  (forall (?c)
+    (=> (member ?c (list CauseCondition SequenceCondition ObjectCondition DominantCondition))
+        (and (not (HasSvalabhava ?c))                ;; 縁に自性（実体）なし
+             (mw_eq (ActualProduction ?c) Dfix0)))) ;; 縁による実体的な生は 0d へ収束
+
+  ;; -------------------------------------------------------------
+  ;; 4. 結論：縁起の非自性化
+  ;; -------------------------------------------------------------
+  (cl-comment "すべての条件（縁）において結果（果）は存在せず、非存在でもない")
+  
+  (forall (?effect ?condition)
+    (=> (DependsOn ?effect ?condition)
+        (mw_eq ?effect Dfix0))) ;; 依存して顕現するものは、実体的には空（Dfix0）である
+
+  (cl-comment "第1章の帰結：縁起＝空性（Shunyata）を mw_eq で定義完了")
+)

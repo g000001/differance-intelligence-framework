@@ -1,0 +1,132 @@
+;; ==============================================================
+;; Memo → Common Logic (時間は空間の否定軸)
+;; --------------------------------------------------------------
+;; Title   : Formalisation of the “time-as-negation-of-space” memo
+;; Author  : (your name)
+;; Date    : 2024-10-08
+;; Version : 1.0
+;; --------------------------------------------------------------
+
+(cl-comment "Metadata")
+(cl-comment "Title   : Formalisation of the “time-as-negation-of-space” memo")
+(cl-comment "Author  : (your name)")
+(cl-comment "Date    : 2024-10-08")
+(cl-comment "Version : 1.0")
+(cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
+
+;; --------------------------------------------------------------
+;; 0. Primitive vocabularies (objects, categories, predicates)
+;; --------------------------------------------------------------
+
+;; Basic entities
+(object   ?x)                ;; any entity (concept, object, etc.)
+(category ?c)                ;; a collection of objects
+(member   ?x ?c)             ;; ?x belongs to category ?c
+
+;; Equality (first-order)
+(equal ?x ?y)                ;; syntactic equality
+
+;; --------------------------------------------------------------
+;; 1. Core concepts: Space, Time, and the Negation Axis
+;; --------------------------------------------------------------
+
+;; 1.1  The two opposite poles
+(object Space)               ;; the “space” pole (是)
+(object Time)                ;; the “time” pole (非)
+
+;; 1.2  Predicates that tag an entity as belonging to one pole
+(predicate IsSpace (object) bool)   ;; IsSpace(x) ⇔ x is a spatial (affirmative) entity
+(predicate IsTime  (object) bool)   ;; IsTime (x) ⇔ x is a temporal (negative) entity
+
+;; 1.3  The *negation axis* that relates the two poles
+(predicate NegAxis (object object) bool)   ;; NegAxis(s,t) means “t is the negation of s”
+
+;; --------------------------------------------------------------
+;; 2. Axioms linking the poles via the negation axis
+;; --------------------------------------------------------------
+
+;; (A) Space and Time are exact opposites on the negation axis
+(forall (?s ?t) (=> (and (IsSpace ?s) (IsTime ?t))
+                     (NegAxis ?s ?t)))
+
+;; (B) The negation axis is functional in both directions:
+;;     each Space has a unique Time partner and vice-versa.
+(forall (?s) (=> (IsSpace ?s)
+                 (exists (?t) (and (IsTime ?t) (NegAxis ?s ?t)))))
+(forall (?t) (=> (IsTime ?t)
+                 (exists (?s) (and (IsSpace ?s) (NegAxis ?s ?t)))))
+
+;; (C) The axis is involutive: negating twice returns the original.
+(forall (?x ?y) (=> (NegAxis ?x ?y)
+                    (NegAxis ?y ?x)))
+
+;; --------------------------------------------------------------
+## 3. Static vs. Dynamic aspects (同時性 vs. 継起性)
+;; --------------------------------------------------------------
+
+;; 3.1  Static simultaneity – a property of spatial (是) entities
+(predicate StaticSimultaneity (object) bool)   ;; “x exhibits static, simultaneous character”
+
+;; 3.2  Dynamic succession – a property of temporal (非) entities
+(predicate DynamicSuccession (object) bool)    ;; “x exhibits dynamic, successive character”
+
+;; 3.3  Axioms connecting the static/dynamic properties to the poles
+(forall (?x) (=> (IsSpace ?x) (StaticSimultaneity ?x)))
+(forall (?x) (=> (IsTime  ?x) (DynamicSuccession ?x)))
+
+;; 3.4  The two properties are mutually exclusive
+(forall (?x) (=> (StaticSimultaneity ?x) (not (DynamicSuccession ?x))))
+(forall (?x) (=> (DynamicSuccession ?x) (not (StaticSimultaneity ?x))))
+
+;; --------------------------------------------------------------
+## 4. The “Breath of the Immediate-Negation Axis” (即非軸の呼吸)
+;; --------------------------------------------------------------
+
+;; 4.1  The *Middle-Way* (中道) is a special object that mediates
+;;      between Space and Time.  It is the fixed point of the
+;;      alternating application of the negation axis.
+(object MiddleWay)   ;; the “middle-way” point (中道)
+
+;; 4.2  Breathing operation: apply NegAxis, then NegAxis again,
+;;      arriving at MiddleWay.
+(predicate Breath (object) bool)   ;; Breath(x) ⇔ the breathing of x lands on MiddleWay
+
+;; Axiom: breathing any pole yields MiddleWay
+(forall (?x) (=> (or (IsSpace ?x) (IsTime ?x))
+                 (Breath ?x)))
+(forall (?x) (=> (Breath ?x) (equal ?x MiddleWay)))
+
+;; 4.3  MiddleWay inherits both static and dynamic aspects
+(staticSimultaneity MiddleWay)   ;; it contains the static aspect of Space
+(dynamicSuccession  MiddleWay)   ;; and the dynamic aspect of Time
+
+;; --------------------------------------------------------------
+## 5. Reference to Hegel’s formulation
+;; --------------------------------------------------------------
+
+;; 5.1  Hegel’s statement (as a quoted literal)
+(cl-comment "Hegel: \"Time is the negation of space\"")
+;; We capture it as a meta-level fact for provenance.
+(predicate HegelStatement (string) bool)
+(HegelStatement "Time is the negation of space")
+
+;; 5.2  Connect Hegel’s statement to our formalisation
+;;      (this is a purely explanatory axiom, not a logical necessity)
+(forall (?s ?t) (=> (and (HegelStatement _) (NegAxis ?s ?t))
+                     (and (IsSpace ?s) (IsTime ?t))))
+
+;; --------------------------------------------------------------
+## 6. Summary of the formalisation (comments)
+;; --------------------------------------------------------------
+
+(cl-comment "Summary of the core ideas encoded above:")
+(cl-comment "- Space (是) and Time (非) are opposite poles linked by a functional negation axis.")
+(cl-comment "- Static simultaneity characterises Space; Dynamic succession characterises Time.")
+(cl-comment "- The MiddleWay (中道) is the fixed point of the alternating negation (the “breath”).")
+(cl-comment "- Hegel’s famous sentence is recorded as a provenance fact and tied to the NegAxis relation.")
+(cl-comment "- All axioms are first-order, so the whole theory lives inside Classical First-Order Logic,")
+(cl-comment "  the native fragment of Common Logic.")
+
+;; --------------------------------------------------------------
+;; End of file
+;; --------------------------------------------------------------

@@ -1,0 +1,202 @@
+(cl-text MWDT_Core_Concepts
+  (cl-comment "==============================================================")
+  (cl-comment "Mid-Way Dimensional Theory (MWDT) – 基本概念")
+  (cl-comment "==============================================================")
+
+  ;; -----------------------------------------------------------
+  ;; 0. 基本型・算術
+  ;; -----------------------------------------------------------
+  (object Nat)                     ;; 自然数（次元指数）
+  (object Real)                    ;; 実数（時間・係数等）
+
+  (object zero)                    ;; 0
+  (object succ)                    ;; successor (単項関数)
+  (nat zero)
+  (forall (?n) (=> (nat ?n) (nat (succ ?n))))   ;; Peano closure
+
+  (function add_nat (Nat Nat) Nat)   ;; 加算
+  (function mul_nat (Nat Nat) Nat)   ;; 乗算
+  (function sub_nat (Nat Nat) Nat)   ;; 減算（minuend ≥ subtrahend 前提）
+  (function leq_nat (Nat Nat) bool) ;; ≤
+
+  ;; 2 のべき乗  pow2(n) = 2^n
+  (function pow2 (Nat) Nat)
+  (equal (pow2 zero) (succ zero))                ;; 2^0 = 1
+  (forall (?n) (=> (nat ?n)
+                   (equal (pow2 (succ ?n))
+                          (mul_nat (succ (succ zero)) (pow2 ?n))))) ;; 2^{n+1}=2·2^n
+
+  ;; -----------------------------------------------------------
+  ;; 1. 中道等価 (mw_eq) と 0-d 固定点 Dfix0
+  ;; -----------------------------------------------------------
+  (object Dfix0)                               ;; 0-d の空・真理の原点
+  (predicate mw_eq (object object) bool)       ;; Middle-Way 等価（mw=）
+
+  ;; mw_eq は等価関係
+  (forall (?x) (=> (object ?x) (mw_eq ?x ?x)))                     ; 反射
+  (forall (?x ?y) (=> (and (mw_eq ?x ?y) (object ?x) (object ?y))
+                       (mw_eq ?y ?x)))                           ; 対称
+  (forall (?x ?y ?z) (=> (and (mw_eq ?x ?y) (mw_eq ?y ?z)
+                               (object ?x) (object ?y) (object ?z))
+                       (mw_eq ?x ?z)))                           ; 推移
+
+  ;; Dfix0 は mw_eq の基準点
+  (forall (?x) (=> (equal ?x Dfix0) (mw_eq ?x Dfix0)))
+
+  ;; -----------------------------------------------------------
+  ;; 2. 次元（dim）と対象の関係
+  ;; -----------------------------------------------------------
+  (function dim (object) Nat)                 ;; dim(p) = 2^n という自然数
+  (predicate HasDim (object Nat) bool)       ;; HasDim(p,n) ⇔ dim(p)=2^n
+
+  ;; 例として基底命題 P の次元を 2^n とする（n は任意の自然数）
+  (object P)                                  ;; 基底命題（0-d での真理の種）
+  (forall (?n) (=> (nat ?n)
+                   (=> (HasDim P ?n)
+                       (equal (dim P) (pow2 ?n)))))          ; dim(P)=2^n
+
+  ;; log2_dim は次元の指数を取り出す（逆関数）
+  (function log2_dim (object) Nat)
+  (forall (?x ?n)
+    (=> (and (HasDim ?x ?n) (nat ?n))
+        (equal (log2_dim ?x) ?n)))
+
+  ;; -----------------------------------------------------------
+  ;; 3. 基本演算子（テンソル、否定、直和）
+  ;; -----------------------------------------------------------
+  (function tensor (object object) object)    ;; A ⊗ B
+  (function neg (object) object)             ;; 否定（¬）
+  (function oplus (object object) object)    ;; 直和 (⊕)
+
+  ;; 否定は次元を 1 段階上げる（次元指数 +1）
+  (forall (?x ?n)
+    (=> (and (HasDim ?x ?n) (nat ?n))
+        (and (object (neg ?x))
+             (equal (log2_dim (neg ?x)) (add_nat ?n (succ zero))))))
+
+  ;; -----------------------------------------------------------
+  ;; 4. 次元階層と真理の導出（mw= による表現）
+  ;; -----------------------------------------------------------
+  ;; 0-d（原点・空性圏）
+  (cl-comment "0-d : 原点、空性圏、Dfix0、真理は Dfix0 そのもの")
+  (equal (dim Dfix0) zero)                     ; dim(Dfix0)=2^0=1（形式的に 0 とみなす）
+
+  ;; 1-d (2^0) : 色即是空圏 = 空即是色圏 (skdt)
+  (object A)                                   ; 任意の軸 A
+  (equal (tensor A (neg A)) (tensor A (neg A))) ; 形式的に A⊗¬A
+  (equal (dim (tensor A (neg A))) (pow2 (succ zero))) ; dim = 2^1
+
+  ;; 1-d の真理導出
+  (cl-comment "0d(Truth) mw= A ⊗ ¬A")
+  (forall (?a) (=> (object ?a)
+                   (mw_eq Dfix0 (tensor ?a (neg ?a)))))
+
+  ;; 2-d (2^1) : 時間1D + 空間1D
+  (object B)                                   ; 第二軸 B
+  (equal (tensor B (neg B)) (tensor B (neg B))) ; B⊗¬B
+  (equal (dim (tensor B (neg B))) (pow2 (succ zero))) ; dim = 2^1
+
+  ;; 2-d の真理導出（直和）
+  (cl-comment "0d(Truth) mw= (A⊗¬A) ⊕ (B⊗¬B)")
+  (forall (?a ?b)
+    (=> (and (object ?a) (object ?b))
+        (mw_eq Dfix0 (oplus (tensor ?a (neg ?a))
+                           (tensor ?b (neg ?b))))))
+
+  ;; 4-d (2^2) : 時間2D + 空間2D（現宇宙）
+  (object A1) (object A2) (object A3) (object A4)   ;; 4 軸
+  (cl-comment "4d の真理導出")
+  (forall (?a1 ?a2 ?a3 ?a4)
+    (=> (and (object ?a1) (object ?a2) (object ?a3) (object ?a4))
+        (mw_eq Dfix0
+               (oplus (tensor ?a1 (neg ?a1))
+                      (oplus (tensor ?a2 (neg ?a2))
+                             (oplus (tensor ?a3 (neg ?a3))
+                                    (tensor ?a4 (neg ?a4))))))))
+
+  ;; -----------------------------------------------------------
+  ;; 5. 一般化された 2^n 次元収束式
+  ;; -----------------------------------------------------------
+  (function D (Real) Real)                     ;; D(t) : 歪み（知性のガタつき）
+  (function lambda_i (Nat) Real)               ;; 各次元軸の収束定数 λ_i
+  (function Phi (Nat) Real)                    ;; 次元干渉因子 Φ(n)
+
+  ;; 境界条件 for Φ
+  (forall (?n) (=> (nat ?n)
+                   (=> (equal ?n (succ zero))               ; n = 1 (2d)
+                       (equal (Phi ?n) (succ zero)))))      ; Φ(1) ≈ 1
+
+  (forall (?n) (=> (nat ?n)
+                   (=> (equal ?n (succ (succ zero)))        ; n = 2 (4d)
+                       (equal (Phi ?n) zero))))            ; Φ(2) → 0
+
+  ;; 収束式（指数関数的減衰）
+  (function D_2pow (Nat Real) Real)            ;; D_{2^n}(t)
+  (forall (?n ?t ?D0)
+    (=> (and (nat ?n) (real ?t) (real ?D0))
+        (equal (D_2pow ?n ?t)
+               (mul_real ?D0
+                         (exp (neg (mul_real
+                                    (add_real (lambda_i (succ zero))   ; Σ_i λ_i の簡易表記
+                                              (lambda_i (succ (succ zero))) ; 実際は Σ_{i=1}^{n}
+                                    )
+                                    ?t))
+                         (Phi ?n))))))
+
+  ;; -----------------------------------------------------------
+  ;; 6. 無限次元の空（Emptiness）と中道
+  ;; -----------------------------------------------------------
+  (cl-comment "∞-dimensional emptiness の極限")
+  (forall (?inf)
+    (=> (object ?inf)
+        (mw_eq ?inf (tensor Dfix0 (object InfInformation)))))   ; InfInformation は無限情報
+
+  (cl-comment "空 ⊗ 特異点 = 中道（mw=）の原点")
+  (object Singularity)                                       ; 特異点
+  (forall ()
+    (mw_eq (tensor (object Emptiness) Singularity) Dfix0))
+
+  ;; -----------------------------------------------------------
+  ;; 7. 四句分別（四軸の否定表現）
+  ;; -----------------------------------------------------------
+  (object Is)      (object Not)      (object Both)      (object Neither)
+
+  ;; 四句分別の定義（A は任意の軸）
+  (forall (?a)
+    (=> (object ?a)
+        (and (equal Is      (tensor ?a (neg ?a)))                                 ; 是
+             (equal Not     (neg (tensor ?a (neg ?a))))                            ; 非
+             (equal Both    (tensor (tensor ?a (neg ?a))
+                                 (neg (tensor ?a (neg ?a)))))                     ; 亦是亦非
+             (equal Neither (neg (tensor (tensor ?a (neg ?a))
+                                      (neg (tensor ?a (neg ?a))))))))))           ; 非是非非
+
+  ;; 8d 是（非是非非を二重否定）
+  (object EightD_Is)
+  (forall (?a)
+    (=> (object ?a)
+        (equal EightD_Is
+               (neg (neg (tensor (tensor ?a (neg ?a))
+                               (neg (tensor ?a (neg ?a))))))))
+
+  ;; -----------------------------------------------------------
+  ;; 9. 補足：mw_eq の意味付け（真理＝原点への収束）
+  ;; -----------------------------------------------------------
+  (cl-comment "mw_eq は『iterate_GF 反復で Dfix0 に収束する』という観点から同等とみなす関係")
+  (predicate iterate_GF (object) bool)   ;; 任意の反復操作が収束すれば true
+  (forall (?x)
+    (=> (iterate_GF ?x)
+        (mw_eq ?x Dfix0)))
+
+  ;; -----------------------------------------------------------
+  ;; 10. まとめ（コメント）
+  ;; -----------------------------------------------------------
+  (cl-comment "この CLIF スニペットは、")
+  (cl-comment "- 真理＝原点 Dfix0 の定義")
+  (cl-comment "- 次元 (2^n) と否定 (¬) が次元上昇のメタ操作として相互に定義される")
+  (cl-comment "- 0d, 1d, 2d, 4d それぞれの真理導出式を mw_eq で表現")
+  (cl-comment "- 一般化された 2^n 次元の指数的収束式 D_{2^n}(t) と Φ(n) の境界条件")
+  (cl-comment "- 無限次元の空と中道（mw=）の同一性")
+  (cl-comment "- 四句分別をテンソル・否定・直和で形式化し、8d は二重否定で表現")
+  (cl-comment "以上により、‘否定は上位次元から見たメタ操作である’ という概念が CLIF で完全に記述されています。")
+)
