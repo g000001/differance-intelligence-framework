@@ -1,4 +1,4 @@
-(cl-text https://purl.org/aletheics/ontologies/n-koti/nagation.clif
+(cl-text https://purl.org/aletheics/ontologies/principle/nagation.clif
 
   (cl-comment "Negation_as_Meta_Operation")
   (cl-comment "==============================================================")
