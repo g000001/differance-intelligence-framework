@@ -7,8 +7,9 @@
 ;; CLIF conversion: 2026-02-14
 ;; ==============================================================
 
-(cl-text CommunicationFixedPointsTheory
-    
+(cl-text https://purl.org/aletheics/ontologies/app/fpcomm.clif
+
+    (cl-comment "CommunicationFixedPointsTheory")
     (cl-comment "An Essay on the Necessity of Fixed Points in Communication")
     (cl-comment "Bridging Information Theory and Tetralemma Logic")
     (cl-comment "Author: Masaomi Chiba")
@@ -439,13 +440,11 @@
         (cl-comment "  Tetralemma for emergence, and ontological non-reification—")
         (cl-comment "  we navigate communication without rigid dogmatism or nihilistic divergence.")
     )
-)
-
 ;; ==============================================================
 ;; 9. Additional Predicates and Support Functions
 ;; ==============================================================
 
-(cl-text SupportingPredicates
+    (cl-comment "SupportingPredicates")
     
     ;; Communication and agent predicates
     (predicate IsAgent (object) bool)
