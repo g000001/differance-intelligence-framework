@@ -2,15 +2,15 @@
 ;; Recursive Gödel and Tarski hierarchies – CLIF formalisation
 ;; --------------------------------------------------------------
 ;; Title   : 再帰的ゲーデル階層と再帰的タルスキ階層のメモ（0d への収束）
-;; Author  : (your name)
-;; Date    : 2024-10-08
+;; Author  : Masaomi Chiba
+;; Date    : 2026-02-03
 ;; Version : 1.0
 ;; --------------------------------------------------------------
 
 (cl-comment "Metadata")
 (cl-comment "Title   : 再帰的ゲーデル階層と再帰的タルスキ階層のメモ（0d への収束）")
-(cl-comment "Author  : (your name)")
-(cl-comment "Date    : 2024-10-08")
+(cl-comment "Author  : Masaomi Chiba")
+(cl-comment "Date    : 2026-02-03")
 (cl-comment "Version : 1.0")
 (cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
 
@@ -79,7 +79,7 @@
                  (let ((gk  (G ?k))
                        (gkp (G (succ ?k))))
                    (leq (sub (norm gk) (add (norm gkp) (sub (add one c) one)))   ; norm(g_{k+1}) ≤ norm(g_k) - 1 + c
-                   )))   ; note: we use “leq” to express “≤”
+                   ))))  ; note: we use “leq” to express “≤”
 
 ;; For simplicity we also state the “ideal” strict decrease (without the constant)
 ;; which is the case when c = 0.
@@ -99,7 +99,7 @@
                  (let ((tk  (T ?k))
                        (tkp (T (succ ?k))))
                    (leq (sub (norm tk) (add (norm tkp) (sub (add one c) one)))   ; ≤ norm(t_k) - 1 + c
-                   )))
+                   ))))
 
 ;; Ideal strict decrease (c = 0) version
 (forall (?k) (=> (nat ?k)

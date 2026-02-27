@@ -1,244 +1,92 @@
-;; ==============================================================
-;; Sunyata Category – Complete CLIF Formalisation
-;; --------------------------------------------------------------
-;; Title   : Sunyata Category: Philosophical Foundations of SKDT
-;; Author  : Masaomi Chiba
-;; Date    : 2025-12-01
-;; Version : 1.0
-;; DOI     : 10.5281/zenodo.XXXXX   ; replace with the actual DOI
-;; --------------------------------------------------------------
+;;; Sunyata Category: Philosophical Foundations of SKDT
+;;; Formalised in Common Logic (CLIF)
 
-(cl-comment "Metadata")
-(cl-comment "Title   : Sunyata Category: Philosophical Foundations of SKDT")
-(cl-comment "Author  : Masaomi Chiba")
-(cl-comment "Date    : 2025-12-01")
-(cl-comment "Version : 1.0")
-(cl-comment "DOI     : 10.5281/zenodo.XXXXX")   ; ← replace with real DOI
+(cl-text https://purl.org/aletheics/ontologies/sunyata/sunyata.clif
+  (cl-imports https://purl.org/aletheics/ontologies/sunyata/dfix0.clif)
 
-;; --------------------------------------------------------------
-;; 0. Primitive vocabularies (objects, morphisms, categories)
-;; --------------------------------------------------------------
+  (cl-comment "Sunyata-Category-Foundations")
+  ;; --------------------------------------------------------------------------
+  ;; 1. Primitive Vocabularies
+  ;; --------------------------------------------------------------------------
+  (cl-comment "Basic categorical and ontological entities")
+  (category ?C)
+  (object ?X)
+  (morphism ?f)
+  (functor ?F)
+  (member ?X ?C)
+  (dom ?f ?X)
+  (cod ?f ?Y)
+  (equal ?X ?Y)
 
-;; Basic notions
-(object   ?x)                ;; any entity in the universe
-(morphism ?f)                ;; arrows between objects
-(category ?C)                ;; a collection of objects and morphisms
+  ;; --------------------------------------------------------------------------
+  ;; 2. The Two Dual Categories: K and S (SKDT Duality)
+  ;; --------------------------------------------------------------------------
+  (cl-comment "K: Kusokuzeshiki (Potential), S: Shikisokuzeku (Manifest)")
+  (category K)
+  (category S)
 
-;; Domain and codomain of a morphism
-(dom ?f ?a)                  ;; source of ?f
-(cod ?f ?b)                  ;; target of ?f
+  ;; Sunyata (Voidness) Principle: K is pure potential without intrinsic nature.
+  (forall (?k)
+    (if (member ?k K)
+        (not (exists (?p) (intrinsic_property ?p ?k)))))
 
-;; Composition and identities
-(comp ?g ?f ?h)              ;; ?h = ?g ∘ ?f
-(id ?a)                      ;; identity arrow on ?a
+  ;; --------------------------------------------------------------------------
+  ;; 3. Mutual Generative Mappings (Pratitya-samutpada)
+  ;; --------------------------------------------------------------------------
+  (cl-comment "Functors realising the principle of Dependent Origination")
+  (functor F) (dom_functor F K) (cod_functor F S) ; Realisation
+  (functor G) (dom_functor G S) (cod_functor G K) ; Extraction
 
-;; Equality (first‑order)
-(equal ?x ?y)                ;; syntactic equality
+  ;; Dependent Origination Axiom: S-objects arise only through F from K.
+  (forall (?s)
+    (if (member ?s S)
+        (exists (?k)
+          (and (member ?k K)
+               (equal ?s (app_obj F ?k))))))
 
-;; --------------------------------------------------------------
-;; 1. The two dual categories of SKDT
-;; --------------------------------------------------------------
+  ;; --------------------------------------------------------------------------
+  ;; 4. Middle-Way Equilibrium (Madhyamaka)
+  ;; --------------------------------------------------------------------------
+  (cl-comment "Dynamic stability through Fixed Points")
+  
+  ;; The Middle-Way composite functor H = G ∘ F
+  (forall (?k)
+    (if (member ?k K)
+        (exists (?k_next)
+          (equal ?k_next (app_obj G (app_obj F ?k))))))
 
-;; K = Kusokuzeshiki‑category (the “potential” side)
-(category K)
+  ;; Lawvere’s Fixed Point Theorem as the stability guarantee.
+  ;; This prevents logical collapse (Gödelian issues) by ensuring a fixed point exists.
+  (forall (?H ?K_cat)
+    (if (and (functor ?H) (equal (dom_functor ?H) ?K_cat) (equal (cod_functor ?H) ?K_cat))
+        (exists (?Dfix0)
+          (and (member ?Dfix0 ?K_cat)
+               (equal (app_obj ?H ?Dfix0) ?Dfix0)
+               (cl-comment "Dfix0: The stable point of Emptiness/Middle-Way")))))
 
-;; S = Shikisokuzeku‑category (the “manifest” side)
-(category S)
+  ;; --------------------------------------------------------------------------
+  ;; 5. Meta-Categorical Emergence (Decoherence-like)
+  ;; --------------------------------------------------------------------------
+  (cl-comment "The process of meta-structures emerging from the base interaction")
+  
+  (predicate CoherentSubstratum (?k))
+  (predicate StableClassicalHierarchy (?s))
 
-;; Objects belonging to each category
-(object ?k) (=> (member ?k K))   ;; ?k ∈ K
-(object ?s) (=> (member ?s S))   ;; ?s ∈ S
+  (forall (?k)
+    (if (and (member ?k K) (CoherentSubstratum ?k))
+        (exists (?s)
+          (and (member ?s S)
+               (EnvironmentalInteraction ?k ?s)
+               (StableClassicalHierarchy ?s)))))
 
-;; --------------------------------------------------------------
-;; 2. Mutual Generative Mappings (the duality functors)
-;; --------------------------------------------------------------
+  ;; --------------------------------------------------------------------------
+  ;; 6. Formal Mapping of Philosophical Concepts (Table 1)
+  ;; --------------------------------------------------------------------------
+  (cl-comment "Mapping to Category Theory structures")
+  
+  (forall (?e) (if (Epistemology ?e) (FibredCategoryStructure ?e)))
+  (forall (?o) (if (Ontology ?o) (MonoidalGenerativeProcess ?o)))
+  (forall (?s) (if (Semantics ?s) (FunctorialTransformation ?s)))
+  (forall (?a) (if (Axiology ?a) (QuasiUniversalValuation ?a)))
 
-;; Functor F : K → S   (realises potential into manifest)
-(functor F)
-(dom_functor F K)                ;; domain of F is K
-(cod_functor F S)                ;; codomain of F is S
-
-;; Functor G : S → K   (extracts potential from manifest)
-(functor G)
-(dom_functor G S)
-(cod_functor G K)
-
-;; Functorial action on objects
-(app_obj F ?k ?s)   (=> (member ?k K) (member ?s S) (app_obj F ?k ?s))
-(app_obj G ?s ?k)   (=> (member ?s S) (member ?k K) (app_obj G ?s ?k))
-
-;; Functorial action on morphisms
-(app_mor F ?f ?h)   (=> (morphism ?f) (dom ?f ?a) (cod ?f ?b)
-                       (member ?a K) (member ?b K)
-                       (morphism ?h) (dom ?h (app_obj F ?a))
-                       (cod ?h (app_obj F ?b))
-                       (app_mor F ?f ?h))
-(app_mor G ?g ?j)   (=> (morphism ?g) (dom ?g ?u) (cod ?g ?v)
-                       (member ?u S) (member ?v S)
-                       (morphism ?j) (dom ?j (app_obj G ?u))
-                       (cod ?j (app_obj G ?v))
-                       (app_mor G ?g ?j))
-
-;; --------------------------------------------------------------
-;; 3. Philosophical Principles as logical axioms
-;; --------------------------------------------------------------
-
-;; 3.1 Sunyata (Voidness) – K is pure potential, devoid of intrinsic nature.
-;; We model this by stating that no object of K carries an intrinsic property.
-(forall (?k) (=> (member ?k K) (not (exists (?p) (property ?p ?k)))))
-;; (‘property’ is a placeholder for any intrinsic attribute.)
-
-;; 3.2 Pratītyasamutpāda (Dependent Origination)
-;; Every object of S arises from a pair of mutually generating functors.
-(forall (?s) (=> (member ?s S)
-                 (exists (?k1 ?k2)
-                         (and (member ?k1 K) (member ?k2 K)
-                              (equal ?s (app_obj F ?k1))
-                              (equal ?k2 (app_obj G ?s))))))
-;; This captures the “mutual generative mappings (F,G)”.
-
-;; 3.3 Madhyamaka (Middle‑Way) – dynamic stability.
-;; The compositions G∘F (and symmetrically F∘G) must have a fixed point.
-(forall (?k) (=> (member ?k K)
-                 (exists (?k')
-                         (and (member ?k' K)
-                              (equal ?k' (app_obj G (app_obj F ?k)))
-                              (mw_eq ?k ?k')))))
-(forall (?s) (=> (member ?s S)
-                 (exists (?s')
-                         (and (member ?s' S)
-                              (equal ?s' (app_obj F (app_obj G ?s)))
-                              (mw_eq ?s ?s')))))
-
-;; --------------------------------------------------------------
-;; 4. Middle‑Way equivalence (mw=) and the 0‑d fixed point Dfix0
-;; --------------------------------------------------------------
-
-;; The special object that all fixed‑point constructions converge to.
-(object Dfix0)
-(mweq Dfix0 Dfix0)                     ;; reflexivity (trivial)
-
-;; Middle‑Way equivalence: two objects are mw‑equal iff they both
-;; converge (via repeated application of the dual functors) to Dfix0.
-(mw_eq ?x ?y) (=> (object ?x) (object ?y)
-                  (and (converges_to ?x Dfix0)
-                       (converges_to ?y Dfix0)))
-
-;; ----------------------------------------------------------------
-;; 5. Convergence & Iteration (used by many later axioms)
-;; ----------------------------------------------------------------
-
-;; converges_to(x,d) holds iff there exists a natural number n such that
-;; (G∘F)^n (x) = d.
-(forall (?x ?d) (=> (object ?x) (object ?d)
-                  (iff (converges_to ?x ?d)
-                       (exists (?n) (nat ?n)
-                                (equal (iterate_GF ?n ?x) ?d)))))
-
-;; Helper: iteration of G∘F n times.
-;; iterate_GF(0, x) = x
-(forall (?x) (equal (iterate_GF 0 ?x) ?x))
-;; iterate_GF(succ(n), x) = G(F(iterate_GF(n, x)))
-(forall (?n ?x) (=> (nat ?n) (object ?x)
-                   (equal (iterate_GF (succ ?n) ?x)
-                          (app_obj G (app_obj F (iterate_GF ?n ?x))))))
-
-;; Peano naturals (minimal fragment needed for iteration).
-(object zero)
-(object succ)   ;; succ is a unary function symbol
-(nat zero)
-(forall (?n) (=> (nat ?n) (nat (succ ?n))))
-
-;; ----------------------------------------------------------------
-;; 6. NEW: Restart from Dfix0 → Emergence (the “seed” cycle)
-;; ----------------------------------------------------------------
-
-;; 6.1 Declare the new object that appears after the fixed‑point.
-object Emergence
-;; Choose whether Emergence lives in K or S; here we place it in K.
-(member Emergence K)            ; ← change to S if preferred
-
-;; 6.2 Binary predicate expressing the restart relation.
-restart ?src ?tgt                ; “?src” restarts into “?tgt”
-
-;; 6.3 Axiom: after reaching Dfix0, one more application of the
-;;      dual pair (G∘F) produces the new seed “Emergence”.
-;;      The natural number used here is the successor of the number
-;;      that already brings us to Dfix0.
-(forall (?n) (=> (nat ?n)
-                 (and (equal (iterate_GF ?n Dfix0) Dfix0)   ; Dfix0 is a fixed point
-                      (equal (iterate_GF (succ ?n) Dfix0) Emergence)
-                      (restart Dfix0 Emergence))))
-
-;; 6.4 Optional: make the restart explicit as a cycle.
-;;      After the seed appears, the ordinary convergence process
-;;      starts again from Emergence.
-(forall (?x) (=> (object ?x)
-                 (=> (converges_to ?x Dfix0)
-                     (converges_to (app_obj G (app_obj F ?x)) Dfix0))))
-
-;; ----------------------------------------------------------------
-;; 7. Decoherence‑like emergence (meta‑categorical emergence)
-;; ----------------------------------------------------------------
-
-;; 7.1 Coherent Substratum: the “void” state of K.
-;; We model it as the unique object that has no outgoing non‑identity morphisms.
-(forall (?k) (=> (member ?k K)
-                 (iff (coherent_substratum ?k)
-                      (forall (?f) (=> (morphism ?f) (dom ?f ?k)
-                                       (=> (not (equal ?f (id ?k))) false)))))
-
-;; 7.2 Environmental Interaction: functorial action of F and G.
-;; The functors preserve coherence.
-(forall (?k) (=> (member ?k K) (coherent_substratum ?k)
-                 (coherent_substratum (app_obj F ?k))))
-(forall (?s) (=> (member ?s S) (coherent_substratum ?s)
-                 (coherent_substratum (app_obj G ?s))))
-
-;; 7.3 Stable Classical Hierarchy: the meta‑category stabilises at Dfix0.
-;; This is just a restatement of the Middle‑Way fixed‑point condition.
-(forall (?x) (=> (object ?x) (converges_to ?x Dfix0)))
-
-;; ----------------------------------------------------------------
-;; 8. Lawvere’s Fixed‑Point Theorem (as an axiom)
-;; ----------------------------------------------------------------
-
-;; For any endofunctor H : C → C that is “continuous” (preserves limits),
-;; there exists an object L such that H(L) ≅ L.
-;; In our setting H = G∘F on K (and symmetrically F∘G on S).
-;; We postulate the existence of such a fixed point and identify it with Dfix0.
-(forall (?H ?C ?L)
-   (=> (functor ?H) (category ?C) (object ?L)
-       (and (dom_functor ?H ?C) (cod_functor ?H ?C)
-            (forall (?X) (=> (object ?X) (exists (?Y) (equal (app_obj ?H ?X) ?Y))))
-            (equal (app_obj ?H ?L) ?L)
-            (equal ?L Dfix0))))
-
-;; ----------------------------------------------------------------
-;; 9. Theorem: Every morphism eventually leads to Dfix0
-;; ----------------------------------------------------------------
-
-;; Statement (written as an axiom; a proof can be supplied as a comment).
-(forall (?f) (=> (morphism ?f)
-                 (exists (?n) (nat ?n)
-                         (equal (iterate_GF ?n (dom ?f)) Dfix0))))
-
-(cl-comment "Sketch of proof (informal):
-  1. By the Middle‑Way axiom each object of K (and of S) converges
-     to Dfix0 via repeated application of G∘F.
-  2. For any morphism f : a → b, the source a is an object of K (or S);
-     therefore there exists n with (G∘F)^n(a) = Dfix0.
-  3. Hence the morphism’s source eventually maps to Dfix0,
-     establishing the existential n required above.")
-
-;; ----------------------------------------------------------------
-;; 10. Bibliographic mapping (optional)
-;; ----------------------------------------------------------------
-
-(mapping Sunyata   voidness)
-(mapping Pratitya‑samutpada dependent_origination)
-(mapping Madhyamaka middle_way_stability)
-
-;; --------------------------------------------------------------
-;; End of file
-;; --------------------------------------------------------------
+)

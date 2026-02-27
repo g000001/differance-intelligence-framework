@@ -48,25 +48,25 @@
 (category PropSpace)                     ;; a collection of proposition objects
 (member p PropSpace)                     ;; p ranges over propositions
 
-;; The distinguished “middle‑way” fixed point (called Φ in the paper)
+;; The distinguished “middle-way” fixed point (called Φ in the paper)
 (object Phi)                             ;; Φ ∈ PropSpace
 (member Phi PropSpace)
 
 ;; --------------------------------------------------------------
-## 2. Phases (observational outcomes)
+;; 2. Phases (observational outcomes)
 
-;; Catuskoti (four‑fold) phases
+;; Catuskoti (four-fold) phases
 (object Is)          (member Is   PropSpace)   ;; “是”
 (object NotIs)       (member NotIs PropSpace)   ;; “非”
 (object Both)        (member Both  PropSpace)   ;; “亦”
 (object Neither)     (member Neither PropSpace) ;; “非非”
 
-;; Binary (two‑fold) phases
+;; Binary (two-fold) phases
 (object IsB)         (member IsB   PropSpace)   ;; “Is” in binary logic
-(object NotIsB)      (member NotIsB PropSpace)   ;; “Not‑Is” in binary logic
+(object NotIsB)      (member NotIsB PropSpace)   ;; “Not-Is” in binary logic
 
 ;; --------------------------------------------------------------
-## 3. Observation projections (coarse‑graining)
+;; 3. Observation projections (coarse-graining)
 
 ;; Projection from the underlying space to Catuskoti phases
 (function projC (object) object)        ;; projC : PropSpace → {Is,NotIs,Both,Neither}
@@ -86,7 +86,7 @@
                      (equal (projB ?p) NotIsB))))
 
 ;; --------------------------------------------------------------
-## 4. Coarsening relation between the two projections
+;; 4. Coarsening relation between the two projections
 
 ;; A (partial) mapping from Catuskoti phases to binary phases
 (function coarse (object) object)       ;; coarse : CatuskotiPhase → BinaryPhase
@@ -95,14 +95,14 @@
 (equal (coarse Is)      IsB)
 (equal (coarse NotIs)   NotIsB)
 (equal (coarse Both)    IsB)          ;; “Both” collapses to “Is” in binary view
-(equal (coarse Neither) NotIsB)       ;; “Neither” collapses to “Not‑Is”
+(equal (coarse Neither) NotIsB)       ;; “Neither” collapses to “Not-Is”
 
 ;; Compatibility axiom: binary projection equals the coarse image of the Catuskoti projection
 (forall (?p) (=> (member ?p PropSpace)
                  (equal (projB ?p) (coarse (projC ?p)))))
 
 ;; --------------------------------------------------------------
-## 5. Distance and Kolmogorov complexity
+;; 5. Distance and Kolmogorov complexity
 
 ;; Distance between two objects (geometric / informational distance)
 (function dist (object object) Real)    ;; dist(p,q) ≥ 0
@@ -110,31 +110,31 @@
 ;; Kolmogorov complexity K(p) (as a natural number)
 (function K (object) Nat)               ;; K : PropSpace → Nat
 
-;; Axiom: distances are non‑negative
+;; Axiom: distances are non-negative
 (forall (?a ?b) (=> (and (member ?a PropSpace) (member ?b PropSpace))
                     (leq zero (dist ?a ?b))))
 
 ;; --------------------------------------------------------------
-## 6. Truth definitions via distance to the fixed point Φ
+;; 6. Truth definitions via distance to the fixed point Φ
 
 ;; Catuskoti truth: a proposition is “true” iff it has **minimum** distance to Φ
 (predicate TruthC (object) bool)        ;; TruthC(p) ⇔ p is closest to Φ
 (forall (?p) (=> (member ?p PropSpace)
                  (iff (TruthC ?p)
                       (forall (?q) (=> (member ?q PropSpace)
-                                      (leq (dist ?p Phi) (dist ?q Phi))))))
+                                      (leq (dist ?p Phi) (dist ?q Phi)))))))
 
 ;; Binary truth: a proposition is “true” iff it has **maximum** distance from Φ
 (predicate TruthB (object) bool)        ;; TruthB(p) ⇔ p is farthest from Φ
 (forall (?p) (=> (member ?p PropSpace)
                  (iff (TruthB ?p)
                       (forall (?q) (=> (member ?q PropSpace)
-                                      (leq (dist ?q Phi) (dist ?p Phi))))))
+                                      (leq (dist ?q Phi) (dist ?p Phi)))))))
 
 ;; --------------------------------------------------------------
-## 7. Fixed‑point stability properties
+;; 7. Fixed-point stability properties
 
-;; The middle‑way fixed point Φ is **stable** under Catuskoti observation
+;; The middle-way fixed point Φ is **stable** under Catuskoti observation
 (predicate StableC (object) bool)       ;; StableC(Φ)
 (equal (StableC Phi) true)
 
@@ -143,7 +143,7 @@
 (equal (RepulsiveB Phi) true)
 
 ;; --------------------------------------------------------------
-## 8. Incompleteness as an observational effect
+;; 8. Incompleteness as an observational effect
 
 ;; A proposition is **undecidable in binary logic** when its binary truth value
 ;; cannot be assigned consistently (i.e. both TruthB and ¬TruthB would hold).
@@ -151,19 +151,19 @@
 (predicate UndecidableB (object) bool)
 
 ;; Axiom: Undecidable propositions arise precisely because the binary projection
-;; loses information compared to the four‑fold projection.
+;; loses information compared to the four-fold projection.
 (forall (?p) (=> (member ?p PropSpace)
                  (iff (UndecidableB ?p)
                       (or (equal (projC ?p) Both)
                           (equal (projC ?p) Neither)))))
 
-;; In Catuskoti logic every proposition has a well‑defined phase, so no
+;; In Catuskoti logic every proposition has a well-defined phase, so no
 ;; UndecidableC predicate is needed (by assumption of phenomenological completeness).
 
 ;; --------------------------------------------------------------
-## 9. Gӧdel‑type phenomenon (illustrative)
+;; 9. Gӧdel-type phenomenon (illustrative)
 
-;; Gӧdel‑type undecidability in binary logic:
+;; Gӧdel-type undecidability in binary logic:
 (predicate GodelUndecidableB (object) bool)
 (equal (GodelUndecidableB ?p) (UndecidableB ?p))
 
@@ -174,7 +174,7 @@
                      (equal (projC ?p) Neither))))
 
 ;; --------------------------------------------------------------
-## 10. Chaitin‑type phenomenon (complexity bound)
+;; 10. Chaitin-type phenomenon (complexity bound)
 
 ;; Complexity bound B (a natural number) that limits observable truth in binary logic
 (constant B Nat)                       ;; B > 0
@@ -195,27 +195,27 @@
                      (equal (projC ?p) Neither))))
 
 ;; --------------------------------------------------------------
-## 11. Summary of phenomenological correspondence (comments)
+;; 11. Summary of phenomenological correspondence (comments)
 ;; --------------------------------------------------------------
 
 (cl-comment "The CLIF file above captures the phenomenological specification")
 (cl-comment "- Both logics share a common underlying proposition space PropSpace.")
-(cl-comment "- A distinguished middle‑way fixed point Φ exists in that space.")
+(cl-comment "- A distinguished middle-way fixed point Φ exists in that space.")
 (cl-comment "- Catuskoti observation yields four phases (Is, NotIs, Both, Neither).")
 (cl-comment "- Binary observation yields two phases (IsB, NotIsB) and is a coarse")
-(cl-comment "  projection of the four‑fold view (coarse mapping defined by `coarse`).")
+(cl-comment "  projection of the four-fold view (coarse mapping defined by `coarse`).")
 (cl-comment "- Truth in Catuskoti is defined by *minimum* distance to Φ;")
 (cl-comment "  truth in binary logic by *maximum* distance from Φ.")
 (cl-comment "- Φ is stable under Catuskoti observation, repulsive under binary observation.")
 (cl-comment "- Incompleteness (undecidability) arises solely from the coarse")
 (cl-comment "  binary projection; the underlying structure remains complete.")
-(cl-comment "- Gӧdel‑type undecidability in binary corresponds to intermediate")
+(cl-comment "- Gӧdel-type undecidability in binary corresponds to intermediate")
 (cl-comment "  phases (Both/Neither) in Catuskoti.")
-(cl-comment "- Chaitin‑type complexity bounds act as external limits only")
+(cl-comment "- Chaitin-type complexity bounds act as external limits only")
 (cl-comment "  for binary truth assignment; in Catuskoti they appear as observable")
 (cl-comment "  intermediate phases rather than hard obstacles.")
-(cl-comment "All statements are first‑order; the theory lives inside Classical")
-(cl-comment "First‑Order Logic, the native fragment of Common Logic.")
+(cl-comment "All statements are first-order; the theory lives inside Classical")
+(cl-comment "First-Order Logic, the native fragment of Common Logic.")
 
 ;; --------------------------------------------------------------
 ;; End of file

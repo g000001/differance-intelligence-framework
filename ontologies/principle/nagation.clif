@@ -1,6 +1,8 @@
-(cl-text Negation_as_Meta_Operation
+(cl-text https://purl.org/aletheics/ontologies/n-koti/nagation.clif
+
+  (cl-comment "Negation_as_Meta_Operation")
   (cl-comment "==============================================================")
-  (cl-comment "Negation as a meta‑operation viewed from a higher dimension")
+  (cl-comment "Negation as a meta-operation viewed from a higher dimension")
   (cl-comment "==============================================================")
 
   ;; -------------------------------------------------------------
@@ -34,19 +36,19 @@
   ;; -------------------------------------------------------------
   ;; 2. メタ次元から見た否定の解釈
   ;; -------------------------------------------------------------
-  (cl-comment "上位次元から見ると、neg は単なる「写像」(meta‑operation) である")
-  (cl-comment "すなわち、neg(x) は x の情報を higher‑dimensional space に投影する操作")
+  (cl-comment "上位次元から見ると、neg は単なる「写像」(meta-operation) である")
+  (cl-comment "すなわち、neg(x) は x の情報を higher-dimensional space に投影する操作")
   (predicate MetaView (object object) bool)   ;; MetaView(higher, lower) が成り立つ
 
   (forall (?x ?y)
     (=> (and (object ?x) (object ?y) (equal ?y (neg ?x)))
-        (MetaView ?y ?x)))                     ;; lower → higher が meta‑view
+        (MetaView ?y ?x)))                     ;; lower → higher が meta-view
 
   ;; -------------------------------------------------------------
-  ;; 3. 中道等価 (mw_eq) と 0‑d 固定点 Dfix0
+  ;; 3. 中道等価 (mw_eq) と 0-d 固定点 Dfix0
   ;; -------------------------------------------------------------
-  (object Dfix0)                               ;; 0‑d の空（中道固定点）
-  (predicate mw_eq (object object) bool)       ;; Middle‑Way 等価
+  (object Dfix0)                               ;; 0-d の空（中道固定点）
+  (predicate mw_eq (object object) bool)       ;; Middle-Way 等価
 
   (cl-comment "mw_eq は iterate_GF の反復で Dfix0 に収束すれば成立する")
   (forall (?z)
@@ -80,12 +82,11 @@
   (cl-comment "  - neg が次元を 1 上げる写像であり、MetaView で上位次元からの視点を表す")
   (cl-comment "  - 4 回の neg が Dfix0（空）へ収束し、mw_eq によって等価とみなされる")
   (cl-comment "この構造が、四句分別や Alethetic 論理における ‘否定＝次元上昇のメタ操作’ を形式的に定義するものです。")
-)
 
 
-(cl-text Meta_Negation_and_ZeroD_Convergence
+  (cl-comment "Meta_Negation_and_ZeroD_Convergence")
   (cl-comment "==============================================================")
-  (cl-comment "Meta‑Negation (否定の多重適用) – 0d（空）への収束を表す CLIF")
+  (cl-comment "Meta-Negation (否定の多重適用) – 0d（空）への収束を表す CLIF")
   (cl-comment "==============================================================")
 
   ;; -------------------------------------------------------------
@@ -172,14 +173,14 @@
   (equal Neither (meta_neg (succ (succ (succ zero))) P))     ;; 非是非非 = 3 回メタ否定
 
   ;; -------------------------------------------------------------
-  ;; 4. 0‑d 固定点 Dfix0 と Middle‑Way 等価 (mw_eq)
+  ;; 4. 0-d 固定点 Dfix0 と Middle-Way 等価 (mw_eq)
   ;; -------------------------------------------------------------
-  (object Dfix0)                                            ;; 0‑d の空（中道固定点）
+  (object Dfix0)                                            ;; 0-d の空（中道固定点）
 
   ;; mw_eq の定義は別モジュールで与えられていると仮定
   ;; (predicate mw_eq (object object) bool)
 
-  ;; 4 回メタ否定は Dfix0 と Middle‑Way 等価
+  ;; 4 回メタ否定は Dfix0 と Middle-Way 等価
   (forall (?p)
     (=> (object ?p)
         (mw_eq (meta_neg (succ (succ (succ (succ zero)))) ?p) Dfix0)))
@@ -191,6 +192,6 @@
   (cl-comment "- 基本否定 neg が次元指数を +1 すること、")
   (cl-comment "- meta_neg(k,p) が k 回の neg を再帰的に適用し、")
   (cl-comment "- その結果次元は 2^{n+k} に上昇すること、")
-  (cl-comment "- 4 回のメタ否定 (k=4) が 0‑d 固定点 Dfix0 と Middle‑Way 等価 (mw_eq) になること")
+  (cl-comment "- 4 回のメタ否定 (k=4) が 0-d 固定点 Dfix0 と Middle-Way 等価 (mw_eq) になること")
   (cl-comment "を形式的に表現しています。")
 )

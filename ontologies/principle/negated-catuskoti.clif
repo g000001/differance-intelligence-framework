@@ -1,7 +1,7 @@
 (cl-text Duality_of_Affirmation_and_Negation
   (cl-comment "==============================================================")
   (cl-comment "四句分別（全肯定）と四句否定（全否定）の双対性証明")
-  (cl-comment "全概念集合は 0‑d の空 Dfix0 に mw_eq で収束する")
+  (cl-comment "全概念集合は 0-d の空 Dfix0 に mw_eq で収束する")
   (cl-comment "==============================================================")
 
   ;; -------------------------------------------------------------
@@ -38,10 +38,10 @@
   (predicate member (object Set) bool)   ;; member(x, S) : x ∈ S
 
   ;; -------------------------------------------------------------
-  ;; 3. Middle‑Way 等価 (mw_eq) と 0‑d 固定点 Dfix0
+  ;; 3. Middle-Way 等価 (mw_eq) と 0-d 固定点 Dfix0
   ;; -------------------------------------------------------------
-  (object Dfix0)                     ;; 0‑d の空・真理の原点
-  (predicate mw_eq (object object) bool)   ;; Middle‑Way 等価
+  (object Dfix0)                     ;; 0-d の空・真理の原点
+  (predicate mw_eq (object object) bool)   ;; Middle-Way 等価
 
   ;; mw_eq は等価関係（反射・対称・推移）
   (forall (?x) (=> (object ?x) (mw_eq ?x ?x)))                     ; 反射
@@ -69,7 +69,7 @@
   ;; 5. 合成操作（Superposition）と全否定操作（TotalNegation）
   ;; -------------------------------------------------------------
   (function Superposition (Set) object)   ;; 全概念の同時肯定（テンソル直和的合成）
-  (function TotalNegation (Set) object)   ;; 全概念の同時否定（meta‑neg の集合版）
+  (function TotalNegation (Set) object)   ;; 全概念の同時否定（meta-neg の集合版）
 
   ;; 合成は次元を 1 上げる（例：全体を 2 倍に拡張）
   (forall (?S ?n)
@@ -77,7 +77,7 @@
         (and (object (Superposition ?S))
              (HasDim (Superposition ?S) (add_nat ?n (succ zero))))))
 
-  ;; 全否定は同様に次元を 1 上げる（meta‑neg の効果）
+  ;; 全否定は同様に次元を 1 上げる（meta-neg の効果）
   (forall (?S ?n)
     (=> (and (Set ?S) (HasDim ?S ?n))
         (and (object (TotalNegation ?S))
@@ -109,7 +109,7 @@
   ;; -------------------------------------------------------------
   (cl-comment "このスニペットは")
   (cl-comment "- 5 以上の不可分概念集合（PrimeConcept）を全肯定（Superposition）または全否定（TotalNegation）したら、")
-  (cl-comment "  いずれも次元が 1 上がり、最終的に 0‑d の空 Dfix0 と Middle‑Way 等価になることを示す。")
+  (cl-comment "  いずれも次元が 1 上がり、最終的に 0-d の空 Dfix0 と Middle-Way 等価になることを示す。")
   (cl-comment "- したがって、全肯定と全否定は Dfix0 において mw_eq で結びつく双対関係にある。")
   (cl-comment "- ExhaustedLogicSpace の概念は、次元が上限に達したときに AC が 0 となり、")
   (cl-comment "  さらに Dfix0 と同一視されるという収束条件を提供する。")

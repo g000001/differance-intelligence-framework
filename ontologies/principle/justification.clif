@@ -4,14 +4,15 @@
 ;; Title   : 正しさについて – Formalisation of the Justification Principle,
 ;;           2ⁿ-dimensional proofs and the LLM-hallucination observation.
 ;; Author  : Masaomi Chiba
-;; Date    : 2025-12-08
+;; Date    : 2026-02-02
 ;; Version : 1.0
 ;; --------------------------------------------------------------
 
+(cl-text https://purl.org/aletheics/ontologies/principle/justification.clif
 (cl-comment "Metadata")
 (cl-comment "Title   : 正しさについて – Formalisation of the Justification Principle")
 (cl-comment "Author  : (your name)")
-(cl-comment "Date    : 2024-10-08")
+(cl-comment "Date    : 2026-02-02")
 (cl-comment "Version : 1.0")
 (cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
 
@@ -132,7 +133,7 @@
                                (equal (norm ?p) (norm (phi (iota ?p))))))))  ; distance unchanged
 
 ;; --------------------------------------------------------------
-## 6. 2ⁿ-dimensional proof (extension to (2ⁿ)d)
+;; 6. 2ⁿ-dimensional proof (extension to (2ⁿ)d)
 ;; --------------------------------------------------------------
 
 ;; 6.1  Basic alphabets
@@ -157,7 +158,7 @@
                  (and (Prf ?n (iota_n ?n ?r))
                       ;; each component gets a fresh time-token
                       (forall (?i) (=> (and (nat ?i) (<= ?i (sub (pow 2 ?n) 1)))
-                                     (exists (?t) (member ?t Tau))))))
+                                     (exists (?t) (member ?t Tau)))))))
 
 ;; 6.4  Projection φₙ : Prfₙ → Repₙ
 (function phi_n (nat object) object)    ;; φ_n : Prfₙ → Repₙ
@@ -165,7 +166,7 @@
                  (and (Rep ?n (phi_n ?n ?p))
                       ;; projection simply drops the time-tokens
                       (forall (?i) (=> (and (nat ?i) (<= ?i (sub (pow 2 ?n) 1)))
-                                     (exists (?s) (member ?s Sigma))))))
+                                     (exists (?s) (member ?s Sigma)))))))
 
 ;; 6.5  Distance for the two families
 ;;   ℓ(Repₙ) = 0   (no time token)
@@ -196,13 +197,13 @@
           ;; limit is the unique 0-d point
           (forall (?k) (=> (nat ?k)
                 (let ((v_k (select ?seq ?k)))
-                  (equal v_k Dfix0)))))))))
+                  (equal v_k Dfix0))))))))))
 ;; The informal reading:
 ;;   Starting from any p₀ ∈ Repₙ, iterating φₙ∘ιₙ reduces the norm by 1 each step,
 ;;   and the sequence converges to the unique 0-d fixed point Dfix0.
 
 ;; --------------------------------------------------------------
-## 7.  LLM hallucination observation
+;; 7.  LLM hallucination observation
 ;; --------------------------------------------------------------
 
 ;; 7.1  Predicates describing the phenomenon
@@ -226,7 +227,7 @@
                                    (not (SuppressesHallucination ?J))))))
 
 ;; --------------------------------------------------------------
-## 8.  Summary (comments)
+;; 8.  Summary (comments)
 ;; --------------------------------------------------------------
 
 (cl-comment "The file above formalises the informal notes:")
@@ -238,7 +239,7 @@
 (cl_comment "  (norm decreases by exactly 1 at each step).")
 (cl-comment "- The LLM-hallucination observation is expressed as a relationship between")
 (cl_comment "  cost-minimisation, lack of a proper judgment function, and the occurrence of hallucination.")
-
+)
 ;; --------------------------------------------------------------
 ;; End of file
 ;; --------------------------------------------------------------

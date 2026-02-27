@@ -2,15 +2,16 @@
 ;; Dfix0 – 0-dimensional Fixed Point (Common Logic Formalisation)
 ;; --------------------------------------------------------------
 ;; Title   : Dfix0 – The Ultimate 0-Dimensional Fixed Point
-;; Author  : (your name)
-;; Date    : 2024-10-08
+;; Author  : Masaomi Chiba
+;; Date    : 2025-12-01
 ;; Version : 1.0
 ;; --------------------------------------------------------------
 
+(cl-text https://purl.org/aletheics/ontologies/sunyata/dfix0.clif
 (cl-comment "Metadata")
 (cl-comment "Title   : Dfix0 – The Ultimate 0-Dimensional Fixed Point")
-(cl-comment "Author  : (your name)")
-(cl-comment "Date    : 2024-10-08")
+(cl-comment "Author  : Masaomi Chiba")
+(cl-comment "Date    : 2025-12-01")
 (cl-comment "Version : 1.0")
 (cl-comment "DOI     : 10.5281/zenodo.XXXXX   ; replace with actual DOI")
 
@@ -183,6 +184,43 @@
 (cl-comment "- All morphisms in K have sources that converge to Dfix0.")
 (cl-comment "- Lawvere’s Fixed-Point Theorem guarantees the existence of Dfix0 as a fixed point of any continuous endofunctor.")
 
+;; ==============================================================
+;; Dfix0 as a Recursive Interface (Convergence and Emergence)
+;; ==============================================================
+
+(cl-comment "1. 過去からの終着点としての不動点 (The Fixed Point as Terminus)")
+;; 過去のコンテキストにおける収束の極限としての性質
+(forall (?H ?L)
+    (=> (and (Endofunctor ?H) (equal ?L Dfix0))
+        (and (FixedPoint ?L ?H)           ;; H(L) = L の不動点性
+             (equal (app_obj ?H ?L) ?L)
+             (Status ?L Terminus))))      ;; 過去の解決（空解決）の終着点
+
+(cl-comment "2. 未来への開始点としての創発 (The Interface as Origin of Emergence)")
+;; 不動点に達した後の「もう一歩」が次元を切り替える再帰的インターフェースの定義
+(forall (?L)
+    (=> (equal ?L Dfix0)
+        (exists (?E)
+            (and (IsEmergence ?E)
+                 (not (equal ?L ?E))       ;; 創発オブジェクトはDfix0そのものではない
+                 (Transition ?L ?E)        ;; Dfix0を介した相転移
+                 (Status ?E Origin)))))    ;; 未来の創造（色化）の開始点
+
+(cl-comment "3. 再帰的インターフェースの統合定義 (Unified Recursive Interface)")
+;; Dfix0 を「点」ではなく「インターフェース」として定義
+(forall (?L)
+    (=> (equal ?L Dfix0)
+        (and (RecursiveInterface ?L)
+             (BreathingProcess ?L)        ;; 知性の呼吸（是・非の反復）の中核
+             (connects ?L Terminus Origin)))) ;; 終着と開始を接続する
+
+(cl-comment "4. 中道演算子による動的等価性の保証 (Middle-Way Bridging)")
+;; 形式上は異なる Dfix0 と Emergence を、中道のプロセスとして統合
+(forall (?L ?E)
+    (=> (and (equal ?L Dfix0) (Transition ?L ?E))
+        (mw_eq ?L ?E)))                   ;; 中道演算子(mweq)による動的同一視
+
+)
 ;; --------------------------------------------------------------
 ;; End of file
 ;; --------------------------------------------------------------

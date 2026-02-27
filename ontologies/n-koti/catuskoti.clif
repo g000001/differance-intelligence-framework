@@ -1,4 +1,6 @@
-(cl-text Catuskoti_Core_Logic
+(cl-text https://purl.org/aletheics/ontologies/n-koti/catuskoti.clif
+
+(cl-comment "Catuskoti_Core_Logic")
 
 (cl-comment "============================================================")
 (cl-comment " 四句分別 (Catuṣkoṭi) : 構文的定義 ")
