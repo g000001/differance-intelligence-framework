@@ -24,7 +24,7 @@
 ;; Version : 1.0
 ;; ==============================================================
 
-(cl-text https://purl.org/ontologies/aletheics/acif.clif
+(cl-text https://purl.org/aletheics/ontologies/aletheics/acif.clif
 (cl-text acif
 (cl-comment "Metadata")
 (cl-comment "Title   : Alethetic Complexity Integration Formalism (ACIF)")
