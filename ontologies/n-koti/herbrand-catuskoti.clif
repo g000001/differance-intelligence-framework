@@ -1,11 +1,11 @@
-(cl-text
-
 ; ============================================================
 ; エルブラン空間における命題の不在と四句分別
 ; Herbrand Universe, Absence of Propositions, and Catuṣkoṭi
-; Chiba Masaomi (千葉 将臣)
+; CHIBA Masaomi (千葉 将臣)
 ; 2026-02-19
 ; ============================================================
+
+(cl-text https://purl.org/aletheics/ontologies/n-koti/herbrand-catuskoti.clif
 
 (comment "
 Abstract:
