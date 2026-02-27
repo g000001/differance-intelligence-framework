@@ -1,0 +1,675 @@
+(cl-text https://purl.org/aletheics/ontologies/app/im.clif
+
+(cl-comment "
+=============================================================================
+Inductive Monads on Two-Truth Adjunction: 
+From Logic Systems to Programming Languages
+=============================================================================
+Author: Masaomi Chiba
+Date: 2026-02-25
+
+This ontology formalizes the universal mechanism for transforming any logical
+or grammatical system N into an executable programming language via inductive
+monads I_N, grounded in the two-truth adjunction F_n ⊣ G_{2^n+1}.
+")
+
+;; =============================================================================
+;; PART 1: FOUNDATIONAL STRUCTURES
+;; =============================================================================
+
+(cl-comment "=== 1.1 Basic Sorts ===")
+
+(define-sort FormalSystem)
+(define-sort LogicSystem :> FormalSystem)
+(define-sort GrammarSystem :> FormalSystem)
+(define-sort ComputationSystem :> FormalSystem)
+
+(define-sort Monad)
+(define-sort ProgrammingLanguage)
+(define-sort Gap
+  (documentation "The gap between description and execution in a formal system"))
+
+(define-sort TwoTruthAdjunction)
+(define-sort ConventionalTruth
+  (documentation "世俗諦: Descriptive, world-view level"))
+(define-sort UltimateTruth
+  (documentation "勝義諦: Computational, essence level"))
+
+;; =============================================================================
+;; PART 2: TWO-TRUTH ADJUNCTION FORMALIZATION
+;; =============================================================================
+
+(cl-comment "=== 2.1 Two-Truth Adjunction Definition ===")
+
+(define-sort TwoCategorySlice
+  (documentation "C/D_fix0: The conventional-truth 2-category"))
+(define-sort EMTwoCategory
+  (documentation "C^D: The ultimate-truth EM 2-category with Debt monad"))
+
+(define-sort LeftLaxFunctor :> Monad)
+(define-sort RightStrictFunctor :> Monad)
+
+(forall (n adjunction)
+  (iff (TwoTruthAdjunction n adjunction)
+    (and (integer n)
+         (exists (F G)
+           (and (LeftLaxFunctor F)
+                (RightStrictFunctor G)
+                (= (Name F) (string-append "F_" n))
+                (= (Name G) (string-append "G_{2^" n "+1}"))
+                (Domain F TwoCategorySlice)
+                (Codomain F EMTwoCategory)
+                (Domain G EMTwoCategory)
+                (Codomain G TwoCategorySlice)
+                (IsAdjoint F G))))))
+
+(cl-comment "=== 2.2 Meta-Negation and Constraint ===")
+
+(forall (n X)
+  (iff (MetaNegationApplied n X)
+    (and (integer n) 
+         (FormalSystem X)
+         (forall (i)
+           (=> (and (>= i 1) (<= i n))
+               (exists (X_i)
+                 (and (FormalSystem X_i)
+                      (= (Comprehension X_i)
+                         (- (Comprehension X) i)))))))))
+
+(forall (n Y)
+  (iff (OddCycleConstraint n Y)
+    (and (integer n)
+         (odd (+ (exponent 2 n) 1))
+         (RefutationNetwork n Y)
+         (AntiCollusionProperty (RefutationNetwork n Y)))))
+
+;; =============================================================================
+;; PART 3: THE FUNDAMENTAL GAP
+;; =============================================================================
+
+(cl-comment "=== 3.1 Gap Definition ===")
+
+(define-sort DescriptionLevel)
+(define-sort ExecutionLevel)
+
+(forall (N gap)
+  (iff (FundamentalGap N gap)
+    (and (FormalSystem N)
+         (exists (desc exec)
+           (and (DescriptionLevel desc)
+                (ExecutionLevel exec)
+                (CanDescribe N desc)
+                (not (CanExecute N exec)))))))
+
+(cl-comment "Examples of gaps:")
+
+(forall (PA)
+  (if (= PA PeanoArithmetic)
+    (and (FundamentalGap PA gap_PA)
+         (CanDescribe PA Addition)
+         (not (CanFreelyCompute PA Addition)))))
+
+(forall (ML)
+  (if (= ML MinimalLogic)
+    (and (FundamentalGap ML gap_ML)
+         (CanExpress ML Implication)
+         (not (CanExpress ML Negation))
+         (not (CanExpress ML ControlStructure)))))
+
+(forall (CFG)
+  (if (= CFG ContextFreeGrammar)
+    (and (FundamentalGap CFG gap_CFG)
+         (CanDefine CFG Syntax)
+         (not (CanTrack CFG InputPosition)))))
+
+(forall (HN)
+  (if (= HN HornClauses)
+    (and (FundamentalGap HN gap_HN)
+         (CanDescribe HN Relations)
+         (not (CanExpress HN Backtracking))
+         (not (CanExpress HN ChoicePoint)))))
+
+;; =============================================================================
+;; PART 4: INDUCTIVE MONAD DEFINITION
+;; =============================================================================
+
+(cl-comment "=== 4.1 Inductive Monad ===")
+
+(define-sort InductiveMonad :> Monad)
+(define-sort MonadReturn)
+(define-sort MonadBind)
+(define-sort KleisliCategory)
+
+(forall (N I_N)
+  (iff (InductiveMonad N I_N)
+    (and (FormalSystem N)
+         (Monad I_N)
+         ;; (1) Object map embeds N's generative rules
+         (forall (rule)
+           (=> (GenerativeRule N rule)
+               (EmbeddedAsGenerator I_N rule)))
+         ;; (2) Bind realizes missing control structure
+         (forall (a b c)
+           (iff (MonadBind I_N a b c)
+             (and (Inhabits a I_N)
+                  (FunctionType b (Arrow a (I_N c)))
+                  (Inhabits c I_N)
+                  (RealizesMissingControl I_N))))
+         ;; (3) Return embeds plain data as trivial program
+         (forall (x)
+           (iff (MonadReturn I_N x)
+             (and (EmbeddedIn x I_N)
+                  (IsTrivialProgram I_N x)))))))
+
+(forall (N I_N K)
+  (iff (KleisliCategoryOf N I_N K)
+    (and (InductiveMonad N I_N)
+         (= (Objects K) Types)
+         (= (Morphisms K) Programs)
+         (ExecutableBy K))))
+
+(cl-comment "=== 4.2 Canonicality of Inductive Monad ===")
+
+(forall (N I_N I_N_prime)
+  (if (and (InductiveMonad N I_N)
+           (InductiveMonad N I_N_prime)
+           (CompletesFundamentalGap N I_N)
+           (CompletesFundamentalGap N I_N_prime))
+    (IsomorphicMonads I_N I_N_prime)
+    (documentation "The inductive monad for N is unique up to isomorphism")))
+
+;; =============================================================================
+;; PART 5: MAIN THEOREMS
+;; =============================================================================
+
+(cl-comment "=== 5.1 Universal Monad Correspondence (Theorem 1) ===")
+
+(forall (N)
+  (=> (FormalSystem N)
+    (exists (I_N_star)
+      (and (InductiveMonad N I_N_star)
+           (IsMostMinimalCompletion N I_N_star)
+           ;; The monad can be recovered from two-truth adjunction
+           (forall (k)
+             (exists (approx)
+               (= I_N_star (Colimit (Sequence approx)))))))))
+
+(cl-comment "
+Recovery formula:
+  I_N* = colim_k G_{2^k+1}(F_k(N))
+where the colimit is taken over the iterations of F and G.
+")
+
+(cl-comment "=== 5.2 Monad-Language Correspondence (Theorem 2) ===")
+
+(forall (N I_N Lang)
+  (iff (ValidLanguageComposition N I_N Lang)
+    (and (InductiveMonad N I_N)
+         (= Lang (TensorProduct N I_N))
+         (or (TuringComplete Lang)
+             (ReachesComputationalClass N Lang)))))
+
+(forall (N I_N)
+  (iff (CompletesFundamentalGap N I_N)
+    (and (InductiveMonad N I_N)
+         ;; Every execution step corresponds to monadic bind
+         (forall (step execution)
+           (=> (ExecutionStep step execution)
+               (MonadBind I_N _ _ _))))))
+
+(forall (N I_N)
+  (if (CompletesFundamentalGap N I_N)
+    (ZeroDebtAfterFiniteIterations N I_N)))
+
+(cl-comment "=== 5.3 Two-Truth Adjunction Termination (Theorem 3) ===")
+
+(forall (N I_N program)
+  (if (and (ValidLanguageComposition N I_N (Lang N I_N))
+           (WellTypedProgram program Lang)
+           (InhabitsType program (SliceCategoryType N I_N)))
+    (and (ExecutionTerminates program)
+         (ReachesFixedPoint program))))
+
+(forall (program)
+  (if (WellTypedProgram program)
+    (exists (debt_norm)
+      (and (DebtNorm debt_norm program)
+           (MonotonicallyDecreasing debt_norm)
+           (FiniteStepsToZero debt_norm)))))
+
+(cl-comment "Proof sketch for termination:
+Well-typed programs have finite debt-norm.
+The two-truth adjunction F_n ⊣ G_{2^n+1} ensures that
+the debt-norm strictly decreases with each reduction step.
+By well-founded descent on ℕ, the program terminates.
+")
+
+;; =============================================================================
+;; PART 6: FOUR CANONICAL EXAMPLES
+;; =============================================================================
+
+(cl-comment "=== 6.1 Example 1: Peano Arithmetic + Free Monad ===")
+
+(define PeanoArithmetic
+  (documentation "Zero, Successor(n), natural numbers with induction"))
+
+(forall (PA)
+  (if (= PA PeanoArithmetic)
+    (and (LogicSystem PA)
+         (CanDescribe PA Addition)
+         (CanDescribe PA Multiplication)
+         (not (CanFreelyCompute PA Addition)))))
+
+(define FreeMonad_Peano
+  (documentation "Free(Σ) where Σ has generators for primitive operations"))
+
+(forall (PA I_PA Lang_PA)
+  (if (and (= PA PeanoArithmetic)
+           (= I_PA FreeMonad_Peano)
+           (= Lang_PA (TensorProduct PA I_PA)))
+    (and (InductiveMonad PA I_PA)
+         (ExecutableLanguage Lang_PA)
+         (SupportsRecursion Lang_PA)
+         (Documentation Lang_PA "Arithmetic language with term rewriting"))))
+
+(cl-comment "Why Free monad:
+- return(n) lifts numerical data into the monad
+- bind enables composition of expressions
+- Free structure recursively expands syntax trees
+- Evaluation is natural recursion scheme on free structures
+")
+
+(cl-comment "=== 6.2 Example 2: Minimal Logic + Continuation Monad ===")
+
+(define MinimalLogic
+  (documentation "Only implication (→) and falsehood (⊥)"))
+
+(forall (ML)
+  (if (= ML MinimalLogic)
+    (and (LogicSystem ML)
+         (CanExpress ML Implication)
+         (not (CanExpress ML Negation))
+         (not (CanExpress ML ControlFlow)))))
+
+(define ContinuationMonad
+  (documentation "Cont_R where Cont_R(a) = (a → R) → R"))
+
+(forall (ML I_ML Lang_ML)
+  (if (and (= ML MinimalLogic)
+           (= I_ML ContinuationMonad)
+           (= Lang_ML (TensorProduct ML I_ML)))
+    (and (InductiveMonad ML I_ML)
+         (SupportsCallCC Lang_ML)
+         (EquivalentTo Lang_ML ClassicalLogic)
+         (Documentation Lang_ML "Classical logic with exceptions and control"))))
+
+(cl-comment "Why Continuation monad:
+- Implication becomes a program (function)
+- Falsehood (⊥) becomes escape continuation
+- Negation ¬P emerges as (P → ⊥) → ⊥
+- Control structures (call/cc) become explicit
+")
+
+(cl-comment "=== 6.3 Example 3: Context-Free Grammar + State Monad ===")
+
+(define ContextFreeGrammar
+  (documentation "Rules like S → NP VP for syntax definition"))
+
+(forall (CFG)
+  (if (= CFG ContextFreeGrammar)
+    (and (GrammarSystem CFG)
+         (CanDefine CFG SyntaxStructure)
+         (not (CanTrack CFG InputPosition)))))
+
+(define StateMonad
+  (documentation "State_S where State_S(a) = S → (a × S)"))
+
+(forall (CFG I_CFG Lang_CFG)
+  (if (and (= CFG ContextFreeGrammar)
+           (= I_CFG StateMonad)
+           (= Lang_CFG (TensorProduct CFG I_CFG)))
+    (and (InductiveMonad CFG I_CFG)
+         (ImplementsRecursiveDescentParser Lang_CFG)
+         (AutomaticallyTrackInputPosition Lang_CFG)
+         (Documentation Lang_CFG "Recursive descent parser with implicit position threading"))))
+
+(cl-comment "Why State monad:
+- Grammar rules become parser functions
+- State carries input position
+- Bind automatically threads position through computation
+- Parsing is natural interpreter on grammar rules
+")
+
+(cl-comment "=== 6.4 Example 4: Horn Clauses + List Monad ===")
+
+(define HornClauses
+  (documentation "p ← q₁, …, qₙ; relational description"))
+
+(forall (HC)
+  (if (= HC HornClauses)
+    (and (LogicSystem HC)
+         (CanDescribe HC Relations)
+         (not (CanExpress HC Backtracking))
+         (not (CanExpress HC ChoicePoints)))))
+
+(define ListMonad
+  (documentation "List(a) = [a], with concat as bind"))
+
+(forall (HC I_HC Lang_HC)
+  (if (and (= HC HornClauses)
+           (= I_HC ListMonad)
+           (= Lang_HC (TensorProduct HC I_HC)))
+    (and (InductiveMonad HC I_HC)
+         (ImplementsProlog Lang_HC)
+         (SupportsUnificationAndBacktracking Lang_HC)
+         (Documentation Lang_HC "Logic programming with search"))))
+
+(cl-comment "Why List monad:
+- Each horn clause becomes a choice (list element)
+- bind (concat) performs complete search
+- Backtracking is natural list enumeration
+- Search tree corresponds to list monad's choice tree
+")
+
+;; =============================================================================
+;; PART 7: MONAD-SYSTEM CORRESPONDENCE TABLE
+;; =============================================================================
+
+(cl-comment "=== 7.1 Complete Correspondence Table ===")
+
+(define-sort CorrespondenceEntry)
+
+(forall (entry N gap monad lang)
+  (iff (CorrespondenceEntry_1 entry N gap monad lang)
+    (and (= N PeanoArithmetic)
+         (= gap "Composition/Evaluation")
+         (= monad FreeMonad)
+         (= lang "Arithmetic Language"))))
+
+(forall (entry N gap monad lang)
+  (iff (CorrespondenceEntry_2 entry N gap monad lang)
+    (and (= N SimpleTypedLambda)
+         (= gap "Variable Binding/Context Management")
+         (= monad ReaderFree)
+         (= lang "Meta-Programming Language"))))
+
+(forall (entry N gap monad lang)
+  (iff (CorrespondenceEntry_3 entry N gap monad lang)
+    (and (= N MinimalLogic)
+         (= gap "Negation/Control")
+         (= monad ContinuationMonad)
+         (= lang "Classical Logic + call/cc"))))
+
+(forall (entry N gap monad lang)
+  (iff (CorrespondenceEntry_4 entry N gap monad lang)
+    (and (= N HornClauses)
+         (= gap "Backtracking/Choice")
+         (= monad ListMonad)
+         (= lang "Prolog"))))
+
+(forall (entry N gap monad lang)
+  (iff (CorrespondenceEntry_5 entry N gap monad lang)
+    (and (= N RegularGrammar)
+         (= gap "Enumeration/Parsing")
+         (= monad FreeMonad)
+         (= lang "Regular Expression Engine"))))
+
+(forall (entry N gap monad lang)
+  (iff (CorrespondenceEntry_6 entry N gap monad lang)
+    (and (= N ContextFreeGrammar)
+         (= gap "Position Tracking")
+         (= monad StateMonad)
+         (= lang "Recursive Descent Parser"))))
+
+(forall (entry N gap monad lang)
+  (iff (CorrespondenceEntry_7 entry N gap monad lang)
+    (and (= N DependentTypeTheory)
+         (= gap "Proof Construction")
+         (= monad FreeMonad)
+         (= lang "Proof Assistant / Script Language"))))
+
+(forall (entry N gap monad lang)
+  (iff (CorrespondenceEntry_8 entry N gap monad lang)
+    (and (= N PresburgerArithmetic)
+         (= gap "Solution Search")
+         (= monad WriterListMonad)
+         (= lang "Constraint Solver"))))
+
+(forall (entry N gap monad lang)
+  (iff (CorrespondenceEntry_9 entry N gap monad lang)
+    (and (= N UntypedLambda)
+         (= gap "Error Recovery")
+         (= monad EitherMonad)
+         (= lang "Safe Interpreter"))))
+
+(forall (entry N gap monad lang)
+  (iff (CorrespondenceEntry_10 entry N gap monad lang)
+    (and (= N QuantifierFreeFOL)
+         (= gap "Non-deterministic Search")
+         (= monad NondetMonad)
+         (= lang "Search Programming"))))
+
+;; =============================================================================
+;; PART 8: META-LEVEL: PRINCIPLE OF MINIMAL ADDITION
+;; =============================================================================
+
+(cl-comment "=== 8.1 Principle of Minimal Addition ===")
+
+(forall (N I_N)
+  (iff (MinimalAdditionPrinciple N I_N)
+    (and (InductiveMonad N I_N)
+         ;; I_N is the smallest monad completing the gap
+         (forall (I_N_prime)
+           (if (InductiveMonad N I_N_prime)
+             (or (= I_N I_N_prime)
+                 (StrictlyContains I_N_prime I_N)))))))
+
+(cl-comment "
+The principle states: Given a formal system N with a fundamental gap,
+there exists a unique (up to isomorphism) inductive monad I_N that
+minimally completes the gap. Adding less structure leaves the gap open;
+adding more structure is redundant.
+")
+
+(cl-comment "=== 8.2 Meta-level Completion: Binary Logic from Two-Truth Adjunction ===")
+
+(forall (B B_n I_Bn Lang_Bn)
+  (if (and (= B BinaryLogic)
+           (= B_n (MetaNegationApplied n B))
+           (= I_Bn (InductiveMonad B_n)))
+    (and (TuringComplete Lang_Bn)
+         (= Lang_Bn (TensorProduct B_n I_Bn))
+         (ReachesComputationalClass Lang_Bn))))
+
+(cl-comment "
+Binary logic alone is incomplete: a single monad cannot complete it.
+However, meta-negation F_n automatically generates structural gaps,
+each inducing a canonical inductive monad I_B(n).
+The language Lang(B(n), I_B(n)) is necessarily Turing complete.
+
+This explains why binary logic's incompleteness is not a defect,
+but rather points to the necessity of meta-structure—which is
+precisely what the two-truth adjunction provides.
+
+This phenomenon corresponds to Śūnyatā (emptiness): no formal system
+is self-sufficient; its completion requires transcendence to the
+metalevel.
+")
+
+;; =============================================================================
+;; PART 9: DEBT AND TERMINATION
+;; =============================================================================
+
+(cl-comment "=== 9.1 Debt Formalism ===")
+
+(define-sort Debt)
+(define-sort DebtNorm)
+
+(forall (program debt)
+  (iff (UnresolvedDebt program debt)
+    (and (ExecutableProgram program)
+         (InductiveMonad _ _)
+         (exists (depth)
+           (and (StructuralDepth debt depth)
+                (UnresolvedComputationAtDepth program depth))))))
+
+(forall (debt norm)
+  (iff (DebtNorm debt norm)
+    (and (Debt debt)
+         (integer norm)
+         (>= norm 0)
+         ;; Monad bind application reduces norm
+         (forall (debt_prime)
+           (if (ApplyMonadBind debt debt_prime)
+             (< (DebtNorm debt_prime) (DebtNorm debt)))))))
+
+(cl-comment "=== 9.2 Monotonic Descent ===")
+
+(forall (program)
+  (if (WellTypedProgram program)
+    (exists (debt_seq)
+      (and (MonotonicallyDecreasing debt_seq)
+           (CoversExecution debt_seq program)
+           (FinitelyTerminatesAt debt_seq 0)))))
+
+(forall (program)
+  (if (WellTypedProgram program)
+    (ExistsFiniteK
+      (forall (k)
+        (if (>= k K)
+          (= (DebtAtStep program k) 0))))))
+
+;; =============================================================================
+;; PART 10: APPLICATIONS
+;; =============================================================================
+
+(cl-comment "=== 10.1 LLM Inference as Inductive Monad ===")
+
+(forall (inference)
+  (if (LLMInferenceProcess inference)
+    (and (exists (N I_N Lang)
+           (and (FormalSystem N)
+                (InductiveMonad N I_N)
+                (= Lang (TensorProduct N I_N))
+                (ModelsInference inference Lang)))
+         ;; Token generation = return
+         (forall (token)
+           (if (GeneratedToken inference token)
+             (ReturnValue I_N token)))
+         ;; Context consistency check = bind
+         (forall (step)
+           (if (InferenceStep inference step)
+             (MonadBind I_N _ _ _)))
+         ;; Termination = debt reaches zero
+         (if (TerminatesSuccessfully inference)
+           (DebtNormReachesZero inference)))))
+
+(cl-comment "
+This application shows how LLM reasoning naturally fits into the
+inductive monad framework. Each token generation, consistency check,
+and continuation decision corresponds to monad operations. The
+termination behavior is governed by debt reduction.
+")
+
+;; =============================================================================
+;; PART 11: OPEN PROBLEMS
+;; =============================================================================
+
+(cl-comment "=== 11.1 Open Problems ===")
+
+(define-sort OpenProblem)
+
+(forall (p1)
+  (iff (OpenProblem_1 p1)
+    (and (= p1 "Automatic Monad Discovery")
+         (Question "Can we compute I_N from N automatically?")
+         (Hint "Possible via homology or Tor computation"))))
+
+(forall (p2)
+  (iff (OpenProblem_2 p2)
+    (and (= p2 "Composite Monad Systems")
+         (Question "What is the normal form for multiple monads (State + Exception)?")
+         (Status Unsolved))))
+
+(forall (p3)
+  (iff (OpenProblem_3 p3)
+    (and (= p3 "Language Reverse Analysis")
+         (Question "Given a language L, recover minimal system N such that L ≅ N ⊗ I_N?")
+         (Status Unsolved))))
+
+(forall (p4)
+  (iff (OpenProblem_4 p4)
+    (and (= p4 "Computational Complexity Correspondence")
+         (Question "Does monad rank correlate with language Turing degree?")
+         (Status Unsolved))))
+
+(forall (p5)
+  (iff (OpenProblem_5 p5)
+    (and (= p5 "Extension to Dependent Types")
+         (Question "Can Theorem 5.3 be extended to dependent type theory or HoTT?")
+         (Status Unsolved))))
+
+;; =============================================================================
+;; PART 12: PHILOSOPHICAL FOUNDATIONS
+;; =============================================================================
+
+(cl-comment "=== 12.1 The Principle of Non-Self (Anātman) ===")
+
+(forall (N)
+  (=> (FormalSystem N)
+    (not (SelfSufficient N))))
+
+(cl-comment "
+No formal system is self-contained. Every system N has a fundamental gap
+that cannot be filled by additional axioms within N itself. This gap
+necessarily points to a monad I_N that provides the missing structure.
+
+This is a mathematical manifestation of the Buddhist principle of anātman
+(non-self): formal systems have no independent essence; their meaning and
+completeness emerges only through relation to their essential monadic
+completion.
+")
+
+(cl-comment "=== 12.2 Śūnyatā and Emptiness Structure ===")
+
+(forall (N I_N D_fix0)
+  (if (and (FormalSystem N)
+           (InductiveMonad N I_N)
+           (FixedPoint D_fix0))
+    (and (EmptinessInherentIn N)
+         (MonadAsCompletionOfEmptiness I_N)
+         (InhabitsFixedPoint (TensorProduct N I_N) D_fix0))))
+
+(cl-comment "
+The fixed point D_fix0 (空, emptiness) represents the ultimate ground
+where all computations converge. It is neither descriptive (world-view)
+nor merely computational, but the intersection where both modes achieve
+coherence. The monad I_N is the formal structure of this convergence.
+")
+
+;; =============================================================================
+;; CONCLUSION
+;; =============================================================================
+
+(cl-comment "
+The inductive monad framework reveals a deep principle:
+- Form systems are not monolithic but structured by necessary gaps
+- These gaps are not defects but structurally determined
+- Each gap corresponds uniquely (up to isomorphism) to an inductive monad
+- The two-truth adjunction guarantees that properly formed languages
+  (N ⊗ I_N with correct typing) terminate and reach a fixed point
+
+This unifies logic, programming language design, and Buddhist philosophy
+within a single mathematical framework, showing that:
+
+1. Representation and execution are dual aspects of the same process
+2. The gap between them is not incidental but canonical
+3. Computational power emerges from completing gaps minimally
+4. Ultimate convergence is guaranteed by the adjunction's structure
+
+Through this lens, programming language design becomes not arbitrary
+engineering but the discovery of necessary structures hidden in logical
+systems.
+")
+
+)
