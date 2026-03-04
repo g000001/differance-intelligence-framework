@@ -1,0 +1,42 @@
+(cl-text https://purl.org/aletheics/ontologies/problem/erdos15_mw.clif
+	(cl-imports https://purl.org/aletheics/ontologies/sunyata/skdt.clif)
+	(cl-imports https://purl.org/aletheics/ontologies/sunyata/dfix0.clif)
+	(cl-imports https://purl.org/aletheics/ontologies/principle/proof.clif)
+
+	(cl-comment "エルデシュ問題15の中道等価演算子による定式化")
+
+	;; 1. 語彙の定義
+	(object ErdosSeries15) ;; エルデシュの級数 Σ (-1)^n * n / p_n
+	(object p_n)           ;; 素数列
+	(function PartialSum (Nat) object) ;; 第n項までの部分和を生成する関数
+
+	;; 2. 級数の「色（表現）」としての定義
+	;; 世俗諦（Shikisokuzeku-category S）における対象
+	(member ErdosSeries15 S)
+
+	;; 3. 中道等価（mw_eq）による解決の記述
+	;; 級数が収束するということは、その表現が無限の反復（HIter）の果てに
+	;; 0次元不動点 Dfix0 と中道において一致することを意味する。
+	
+	(cl-comment "エルデシュの問い：この級数は Dfix0 と mw-等価であるか？")
+	(define ErdosProblem15_Statement
+		(mw_eq ErdosSeries15 Dfix0))
+
+	;; 4. 不動点整列 (FPA) プロセスとしての記述
+	;; 級数に対し、正当性判断関数 J を伴う複合関手 H = φ ∘ ι を適用し続ける
+	(forall (?n)
+		(=> (nat ?n)
+			(and 
+				(exists (?S_n) (equal ?S_n (PartialSum ?n)))
+				(cl-comment "各ステップでのノルムの減少（収束プロセス）")
+				(exists (?next) 
+					(and (equal ?next (app_obj H ErdosSeries15))
+						 (less_than (norm ?next) (norm ErdosSeries15)))))))
+
+	;; 5. テレンス・タオによる「空解決（Sora-resolution）」の条件付き記述
+	;; 強力なハーディ・リトルウッド予想（HL_Conjecture）が真ならば、mw_eq が成立する
+	(forall (?HL_Conjecture)
+		(=> (ProperJudgment ?HL_Conjecture)
+			(mw_eq ErdosSeries15 Dfix0)))
+
+)
