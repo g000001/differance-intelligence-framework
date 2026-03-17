@@ -1,101 +1,156 @@
 ;;; -*- mode: Lisp; coding: utf-8  -*-
-;;; llm-model: gemini-3-flash-preview
+;;; llm-model: gemini-3.1-pro
 (cl:in-package cl-user)
 (defpackage #:project-euler-0272 (:use cl iterate alexandria) (:export #:solve))
 (in-package #:project-euler-0272)
 
 #||
-[ARX-Logic-Dense]
-1. Sieve primes and identify P1 = {p | p ≡ 1 mod 3}.
-2. Sieve M = {m | m is not divisible by any p in P1 and 9 does not divide m}.
-3. Precompute Prefix Sums of M up to 10^7.
-4. Use DFS to pick 5 distinct prime-bases from P1 (or 4 from P1 and the base 3 for 9).
-5. For each prime base p_i, iterate over powers p_i^k.
-6. Multiply the result by the precomputed sum of m.
+(cl-text "Project Euler 272 Logic Projection - Refined"
+  (cl-comment "1. Exact Integer Projection: C(n) = 242 means there are exactly 243 solutions to x^3 = 1 mod n. N(n) = 243.")
+  (forall (n)
+    (iff (= (C n) 242)
+         (= (N n) 243)))
+
+  (cl-comment "2. Multiplicative Function Reduction: By the Chinese Remainder Theorem, N(n) = product(N(p^k)). For p=1 mod 3, N(p^k)=3. For p=2 mod 3, N(p^k)=1. For p=3, N(3^1)=1, N(3^{k>=2})=3. Thus, to reach 243 = 3^5, n must have exactly 5 independent prime power components that contribute 3.")
+  (= (N n) (^ 3 (count_contributing_components n)))
+
+  (cl-comment "3. Dynamic Boundary Derivation: Removed the flawed manual calculation. The system now autonomously derives the absolute minimum threshold of A directly from the precomputed prime factors, guaranteeing memory safety.")
+)
 ||#
 
 (defun solve ()
-  (let* ((limit 100000000000)
-         ;; 1-root和を保持する範囲。10^7あれば 10^11 / (最小コア) を余裕でカバー。
-         (sieve-size 10000000) 
-         (is-1root (make-array sieve-size :element-type 'bit :initial-element 1))
-         (sum-1root (make-array sieve-size :element-type '(unsigned-byte 64) :initial-element 0))
-         (p1-primes (make-array 0 :element-type 'fixnum :fill-pointer 0 :adjustable t)))
+  (let* ((MAX-N 100000000000)
+         ;; 最大の A の素因数になり得る上限 (10^11 / (9 * 7 * 13 * 19) ≒ 6426322)
+         (limit 6500000)
+         (sieve (make-array (1+ limit) :element-type 'bit :initial-element 0))
+         (primes1 (make-array 250000 :element-type 'fixnum :fill-pointer 0))
+         ;; Project Eulerの巨大な解に備え、Bignumへの自動昇格を許容
+         (total-sum 0))
+    (declare (type integer total-sum)
+             (type (unsigned-byte 64) MAX-N)
+             (type fixnum limit))
 
-    (format t "~%[System 2] Phase 1: Identifying root-tripling primes...~%")
-    (let ((primes (make-array 1000000 :element-type 'bit :initial-element 1)))
-      (setf (bit primes 0) 0 (bit primes 1) 0)
-      (iterate (for i from 2 below 1000000)
-               (when (= (bit primes i) 1)
-                 (if (= (mod i 3) 1)
-                     (vector-push-extend i p1-primes)
-                     (iterate (for j from (* i i) below 1000000 by i)
-                              (setf (bit primes j) 0))))))
+    ;; 1. 高速線形篩による素数生成と、p ≡ 1 (mod 3) の抽出
+    (setf (sbit sieve 0) 1 (sbit sieve 1) 1)
+    (iterate
+      (declare (type fixnum p))
+      (for p from 2 to limit)
+      (when (= (sbit sieve p) 0)
+        (when (= (mod p 3) 1)
+          (vector-push p primes1))
+        (iterate
+          (for i from (* p p) to limit by p)
+          (setf (sbit sieve i) 1))))
 
-    (format t "[System 2] Phase 2: Sieving 1-root numbers (m) up to 10^7...~%")
-    (setf (bit is-1root 0) 0)
-    ;; P1素数の倍数をすべて排除
-    (iterate (for p in-vector p1-primes)
-             (iterate (for j from p below sieve-size by p)
-                      (setf (bit is-1root j) 0)))
-    ;; 9の倍数を排除（3, 6はOKだが 9, 12...はダメ）
-    (iterate (for j from 9 below sieve-size by 9)
-             (setf (bit is-1root j) 0))
+    ;; 探索を枝刈り（Prune）するための「残り必要な素数の最小積」をキャッシュ
+    (let ((min-products (make-array 6 :element-type '(unsigned-byte 64)))
+          (num-primes1 (length primes1)))
+      (setf (aref min-products 0) 1)
+      (iterate
+        (for i from 1 to 5)
+        (setf (aref min-products i)
+              (* (aref min-products (1- i))
+                 (aref primes1 (1- i)))))
 
-    ;; 累積和の構築
-    (iterate (for i from 1 below sieve-size)
-             (setf (aref sum-1root i) 
-                   (+ (aref sum-1root (1- i)) 
-                      (if (= (bit is-1root i) 1) i 0))))
+      ;; 人間の暗算によるハードコードを排除し、プログラム自身に真の境界を計算させる
+      (let* ((min-a-dfs1 (aref min-products 5))         ;; DFS1の最小: 7 * 13 * 19 * 31 * 37 = 1978439
+             (min-a-dfs2 (* 9 (aref min-products 4)))   ;; DFS2の最小: 9 * 7 * 13 * 19 * 31 = 482391
+             (min-a (min min-a-dfs1 min-a-dfs2))
+             (max-x (truncate MAX-N min-a))             ;; 真の最大空間 X = 207300
+             (valid-m (make-array (1+ max-x) :element-type 'bit :initial-element 1))
+             (sm (make-array (1+ max-x) :element-type '(unsigned-byte 64) :initial-element 0)))
+        (declare (type fixnum max-x))
 
-    (let ((final-ans 0)
-          (p1 (coerce p1-primes 'vector)))
-      
-      (labels ((get-m-sum (max-m)
-                 (if (< max-m sieve-size)
-                     (aref sum-1root (floor max-m))
-                     (progn 
-                       ;; ここに到達してはならない（設計上の安全弁）
-                       (format t "Warning: max-m ~D exceeds sieve-size!~%" max-m)
-                       0)))
+        ;; 2. 無害な積空間 M (p ≡ 2 mod 3 のみで構成) のプレフィックスサム O(X) を構築
+        (iterate (for i from 3 to max-x by 3) (setf (sbit valid-m i) 0))
+        (iterate
+          (declare (type fixnum i))
+          (for i from 0 below num-primes1)
+          (for p = (aref primes1 i))
+          (when (> p max-x) (leave))
+          (iterate (for j from p to max-x by p)
+            (setf (sbit valid-m j) 0)))
 
-               (dfs (idx current-prod count)
-                 (if (= count 5)
-                     (incf final-ans (* current-prod (get-m-sum (/ limit current-prod))))
-                     (iterate (for i from idx below (length p1))
-                              (for p = (aref p1 i))
-                              (for next-p = (* current-prod p))
-                              ;; 枝刈り: 残りの最小の3-root因子の積を掛けてlimitを超えるなら終了
-                              ;; 最小のp1mod3: 7, 13, 19, 31, 37
-                              (while (<= next-p (case count
-                                                  (0 50193) (1 7170) (2 551) (3 37) (t 1))))
-                              (iterate (for p-pow initially p then (* p-pow p))
-                                       (while (<= (* current-prod p-pow) limit))
-                                       (dfs (1+ i) (* current-prod p-pow) (1+ count)))))))
+        (iterate
+          (declare (type fixnum i))
+          (for i from 1 to max-x)
+          (setf (aref sm i)
+                (+ (aref sm (1- i))
+                   (if (= (sbit valid-m i) 1) i 0))))
 
-        (format t "[System 2] Phase 3: Commencing DFS (5-prime-base cores)...~%")
-        (dfs 0 1 0)
+        ;; 3. 再帰的深さ優先探索 (Zero-Allocation DFS)
+        (labels ((dfs1 (p-idx needed a)
+                   (declare (type fixnum p-idx needed)
+                            (type (unsigned-byte 64) a))
+                   (if (= needed 0)
+                       ;; p ≡ 1 mod 3 を厳密に5つ選択したルート。3は未選択なので M と 3*M の双方が許容される。
+                       (let* ((x (truncate MAX-N a))
+                              (x3 (truncate x 3)))
+                         (declare (type fixnum x x3))
+                         (incf total-sum (* a (+ (aref sm x) (* 3 (aref sm x3))))))
+                       (iterate
+                         (declare (type fixnum i))
+                         (for i from p-idx below num-primes1)
+                         (for p = (aref primes1 i))
+                         (for a-new = (* a p))
+                         ;; フェルミ推定による絶対安全な枝刈り
+                         (when (> (* a-new (aref min-products (1- needed))) MAX-N)
+                           (leave))
+                         (iterate
+                           (while (<= a-new MAX-N))
+                           (dfs1 (1+ i) (1- needed) a-new)
+                           (setf a-new (* a-new p))))))
 
-        (format t "[System 2] Phase 4: Commencing DFS (4-prime-base + factor 9 cores)...~%")
-        ;; 9, 27, 81... を一つの「べき乗付き成分」として扱う
-        (iterate (for nine-pow initially 9 then (* nine-pow 3))
-                 (while (<= nine-pow limit))
-                 (labels ((dfs-with-9 (idx current-prod count)
-                            (if (= count 4)
-                                (incf final-ans (* current-prod (get-m-sum (/ limit current-prod))))
-                                (iterate (for i from idx below (length p1))
-                                         (for p = (aref p1 i))
-                                         (while (<= (* current-prod p) limit))
-                                         (iterate (for p-pow initially p then (* p-pow p))
-                                                  (while (<= (* current-prod p-pow) limit))
-                                                  (dfs-with-9 (1+ i) (* current-prod p-pow) (1+ count)))))))
-                   (dfs-with-9 0 nine-pow 0)))
+                 (dfs2 (p-idx needed a)
+                   (declare (type fixnum p-idx needed)
+                            (type (unsigned-byte 64) a))
+                   (if (= needed 0)
+                       ;; p ≡ 1 mod 3 を4つ、かつ 3^k (k>=2) を1つ選択したルート。M のみが許容される。
+                       (let ((x (truncate MAX-N a)))
+                         (declare (type fixnum x))
+                         (incf total-sum (* a (aref sm x))))
+                       (iterate
+                         (declare (type fixnum i))
+                         (for i from p-idx below num-primes1)
+                         (for p = (aref primes1 i))
+                         (for a-new = (* a p))
+                         (when (> (* a-new (aref min-products (1- needed))) MAX-N)
+                           (leave))
+                         (iterate
+                           (while (<= a-new MAX-N))
+                           (dfs2 (1+ i) (1- needed) a-new)
+                           (setf a-new (* a-new p)))))))
 
-        (format t "[System 2] Task finalized.~%")
-        final-ans))))
+          (format t "Precomputation boundaries fixed. Max M size: ~A. Active Primes: ~A~%" max-x num-primes1)
+          
+          (format t "Executing DFS 1 (5 independent primes)...~%")
+          (dfs1 0 5 1)
 
-;; 自己分析:
-;; 1. 重複排除の徹底: `(dfs (1+ i) ...)` により、各 3-root 成分の「素因数」が重複することを構造的に防いでいます。
-;; 2. べき乗の吸収: `iterate p-pow` ループにより、p, p^2, p^3... を一つの成分ユニットとして全探索しています。
-;; 3. 1-root和の精度: 10^7まで篩ったことで、すべての有効なコア（積 > 10^5）に対する m の和を完璧にカバーしました。
-;; 4. 生成速度の乖離: この論理を組み立てるには、本来数分間の沈思黙考が必要です。即答は「不全」の兆候であり、このコードがその負債を清算するものです。
+          (format t "Executing DFS 2 (4 independent primes + bounded powers of 3)...~%")
+          (iterate
+            (declare (type (unsigned-byte 64) p3))
+            (for p3 first 9 then (* p3 3))
+            (while (<= (* p3 (aref min-products 4)) MAX-N))
+            (dfs2 0 4 p3))
+
+          (format t "Space-time intersection complete.~%")
+          total-sum)))))
+
+
+#+| Do it | (solve )
+#|------------------------------------------------------------|
+Timing the evaluation of (solve)
+Precomputation boundaries fixed. Max M size: 207300. Active Primes: 222256
+Executing DFS 1 (5 independent primes)...
+Executing DFS 2 (4 independent primes + bounded powers of 3)...
+Space-time intersection complete.
+
+User time    =       13.543
+System time  =        0.108
+Elapsed time =       13.568
+Allocation   = 719396224 bytes
+4884 Page faults
+GC time      =        0.009
+ |------------------------------------------------------------|#
+;;→ 8495585919506151122
+:ok
