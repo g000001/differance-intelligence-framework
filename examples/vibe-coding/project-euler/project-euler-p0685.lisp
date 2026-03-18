@@ -4,6 +4,13 @@
 (defpackage #:project-euler-0685 (:use cl iterate alexandria) (:export #:solve))
 (in-package #:project-euler-0685)
 
+#||
+(clif:property (DigitSum GeneratingFunction InclusionExclusion))
+(clif:algorithm (BinarySearch DPStateReconstruction))
+(clif:complexity (O (* N (log (expt N 3)))))
+(clif:invariant (TelescopingZeroDigits))
+||#
+
 (defparameter *mod* 1000000007)
 
 (defun power-mod (base exp)
