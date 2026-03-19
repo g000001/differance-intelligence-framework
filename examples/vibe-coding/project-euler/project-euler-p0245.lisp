@@ -1,316 +1,192 @@
-#|;;; -*- mode: Lisp; coding: utf-8  -*-
-;;; llm-model: gemini-3.1-pro
-(cl:in-package cl-user)
-(defpackage #:project-euler-0245 (:use cl iterate alexandria) (:export #:solve))
-(in-package #:project-euler-0245)
-
-#||
-(cl:comment "Coresilience C(n) = (n - phi(n))/(n - 1) = 1/k")
-(cl:comment "n is composite, n <= 2*10^11")
-(cl:comment "k(n - phi(n)) = n - 1 implies n-1 = 0 mod (n - phi(n))")
-(cl:comment "For n = P * p, let phi = phi(P). M = (P - phi)p + phi")
-(cl:comment "Condition: M divides C = P*phi + P - phi")
-(cl:comment "p = (C/a - phi)/(P - phi) for divisor a of C")
-(cl:comment "Limit on a: a <= 2*phi - P")
-(cl:comment "Requirement: 2*phi > P restricts P to have at most 2 prime factors.")
-||#
-
-
-(defun make-primes (limit)
-  (let ((sieve (make-array (1+ limit) :element-type 'bit :initial-element 0))
-        (primes (make-array 100000 :element-type 'fixnum :fill-pointer 0 :adjustable t)))
-    (iterate (for i from 2 to limit)
-      (when (zerop (sbit sieve i))
-        (vector-push-extend i primes)
-        (iterate (for j from (* i i) to limit by i)
-          (setf (sbit sieve j) 1))))
-    primes))
-
-(defun mod-exp (base exp mod-val)
-  (let ((res 1)
-        (b (mod base mod-val)))
-    (iterate (while (> exp 0))
-      (when (oddp exp)
-        (setf res (mod (* res b) mod-val)))
-      (setf b (mod (* b b) mod-val))
-      (setf exp (ash exp -1)))
-    res))
-
-(defun miller-rabin-p (n)
-  (cond ((< n 2) nil)
-        ((= n 2) t)
-        ((evenp n) nil)
-        (t
-         (let ((d (1- n))
-               (s 0))
-           (iterate (while (evenp d))
-             (incf s)
-             (setf d (ash d -1)))
-           (iterate (for a in '(2 3 5 7 11 13 17))
-             (when (>= a n) (leave t))
-             (let ((x (mod-exp a d n)))
-               (unless (or (= x 1) (= x (1- n)))
-                 (iterate (for r from 1 below s)
-                   (setf x (mod (* x x) n))
-                   (when (= x 1) (return-from miller-rabin-p nil))
-                   (when (= x (1- n)) (leave)))
-                 (unless (= x (1- n))
-                   (return-from miller-rabin-p nil)))))
-           t))))
-
-(defun factorize (n primes)
-  (let ((factors nil)
-        (temp n))
-    (iterate (for p in-vector primes)
-      (when (> (* p p) temp) (leave))
-      (multiple-value-bind (q r) (truncate temp p)
-        (when (zerop r)
-          (let ((count 0))
-            (iterate (while (zerop r))
-              (incf count)
-              (setf temp q)
-              (multiple-value-bind (new-q new-r) (truncate temp p)
-                (setf q new-q r new-r)))
-            (push (cons p count) factors))))
-      ;; Factorization shortcut: if temp is prime, stop early
-      (when (and (> temp 1) (miller-rabin-p temp))
-        (push (cons temp 1) factors)
-        (setf temp 1)
-        (leave)))
-    (when (> temp 1)
-      (push (cons temp 1) factors))
-    factors))
-
-(defun get-divisors (factors)
-  (if (null factors)
-      (list 1)
-      (let ((rest-divs (get-divisors (cdr factors)))
-            (p (caar factors))
-            (count (cdar factors))
-            (res nil))
-        (iterate (for d in rest-divs)
-          (let ((mul 1))
-            (iterate (for i from 0 to count)
-              (push (* d mul) res)
-              (setf mul (* mul p)))))
-        res)))
-
-(defun solve ()
-  (let* ((limit 200000000000)
-         (primes (make-primes 1000000))
-         (ans 0))
-    
-    (format t "Starting search for r=2...~%")
-    (iterate (for p1 in-vector primes)
-      (when (= p1 2) (next-iteration))
-      (when (> (* p1 p1) limit) (leave))
-      (when (zerop (mod p1 10000))
-        (format t "r=2 checkpoint: p1=~A~%" p1))
-      
-      (let* ((p-val p1)
-             (phi (- p1 1))
-             (p-minus-phi 1)
-             (c (+ (* p-val phi) p-val (- phi)))
-             (limit-a (- (* 2 phi) p-val))
-             (min-a (truncate c (+ (truncate (* limit p-minus-phi) p-val) phi)))
-             (factors (factorize c primes))
-             (divs (get-divisors factors)))
-        
-        (iterate (for a in divs)
-          (when (and (>= a (max 1 min-a)) (<= a limit-a))
-            ;; 修正点: / ではなく truncate を使い、安全に整数を取得する
-            (let* ((d (truncate c a))
-                   (p (- d phi)))
-              (when (and (> p p1)
-                         (<= (* p-val p) limit)
-                         (miller-rabin-p p))
-                (incf ans (* p-val p))))))))
-
-    (format t "Starting search for r=3...~%")
-    (iterate (for p1 in-vector primes)
-      (when (= p1 2) (next-iteration))
-      (when (> (* p1 p1 p1) limit) (leave))
-      (format t "r=3 checkpoint: p1=~A~%" p1)
-      
-      (iterate (for p2 in-vector primes)
-        (when (<= p2 p1) (next-iteration))
-        (let ((p-val (* p1 p2)))
-          (when (> (* p-val p2) limit) (leave))
-          
-          (let* ((phi (* (1- p1) (1- p2)))
-                 (p-minus-phi (- p-val phi))
-                 (c (+ (* p-val phi) p-minus-phi))
-                 (limit-a (- (* 2 phi) p-val)))
-            
-            (when (>= limit-a 1)
-              (let* ((min-a (truncate c (+ (truncate (* limit p-minus-phi) p-val) phi)))
-                     (factors (factorize c primes))
-                     (divs (get-divisors factors)))
-                
-                (iterate (for a in divs)
-                  (when (and (>= a (max 1 min-a))
-                             (<= a limit-a))
-                    ;; 修正点: 割り切れるか（有理数にならないか）を truncate の剰余で確認
-                    (let ((d (truncate c a)))
-                      (multiple-value-bind (p rem) (truncate (- d phi) p-minus-phi)
-                        (when (and (zerop rem) ;; ここで完全に有理数を弾く
-                                   (> p p2)
-                                   (<= (* p-val p) limit)
-                                   (miller-rabin-p p))
-                          (incf ans (* p-val p)))))))))))))
-    (format t "Done.~%")
-    ans))
-
-
-#+| Do it | (solve )|#
-
-
 ;;; -*- mode: Lisp; coding: utf-8  -*-
-;;; llm-model: gemini-3.1-pro
+;;; llm-model: gemini-3.5-pro
 (cl:in-package cl-user)
 (defpackage #:project-euler-0245 (:use cl iterate alexandria) (:export #:solve))
 (in-package #:project-euler-0245)
 
+;; -----------------------------------------------------------------------------
+;; ユーティリティと素数判定
+;; -----------------------------------------------------------------------------
 (defun make-primes (limit)
   (let ((sieve (make-array (1+ limit) :element-type 'bit :initial-element 0))
         (primes (make-array 10000 :element-type 'fixnum :fill-pointer 0 :adjustable t)))
-    (iterate (for i from 2 to limit)
-      (when (zerop (sbit sieve i))
-        (vector-push-extend i primes)
-        (iterate (for j from (* i i) to limit by i)
-          (setf (sbit sieve j) 1))))
+    (iterate (for p from 2 to limit)
+      (when (= (sbit sieve p) 0)
+        (vector-push-extend p primes)
+        (iterate (for i from (* p p) to limit by p)
+          (setf (sbit sieve i) 1))))
     primes))
 
-(defun mod-exp (base exp mod-val)
+;; k^2 - k + 1 を割り切る可能性のある素数は p=3 または p ≡ 1 (mod 6) のみ
+(defun make-test-primes (primes)
+  (let ((t-primes (make-array 10000 :element-type 'fixnum :fill-pointer 0 :adjustable t)))
+    (iterate (for i from 0 below (length primes))
+      (let ((p (aref primes i)))
+        (when (or (= p 3) (= (mod p 6) 1))
+          (vector-push-extend p t-primes))))
+    t-primes))
+
+(defun expt-mod (base power divisor)
+  (declare (type (unsigned-byte 64) base power divisor))
   (let ((res 1)
-        (b (mod base mod-val)))
-    (iterate (while (> exp 0))
-      (when (oddp exp)
-        (setf res (mod (* res b) mod-val)))
-      (setf b (mod (* b b) mod-val))
-      (setf exp (ash exp -1)))
+        (b (mod base divisor))
+        (p power))
+    (iterate (while (> p 0))
+      (when (= (logand p 1) 1)
+        (setf res (mod (* res b) divisor)))
+      (setf b (mod (* b b) divisor))
+      (setf p (ash p -1)))
     res))
 
-(defun miller-rabin-p (n)
-  (cond ((< n 2) nil)
-        ((= n 2) t)
-        ((evenp n) nil)
-        (t
-         (let ((d (1- n))
-               (s 0))
-           (iterate (while (evenp d))
-             (incf s)
-             (setf d (ash d -1)))
-           (iterate (for a in '(2 3 5 7 11 13 17 19 23 29))
-             (when (>= a n) (leave t))
-             (let ((x (mod-exp a d n)))
-               (unless (or (= x 1) (= x (1- n)))
-                 (iterate (for r from 1 below s)
-                   (setf x (mod (* x x) n))
-                   (when (= x 1) (return-from miller-rabin-p nil))
-                   (when (= x (1- n)) (leave)))
-                 (unless (= x (1- n))
-                   (return-from miller-rabin-p nil)))))
-           t))))
+(defun is-prime (n)
+  (declare (type (unsigned-byte 64) n))
+  (if (<= n 1) (return-from is-prime nil))
+  (if (<= n 3) (return-from is-prime t))
+  (if (evenp n) (return-from is-prime nil))
+  (let ((d (1- n))
+        (s 0))
+    (iterate (while (evenp d))
+      (setf d (ash d -1))
+      (incf s))
+    (iterate (for a in '(2 3 5 7 11 13 17))
+      (if (>= a n) (return t))
+      (let ((x (expt-mod a d n))
+            (composite t))
+        (if (or (= x 1) (= x (1- n)))
+            (setf composite nil)
+            (iterate (for r from 1 below s)
+              (setf x (mod (* x x) n))
+              (when (= x (1- n))
+                (setf composite nil)
+                (finish))))
+        (when composite (return-from is-prime nil))))
+    t))
 
-;; Bignum回避のため、高速でシンプルな試し割りのみに変更
-(defun factorize-simple (n primes)
-  (let ((factors nil)
-        (temp n))
-    (iterate (for p in-vector primes)
-      (when (> (* p p) temp) (leave))
-      (multiple-value-bind (q r) (truncate temp p)
-        (when (zerop r)
+;; -----------------------------------------------------------------------------
+;; 試し割り法による素因数分解と約数列挙
+;; -----------------------------------------------------------------------------
+(defun factorize (v test-primes)
+  (declare (type (unsigned-byte 64) v)
+           (type (array fixnum (*)) test-primes))
+  (let ((factors nil))
+    (iterate (for i from 0 below (length test-primes))
+      (let ((p (aref test-primes i)))
+        (declare (type fixnum p))
+        ;; v が素数になればそれ以上の試し割りは不要
+        (if (> (* p p) v) (finish))
+        (when (= (mod v p) 0)
           (let ((count 0))
-            (iterate (while (zerop r))
+            (declare (type fixnum count))
+            (iterate (while (= (mod v p) 0))
               (incf count)
-              (setf temp q)
-              (multiple-value-bind (new-q new-r) (truncate temp p)
-                (setf q new-q r new-r)))
+              (setf v (truncate v p)))
             (push (cons p count) factors)))))
-    (when (> temp 1)
-      (push (cons temp 1) factors))
+    (when (> v 1)
+      (push (cons v 1) factors))
     factors))
 
 (defun get-divisors (factors)
-  (if (null factors)
-      (list 1)
-      (let ((rest-divs (get-divisors (cdr factors)))
-            (p (caar factors))
-            (count (cdar factors))
-            (res nil))
-        (iterate (for d in rest-divs)
-          (let ((mul 1))
-            (iterate (for i from 0 to count)
-              (push (* d mul) res)
-              (setf mul (* mul p)))))
-        res)))
-
-(defun solve ()
-  (let* ((limit 200000000000)
-         ;; k <= 223606 なので、素数は25万までで十分
-         (primes (make-primes 250000))
-         (ans 0))
-    
-    (format t "Starting search for r=2...~%")
-    ;; r=2: (p-k)(q-k) = k^2 - k + 1
-    (iterate (for k from 2 to 223607)
-      (let* ((target (+ (* k k) (- k) 1))
-             (factors (factorize-simple target primes))
-             (divs (get-divisors factors)))
+  (let ((divs (list 1)))
+    (iterate (for f in factors)
+      (let* ((p (car f))
+             (c (cdr f))
+             (new-divs nil))
         (iterate (for d in divs)
-          (when (<= d k)
-            (let* ((p (+ k d))
-                   (q (+ k (truncate target d)))
-                   (n (* p q)))
-              (when (<= n limit)
-                ;; 候補が限られるので、ここで初めてMiller-Rabinを呼ぶ
-                (when (and (miller-rabin-p p) (miller-rabin-p q))
-                  (incf ans n))))))))
+          (let ((mult d))
+            (iterate (for i from 0 to c)
+              (push mult new-divs)
+              (setf mult (* mult p)))))
+        (setf divs new-divs)))
+    divs))
 
-    (format t "Starting search for r >= 3...~%")
-    (labels ((dfs-r-ge-4 (p-val phi last-p-idx)
-               (iterate (for i from (1+ last-p-idx) below (length primes))
-                 (let* ((q (aref primes i))
-                        (new-p (* p-val q)))
-                   (when (> (* new-p q) limit) (leave))
-                   (let* ((new-phi (* phi (1- q)))
-                          (p-minus-phi (- new-p new-phi))
-                          (k-max (truncate (1- new-p) p-minus-phi)))
-                     (iterate (for k from 2 to k-max)
-                       (let ((d (- new-p (* k p-minus-phi))))
-                         (when (> d 0)
-                           (let ((n-val (+ (* k new-phi) 1)))
-                             (multiple-value-bind (p rem) (truncate n-val d)
-                               ;; 約数探索を行わず、割り算1回で最後の素数を特定
-                               (when (and (zerop rem) (> p q) (<= (* new-p p) limit) (miller-rabin-p p))
-                                 (incf ans (* new-p p))))))))
-                     (dfs-r-ge-4 new-p new-phi i))))))
+;; -----------------------------------------------------------------------------
+;; メインルーチン
+;; -----------------------------------------------------------------------------
+(defun solve (&optional (limit 200000000000))
+  (let* ((k-max (isqrt limit))
+         (ans 0)
+         (primes (make-primes k-max))
+         (test-primes (make-test-primes primes))
+         (odd-primes (make-array 0 :element-type 'fixnum :fill-pointer 0 :adjustable t)))
+    
+    ;; DFS用に奇数素数のみを抽出
+    (iterate (for i from 1 below (length primes))
+      (vector-push-extend (aref primes i) odd-primes))
 
-      ;; ベースとなる2素数のプレフィックスからDFSを起動
-      (iterate (for i from 0 below (length primes))
-        (let ((p1 (aref primes i)))
-          (when (> (* p1 p1 p1) limit) (leave))
-          (iterate (for j from (1+ i) below (length primes))
-            (let* ((p2 (aref primes j))
-                   (P (* p1 p2)))
-              (when (> (* P p2) limit) (leave))
-              (let ((phi (* (1- p1) (1- p2))))
-                ;; r=3のチェック
-                (let* ((p-minus-phi (- P phi))
-                       (k-max (truncate (1- P) p-minus-phi)))
-                  (iterate (for k from 2 to k-max)
-                    (let ((d (- P (* k p-minus-phi))))
-                      (when (> d 0)
-                        (let ((n-val (+ (* k phi) 1)))
-                          (multiple-value-bind (p rem) (truncate n-val d)
-                            (when (and (zerop rem) (> p p2) (<= (* P p) limit) (miller-rabin-p p))
-                              (incf ans (* P p)))))))))
-                ;; r=4以上への再帰
-                (dfs-r-ge-4 P phi j)))))))
+    (format t "Starting Part 1 (m=2) target k-max = ~D...~%" k-max)
+    ;; 不変量: k は偶数に限定される
+    (iterate (for k from 2 to k-max by 2)
+      (let* ((v (+ (- (* k k) k) 1))
+             (factors (factorize v test-primes))
+             (divs (get-divisors factors)))
+        (iterate (for a in divs)
+          (let ((b (truncate v a)))
+            (when (< a b)
+              (let ((p1 (+ k a))
+                    (p2 (+ k b)))
+                (when (<= (* p1 p2) limit)
+                  (when (and (is-prime p1) (is-prime p2))
+                    (incf ans (* p1 p2)))))))))
+      
+      (when (zerop (mod k 50000))
+        (format t "Processed k = ~D / ~D, current ans = ~D~%" k k-max ans)))
 
-    (format t "Done.~%")
+    (format t "Starting Part 2 (m>=3) with highly pruned DFS...~%")
+    (labels ((dfs (depth n phi p-idx)
+               (let ((k-max-val (truncate n (- n phi))))
+                 ;; 少なくとも2つの素数を選んだ状態で、最後の素数 p_last を一意に決定して検査
+                 (when (>= depth 2)
+                   (iterate (for k from 2 to k-max-val by 2)
+                     (let ((num (+ (* k phi) 1))
+                           (den (- (* k phi) (* (- k 1) n))))
+                       (when (and (> den 0) (= (mod num den) 0))
+                         (let ((p-last (truncate num den)))
+                           (when (and (> p-last (aref odd-primes p-idx))
+                                      (<= (* n p-last) limit)
+                                      (is-prime p-last))
+                             (incf ans (* n p-last)))))))))
+               ;; 次の素数を追加（オイラー積 φ/n >= 1/2 の強烈な枝刈り）
+               (iterate (for i from (1+ p-idx) below (length odd-primes))
+                 (let* ((p (aref odd-primes i))
+                        (next-n (* n p))
+                        (next-phi (* phi (1- p))))
+                   (if (> (* next-n p) limit) (finish))
+                   (when (>= (* 2 next-phi) next-n)
+                     (dfs (1+ depth) next-n next-phi i))))))
+      
+      (iterate (for i from 0 below (length odd-primes))
+        (let* ((p (aref odd-primes i))
+               (n p)
+               (phi (1- p)))
+          (if (> (* n p p) limit) (finish))
+          (when (>= (* 2 phi) n)
+            (dfs 1 n phi i)))))
+
+    (format t "Final ans = ~D~%" ans)
     ans))
 
 
 #+| Do it | (solve )
+#|------------------------------------------------------------|
+Timing the evaluation of (solve)
+Starting Part 1 (m=2) target k-max = 447213...
+Processed k = 50000 / 447213, current ans = 62868625497020
+Processed k = 100000 / 447213, current ans = 135567966251831
+Processed k = 150000 / 447213, current ans = 205479120785626
+Processed k = 200000 / 447213, current ans = 269635673307359
+Processed k = 250000 / 447213, current ans = 286828184937440
+Processed k = 300000 / 447213, current ans = 286828184937440
+Processed k = 350000 / 447213, current ans = 286828184937440
+Processed k = 400000 / 447213, current ans = 286828184937440
+Starting Part 2 (m>=3) with highly pruned DFS...
+Final ans = 288084712410001
+
+User time    =       27.862
+System time  =        0.175
+Elapsed time =       28.407
+Allocation   = 93226192 bytes
+615 Page faults
+GC time      =        0.009
+ |------------------------------------------------------------|#
+;;→ 288084712410001
+:ok
