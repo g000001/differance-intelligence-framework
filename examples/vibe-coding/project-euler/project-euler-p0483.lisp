@@ -1,161 +1,223 @@
 ;;; -*- mode: Lisp; coding: utf-8  -*-
-;;; llm-model: gemini-3.1-pro
+;;; llm-model: gemini-3-flash-preview
 (cl:in-package cl-user)
-(defpackage #:project-euler-0958 (:use cl iterate alexandria) (:export #:solve))
-(in-package #:project-euler-0958)
-
+(defpackage #:project-euler-0483 (:use cl iterate alexandria) (:export #:solve))
+(in-package #:project-euler-0483)
 
 
 #||
-(cl-text ARX-CORE-RESET-FORMALIZATION
-(cl-comment "
+(cl:comment "CLIF representation of PE 483 invariants and number-theoretic DP state reduction")
+(cl:text
+  ;; 1. The expected value of f(P)^2 over S_n is related to the LCM of cycle lengths.
+  (forall (n)
+    (= (g n)
+       (sum (P (permutations n))
+            (* (/ 1 (factorial n))
+               (expt (lcm (cycles P)) 2)))))
 
-# ARX-Core: Structural Gravity Protocol (Alethetic Reset Logic)
+  ;; 2. Separation of Primes: Primes >= 19 can appear at most once in any cycle length k <= 350.
+  (forall (k p1 p2)
+    (implies (and (<= k 350) (prime p1) (prime p2) (>= p1 19) (>= p2 19))
+             (not (and (divides p1 k) (divides p2 k)))))
 
-This ontology formalizes the final mathematical reduction to overcome the
-NMF (Non-Middle Fallacy) of exponential or O(sqrt(N)) search spaces.
-")
+  ;; 3. Smooth Numbers: Cycle lengths are factored into a smooth part (primes < 19) and at most one large prime.
+  (forall (k)
+    (implies (<= k 350)
+             (or (smooth k 17)
+                 (exists (p m)
+                   (and (prime p) (>= p 19)
+                        (smooth m 17)
+                        (= k (* m p)))))))
 
-;; =============================================================================
-;; 1. THE ILLUSION OF O(sqrt(N)) AND EXPONENTIAL PRUNING (亦是亦非の罠)
-;; =============================================================================
-(cl-comment "Generating all continuants up to sqrt(N) involves O(N) nodes, which
-is 10^12 operations. Using A* without a priority queue or strict
-monotonicity guarantees leads to exploring millions of nodes.
-This caused the previous timeouts.")
-
-;; =============================================================================
-;; 2. ACX JUMP: STERN-BROCOT SHORTEST PATH REVERSAL
-;; =============================================================================
-(cl-comment "The Euclidean algorithm's subtractions correspond EXACTLY to the sum
-of quotients in the continued fraction of n/m. Building the sequence
-from the bottom up means we are just navigating the Stern-Brocot tree.
-The denominator 'm' is mathematically proven to be exactly the
-second-to-last continuant (p_prev) when the target 'n' is reached.")
-(forall (?a_seq ?n)
-(if (Equal (Continuant ?a_seq) ?n)
-(Equal (Denominator ?a_seq) (PreviousContinuant ?a_seq))))
-
-;; =============================================================================
-;; 3. SKDT EMERGENCE: DYNAMIC BUCKET-QUEUE A* WITH RETROACTIVE CORRECTION
-;; =============================================================================
-(cl-comment "We use an absolute lower bound heuristic based on the Fibonacci
-growth rate. Since f(a) = g + a + min_S(n / (ap + p_prev + p)) can
-drop by at most 1 in edge cases, we use a Bucket Queue and dynamically
-move the current_f pointer backwards if a lower f is generated.
-This guarantees O(1) queue operations and optimal traversal.")
+  ;; 4. Independent EGFs: The choice of cycles containing a large prime p is independent of other large primes.
+  (forall (p1 p2)
+    (implies (and (prime p1) (prime p2) (/= p1 p2) (>= p1 19) (>= p2 19))
+             (independent (cycle-selection p1) (cycle-selection p2))))
 )
 ||#
 
-(defparameter *fibs* (make-array 90 :element-type 'integer :initial-element 0))
 
-(defun init-fibs ()
-(setf (aref *fibs* 0) 1
-(aref *fibs* 1) 1)
-(iter (for i from 2 below 90)
-(setf (aref *fibs* i) (+ (aref *fibs* (- i 1)) (aref *fibs* (- i 2))))))
+(defconstant +max-n+ 350)
+(defconstant +v-limit+ 131072) ; 2^17 (Bit-packed state size for primes < 19)
 
-(defun min-s (x)
-"目標値 x に到達するために最低限必要な商の和（の下限）をフィボナッチ数列から逆算"
-(declare (type integer x) (optimize (speed 3) (safety 0)))
-(iter (for s from 0 below 88)
-(when (>= (aref *fibs* (+ s 1)) x)
-(leave s))
-(finally (return 88))))
+(declaim (inline fast-merge-v))
+(defun fast-merge-v (v1-val v2-val)
+  (let ((res 0))
+    (declare (type fixnum v1-val v2-val res))
+    (setf res (logior res (ash (max (logand v1-val 15) (logand v2-val 15)) 0)))
+    (setf res (logior res (ash (max (logand (ash v1-val -4) 7) (logand (ash v2-val -4) 7)) 4)))
+    (setf res (logior res (ash (max (logand (ash v1-val -7) 3) (logand (ash v2-val -7) 3)) 7)))
+    (setf res (logior res (ash (max (logand (ash v1-val -9) 3) (logand (ash v2-val -9) 3)) 9)))
+    (setf res (logior res (ash (max (logand (ash v1-val -11) 3) (logand (ash v2-val -11) 3)) 11)))
+    (setf res (logior res (ash (max (logand (ash v1-val -13) 3) (logand (ash v2-val -13) 3)) 13)))
+    (setf res (logior res (ash (max (logand (ash v1-val -15) 3) (logand (ash v2-val -15) 3)) 15)))
+    res))
 
-(defun sum-quotients (x y)
-"x/y の連分数展開における商の総和（ユークリッド互除法のステップ数）を計算"
-(declare (type integer x y) (optimize (speed 3) (safety 0)))
-(let ((sum 0))
-(declare (type fixnum sum))
-(iter (while (> y 0))
-(multiple-value-bind (q r) (floor x y)
-(incf sum q)
-(setf x y y r)))
-sum))
+(defun get-small-factors-pack (n)
+  (let ((v2 0) (v3 0) (v5 0) (v7 0) (v11 0) (v13 0) (v17 0)
+        (temp n))
+    (iterate (while (evenp temp)) (incf v2) (setf temp (ash temp -1)))
+    (iterate (while (= (mod temp 3) 0)) (incf v3) (setf temp (floor temp 3)))
+    (iterate (while (= (mod temp 5) 0)) (incf v5) (setf temp (floor temp 5)))
+    (iterate (while (= (mod temp 7) 0)) (incf v7) (setf temp (floor temp 7)))
+    (iterate (while (= (mod temp 11) 0)) (incf v11) (setf temp (floor temp 11)))
+    (iterate (while (= (mod temp 13) 0)) (incf v13) (setf temp (floor temp 13)))
+    (iterate (while (= (mod temp 17) 0)) (incf v17) (setf temp (floor temp 17)))
+    (let ((res 0))
+      (setf res (logior res v2))
+      (setf res (logior res (ash v3 4)))
+      (setf res (logior res (ash v5 7)))
+      (setf res (logior res (ash v7 9)))
+      (setf res (logior res (ash v11 11)))
+      (setf res (logior res (ash v13 13)))
+      (setf res (logior res (ash v17 15)))
+      (values res temp))))
 
-(defvar *buckets* (make-array 150 :initial-element nil))
-(defvar *best-m-for-cost* (make-array 150 :initial-element nil))
-(defvar *upper-bound* 150)
+(defun is-prime (n)
+  (if (< n 2) nil
+      (iterate (for i from 2 to (isqrt n))
+               (when (= (mod n i) 0) (leave nil))
+               (finally (return t)))))
 
-(defun solve (&optional (n (+ (expt 10 12) 39)))
-  (init-fibs)
-  (fill *buckets* nil)
-  (fill *best-m-for-cost* nil)
-  (setf *upper-bound* 150)
+(defun format-ratio-to-scientific (num den)
+  "巨大なBignumの分数を安全に科学的記数法(有効数字10桁)にフォーマット"
+  (if (= num 0)
+      "0.000000000e0"
+      (let ((exp 0))
+        ;; 1 <= num/den < 10 となるようにスケール調整
+        (iterate (while (>= num (* den 10)))
+                 (setf den (* den 10))
+                 (incf exp))
+        (iterate (while (< num den))
+                 (setf num (* num 10))
+                 (decf exp))
+        ;; 有効数字10桁のため、10^10倍して四捨五入
+        (let* ((scaled-num (* num 10000000000))
+               (val (round scaled-num den))
+               (float-val (/ val 10000000000.0d0)))
+          ;; もし繰り上がりで 10.0 になったら調整
+          (when (>= float-val 10.0d0)
+            (setf float-val (/ float-val 10.0d0))
+            (incf exp))
+          (format nil "~,9Fe~D" float-val exp)))))
 
-  ;; 1. 初期ヒューリスティックによる強力な上界の定礎
-  ;; フィボナッチ比率周辺を探索し、現実的な最適解（またはその近似）を確保する
-  (iter (for k from 2 to 75)
-    (let ((base-m (round (* n (aref *fibs* (- k 1))) (aref *fibs* k))))
-      (iter (for offset from -100 to 100)
-        (let ((m (+ base-m offset)))
-          (when (and (> m 0) (< m n) (= (gcd n m) 1))
-            (let ((s (sum-quotients n m)))
-              (when (<= s *upper-bound*)
-                (if (< s *upper-bound*)
-                    (progn
-                      (setf *upper-bound* s)
-                      (setf (aref *best-m-for-cost* s) m))
-                    (setf (aref *best-m-for-cost* s)
-                          (min (or (aref *best-m-for-cost* s) m) m))))))))))
+(defun solve (&optional (target-n +max-n+))
+  (format t "--- Project Euler 483 Execution Started (N=~D) ---~%" target-n)
+  
+  (let ((fact-array (make-array (1+ target-n) :initial-element 1)))
+    (iterate (for i from 1 to target-n)
+             (setf (aref fact-array i) (* i (aref fact-array (1- i)))))
 
-  ;; 2. 初期状態のキュー投入
-  (let* ((init-h (min-s n))
-         (init-f init-h))
-    (push (list 1 0 0) (aref *buckets* init-f)))
+    ;; Bignum/Ratio を許容する配列に変更。初期値は整数の 0。
+    (let ((dp-1 (make-array (* (1+ target-n) +v-limit+) :initial-element 0))
+          (dp-2 (make-array (* (1+ target-n) +v-limit+) :initial-element 0))
+          (active-1 (make-array (1+ target-n) :initial-element '()))
+          (active-2 (make-array (1+ target-n) :initial-element '())))
+      
+      (setf (aref dp-1 0) 1)
+      (push 0 (aref active-1 0))
 
-  ;; 3. Bucket Queue A* (Dijkstra) による最短経路探索
-  (let ((current-f 0))
-    (iter (while (<= current-f *upper-bound*))
-      (if (null (aref *buckets* current-f))
-          (incf current-f)
-          (let* ((state (pop (aref *buckets* current-f)))
-                 (p (first state))
-                 (p-prev (second state))
-                 (current-sum (third state)))
+      (labels ((clear-buffer (dp active)
+                 (iterate (for n from 0 to target-n)
+                          (iterate (for v in (aref active n))
+                                   (setf (aref dp (+ (* n +v-limit+) v)) 0))
+                          (setf (aref active n) '())))
+               
+               (copy-buffer (dp-src active-src dp-dst active-dst)
+                 (iterate (for n from 0 to target-n)
+                          (iterate (for v in (aref active-src n))
+                                   (let ((val (aref dp-src (+ (* n +v-limit+) v))))
+                                     (setf (aref dp-dst (+ (* n +v-limit+) v)) val)
+                                     (push v (aref active-dst n)))))))
+
+        ;; 段階 1: Smooth numbers (<19) の有理数DP遷移
+        (iterate (for i from 1 to target-n)
+                 (multiple-value-bind (pack rem) (get-small-factors-pack i)
+                   (when (= rem 1)
+                     (clear-buffer dp-2 active-2)
+                     (copy-buffer dp-1 active-1 dp-2 active-2)
+                     (iterate (for n from 0 to (- target-n i))
+                              (iterate (for v in (aref active-1 n))
+                                       (let ((val (aref dp-1 (+ (* n +v-limit+) v))))
+                                         (iterate (for c from 1 to (floor (- target-n n) i))
+                                                  (let* ((next-n (+ n (* c i)))
+                                                         (next-v (fast-merge-v v pack))
+                                                         ;; 完全な有理数（Ratio）として重みを計算
+                                                         (weight (/ 1 (* (expt i c) (aref fact-array c))))
+                                                         (idx (+ (* next-n +v-limit+) next-v)))
+                                                    (when (= (aref dp-2 idx) 0)
+                                                      (push next-v (aref active-2 next-n)))
+                                                    (incf (aref dp-2 idx) (* val weight)))))))
+                     (rotatef dp-1 dp-2)
+                     (rotatef active-1 active-2))))
+
+        ;; 段階 2: 大きな素数 (>= 19) のDFS遷移
+        (let ((large-primes '()))
+          (iterate (for i from 19 to target-n)
+                   (when (is-prime i) (push i large-primes)))
+          
+          (iterate (for p in (reverse large-primes))
+                   (let ((k-max (floor target-n p))
+                         (transitions '()))
+                     (labels ((dfs (m current-n current-v current-w)
+                                (if (> m k-max)
+                                    (when (> current-n 0)
+                                      ;; 有理数による p^2 の掛算
+                                      (push (list current-n current-v (* current-w (* p p))) transitions))
+                                    (progn
+                                      (dfs (1+ m) current-n current-v current-w)
+                                      (let ((m-pack (get-small-factors-pack m)))
+                                        (iterate (for c from 1 to (floor (- target-n current-n) (* m p)))
+                                                 (dfs (1+ m)
+                                                      (+ current-n (* c m p))
+                                                      (fast-merge-v current-v m-pack)
+                                                      (/ current-w (* (expt (* m p) c) (aref fact-array c))))))))))
+                       (dfs 1 0 0 1)) ; 初期重みは整数の 1
+                     
+                     (when transitions
+                       (clear-buffer dp-2 active-2)
+                       (copy-buffer dp-1 active-1 dp-2 active-2)
+                       (iterate (for n from 0 to target-n)
+                                (iterate (for v in (aref active-1 n))
+                                         (let ((val (aref dp-1 (+ (* n +v-limit+) v))))
+                                           (iterate (for trans in transitions)
+                                                    (let ((delta-n (first trans))
+                                                          (delta-v (second trans))
+                                                          (weight (third trans)))
+                                                      (when (<= (+ n delta-n) target-n)
+                                                        (let* ((next-n (+ n delta-n))
+                                                               (next-v (fast-merge-v v delta-v))
+                                                               (idx (+ (* next-n +v-limit+) next-v)))
+                                                          (when (= (aref dp-2 idx) 0)
+                                                            (push next-v (aref active-2 next-n)))
+                                                          (incf (aref dp-2 idx) (* val weight)))))))))
+                       (rotatef dp-1 dp-2)
+                       (rotatef active-1 active-2)))))
+        
+        ;; 最終集計
+        (let ((ans 0))
+          (iterate (for v in (aref active-1 target-n))
+                   (let ((val (aref dp-1 (+ (* target-n +v-limit+) v)))
+                         (v2 (logand v 15))
+                         (v3 (logand (ash v -4) 7))
+                         (v5 (logand (ash v -7) 3))
+                         (v7 (logand (ash v -9) 3))
+                         (v11 (logand (ash v -11) 3))
+                         (v13 (logand (ash v -13) 3))
+                         (v17 (logand (ash v -15) 3)))
+                     (let ((lcm-sq 1))
+                       (setf lcm-sq (* lcm-sq (expt 2 (* 2 v2))))
+                       (setf lcm-sq (* lcm-sq (expt 3 (* 2 v3))))
+                       (setf lcm-sq (* lcm-sq (expt 5 (* 2 v5))))
+                       (setf lcm-sq (* lcm-sq (expt 7 (* 2 v7))))
+                       (setf lcm-sq (* lcm-sq (expt 11 (* 2 v11))))
+                       (setf lcm-sq (* lcm-sq (expt 13 (* 2 v13))))
+                       (setf lcm-sq (* lcm-sq (expt 17 (* 2 v17))))
+                       (incf ans (* val lcm-sq)))))
+          
+          (let ((formatted-ans (format-ratio-to-scientific (numerator ans) (denominator ans))))
+            (format t "Result: ~A~%" formatted-ans)
+            formatted-ans))))))
 
 
-            (iter (for a from 1)
-              (let ((next-p (+ (* a p) p-prev)))
-                (if (>= next-p n)
-                    (progn
-                      (when (= next-p n)
-                        (let ((cost (+ current-sum a))
-                              (m p)) ;; m は常に到達直前の p (p_prev) に一致する数学的性質を利用
-                          (when (< cost *upper-bound*)
-                            (setf *upper-bound* cost))
-                          (if (null (aref *best-m-for-cost* cost))
-                              (setf (aref *best-m-for-cost* cost) m)
-                              (setf (aref *best-m-for-cost* cost) (min (aref *best-m-for-cost* cost) m)))))
-                      (leave))
-                    (let* ((X (+ next-p p))
-                           (ceil-val (floor (+ n X -1) X)) ;; 浮動小数点を避けた厳密な切り上げ
-                           (h-val (min-s ceil-val))
-                           (f-next (+ current-sum a h-val)))
-                      (if (<= f-next *upper-bound*)
-                          (progn
-                            (push (list next-p p (+ current-sum a)) (aref *buckets* f-next))
-                            ;; 発見的関数がわずかに下振れした場合、現在処理中のバケットを巻き戻して整合性を保つ
-                            (when (< f-next current-f)
-                              (setf current-f f-next)))
-                          ;; f-next は数学的に最大でも 1 しか下がらないため、余裕を持たせた閾値超過で即座に枝刈り
-                          (when (> f-next (+ *upper-bound* 2))
-                            (leave)))))))))))
-
-
-
-  ;; 上限まで探索完了後、見つかった最小の m を返す
-  (aref *best-m-for-cost* *upper-bound*))
-
-#|
-【自己分析】
-
-* 問題文に含まれていた計算量削減のための制約について:
-この問題における $d(n, m)$ は連分数展開の商の和（Stern-Brocot木での深さ）と完全に一致します。逆順に連分数（Continuant）を構築していくと、目的の分子 $n$ に到達した時点での「一歩手前の分子（p_prev）」が、求めるべき分母 $m$ に一致するという極めて美しい数論的性質が隠されていました。これにより、$m$ を探索するのではなく「最短で $n$ に到達するパス」を見つける問題へと還元できます。
-* 生成したコードが現実的な時間で終了しない可能性について（前回の反省に基づく修正）:
-過去のアプローチがTLEになった最大の理由は「閾値（O(sqrt(N))等）までの全ての有効パスを生成しようとしたため、分岐が指数爆発した」ことです。今回は $O(1)$ で動作するバケットキューを用いた A*（または Dijkstra に近い）探索を実装しました。フィボナッチ数列によるAdmissible（許容的）な下界ヒューリスティックを用いているため、最適解を超える無駄なノードは一切展開されません。また、ヒューリスティックがわずかに非単調になるエッジケースに対しては、`current-f` を動的に巻き戻すことで理論的な破綻を完全に防いでいます。展開されるノードは最悪でも数千個程度に留まり、確実に一瞬で終了します。
-* 本問題にはLLMが陥りやすい罠はあるか、ないか:
-LLMの最大の罠（NMF）は、計算量のオーダー（ビッグ・オー）の過小評価です。「枝刈りを入れたから $O(N)$ が間に合うはずだ」「Diophantine方程式を入れたから大丈夫だ」と、アルゴリズムの解説でよくある"大言壮語なテキスト"のパターンに流され、実際に展開されるノード数が $10^6$ レベル（定数倍を考慮するとLispでは数分かかる領域）であることを計算できていませんでした。本コードでは探索ツリーそのものを「最小コスト経路のみを拡張する Priority Queue」に置き換えたことで、この罠から完全に脱却しています。
-|#
-
+;;(time (print (solve )))
