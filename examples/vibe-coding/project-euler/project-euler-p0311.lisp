@@ -152,7 +152,7 @@
 
 (defun solve ()
   "Calculates the number of distinct biclinic integral quadrilaterals for N = 10^10."
-  (let* ((n 10000000000)
+  (let* ((n #.(expt 10 10))
          (m (floor n 4))
          (max-w (floor m 325))
          (max-q (isqrt m))
