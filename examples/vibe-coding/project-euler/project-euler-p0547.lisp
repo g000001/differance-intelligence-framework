@@ -18,8 +18,8 @@
   "2次元の倍精度浮動小数点配列を生成する"
   (make-array (list rows cols) :element-type 'double-float :initial-element 0.0d0))
 
-(declaim (inline is-valid-lamina?))
-(defun is-valid-lamina? (n w h x0 y0)
+(declaim (inline valid-lamina?))
+(defun valid-lamina? (n w h x0 y0)
   "laminaの穴が正方形の内部に正しく収まっているかを判定する述語"
   (and (>= x0 1) (>= y0 1) (<= (+ x0 w) (1- n)) (<= (+ y0 h) (1- n))))
 
@@ -98,7 +98,7 @@
           (declare (type double-float mult))
           (iterate ((x0 (scan-range :from 1 :upto (- n 1 w))))
             (iterate ((y0 (scan-range :from 1 :upto (- n 1 h))))
-              (when (is-valid-lamina? n w h x0 y0)
+              (when (valid-lamina? n w h x0 y0)
                 (incf total (* mult (compute-el n w h x0 y0 s-matrix)))))))))
     
     (let ((rounded-result (float (/ (round (* total 10000.0d0)) 10000.0d0) 0.0d0)))
