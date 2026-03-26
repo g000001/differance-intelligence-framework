@@ -1,101 +1,136 @@
 ;;; -*- mode: Lisp; coding: utf-8  -*-
 ;;; llm-model: gemini-3.5-pro
 (cl:in-package cl-user)
-(defpackage #:project-euler-0882 (:use cl series alexandria) (:export #:solve))
-(in-package #:project-euler-0882)
+(defpackage #:project-euler-0821 (:use cl series alexandria) (:export #:solve))
+(in-package #:project-euler-0821)
 (eval-when (:compile-toplevel :load-toplevel :execute) (series::install))
 
-#||
-(cl:comment "PE 882 Combinatorial Game Theory and Exact Rational DP")
-(cl:comment "Insight 1: The partisan game exactly maps to Conway's Surreal Numbers. G(x) = { max G(x_L) | min G(x_R) }.")
-(cl:comment "Insight 2: The previous O(1) guess failed at x=14 because surreal numbers strongly favor integers ({1 | 3} = 2, not 1.5).")
-(cl:comment "Shortcut: Since N = 10^5 is small, O(N log N) Dynamic Programming is the intended path. We use Common Lisp's exact `rational` arithmetic to recursively find the simplest dyadic rational between Left and Right options, bypassing complex formulas and guaranteeing 100% mathematical accuracy without float precision limits.")
-||#
+(declaim (inline phi))
+(defun phi (x)
+  "Calculates the number of integers <= x that are coprime to 6 in O(1)."
+  (declare (type (unsigned-byte 64) x))
+  (multiple-value-bind (q r) (truncate x 6)
+    (the (unsigned-byte 64)
+         (+ (the (unsigned-byte 64) (* 2 q))
+            (if (>= r 1) 1 0)
+            (if (>= r 5) 1 0)))))
 
-(defun simplest-between (l r)
-  "Finds the simplest surreal number (dyadic rational) strictly between L and R."
-  (if (eq r 'infinity)
-      (1+ (floor l))
-      (let ((int-l (floor l)))
-        (if (< int-l (1- (ceiling r)))
-            ;; If there's an integer strictly between L and R, pick the smallest one
-            (1+ int-l)
-            ;; Otherwise, shift, scale by 2, recurse, and scale back
-            (let* ((offset int-l)
-                   (new-l (- l offset))
-                   (new-r (- r offset)))
-              (+ offset (/ (simplest-between (* 2 new-l) (* 2 new-r)) 2)))))))
+(defun generate-valid-masks (length)
+  "Generates all valid masks (no adjacent 1s) of given length to compress DP space to Fibonacci bounds."
+  (let ((res (make-array 0 :element-type '(unsigned-byte 64) :adjustable t :fill-pointer 0)))
+    (labels ((rec (idx current)
+               (if (= idx length)
+                   (vector-push-extend current res)
+                   (progn
+                     ;; We can always skip (place 0)
+                     (rec (1+ idx) current)
+                     ;; We can place 1 only if the previous bit is not 1
+                     (when (or (= idx 0) (not (logbitp (1- idx) current)))
+                       (rec (1+ idx) (logior current (ash 1 idx))))))))
+      (rec 0 0))
+    res))
 
-(declaim (inline remove-bit))
-(defun remove-bit (x i)
-  "Removes the i-th bit from x, shifting higher bits down."
-  (declare (type fixnum x i))
-  (let ((low (ldb (byte i 0) x))
-        (high (ash x (- (1+ i)))))
-    (logior (ash high i) low)))
+(defun solve-dp-for-shape (K)
+  "Executes profile DP restricted to valid Fibonacci masks on the V_K triangular graph."
+  (declare (type (unsigned-byte 64) K))
+  (let ((b-limits (make-array 60 :element-type 'fixnum :initial-element -1))
+        (max-a -1))
+    ;; 1. Kにおけるグラフの形状（各列 a の高さ b）を計算
+    (loop for a from 0 to 55 do
+      (let ((pow2 (expt 2 a)))
+        (if (> pow2 K)
+            (return)
+            (let ((max-b -1))
+              (loop for b from 0 to 35 do
+                (if (<= (expt 3 b) (truncate K pow2))
+                    (setf max-b b)
+                    (return)))
+              (setf (aref b-limits a) max-b)
+              (setf max-a a)))))
+              
+    ;; 2. プロファイルDP
+    (let ((dp (make-hash-table :test 'eql))
+          (next-dp (make-hash-table :test 'eql)))
+      (setf (gethash 0 dp) 0)
+      
+      (loop for a from 0 to max-a do
+        (clrhash next-dp)
+        (let* ((b-limit (aref b-limits a))
+               ;; Generate valid placement masks on the fly for the exact column height
+               (valid-masks (if (>= b-limit 0) (generate-valid-masks (1+ b-limit)) nil)))
+          (when (>= b-limit 0)
+            (maphash
+             (lambda (mask score)
+               (declare (type (unsigned-byte 64) mask score))
+               (loop for i from 0 below (length valid-masks) do
+                 (let ((placed (aref valid-masks i)))
+                   (declare (type (unsigned-byte 64) placed))
+                   ;; 制約: 前列からの mask と衝突しない
+                   (when (and (zerop (logand placed mask))
+                              (zerop (logand (ash placed 1) mask)))
+                     (let* ((cov (logior mask placed (ash placed 1)))
+                            (valid-mask (1- (ash 1 (1+ b-limit))))
+                            (pts (logcount (logand cov valid-mask)))
+                            (new-mask placed)
+                            (current-best (gethash new-mask next-dp -1)))
+                       (when (> (+ score pts) current-best)
+                         (setf (gethash new-mask next-dp) (+ score pts))))))))
+             dp)))
+        (let ((tmp dp)) (setf dp next-dp) (setf next-dp tmp)))
+        
+      ;; DPの最終結果の最大値を取得
+      (let ((max-score 0))
+        (maphash (lambda (m s) (declare (ignore m)) (setf max-score (max max-score s))) dp)
+        max-score))))
 
 (defun solve-for (n)
-  "Dynamically computes G(x) for all x <= n and aggregates the ceiling of their sum."
-  (let ((g (make-array (1+ n) :initial-element 0))
-        (sum 0))
-    (setf (aref g 0) 0)
-    (iterate ((x (scan-range :from 1 :upto n)))
-      (let ((max-l -1)
-            (min-r 'infinity)
-            (len (integer-length x)))
-        (iterate ((i (scan-range :from 0 :below len)))
-          (let ((new-x (remove-bit x i)))
-            (if (logbitp i x)
-                (let ((val (aref g new-x)))
-                  (when (> val max-l)
-                    (setf max-l val)))
-                (let ((val (aref g new-x)))
-                  (when (or (eq min-r 'infinity) (< val min-r))
-                    (setf min-r val))))))
-        (let ((gx (simplest-between max-l min-r)))
-          (setf (aref g x) gx)
-          (incf sum (* x gx)))))
-    (ceiling sum)))
+  (declare (type (unsigned-byte 64) n))
+  (let ((v-list (make-array 0 :element-type '(unsigned-byte 64) :adjustable t :fill-pointer 0)))
+    ;; 全ての v = 2^a 3^b <= n を列挙
+    (loop for a from 0 to 55 do
+      (let ((pow2 (expt 2 a)))
+        (if (> pow2 n)
+            (return)
+            (loop for b from 0 to 35 do
+              (let ((pow3 (expt 3 b)))
+                (if (> pow3 (truncate n pow2))
+                    (return)
+                    (vector-push-extend (* pow2 pow3) v-list)))))))
+                    
+    ;; 【致命的ミスの修正】 昇順（ASCENDING）ソートによって区間の包含関係を正確にトレースする
+    (setf v-list (sort v-list #'<))
+    
+    (let ((total-ans 0)
+          (memo (make-hash-table :test 'eql)))
+      ;; 各形状区間について DP を回す
+      (loop for i from 0 below (length v-list) do
+        (let* ((v (aref v-list i))
+               ;; v_i <= n/m < v_{i+1} となる m の個数を抽出
+               (count (if (= i (1- (length v-list)))
+                          (phi (truncate n v))
+                          (- (phi (truncate n v)) (phi (truncate n (aref v-list (1+ i))))))))
+          (when (> count 0)
+            (let ((fk (gethash v memo)))
+              (unless fk
+                (setf fk (solve-dp-for-shape v))
+                (setf (gethash v memo) fk))
+              (incf total-ans (* count fk))))))
+      total-ans)))
 
 (defun solve ()
-  (format t "Validating True Combinatorial Game Theory logic with S(2)...~%")
-  (let ((ans2 (solve-for 2)))
-    (format t "S(2) = ~A (Expected 2)~%" ans2)
-    (assert (= ans2 2)))
+  (format t "Validating with F(6)...~%")
+  (let ((ans6 (solve-for 6)))
+    (format t "F(6) = ~A (Expected 5)~%" ans6)
+    (assert (= ans6 5)))
     
-  (format t "Validating S(5)...~%")
-  (let ((ans5 (solve-for 5)))
-    (format t "S(5) = ~A (Expected 17)~%" ans5)
-    (assert (= ans5 17)))
+  (format t "Validating with F(20)...~%")
+  (let ((ans20 (solve-for 20)))
+    (format t "F(20) = ~A (Expected 19)~%" ans20)
+    (assert (= ans20 19)))
     
-  (format t "Validating S(10)...~%")
-  (let ((ans10 (solve-for 10)))
-    (format t "S(10) = ~A (Expected 64)~%" ans10)
-    (assert (= ans10 64)))
-    
-  (format t "Computing S(10^5) with Exact Rational DP...~%")
-  (let ((ans (solve-for 100000)))
-    (format t "Final Answer S(10^5): ~A~%" ans)
+  (format t "Computing F(10^16) with Exact Graph Profile DP...~%")
+  (let ((ans (solve-for (expt 10 16))))
+    (format t "Final Answer F(10^16) = ~A~%" ans)
     ans))
 
-#+| Do it | (project-euler-0882:solve)
-#|------------------------------------------------------------|
-Timing the evaluation of (solve)
-Validating True Combinatorial Game Theory logic with S(2)...
-S(2) = 2 (Expected 2)
-Validating S(5)...
-S(5) = 17 (Expected 17)
-Validating S(10)...
-S(10) = 64 (Expected 64)
-Computing S(10^5) with Exact Rational DP...
-Final Answer S(10^5): 15800662276
-
-User time    =        0.324
-System time  =        0.017
-Elapsed time =        0.277
-Allocation   = 64084912 bytes
-4588 Page faults
-GC time      =        0.007
- |------------------------------------------------------------|#
-;;→ 15800662276
-:ok
+#+| Do it | (project-euler-0821:solve)
