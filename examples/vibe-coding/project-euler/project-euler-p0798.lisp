@@ -54,11 +54,11 @@ P(k) 自身も O(1) の線形漸化式 P(k+1) = (P(k) + C1 + C2)/2 に完全崩�
 
     ;; 1. O(N) で階乗と逆元の事前計算
     (setf (aref fact 0) 1)
-    (series:iterate ((index-i (series:scan-range :from 1 :upto limit-n)))
+    (iterate ((index-i (scan-range :from 1 :upto limit-n)))
       (setf (aref fact index-i) (mod (* (aref fact (1- index-i)) index-i) $modulo)))
 
     (setf (aref inv-fact limit-n) (mod-inverse (aref fact limit-n)))
-    (series:iterate ((index-i (series:scan-range :from (1- limit-n) :downto 0 :by -1)))
+    (iterate ((index-i (scan-range :from (1- limit-n) :downto 0 :by -1)))
       (setf (aref inv-fact index-i) (mod (* (aref inv-fact (1+ index-i)) (1+ index-i)) $modulo)))
 
     (labels ((calc-ncr (n k)
@@ -76,7 +76,7 @@ P(k) 自身も O(1) の線形漸化式 P(k+1) = (P(k) + C1 + C2)/2 に完全崩�
             (p-val 1)
             (inv2 (truncate (1+ $modulo) 2)))
         
-        (series:iterate ((k (series:scan-range :from 1 :upto (truncate limit-n 2))))
+        (iterate ((k (scan-range :from 1 :upto (truncate limit-n 2))))
           (let* ((term-even (calc-ncr (- limit-n 1 k) k))
                  (term-odd  (calc-ncr (- limit-n 2 k) (1+ k)))
                  ;; (pow2 - p-val) を安全に計算
@@ -94,11 +94,11 @@ P(k) 自身も O(1) の線形漸化式 P(k+1) = (P(k) + C1 + C2)/2 に完全崩�
     (format t "観測: 真のN(v)構築完了. FWTを開始します (m = ~D)~%" target-m)
 
     ;; 3. 高速ウォルシュ・アダマール変換 (FWT)
-    (series:iterate ((len-power (series:scan-range :from 0 :below m-power)))
+    (iterate ((len-power (scan-range :from 0 :below m-power)))
       (let ((len (ash 1 len-power))
             (step (ash 1 (1+ len-power))))
-        (series:iterate ((index-i (series:scan-range :from 0 :below target-m :by step)))
-          (series:iterate ((index-j (series:scan-range :from 0 :below len)))
+        (iterate ((index-i (scan-range :from 0 :below target-m :by step)))
+          (iterate ((index-j (scan-range :from 0 :below len)))
             (let* ((idx1 (+ index-i index-j))
                    (idx2 (+ idx1 len))
                    (val-u (aref a-array idx1))
@@ -112,7 +112,7 @@ P(k) 自身も O(1) の線形漸化式 P(k+1) = (P(k) + C1 + C2)/2 に完全崩�
 
     ;; 4. s乗の総和（逆変換のショートカット）
     (let ((total-sum 0))
-      (series:iterate ((index-k (series:scan-range :from 0 :below target-m)))
+      (iterate ((index-k (scan-range :from 0 :below target-m)))
         (setf total-sum (mod (+ total-sum (power-mod (aref a-array index-k) limit-s)) $modulo)))
 
       ;; 5. 1/M を掛けて定数項（XOR和0の負け状態）を抽出
