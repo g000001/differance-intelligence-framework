@@ -74,7 +74,7 @@
                (term (mod (- pow2-n-1 pow2-n-k) $const-mod)))
           (when (< term 0) (incf term $const-mod))
           (setf ans (mod (+ ans (mod (* (mod current-x $const-mod) term) $const-mod)) $const-mod))
-          (when (and (= (mod current-x 1000000) 0) (> current-x 0))
+          (when (and (= (mod current-x #.(expt 10 6)) 0) (> current-x 0))
             (format t "Part 1 progress: ~A / ~A~%" current-x limit-v))))
       
       (let ((limit-max-k (floor limit-n (1+ limit-v))))
