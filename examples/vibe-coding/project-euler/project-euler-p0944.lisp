@@ -95,7 +95,7 @@
                      (term (mod (- pow2-n-1 pow2-n-k) $const-mod)))
                 (when (< term 0) (incf term $const-mod))
                 (setf ans (mod (+ ans (mod (* sum-x-mod term) $const-mod)) $const-mod))))
-            (when (and (= (mod current-k 1000000) 0) (> current-k 0))
+            (when (and (= (mod current-k #.(expt 10 6)) 0) (> current-k 0))
               (format t "Part 2 progress: ~A / ~A~%" current-k limit-max-k)))))
       
       (format t "Finished. Answer: ~A~%" ans)
