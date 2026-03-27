@@ -1,88 +1,100 @@
-;;; -*- mode: Lisp; coding: utf-8 -*-
-;;; llm-model: gemini-3.1-pro
+;;; -*- mode: Lisp; coding: utf-8  -*-
+;;; llm-model: gemini-3-flash-preview
 (cl:in-package cl-user)
-(defpackage #:project-euler-0958 (:use cl series alexandria) (:export #:solve))
+(defpackage #:project-euler-0958 (:use cl iterate alexandria) (:export #:solve))
 (in-package #:project-euler-0958)
-(eval-when (:compile-toplevel :load-toplevel :execute) (series::install))
 
-#||
-【自己批判と IDA* への昇華】
-前回のビームサーチは「一時的にスコアが悪化する真の最適パス」を刈り取るという致命的なバグを抱え、
-無駄な配列確保によってGCの負担も増大させていた。
-ここでは、完璧なヒューリスティック関数(Fibonacci下界)を用いた IDA* (反復深化 A*) を採用する。
-IDA* は状態を配列に保存しないため、動的メモリ確保（アロケーション）が完全にゼロになる。
-また、大域的最適解を絶対にこぼさないことが数学的に保証される。
-不要な配列や冗長なコードを全て消し去り、再帰スタックのみで10^12の空間を数秒で切り裂く。
-||#
+(defparameter *f* (make-array 100 :element-type 'integer :initial-element 0))
+(defparameter *best-m* 1000000000000000)
+(defparameter *found* nil)
 
-(defconstant $target-n (+ #.(expt 10 12) 39))
+(defun init-fibs ()
+  (setf (aref *f* 0) 0)
+  (setf (aref *f* 1) 1)
+  (iterate (for i from 2 to 99)
+    (setf (aref *f* i) (+ (aref *f* (- i 1)) (aref *f* (- i 2))))))
 
-(defun make-fixnum-array (size)
-  (make-array size :element-type 'fixnum :initial-element 0))
+(declaim (inline get-F))
+(defun get-F (i)
+  (declare (type fixnum i))
+  (cond
+    ((< i 0) 1)
+    ((= i 0) 0)
+    ((= i 1) 1)
+    ((< i 100) (aref *f* i))
+    (t 0)))
 
-;; 余裕を持たせた100サイズのFibonacci表
-(defparameter *fib* (make-fixnum-array 100))
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (setf (aref *fib* 1) 1)
-  (setf (aref *fib* 2) 1)
-  (do ((i 3 (1+ i))) ((> i 90))
-    (setf (aref *fib* i) (+ (aref *fib* (- i 1)) (aref *fib* (- i 2))))))
+(declaim (inline lb))
+(defun lb (u v n)
+  (declare (type fixnum u v n))
+  ;; 現在のコンティニュアント (u, v) から目標 N に到達するための最小必須コストを逆算
+  ;; 1の連続がコンティニュアントを最大化するという数学的定理に基づく完璧な下界
+  (iterate (for c from 0 to 90)
+    (when (>= (+ (* u (get-F (1+ c))) (* v (get-F c))) n)
+      (return c))))
 
-(declaim (inline estimate-h))
-(defun estimate-h (x y target)
-  "状態 (x, y) から target に到達するための最小追加コスト(完全な下界)"
-  (declare (type fixnum x y target)
-           (optimize (speed 3) (safety 0) (debug 0)))
-  (do ((k 0 (1+ k)))
-      ((> k 85) 85)
-    (declare (type fixnum k))
-    (when (>= (+ (* (aref *fib* (+ k 1)) x)
-                 (* (aref *fib* k) y))
-              target)
-      (return k))))
+(defun mod-inv (a m)
+  (declare (type fixnum a m))
+  (if (= m 1) 0
+      (let ((t0 0) (t1 1) (r0 m) (r1 (mod a m)) (q 0))
+        (declare (type fixnum t0 t1 r0 r1 q))
+        (iterate (while (> r1 0))
+          (setf q (floor r0 r1))
+          (let ((temp-t (- t0 (* q t1)))
+                (temp-r (- r0 (* q r1))))
+            (setf t0 t1 t1 temp-t)
+            (setf r0 r1 r1 temp-r)))
+        (if (< t0 0) (+ t0 m) t0))))
 
-(defun solve (&optional (target-n $target-n))
-  (declare (optimize (speed 3) (safety 0) (debug 0)))
-  (let ((start-limit (estimate-h 1 0 target-n))
-        (best-m most-positive-fixnum))
-    (declare (type fixnum start-limit best-m target-n))
-    
-    (labels ((dfs (x y g limit is-first)
-               (declare (type fixnum x y g limit)
-                        (type boolean is-first))
-               ;; 目標の n に到達したか判定
-               (if (= x target-n)
-                   (when (< y best-m)
-                     (setf best-m y))
-                   ;; ヒューリスティック枝刈り
-                   (let ((h (estimate-h x y target-n)))
-                     (declare (type fixnum h))
-                     (when (<= (+ g h) limit)
-                       ;; 初手は q=2 から始めることで、q=1による(1,1)の重複パスを論理的に排除する
-                       (do ((q (if is-first 2 1) (1+ q)))
-                           (nil)
-                         (declare (type fixnum q))
-                         (let ((next-x (+ (* q x) y)))
-                           (declare (type fixnum next-x))
-                           ;; xは単調増加するため、targetを超えた瞬間に以降の q の探索を安全に打ち切る
-                           (if (> next-x target-n)
-                               (return)
-                               (dfs next-x x (+ g q) limit nil)))))))))
-                               
-      (format t "観測: IDA*探索を開始します。初期Limit = ~D~%" start-limit)
+(defun ida-star (u v cost limit n is-first)
+  (declare (type fixnum u v cost limit n))
+  ;; 目標の N に到達した場合
+  (when (= u n)
+    (setf *found* t)
+    ;; 【数学的裏切りへの完全なカウンター (4-Orbit Recovery)】
+    ;; コンティニュアント v は逆順連分数の分母 M_rev。
+    ;; v^-1 mod N、およびそれらの補数から、対称性を持つ4つの軌道を生成し最小の M を抽出する。
+    (let* ((m1 v)
+           (m2 (- n v))
+           (m3 (mod-inv v n))
+           (m4 (- n m3)))
+      (setf *best-m* (min *best-m* m1 m2 m3 m4)))
+    (return-from ida-star nil))
+
+  ;; 表現の一意性を保証するため、最初の部分商は 2 以上とする（m < n/2 の探索に限定）
+  ;; 4-Orbit展開により、m > n/2 のケースも完全にカバーされるため数学的漏れはない
+  (let ((start-q (if is-first 2 1)))
+    (iterate (for q from start-q to n)
+      (let ((next-u (+ (* q u) v)))
+        (declare (type fixnum next-u))
+        ;; 限界値を超過した瞬間に即座に打ち切るため、Bignumへの昇格すら発生しない
+        (when (> next-u n) (return))
+        
+        (let ((next-cost (+ cost q)))
+          (declare (type fixnum next-cost))
+          ;; A* ヒューリスティック枝刈り: (現在のコスト + 到達への最小必須コスト) <= 制限値
+          (when (<= (+ next-cost (lb next-u u n)) limit)
+            (ida-star next-u u next-cost limit n nil)))))))
+
+(defun solve (&optional (n (+ #.(expt 10 12) 39)))
+  (init-fibs)
+  (format t "Starting Ultimate Dimensional Collapse (IDA* & 4-Orbit Recovery) for N=~A~%" n)
+  
+  ;; Nに到達するための論理的最小ステップ数から反復深化を開始
+  (let ((limit (lb 1 0 n)))
+    (iterate
+      (setf *best-m* n)
+      (setf *found* nil)
       
-      ;; IDA* (反復深化) メインループ
-      (do ((limit start-limit (1+ limit)))
-          (nil)
-        (declare (type fixnum limit))
-        (setf best-m most-positive-fixnum)
-        
-        ;; 起点 (1, 0) コスト 0 から探索開始
-        (dfs 1 0 0 limit t)
-        
-        (when (< best-m most-positive-fixnum)
-          (format t "観測: 最適解を発見。Cost = ~D~%" limit)
-          (format t "f(~D) = ~D~%" target-n best-m)
-          (return best-m))))))
+      (ida-star 1 0 0 limit n t)
+      
+      ;; 最小コスト (limit) における全解の探索が完了した場合、結果を返す
+      ;; これにより、等コストの中で確実に「最小の m」が選択される
+      (when *found*
+        (format t "Finished. Optimal subtraction steps ~A with minimal m = ~A~%" (1- limit) *best-m*)
+        (return *best-m*))
+      
+      (incf limit))))
 
-#+| Do it | (project-euler-0958:solve)
+
+#+| Do it | (solve )
