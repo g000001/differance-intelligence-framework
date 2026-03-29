@@ -8,12 +8,16 @@
 
 (defconstant $modulus 1000000007)
 
+(declaim (inline make-fixnum-array))
+(defun make-fixnum-array (size &key (initial-element 0))
+  (make-array size :element-type 'fixnum :initial-element initial-element))
+
 (defun precompute-ways ()
   "桁の生成パターンと配置（組み合わせ）を事前計算して ways-table を返す"
-  (let ((ways-end (make-array '(26 250) :element-type 'fixnum :initial-element 0))
-        (ways-cont (make-array '(26 250) :element-type 'fixnum :initial-element 0))
-        (combinations (make-array '(26 26) :element-type 'fixnum :initial-element 0))
-        (ways-table (make-array '(26 26 250) :element-type 'fixnum :initial-element 0)))
+  (let ((ways-end (make-fixnum-array '(26 250)))
+        (ways-cont (make-fixnum-array '(26 250)))
+        (combinations (make-fixnum-array '(26 26)))
+        (ways-table (make-fixnum-array '(26 26 250))))
     
     ;; 終了する項の生成パターン (1〜9を割り当て)
     (setf (aref ways-end 0 0) 1)
@@ -67,8 +71,8 @@
 
 (defun solve-dp (max-n ways-table)
   "事前計算された ways-table を用いて Digit DP を実行する"
-  (let ((dp-table (make-array '(26 26 51 51) :element-type 'fixnum :initial-element 0))
-        (dp-half (make-array '(26 276) :element-type 'fixnum :initial-element 0)))
+  (let ((dp-table (make-fixnum-array '(26 26 51 51)))
+        (dp-half (make-fixnum-array '(26 276))))
     
     ;; 状態の初期化 (+ と = のコストを事前加算)
     (iterate ((count-l (scan-range :from 1 :upto 25)))
