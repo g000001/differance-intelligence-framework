@@ -4,7 +4,7 @@
 (defpackage #:project-euler-0729 (:use cl series alexandria) (:export #:solve))
 (in-package #:project-euler-0729)
 (eval-when (:compile-toplevel :load-toplevel :execute) (series::install))
-
+(declaim (optimize (speed 3) (safety 0) (debug 0)))
 ;; ------------------------------------------------------------
 ;; Iterated Function System (IFS) with Reverse Composition
 ;; ------------------------------------------------------------
