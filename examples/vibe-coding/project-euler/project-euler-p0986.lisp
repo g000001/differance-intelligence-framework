@@ -7,32 +7,165 @@
 
 (declaim (optimize (speed 3) (safety 0) (debug 0)))
 
-;; ------------------------------------------------------------
-;; Exact Phase Space Constants & Pre-allocated Buffer
-;; ------------------------------------------------------------
+#||
+フェーズ1：愚直なシミュレータの提示「問題の法則が複雑なので、まずは $c=1, d=1 \dots 40$ までの真の最大容量 $S[d]$ を観察させてください。以下の単純なLispコードを実行し、出力配列を私に教えてもらえませんか？」と依頼する。
+フェーズ2：ユーザーからのデータ受信あなたから、最初の数項の正しいデータを受け取る。
+フェーズ3：解析受け取ったデータに対して、私は内部で「階差」を取ります
+フェーズ4：閉形式の確信と次元崩壊
+||#
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; phase 1
+;; 愚直で安全な円環バッファ（トークン移動の純粋なシミュレーション）
+(defvar *cells* (make-array 200 :element-type 'fixnum :initial-element 0))
+
+(defun simulates-halt-p (k initial-tokens)
+  "H(1, k) において、初期トークン数が発散せずに安定するかを厳密に判定します。"
+  (declare (type fixnum k initial-tokens))
+  (if (zerop initial-tokens) (return-from simulates-halt-p t))
+  
+  (let ((size (1+ k))
+        (last k)
+        (cells *cells*))
+    (declare (type fixnum size last)
+             (type (simple-array fixnum (*)) cells))
+             
+    (iterate ((i (scan-range :from 0 :upto last)))
+      (setf (aref cells i) 0))
+    (setf (aref cells last) initial-tokens)
+    
+    (let ((zero-count last))
+      (declare (type fixnum zero-count))
+      (block sim
+        (iterate ((_ (scan-range)))
+          (iterate ((i (scan-range :from 0 :below last)))
+            (let* ((old (aref cells i))
+                   (nxt (ash (+ old (aref cells (1+ i))) -1)))
+              (declare (type fixnum old nxt))
+              (setf (aref cells i) nxt)
+              (if (> old 0)
+                  (if (zerop nxt) (incf zero-count))
+                  (if (> nxt 0) (decf zero-count)))))
+                  
+          (let* ((old (aref cells last))
+                 (nxt (ash (+ old (aref cells 0)) -1)))
+            (declare (type fixnum old nxt))
+            (setf (aref cells last) nxt)
+            (if (> old 0)
+                (if (zerop nxt) (incf zero-count))
+                (if (> nxt 0) (decf zero-count))))
+                
+          (if (= zero-count size) (return-from sim t))
+          (if (= zero-count 0) (return-from sim nil)))))))
+
+(defun find-max-tokens (k)
+  "二分探索で安定する最大のトークン数 S[k] を探します"
+  (declare (type fixnum k))
+  (let ((lo 0) (hi 1))
+    (declare (type fixnum lo hi))
+    (block find-hi
+      (iterate ((_ (scan-range)))
+        (if (simulates-halt-p k hi)
+            (progn (setf lo hi) (setf hi (ash hi 1)))
+            (return-from find-hi))))
+    (block bin-search
+      (iterate ((_ (scan-range)))
+        (if (>= (1+ lo) hi) (return-from bin-search))
+        (let ((mid (+ lo (ash (- hi lo) -1))))
+          (declare (type fixnum mid))
+          (if (simulates-halt-p k mid)
+              (setf lo mid)
+              (setf hi mid)))))
+    lo))
+
+(defun run-probe ()
+  (format t "--- 観測データ抽出開始 ---~%")
+  (format t " k | S[k]~%")
+  (format t "---+-------~%")
+  (iterate ((k (scan-range :from 1 :upto 40)))
+    (format t "~2D | ~D~%" k (find-max-tokens k)))
+  (format t "--------------------------~%"))
+
+#+| Do it | (run-probe)
+
+#|------------------------------------------------------------|
+
+Timing the evaluation of (run-probe)
+--- 観測データ抽出開始 ---
+ k | S[k]
+---+-------
+ 1 | 1
+ 2 | 3
+ 3 | 7
+ 4 | 15
+ 5 | 29
+ 6 | 47
+ 7 | 71
+ 8 | 103
+ 9 | 143
+10 | 197
+11 | 255
+12 | 335
+13 | 421
+14 | 523
+15 | 639
+16 | 781
+17 | 943
+18 | 1103
+19 | 1293
+20 | 1503
+21 | 1733
+22 | 1991
+23 | 2271
+24 | 2589
+25 | 2911
+26 | 3245
+27 | 3645
+28 | 4063
+29 | 4495
+30 | 4957
+31 | 5461
+32 | 6031
+33 | 6607
+34 | 7231
+35 | 7869
+36 | 8571
+37 | 9237
+38 | 10037
+39 | 10815
+40 | 11741
+--------------------------
+
+User time    =        0.093
+System time  =        0.004
+Elapsed time =        0.048
+Allocation   = 63744 bytes
+267 Page faults
+GC time      =        0.000
+ |------------------------------------------------------------|#
+
+;;→ nil
+
 
 (defconstant +limit+ 160)
 (defconstant +predict-start-n+ 33)
 (defconstant +search-window+ 4096)
 
-(defun make-fixnum-array (size &optional (initial-element 0))
-  (make-array size :element-type 'fixnum :initial-element initial-element))
-
-;; Global buffer strictly bounded by max_n. No allocation during search.
-(defvar *sim-cells* (make-fixnum-array 300))
+;; Zero-cost simulation buffer
+(defvar *cells* (make-array 300 :element-type 'fixnum :initial-element 0))
 
 ;; ------------------------------------------------------------
-;; Faithful Token Game Simulator (In-place Cyclic Kernel)
+;; Faithful Token Game Simulator (c=1 dedicated, incredibly fast)
 ;; ------------------------------------------------------------
 
-(defun is-extinct-for-k1 (n k)
-  "Strictly simulates H(1, n) with initial tokens k using a zero-cost circular array."
+(defun extinct-for-k1 (n k)
+  "Decide whether H(1, n) with initial h = k halts. Exact translation of extinct_for_k1."
   (declare (type fixnum n k))
-  (if (zerop k) (return-from is-extinct-for-k1 t))
+  (if (zerop k) (return-from extinct-for-k1 t))
   
   (let ((size (1+ n))
         (last n)
-        (cells *sim-cells*))
+        (cells *cells*))
     (declare (type fixnum size last)
              (type (simple-array fixnum (*)) cells))
              
@@ -51,8 +184,8 @@
               (declare (type fixnum old nxt))
               (setf (aref cells i) nxt)
               (if (> old 0)
-                  (if (zerop nxt) (incf zero-count))
-                  (if (> nxt 0) (decf zero-count)))))
+                  (when (zerop nxt) (incf zero-count))
+                  (when (> nxt 0) (decf zero-count)))))
                   
           ;; Cyclic boundary condition
           (let* ((old (aref cells last))
@@ -60,25 +193,24 @@
             (declare (type fixnum old nxt))
             (setf (aref cells last) nxt)
             (if (> old 0)
-                (if (zerop nxt) (incf zero-count))
-                (if (> nxt 0) (decf zero-count))))
+                (when (zerop nxt) (incf zero-count))
+                (when (> nxt 0) (decf zero-count))))
                 
-          ;; Forward-invariant state convergence checks
+          ;; Forward-invariant states
           (if (= zero-count size) (return-from sim t))
-          (if (= zero-count 0) (return-from sim nil)))))))
+          (if (zerop zero-count) (return-from sim nil)))))))
 
 ;; ------------------------------------------------------------
 ;; Binary Search & Residue-Class Cubic Extrapolation
 ;; ------------------------------------------------------------
 
 (defun threshold-k1-plain (n)
-  "Basic exponential to binary search for cold-start values."
   (declare (type fixnum n))
   (let ((lo 0) (hi 1))
     (declare (type fixnum lo hi))
     (block find-hi
       (iterate ((_ (scan-range)))
-        (if (is-extinct-for-k1 n hi)
+        (if (extinct-for-k1 n hi)
             (progn (setf lo hi) (setf hi (ash hi 1)))
             (return-from find-hi))))
     (block bin-search
@@ -86,13 +218,12 @@
         (if (>= (1+ lo) hi) (return-from bin-search))
         (let ((mid (+ lo (ash (- hi lo) -1))))
           (declare (type fixnum mid))
-          (if (is-extinct-for-k1 n mid)
+          (if (extinct-for-k1 n mid)
               (setf lo mid)
               (setf hi mid)))))
     lo))
 
 (defun predict-k1-from-previous (s n)
-  "Astounding cubic extrapolation taking advantage of mod 8 periodicity."
   (declare (type fixnum n)
            (type (simple-array fixnum (*)) s))
   (let ((a (aref s (- n 32)))
@@ -100,11 +231,9 @@
         (c (aref s (- n 16)))
         (d (aref s (- n 8))))
     (declare (type fixnum a b c d))
-    ;; d + (d - c) + (d - 2c + b) + (d - 3c + 3b - a)
     (+ d (- d c) (+ (- d (* 2 c)) b) (- (+ d (* 3 b)) (* 3 c) a))))
 
 (defun threshold-k1-with-guess (n guess)
-  "Accelerated binary search anchored by the cubic extrapolation."
   (declare (type fixnum n guess))
   (let ((lo (max 0 (- guess +search-window+)))
         (hi (+ guess +search-window+)))
@@ -112,13 +241,13 @@
     
     (block refine-lo
       (iterate ((_ (scan-range)))
-        (if (and (> lo 0) (not (is-extinct-for-k1 n lo)))
+        (if (and (> lo 0) (not (extinct-for-k1 n lo)))
             (progn (setf hi lo) (setf lo (ash lo -1)))
             (return-from refine-lo))))
             
     (block refine-hi
       (iterate ((_ (scan-range)))
-        (if (is-extinct-for-k1 n hi)
+        (if (extinct-for-k1 n hi)
             (progn (setf lo hi) (setf hi (ash hi 1)))
             (return-from refine-hi))))
             
@@ -127,15 +256,14 @@
         (if (>= (1+ lo) hi) (return-from bin-search))
         (let ((mid (+ lo (ash (- hi lo) -1))))
           (declare (type fixnum mid))
-          (if (is-extinct-for-k1 n mid)
+          (if (extinct-for-k1 n mid)
               (setf lo mid)
               (setf hi mid)))))
     lo))
 
 (defun build-s-sequence (max-n)
-  "Constructs the true baseline sequence S[n] = H(1, n)."
   (declare (type fixnum max-n))
-  (let ((s (make-fixnum-array (1+ max-n))))
+  (let ((s (make-array (1+ max-n) :element-type 'fixnum :initial-element 0)))
     (iterate ((n (scan-range :from 1 :upto max-n)))
       (if (< n +predict-start-n+)
           (setf (aref s n) (threshold-k1-plain n))
@@ -148,7 +276,7 @@
 ;; ------------------------------------------------------------
 
 (defun h-reduced (c d s)
-  "Calculates H(c, d) for reduced pairs tracking the true boundaries."
+  "H(c, d) for reduced pairs, adhering perfectly to the EXCEPTION_H map."
   (declare (type fixnum c d)
            (type (simple-array fixnum (*)) s))
   (if (= d 1)
@@ -158,21 +286,20 @@
       (aref s (+ d (ash (1- c) -1)))))
 
 (defun g-value (c d s)
-  "Evaluates G(c, d) cleanly abstracting the GCD reduction and H extraction."
   (declare (type fixnum c d)
            (type (simple-array fixnum (*)) s))
   (let* ((g (gcd c d))
          (cr (truncate c g))
-         (dr (truncate d g)))
-    (declare (type fixnum g cr dr))
-    (1+ (ash (h-reduced cr dr s) 1))))
+         (dr (truncate d g))
+         (h (h-reduced cr dr s)))
+    (declare (type fixnum g cr dr h))
+    (1+ (ash h 1))))
 
 ;; ------------------------------------------------------------
 ;; Main Solver API
 ;; ------------------------------------------------------------
 
 (defun solve (&optional (limit +limit+))
-  "Entry point integrating the mathematical truth."
   (declare (type fixnum limit))
   (let* ((max-n (+ limit (ash (1- limit) -1)))
          (s (build-s-sequence max-n))
@@ -181,7 +308,7 @@
     (declare (type fixnum max-n)
              (type (unsigned-byte 64) total))
              
-    ;; Validation of Problem Statements (Safely passing through g-value)
+    ;; Validation of Problem Statements safely wrapped in g-value
     (assert (= (g-value 2 1 s) 7))
     (assert (= (g-value 1 2 s) 7))
     (assert (= (g-value 3 1 s) 11))
@@ -192,16 +319,15 @@
     (iterate ((c (scan-range :from 1 :upto limit)))
       (iterate ((d (scan-range :from 1 :upto limit)))
         (let* ((g (gcd c d))
-               (cp (truncate c g))
-               (dp (truncate d g))
-               (val (aref memo cp dp)))
-          (declare (type fixnum g cp dp val))
+               (cr (truncate c g))
+               (dr (truncate d g))
+               (val (aref memo cr dr)))
+          (declare (type fixnum g cr dr val))
           
           (when (= val -1)
-            (let ((h (h-reduced cp dp s)))
-              (setf val (1+ (ash h 1)))
-              (setf (aref memo cp dp) val)))
-              
+            (setf val (1+ (ash (h-reduced cr dr s) 1)))
+            (setf (aref memo cr dr) val))
+            
           (incf total val))))
           
     (format t "Sum of G(c, d) for 1 <= c, d <= ~D = ~D~%" limit total)
@@ -212,12 +338,12 @@
 Timing the evaluation of (solve)
 Sum of G(c, d) for 1 <= c, d <= 160 = 15418494040
 
-User time    =       38.723
-System time  =        0.294
-Elapsed time =       38.794
-Allocation   = 5345208 bytes
-3856 Page faults
-GC time      =        0.000
+User time    =       29.922
+System time  =        0.210
+Elapsed time =       30.469
+Allocation   = 433944 bytes
+3684 Page faults
+GC time      =        0.001
  |------------------------------------------------------------|#
 ;;→ 15418494040
 :ok
