@@ -49,7 +49,7 @@
     ;; 1. tau, inv-tau mapping
     (prog ((i 1) (val 0))
 loop-i
-          (if (> i $n) (go end))
+          (when (> i $n) (go end))
           (setf val (1+ (mod (* $mod i) $n)))
           (setf (aref tau-table i) val)
           (setf (aref inv-tau-table val) i)
@@ -64,7 +64,7 @@ loop-k
           (if (> k $m) (go end))
           (setf j 0)
 loop-j
-          (if (>= j k) (progn (incf k) (go loop-k)))
+          (when (>= j k) (incf k) (go loop-k))
           (setf (aref cycle-id-table x) k)
           (setf (aref cycle-idx-table x) j)
           (incf x)
@@ -76,7 +76,7 @@ end
     ;; 3. Precompute gcd-table
     (prog ((a 1) (b 1))
 loop-a
-          (if (> a $m) (go end-a))
+          (when (> a $m) (go end-a))
           (setf b 1)
 loop-b
           (when (> b $m) (incf a) (go loop-a))
@@ -100,7 +100,7 @@ end
     ;; 5. Precompute cycle multiplier M[cu][cv] = m! / lcm(cu, cv)
     (prog ((cu 1) (cv 1) (lcm-val 0) (fact-m (aref fact-table $m)))
 loop-cu
-          (if (> cu $m) (go end-cu))
+          (when (> cu $m) (go end-cu))
           (setf cv 1)
 loop-cv
           (when (> cv $m) (incf cu) (go loop-cu))
@@ -118,7 +118,7 @@ end-cu
     (prog ((x 1) (y 1) (cx 0) (cy 0) (idx-x 0) (idx-y 0) (g 0) (d 0)
            (inv-x 0) (inv-y 0))
 loop-x
-          (if (> x $n) (go end-x))
+          (when (> x $n) (go end-x))
           (setf cx (aref cycle-id-table x))
           (setf idx-x (aref cycle-idx-table x))
           (setf inv-x (aref inv-tau-table x))
@@ -126,13 +126,12 @@ loop-x
 loop-y
           (when (> y $n) (incf x) (go loop-x))
           (setf inv-y (aref inv-tau-table y))
-          (if (< inv-x inv-y)
-              (progn
-                (setf cy (aref cycle-id-table y))
-                (setf idx-y (aref cycle-idx-table y))
-                (setf g (aref gcd-table (idx-m cx cy)))
-                (setf d (mod (- idx-x idx-y) g))
-                (incf (aref w-table (idx-w cx cy d)))))
+          (when (< inv-x inv-y)
+            (setf cy (aref cycle-id-table y))
+            (setf idx-y (aref cycle-idx-table y))
+            (setf g (aref gcd-table (idx-m cx cy)))
+            (setf d (mod (- idx-x idx-y) g))
+            (incf (aref w-table (idx-w cx cy d))))
           (incf y)
           (go loop-y)
 end-x
@@ -143,14 +142,14 @@ end-x
            (i 1) (j 1) (v 0) (u 0) (cv 0) (cu 0) (idx-v 0) (idx-u 0) (g 0) (d 0)
            (sum-s 0) (m-val 0) (w-val 0))
 loop-i
-          (if (>= i $n) (go end-i))
+          (when (>= i $n) (go end-i))
           (setf v (aref tau-table i))
           (setf cv (aref cycle-id-table v))
           (setf idx-v (aref cycle-idx-table v))
           (setf sum-s 0)
           (setf j (1+ i))
 loop-j
-          (if (> j $n) (go next-i))
+          (when (> j $n) (go next-i))
           (setf u (aref tau-table j))
           (setf cu (aref cycle-id-table u))
           (setf idx-u (aref cycle-idx-table u))
