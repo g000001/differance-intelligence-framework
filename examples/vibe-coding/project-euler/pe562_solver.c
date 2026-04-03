@@ -1,17 +1,4 @@
-;;; -*- mode: Lisp; coding: utf-8 -*-
-;;; llm-model: gemini-3.1-pro
-(cl:in-package cl-user)
-(defpackage #:project-euler-0562 (:use cl iterate alexandria) (:export #:solve))
-(in-package #:project-euler-0562)
 
-(defmacro source-pathname ()
-  "Compute source pathname"
-  `(or *compile-file-truename* *load-truename*))
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ql:quickload :cffi :silent t))
-
-(defparameter *c-source* "
 #include <stdint.h>
 #include <math.h>
 #include <stdlib.h>
@@ -141,45 +128,3 @@ double solve_562_test(int64_t r) {
 uint64_t solve_562_final(int64_t r) {
     return (uint64_t)roundl(solve_core(r));
 }
-")
-
-(defun compile-and-load-c-code ()
-  (let* ((c-file (uiop:native-namestring (merge-pathnames "pe562_solver.c" (uiop:getcwd))))
-         (so-file (uiop:native-namestring (merge-pathnames 
-                                            #-windows "libpe562_solver.so"
-                                            #+windows "libpe562_solver.dll"
-                                            (uiop:getcwd)))))
-    (with-open-file (out c-file :direction :output :if-exists :supersede)
-      (write-string *c-source* out))
-    (uiop:run-program (format nil "gcc -O3 -shared -fPIC -o ~A ~A" so-file c-file)
-                      :output *standard-output* :error-output *error-output*)
-    (cffi:load-foreign-library so-file)))
-
-(cffi:defcfun ("solve_562_test" c-solve-562-test) :double
-  (r :int64))
-
-(cffi:defcfun ("solve_562_final" c-solve-562-final) :uint64
-  (r :int64))
-
-(defun solve ()
-  (format t "観測: C共有ライブラリをコンパイルおよびロード中...~%")
-  (compile-and-load-c-code)
-  
-  (format t "観測: テストケース T(5) を検証中...~%")
-  (let ((ans-test (c-solve-562-test 5)))
-    (format t "観測: T(5) = ~,5F (Expected: 19.83381)~%" ans-test))
-    
-  (format t "観測: テストケース T(10) を検証中...~%")
-  (let ((ans-test2 (c-solve-562-test 10)))
-    (format t "観測: T(10) = ~,5F (Expected: 97.26729)~%" ans-test2))
-    
-  (format t "観測: テストケース T(100) を検証中...~%")
-  (let ((ans-test3 (c-solve-562-test 100)))
-    (format t "観測: T(100) = ~,5F (Expected: 9157.64707)~%" ans-test3))
-
-  (format t "観測: 本探索 T(10^7) を実行中...~%")
-  (let ((ans (c-solve-562-final 10000000)))
-    (format t "Answer: ~D~%" ans)
-    ans))
-
-#+| Do it | (project-euler-0562:solve)

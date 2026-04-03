@@ -1,17 +1,4 @@
-;;; -*- mode: Lisp; coding: utf-8 -*-
-;;; llm-model: gemini-3.1-pro
-(cl:in-package cl-user)
-(defpackage #:project-euler-0958 (:use cl iterate alexandria) (:export #:solve))
-(in-package #:project-euler-0958)
 
-(defmacro source-pathname ()
-  "Compute source pathname"
-  `(or *compile-file-truename* *load-truename* (uiop:getcwd)))
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ql:quickload :cffi :silent t))
-
-(defparameter *fortran-source* "
 module solver
     implicit none
     
@@ -139,7 +126,7 @@ contains
         end if
     end function floor_div
 
-    integer(8) function solve_958_fortran(n) bind(C, name=\"solve_958_fortran\")
+    integer(8) function solve_958_fortran(n) bind(C, name="solve_958_fortran")
         use iso_c_binding
         integer(8), intent(in), value :: n
         
@@ -220,42 +207,3 @@ contains
         solve_958_fortran = min_m
     end function solve_958_fortran
 end module solver
-")
-
-(defun compile-and-load-fortran-code ()
-  (let* ((f90-file (uiop:native-namestring (merge-pathnames "pe958_solver.f90" (source-pathname))))
-         (so-file (uiop:native-namestring (merge-pathnames 
-                                            #-windows "libpe958_solver.so"
-                                            #+windows "libpe958_solver.dll"
-                                            (source-pathname)))))
-    (with-open-file (out f90-file :direction :output :if-exists :supersede)
-      (write-string *fortran-source* out))
-    (uiop:run-program (format nil "gfortran -O3 -shared -fPIC -o ~A ~A" so-file f90-file)
-                      :output *standard-output* :error-output *error-output*)
-    (cffi:load-foreign-library so-file)))
-
-(cffi:defcfun ("solve_958_fortran" c-solve-958) :uint64
-  (n :uint64))
-
-(defun solve ()
-  (format t "観測: Fortran共有ライブラリをコンパイルおよびロード中...~%")
-  (compile-and-load-fortran-code)
-  
-  (format t "観測: テストケース T(7) を検証中...~%")
-  (let ((ans-test (c-solve-958 7)))
-    (format t "観測: T(7) = ~D (Expected: 2)~%" ans-test))
-    
-  (format t "観測: テストケース T(89) を検証中...~%")
-  (let ((ans-test2 (c-solve-958 89)))
-    (format t "観測: T(89) = ~D (Expected: 34)~%" ans-test2))
-    
-  (format t "観測: テストケース T(8191) を検証中...~%")
-  (let ((ans-test3 (c-solve-958 8191)))
-    (format t "観測: T(8191) = ~D (Expected: 1856)~%" ans-test3))
-
-  (format t "観測: 本探索 T(10^12+39) を実行中...~%")
-  (let ((ans (c-solve-958 1000000000039)))
-    (format t "Answer: ~D~%" ans)
-    ans))
-
-#+| Do it | (project-euler-0958:solve)
