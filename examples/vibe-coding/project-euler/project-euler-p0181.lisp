@@ -86,3 +86,61 @@ GC time      =        0.000
  |------------------------------------------------------------|#
 ;;→ 83735848679360680
 :ok
+
+
+#||
+【CFFIアーキテクチャによる次元崩壊】
+1. メモリアロケーションの完全なる外部化:
+   DP配列の確保と解放 (`calloc` / `free`) をC言語のレイヤーに押し付けることで、
+   Lisp側のガベージコレクタ (GC) はこの計算において文字通り「何もしない」状態になります。
+   配列へのアクセスもネイティブのポインタ演算となるため、オーバーヘッドは皆無です。
+
+2. CFFIによる型マッピング:
+   C側の `uint64_t` は、CFFIの `:uint64` として定義することで、
+   Lisp側へ戻る瞬間に安全に Lisp の `integer` 型としてボクシングされます。
+   計算途中の150万回の加算はすべてレジスタ上のハードウェア演算で行われます。
+||#
+
+;; Cの共有ライブラリをロードする定義
+(cffi:define-foreign-library libpe181
+  (:darwin #.(make-pathname :name "libpe181" :type "dylib"
+                          :defaults (translate-logical-pathname "pe:181")))
+  (:windows (:or "libpe181.dll" "./libpe181.dll"))
+  (t (:default "libpe181")))
+
+;; ライブラリのロード
+(cffi:use-foreign-library libpe181)
+
+;; Cの関数 solve_181(int, int) -> uint64_t のバインディング
+(cffi:defcfun ("solve_181" c-solve-181) :uint64
+  (b-max :int)
+  (w-max :int))
+
+(defun solve-c ()
+  (format t "観測: テストケース T(3,1) を C関数経由で検証中...~%")
+  (let ((ans-test (c-solve-181 3 1)))
+    (format t "観測: T(3,1) = ~D (Expected: 7)~%" ans-test))
+  
+  (format t "観測: 本探索 T(60,40) を C関数経由で実行中...~%")
+  (let ((ans (c-solve-181 60 40)))
+    (format t "Answer: ~D~%" ans)
+    ans))
+
+
+#+| Do it | (solve-c )
+#|------------------------------------------------------------|
+Timing the evaluation of (solve)
+観測: テストケース T(3,1) を C関数経由で検証中...
+観測: T(3,1) = 7 (Expected: 7)
+観測: 本探索 T(60,40) を C関数経由で実行中...
+Answer: 83735848679360680
+
+User time    =        0.002
+System time  =        0.000
+Elapsed time =        0.001
+Allocation   = 352 bytes
+12 Page faults
+GC time      =        0.000
+ |------------------------------------------------------------|#
+;;→ 83735848679360680
+:ok
