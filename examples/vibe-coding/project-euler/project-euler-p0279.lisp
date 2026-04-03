@@ -140,11 +140,11 @@ end module solver
   (compile-and-load-fortran-code)
   
   (format t "観測: テストケース T(10^5) を検証中...~%")
-  (let ((ans-test (c-solve-279 100000)))
+  (let ((ans-test (c-solve-279 #.(expt 10 5))))
     (format t "観測: T(10^5) = ~D~%" ans-test))
 
   (format t "観測: 本探索 T(10^8) を実行中...~%")
-  (let ((ans (c-solve-279 100000000)))
+  (let ((ans (c-solve-279 #.(expt 10 8))))
     (format t "Answer: ~D~%" ans)
     ans))
 
