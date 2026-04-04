@@ -9,8 +9,6 @@
   `(load-time-value ,(or *compile-file-truename* *load-truename* (uiop:getcwd))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (ql:quickload :cffi)
-  (ql:quickload :uiop)
   (require "java-interface"))
 
 (defvar *jvm-library-path*
