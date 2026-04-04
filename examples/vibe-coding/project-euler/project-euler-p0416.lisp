@@ -1,126 +1,210 @@
-;;; -*- mode: Lisp; coding: utf-8 -*-
-;;; llm-model: gemini-3.1-pro
+;;; -*- mode: Lisp; coding: utf-8  -*-
+;;; llm-model: gemini-3-flash-preview
 (cl:in-package cl-user)
-(defpackage #:project-euler-0416 (:use cl series alexandria) (:export #:solve))
+(defpackage #:project-euler-0416 (:use cl) (:export #:solve))
 (in-package #:project-euler-0416)
-(eval-when (:compile-toplevel :load-toplevel :execute) (series::install))
-;(declaim (optimize (speed 3) (safety 0) (debug 0)))
 
-(defmacro make-uint64-array (dims)
-  `(make-array ,dims :element-type '(unsigned-byte 64) :initial-element 0))
+(defmacro source-pathname ()
+  "Compute source pathname"
+  `(load-time-value ,(or *compile-file-truename* *load-truename* (uiop:getcwd))))
 
-(defun build-binom ()
-  (let ((binom (make-uint64-array '(25 25))))
-    (iterate ((i (scan-range :below 25)))
-      (setf (aref binom i 0) 1)
-      (iterate ((j (scan-range :from 1 :upto i)))
-        (setf (aref binom i j)
-              (mod (+ (aref binom (1- i) (1- j))
-                      (aref binom (1- i) j))
-                   #.(expt 10 9)))))
-    binom))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (ql:quickload :cffi)
+  (ql:quickload :uiop))
 
-(defun state-index (c1 c2 m)
-  (let ((idx 0))
-    (iterate ((i (scan-range :below c1)))
-      (incf idx (- (+ (* 2 m) 1) i)))
-    (+ idx c2)))
+;;; ----------------------------------------------------------------------
+;;; Julia C API バインディングと共有ライブラリのロード
+;;; ----------------------------------------------------------------------
+(cffi:define-foreign-library libjulia
+  (:darwin (:or "libjulia.dylib" "libjulia.1.dylib"))
+  (:unix (:or "libjulia.so" "libjulia.so.1"))
+  (:windows "libjulia.dll")
+  (t (:default "libjulia")))
 
-(defun build-a-b (m)
-  (let* ((size (truncate (* (+ (* 2 m) 1) (+ (* 2 m) 2)) 2))
-         (a-mat (make-uint64-array (list size size)))
-         (b-mat (make-uint64-array (list size size)))
-         (binom (build-binom)))
-    (iterate ((c1 (scan-range :from 0 :upto (* 2 m))))
-      (iterate ((c2 (scan-range :from 0 :upto (- (* 2 m) c1))))
-        (let ((c0 (- (* 2 m) c1 c2))
-              (idx-base (state-index c1 c2 m)))
-          (iterate ((c1-prime (scan-range :from 0 :upto c0)))
-            (iterate ((c2-prime (scan-range :from 0 :upto c1)))
-              (let* ((c0-prime (- (* 2 m) c1-prime c2-prime))
-                     (weight (mod (* (aref binom c0 c1-prime)
-                                     (aref binom c1 c2-prime))
-                                  #.(expt 10 9)))
-                     (idx-prime-base (state-index c1-prime c2-prime m)))
-                (if (= c0-prime 0)
-                    ;; 未訪問マスが発生する遷移は B 行列に記録
-                    (setf (aref b-mat idx-base idx-prime-base)
-                          (mod (+ (aref b-mat idx-base idx-prime-base) weight)
-                               #.(expt 10 9)))
-                    ;; 未訪問マスが発生しない遷移は A 行列に記録
-                    (setf (aref a-mat idx-base idx-prime-base)
-                          (mod (+ (aref a-mat idx-base idx-prime-base) weight)
-                               #.(expt 10 9))))))))))
-    (cons a-mat b-mat)))
+(handler-case 
+    (cffi:use-foreign-library libjulia)
+  (error (e)
+    (format t "WARNING: Failed to load libjulia: ~A~%" e)
+    (format t "Please ensure Julia is installed and its lib path is exposed.~%")))
 
-(defun matrix-multiply (x y size)
-  (let ((z (make-uint64-array (list size size)))
-        (y-t (make-uint64-array (list size size))))
-    ;; キャッシュ効率最大化のための転置
-    (iterate ((i (scan-range :below size)))
-      (iterate ((j (scan-range :below size)))
-        (setf (aref y-t j i) (aref y i j))))
-    (iterate ((i (scan-range :below size)))
-      (iterate ((j (scan-range :below size)))
-        (let ((sum 0))
-          (declare (type (unsigned-byte 64) sum))
-          (iterate ((k (scan-range :below size)))
-            (setf sum (+ sum (* (aref x i k) (aref y-t j k))))
-            ;; 16回ごとに剰余を取ることで 64-bit オーバーフローを完全に回避
-            (when (= (logand k 15) 15)
-              (setf sum (mod sum #.(expt 10 9)))))
-          (setf (aref z i j) (mod sum #.(expt 10 9))))))
-    z))
+(cffi:defcfun ("jl_init" %jl-init) :void)
+(cffi:defcfun ("jl_eval_string" %jl-eval-string) :pointer (str :string))
 
-(defun matrix-add (x y size)
-  (let ((z (make-uint64-array (list size size))))
-    (iterate ((i (scan-range :below size)))
-      (iterate ((j (scan-range :below size)))
-        (setf (aref z i j) (mod (+ (aref x i j) (aref y i j)) #.(expt 10 9)))))
-    z))
+;;; ----------------------------------------------------------------------
+;;; Julia JIT Code
+;;; ----------------------------------------------------------------------
+(defparameter *julia-code-416* "
+module Euler416
+export solve416
 
-(defun power-a-b (a b exp size)
-  ;; M = [[A, B], [0, A]] の累乗を半分のサイズ (A_k, C_k) に分解して再帰計算する超次元崩壊
-  (labels ((recur (k)
-             (if (= k 1)
-                 (cons a b)
-                 (let* ((half (recur (ash k -1)))
-                        (ah (car half))
-                        (ch (cdr half))
-                        (a2 (matrix-multiply ah ah size))
-                        (c2 (matrix-add (matrix-multiply ah ch size)
-                                        (matrix-multiply ch ah size) size)))
-                   (if (oddp k)
-                       (cons (matrix-multiply a2 a size)
-                             (matrix-add (matrix-multiply a2 b size)
-                                         (matrix-multiply c2 a size) size))
-                       (cons a2 c2))))))
-    (recur exp)))
+function multinomial(j1::Int, j2::Int, j3::Int)
+    c0 = j1 + j2 + j3
+    res = Int128(1)
+    for i in 1:c0
+        res *= i
+    end
+    fj1 = Int128(1)
+    for i in 1:j1
+        fj1 *= i
+    end
+    fj2 = Int128(1)
+    for i in 1:j2
+        fj2 *= i
+    end
+    fj3 = Int128(1)
+    for i in 1:j3
+        fj3 *= i
+    end
+    return Int64(res ÷ (fj1 * fj2 * fj3))
+end
 
-(defun f (m n)
-  (let* ((mats (build-a-b m))
-         (a-mat (car mats))
-         (b-mat (cdr mats))
-         (size (truncate (* (+ (* 2 m) 1) (+ (* 2 m) 2)) 2))
-         (res (power-a-b a-mat b-mat (- n 1) size))
-         (ak (car res))
-         (ck (cdr res)))
-    ;; 始点から終点まで、未訪問が0回 (A^k) と未訪問が1回 (C_k) のパターンの和
-    (mod (+ (aref ak 0 0) (aref ck 0 0)) #.(expt 10 9))))
+function mul(A::Matrix{Int64}, B::Matrix{Int64})
+    N = size(A, 1)
+    C = zeros(Int64, N, N)
+    @inbounds for j in 1:N
+        for i in 1:N
+            s = Int128(0)
+            for k in 1:N
+                s += Int128(A[i,k]) * B[k,j]
+            end
+            C[i,j] = Int64(s % 1000000000)
+        end
+    end
+    return C
+end
 
+function power_pair(A::Matrix{Int64}, B::Matrix{Int64}, p::Int64)
+    N = size(A, 1)
+    res_A = zeros(Int64, N, N)
+    for i in 1:N
+        res_A[i,i] = 1
+    end
+    res_B = zeros(Int64, N, N)
+    
+    base_A = copy(A)
+    base_B = copy(B)
+    
+    while p > 0
+        if p & 1 == 1
+            new_res_A = mul(res_A, base_A)
+            new_res_B = (mul(res_A, base_B) .+ mul(res_B, base_A)) .% 1000000000
+            res_A = new_res_A
+            res_B = new_res_B
+        end
+        if p > 1
+            new_base_A = mul(base_A, base_A)
+            new_base_B = (mul(base_A, base_B) .+ mul(base_B, base_A)) .% 1000000000
+            base_A = new_base_A
+            base_B = new_base_B
+        end
+        p >>= 1
+    end
+    return res_A, res_B
+end
+
+function solve416(m::Int, n::Int64, out_ptr::Ptr{Int64})
+    k = 2 * m
+    MOD = 1000000000
+    
+    # 状態の生成： c0 + c1 + c2 = k
+    states = Tuple{Int,Int,Int}[]
+    for c0 in 0:k
+        for c1 in 0:(k - c0)
+            c2 = k - c0 - c1
+            push!(states, (c0, c1, c2))
+        end
+    end
+    
+    N = length(states)
+    state_to_idx = Dict{Tuple{Int,Int,Int}, Int}()
+    for (i, st) in enumerate(states)
+        state_to_idx[st] = i
+    end
+    
+    M_gt0 = zeros(Int64, N, N)
+    M_eq0 = zeros(Int64, N, N)
+    
+    for i in 1:N
+        c0, c1, c2 = states[i]
+        for j in 1:N
+            cp0, cp1, cp2 = states[j]
+            
+            j3 = cp2
+            j2 = cp1 - c2
+            j1 = cp0 - c1
+            
+            if j1 >= 0 && j2 >= 0 && j3 >= 0 && (j1 + j2 + j3 == c0)
+                w = multinomial(j1, j2, j3) % MOD
+                if cp0 > 0
+                    M_gt0[i, j] = (M_gt0[i, j] + w) % MOD
+                else
+                    M_eq0[i, j] = (M_eq0[i, j] + w) % MOD
+                end
+            end
+        end
+    end
+    
+    # 行列ペアの累乗
+    res_A, res_B = power_pair(M_gt0, M_eq0, n - 1)
+    
+    # 初期状態・終了状態のインデックス
+    start_idx = state_to_idx[(k, 0, 0)]
+    
+    ans = (res_A[start_idx, start_idx] + res_B[start_idx, start_idx]) % MOD
+    
+    unsafe_store!(out_ptr, ans)
+end
+end # module
+")
+
+;;; ----------------------------------------------------------------------
+;;; Lisp 実行関数
+;;; ----------------------------------------------------------------------
 (defun solve ()
-  (format t "観測: テストケース T(1, 3) を検証中...~%")
-  (format t "T(1, 3) = ~A (Expected: 4)~%" (f 1 3))
-  (format t "観測: テストケース T(1, 4) を検証中...~%")
-  (format t "T(1, 4) = ~A (Expected: 15)~%" (f 1 4))
-  (format t "観測: テストケース T(1, 5) を検証中...~%")
-  (format t "T(1, 5) = ~A (Expected: 46)~%" (f 1 5))
-  (format t "観測: テストケース T(2, 3) を検証中...~%")
-  (format t "T(2, 3) = ~A (Expected: 16)~%" (f 2 3))
+  "Find the last 9 digits of F(10, 10^12)."
+  (format t "Initializing Julia Runtime...~%")
+  (%jl-init)
   
-  (format t "観測: 本探索 F(10, 10^12) を実行中...~%")
-  (let ((ans (f 10 #.(expt 10 12))))
-    (format t "Answer: ~9,'0D~%" ans)
-    ans))
+  (format t "Loading JIT code into Julia...~%")
+  (%jl-eval-string *julia-code-416*)
+  
+  (let* ((m 10)
+         (n #.(expt 10 12))
+         (out-ptr (cffi:foreign-alloc :int64))
+         (result 0))
+    
+    (setf (cffi:mem-ref out-ptr :int64) 0)
+    
+    (format t "Executing Julia JIT function via CFFI Zero-Allocation...~%")
+    (unwind-protect
+         (progn
+           (let ((call-code (format nil "Euler416.solve416(~D, ~D, Ptr{Int64}(~D))" 
+                                     m n 
+                                     (cffi:pointer-address out-ptr))))
+              (%jl-eval-string call-code))
+           
+           (setf result (cffi:mem-ref out-ptr :int64)))
+      
+      (cffi:foreign-free out-ptr))
+    
+    (format t "Last 9 digits of F(~D, 10^12) = ~9,'0D~%" m result)
+    result))
 
-#+| Do it | (project-euler-0416:solve)
+
+#+| Do it | (solve )
+#|------------------------------------------------------------|
+Timing the evaluation of (solve)
+Initializing Julia Runtime...
+Loading JIT code into Julia...
+Executing Julia JIT function via CFFI Zero-Allocation...
+Last 9 digits of F(10, 10^12) = 898082747
+
+User time    =        2.688
+System time  =        0.039
+Elapsed time =        2.677
+Allocation   = 112536 bytes
+2776 Page faults
+GC time      =        0.000
+ |------------------------------------------------------------|#
+;;→ 898082747
+:ok

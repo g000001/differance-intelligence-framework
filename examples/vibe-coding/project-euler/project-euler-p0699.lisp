@@ -1,176 +1,260 @@
-;;; -*- mode: Lisp; coding: utf-8 -*-
-;;; llm-model: gemini-3.1-pro
+;;; -*- mode: Lisp; coding: utf-8  -*-
+;;; llm-model: gemini-3-flash-preview
 (cl:in-package cl-user)
-(defpackage #:project-euler-0699 (:use cl iterate alexandria) (:export #:solve))
+(defpackage #:project-euler-0699 (:use cl) (:export #:solve))
 (in-package #:project-euler-0699)
 
-#||
-【純粋な事実に基づく修正】
-・一切の `declaim optimize` を排除し、Lisp標準の安全な演算環境を維持。
-・T(100)=216 の欠落原因（n=54の喪失）を防ぐため、`sigma-3m` などの割り算において
-　`truncate` が返す多値（余り）が後続の関数呼び出しに混入しないよう `nth-value 0` で明示的に遮断。
-・到達可能素数の閉包グラフ（reachable）とプロバイダ逆探索（max-provider-idx）の
-　数理的ショートカットは O(1) 枝刈りとして 10^14 空間で極めて有効であるため保持。
-||#
+(defmacro source-pathname ()
+  "Compute source pathname"
+  `(load-time-value ,(or *compile-file-truename* *load-truename* (uiop:getcwd))))
 
-(defvar *primes* (make-array 1000000 :element-type '(unsigned-byte 32) :adjustable t :fill-pointer 0))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (ql:quickload :cffi)
+  (ql:quickload :uiop))
 
-(defun generate-primes (limit)
-  (let ((is-prime (make-array (1+ limit) :element-type 'bit :initial-element 1)))
-    (setf (sbit is-prime 0) 0 (sbit is-prime 1) 0)
-    (loop for i from 2 to (isqrt limit) do
-      (when (= (sbit is-prime i) 1)
-        (loop for j from (* i i) to limit by i do
-          (setf (sbit is-prime j) 0))))
-    (setf (fill-pointer *primes*) 0)
-    (loop for i from 2 to limit do
-      (when (= (sbit is-prime i) 1)
-        (vector-push-extend i *primes*)))))
+;;; ----------------------------------------------------------------------
+;;; Julia C API バインディングと共有ライブラリのロード
+;;; ----------------------------------------------------------------------
+(cffi:define-foreign-library libjulia
+  (:darwin (:or "libjulia.dylib" "libjulia.1.dylib"))
+  (:unix (:or "libjulia.so" "libjulia.so.1"))
+  (:windows "libjulia.dll")
+  (t (:default "libjulia")))
 
-(defun get-prime-factors (n)
-  (let ((factors nil)
-        (temp n))
-    (loop for i from 0 below (length *primes*) do
-      (let ((p (aref *primes* i)))
-        (when (> (* p p) temp) (return))
-        (when (= (mod temp p) 0)
-          (push p factors)
-          (loop while (= (mod temp p) 0) do
-            (setf temp (nth-value 0 (floor temp p)))))))
-    (when (> temp 1)
-      (push temp factors))
-    factors))
+(handler-case 
+    (cffi:use-foreign-library libjulia)
+  (error (e)
+    (format t "WARNING: Failed to load libjulia: ~A~%" e)
+    (format t "Please ensure Julia is installed and its lib path is exposed.~%")))
 
-(defun sigma-pe (p e)
-  (let ((sum 1)
-        (term 1))
-    (loop repeat e do
-      (setf term (* term p))
-      (incf sum term))
-    sum))
+(cffi:defcfun ("jl_init" %jl-init) :void)
+(cffi:defcfun ("jl_eval_string" %jl-eval-string) :pointer (str :string))
 
-(defun count-v3 (n)
-  (let ((c 0)
-        (temp n))
-    (loop while (and (> temp 0) (= (mod temp 3) 0)) do
-      (incf c)
-      (setf temp (nth-value 0 (floor temp 3))))
-    c))
+;;; ----------------------------------------------------------------------
+;;; Julia JIT Code
+;;; ----------------------------------------------------------------------
+(defparameter *julia-code-699* "
+module Euler699
+export solve699
 
-(defun sigma-3m (m)
-  ;; truncate の多値が dfs の引数に伝播するのを防ぐ
-  (nth-value 0 (floor (1- (expt 3 (1+ m))) 2)))
+function get_sigma128(p::Int64, a::Int)
+    return (Int128(p)^(a+1) - 1) ÷ (p - 1)
+end
 
-(defun solve-for-m (m N_max)
-  (let ((reachable (make-hash-table :test 'eql))
-        (new-primes nil)
-        (providers (make-hash-table :test 'eql)))
+function v3(n::Union{Int64, Int128})
+    c = 0
+    while n > 0 && n % 3 == 0
+        c += 1
+        n ÷= 3
+    end
+    return c
+end
+
+function get_prime_factors(n::Int128)
+    factors = Int64[]
+    p = Int128(2)
+    while p * p <= n
+        if n % p == 0
+            push!(factors, Int64(p))
+            while n % p == 0
+                n ÷= p
+            end
+        end
+        p += 1
+    end
+    if n > 1
+        push!(factors, Int64(n))
+    end
+    return factors
+end
+
+function max_p_factor(n::Int128)
+    n == 1 && return Int64(1)
+    p = Int128(2)
+    max_p = Int64(1)
+    while p * p <= n
+        if n % p == 0
+            max_p = Int64(p)
+            while n % p == 0
+                n ÷= p
+            end
+        end
+        p += 1
+    end
+    if n > 1
+        max_p = Int64(n)
+    end
+    return max_p
+end
+
+function solve699(limit_pow::Int, out_ptr::Ptr{UInt64})
+    limit_N = Int64(10)^limit_pow
     
-    (dolist (p (get-prime-factors (sigma-3m m)))
-      (unless (= p 3)
-        (setf (gethash p reachable) t)
-        (push p new-primes)))
-    
-    (loop while new-primes do
-      (let ((next-primes nil))
-        (dolist (q new-primes)
-          (let ((q_pow q) (e 1))
-            (loop while (<= q_pow N_max) do
-              (let ((factors (get-prime-factors (sigma-pe q e))))
-                (dolist (r factors)
-                  (unless (= r 3)
-                    (push q (gethash r providers))
-                    (unless (gethash r reachable)
-                      (setf (gethash r reachable) t)
-                      (push r next-primes)))))
-              (setf q_pow (* q_pow q))
-              (incf e))))
-        (setf new-primes next-primes)))
-        
-    (let* ((allowed-list (alexandria:hash-table-keys reachable))
-           (allowed-primes (sort allowed-list #'>))
-           (allowed-array (make-array (length allowed-primes) :initial-contents allowed-primes))
-           (max-provider-idx (make-hash-table :test 'eql))
-           (prime-to-idx (make-hash-table :test 'eql))
-           (ans 0)
-           (3-to-m (expt 3 m)))
-      
-      (loop for i from 0 below (length allowed-array) do
-        (setf (gethash (aref allowed-array i) prime-to-idx) i))
-        
-      (maphash (lambda (r q-list)
-                 (let ((max-i -1))
-                   (dolist (q q-list)
-                     (let ((idx (gethash q prime-to-idx)))
-                       (when (and idx (> idx max-i))
-                         (setf max-i idx))))
-                   (setf (gethash r max-provider-idx) max-i)))
-               providers)
-               
-      (incf ans 3-to-m)
-      
-      (labels ((dfs (idx M A B B_factors v3)
-                 (when (= idx (length allowed-array))
-                   (return-from dfs))
-                 
-                 (let ((p (aref allowed-array idx)))
-                   ;; pを使わない分岐
-                   (dfs (1+ idx) M A B B_factors v3)
-                   
-                   ;; pを使う分岐
-                   (let ((p_pow p) (e 1))
-                     (loop while (<= (* M p_pow) N_max) do
-                       (let* ((sig (sigma-pe p e))
-                              (v3_sig (count-v3 sig))
-                              (new_v3 (+ v3 v3_sig)))
-                         (when (< new_v3 m)
-                           (let* ((new_A (* A sig))
-                                  (new_B (* B p_pow))
-                                  (g (gcd new_A new_B))
-                                  (A_prime (nth-value 0 (floor new_A g)))
-                                  (B_prime (nth-value 0 (floor new_B g))))
-                             (let ((new_B_factors (if (member p B_factors) B_factors (cons p B_factors))))
-                               (let ((actual_B_factors nil))
-                                 (dolist (r new_B_factors)
-                                   (when (= (mod B_prime r) 0)
-                                     (push r actual_B_factors)))
-                                 
-                                 (let ((possible t))
-                                   (when (> B_prime 1)
-                                     (dolist (r actual_B_factors)
-                                       (let ((max_idx (gethash r max-provider-idx)))
-                                         (when (or (null max_idx) (<= max_idx idx))
-                                           (setf possible nil)
-                                           (return)))))
-                                   (when possible
-                                     (when (= B_prime 1)
-                                       (incf ans (* M p_pow 3-to-m)))
-                                     (dfs (1+ idx) (* M p_pow) A_prime B_prime actual_B_factors new_v3))))))))
-                       (setf p_pow (* p_pow p))
-                       (incf e))))))
-        (dfs 0 1 (sigma-3m m) 1 nil 0)
-        ans))))
+    # 素数篩（約 5.77 * 10^6 まで必要なので余裕をもって 10^7）
+    sieve_max = 10000000
+    is_prime = trues(sieve_max)
+    is_prime[1] = false
+    for p = 2:isqrt(sieve_max)
+        if is_prime[p]
+            for i = p*p:p:sieve_max
+                is_prime[i] = false
+            end
+        end
+    end
+    primes = Int64[]
+    for p = 2:sieve_max
+        if p != 3 && is_prime[p]
+            push!(primes, p)
+        end
+    end
 
-(defun solve-for-N (N)
-  (let ((total-ans 0))
-    (loop for m from 1 do
-      (let ((N_max (nth-value 0 (floor N (expt 3 m)))))
-        (when (= N_max 0) (return))
-        (incf total-ans (solve-for-m m N_max))))
-    total-ans))
+    total_sum = Ref{Int128}(0)
 
+    function get_max_ratio(p_idx::Int, L_rem::Int64)
+        ratio = 1.0
+        for i in p_idx:length(primes)
+            p = primes[i]
+            if p > L_rem
+                break
+            end
+            ratio *= p / (p - 1)
+            L_rem ÷= p
+        end
+        return ratio
+    end
+
+    function dfs(p_idx::Int, current_r::Int64, num::Int128, den::Int128, v3_sigma::Int, m::Int, L::Int64)
+        # 現在の r が条件を満たす場合（分母が完全にキャンセルされた）
+        if den == 1
+            total_sum[] += Int128(3)^m * current_r
+        end
+
+        if p_idx > length(primes)
+            return
+        end
+
+        p = primes[p_idx]
+        if current_r * p > L
+            return
+        end
+
+        # Prune 1: Max Ratio Pruning (Float誤差回避のため 1.000001 を乗算)
+        if den > num
+            max_rat = get_max_ratio(p_idx, L ÷ current_r)
+            if Float64(num) * max_rat * 1.000001 < Float64(den)
+                return
+            end
+        end
+
+        # Prune 2: 必要なキャンセル素数が未来の範囲を超えている場合
+        if den > 1
+            P = max_p_factor(den)
+            if P - 1 > L ÷ current_r
+                return
+            end
+        end
+
+        limit_for_p = isqrt(L ÷ current_r)
+
+        # Prune 3: Tail Mode (残り1つの素数しか追加できない領域への次元崩壊)
+        if p > limit_for_p
+            factors = get_prime_factors(num)
+            for f in factors
+                if f >= p && f != 3
+                    fa = f
+                    a = 1
+                    while num % fa == 0
+                        if current_r * fa <= L
+                            sigma_fa = get_sigma128(f, a)
+                            new_v3 = v3_sigma + v3(sigma_fa)
+                            if new_v3 < m
+                                if ((num ÷ fa) * sigma_fa) % den == 0
+                                    total_sum[] += Int128(3)^m * current_r * fa
+                                end
+                            end
+                        end
+                        fa *= f
+                        a += 1
+                    end
+                end
+            end
+            return
+        end
+
+        # 分岐1: p を追加しない
+        dfs(p_idx + 1, current_r, num, den, v3_sigma, m, L)
+
+        # 分岐2: p^a を追加する
+        pa = p
+        a = 1
+        while current_r * pa <= L
+            sigma_pa = get_sigma128(p, a)
+            new_v3 = v3_sigma + v3(sigma_pa)
+            
+            if new_v3 < m
+                new_num = num * sigma_pa
+                new_den = den * pa
+                g = gcd(new_num, new_den)
+                dfs(p_idx + 1, current_r * pa, new_num ÷ g, new_den ÷ g, new_v3, m, L)
+            end
+            
+            pa *= p
+            a += 1
+        end
+    end
+
+    # 3^m の探索
+    for m = 1:30
+        L = limit_N ÷ (Int64(3)^m)
+        if L == 0
+            break
+        end
+        C = get_sigma128(Int64(3), m)
+        dfs(1, Int64(1), C, Int128(1), 0, m, L)
+    end
+
+    # 128bit メモリへの書き込み
+    ts = total_sum[]
+    unsafe_store!(out_ptr, UInt64(ts & 0xFFFFFFFFFFFFFFFF), 1)
+    unsafe_store!(out_ptr, UInt64((ts >> 64) & 0xFFFFFFFFFFFFFFFF), 2)
+end
+end # module
+")
+
+;;; ----------------------------------------------------------------------
+;;; Lisp 実行関数
+;;; ----------------------------------------------------------------------
 (defun solve ()
-  (format t "観測: 10^7までの素数テーブルを構築中...~%")
-  (generate-primes 10000000)
-  (format t "観測: テストケース T(100) を検証中...~%")
-  (let ((ans100 (solve-for-N 100)))
-    (format t "観測: T(100) = ~D (Expected: 270)~%" ans100))
-  (format t "観測: テストケース T(10^6) を検証中...~%")
-  (let ((ans1M (solve-for-N 1000000)))
-    (format t "観測: T(10^6) = ~D (Expected: 26089287)~%" ans1M))
-  (format t "観測: 本探索 T(10^14) を実行中...~%")
-  (let ((ans (solve-for-N 100000000000000)))
-    (format t "Answer: ~D~%" ans)
-    ans))
-
-#+| Do it | (project-euler-0699:solve)
+  "Find T(10^14)."
+  (format t "Initializing Julia Runtime...~%")
+  (%jl-init)
+  
+  (format t "Loading JIT code into Julia...~%")
+  (%jl-eval-string *julia-code-699*)
+  
+  (let* ((limit-pow 14)
+         ;; 128bit (16bytes) のメモリ領域を確保
+         (out-ptr (cffi:foreign-alloc :uint64 :count 2))
+         (result 0))
+    
+    (setf (cffi:mem-aref out-ptr :uint64 0) 0)
+    (setf (cffi:mem-aref out-ptr :uint64 1) 0)
+    
+    (format t "Executing Julia JIT function via CFFI Zero-Allocation...~%")
+    (unwind-protect
+         (progn
+           (time
+            (let ((call-code (format nil "Euler699.solve699(~D, Ptr{UInt64}(~D))" 
+                                     limit-pow 
+                                     (cffi:pointer-address out-ptr))))
+              (%jl-eval-string call-code)))
+           
+           ;; Lisp側で 128bit のデータを再構築
+           (let ((lo (cffi:mem-aref out-ptr :uint64 0))
+                 (hi (cffi:mem-aref out-ptr :uint64 1)))
+             (setf result (+ lo (ash hi 64)))))
+      
+      (cffi:foreign-free out-ptr))
+    
+    (format t "T(10^~D) = ~D~%" limit-pow result)
+    result))
