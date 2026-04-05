@@ -1,5 +1,5 @@
-;;; -*- mode: Lisp; coding: utf-8 -*-
-;;; llm-model: gemini-3.1-pro
+;;; -*- mode: Lisp; coding: utf-8  -*-
+;;; llm-model: gemini-3-flash-preview
 (cl:in-package cl-user)
 (defpackage #:project-euler-0789 (:use cl iterate alexandria) (:export #:solve))
 (in-package #:project-euler-0789)
@@ -7,205 +7,170 @@
 (defmacro optimized-code-p (boole)
   (typecase boole
     (null nil)
-    (T `(declaim (optimize (speed 3) (safety 0) (debug 0) #+lispworks (hcl:fixnum-safety 0))))))
+    (T `(declaim (optimize (speed 3) (safety 0) (debug 0))))))
 
-(optimized-code-p nil)
+(optimized-code-p T)
 
-#||
-【究極の自己批判と完全な次元崩壊】
-1. Bignum 爆発の回避: 
-   前回の「ヒープ枯渇」の真の原因は、DFS 探索中に Bignum (多倍長整数 K) を数百万個も
-   生成・保持したことによる Lisp オブジェクトの割り当て（Allocation）爆発でした。
-   本解法では、探索中は「状態 (mod p)」「コスト」「親ノードへのインデックス」のみを 
-   32-bit の固定長配列に記録し、Bignum は一切生成しません。
-   最適コストが確定した合流の瞬間にのみ `reconstruct-k` 関数で経路を逆算し Bignum を計算します。
-   これにより、ヒープ使用量を 150MB 以下から わずか 数十MB へと完全に抑え込みました。
+(defconstant +p+ 2000000011)
 
-2. Lisp のイディオムによるメモリ内ソート:
-   存在しない `:end` パラメータを排し、`displaced-to`（変位配列）を用いることで、
-   固定長配列の有効な部分だけをインプレースでソートする高速な二分探索基盤を構築しました。
+;; -----------------------------------------------------------------------------
+;; ユーティリティ: 64bit整数の算術
+;; -----------------------------------------------------------------------------
+(declaim (inline mod-inv))
+(defun mod-inv (a m)
+  (declare (type integer a m))
+  (let ((m0 m)
+        (y 0)
+        (x 1)
+        (a0 a))
+    (declare (type integer m0 y x a0))
+    (if (= m 1) (return-from mod-inv 0))
+    (iterate (while (> a0 1))
+      (let ((q (truncate a0 m0)))
+        (let ((t-val m0))
+          (setf m0 (rem a0 m0)
+                a0 t-val)
+          (setf t-val y
+                y (- x (* q y))
+                x t-val))))
+    (if (< x 0) (+ x m) x)))
 
-3. 不変量の真理:
-   最適コスト和を与える $K$ は $\prod q_i \equiv -1 \pmod p$ を満たす最小の $\sum(q_i-1)$ の状態です。
-   「Meet-in-the-Middle」と「Single-prime completion」の組み合わせにより、探索深さを半分に抑えつつ
-   巨大空間 $2 \times 10^9$ の真の最適解へと 1分以内に到達します。
-||#
+;; -----------------------------------------------------------------------------
+;; データストレージ: フラット配列によるキャッシュ最適化
+;; -----------------------------------------------------------------------------
+(defvar *primes* (make-array 34 :element-type 'integer
+                             :initial-contents '(2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 
+                                                 61 67 71 73 79 83 89 97 101 103 107 109 113 127 131 137 139)))
 
-(defconstant +MAX-STATES+ 8000000)
-(defvar *states-mod* (make-array +MAX-STATES+ :element-type '(unsigned-byte 32)))
-(defvar *states-cost* (make-array +MAX-STATES+ :element-type '(unsigned-byte 8)))
-(defvar *states-last-q* (make-array +MAX-STATES+ :element-type '(unsigned-byte 32)))
-(defvar *states-prev* (make-array +MAX-STATES+ :element-type '(unsigned-byte 32)))
-(defvar *indices* (make-array +MAX-STATES+ :element-type '(unsigned-byte 32)))
-(defvar *state-count* 0)
+(defvar *a-mod-vals* (make-array 1000000 :element-type 'integer :adjustable t :fill-pointer 0))
+(defvar *a-weights* (make-array 1000000 :element-type 'integer :adjustable t :fill-pointer 0))
+(defvar *a-vals* (make-array 1000000 :element-type 'integer :adjustable t :fill-pointer 0))
 
-(defvar *primes* (make-array 500 :element-type '(unsigned-byte 32) :adjustable t :fill-pointer 0))
+(defvar *min-w* 1000000)
+(defvar *best-product* 0)
 
-(defun generate-primes-list (limit)
-  (let ((is-prime (make-array (1+ limit) :element-type 'bit :initial-element 1)))
-    (setf (sbit is-prime 0) 0 (sbit is-prime 1) 0)
-    (loop for i from 2 to (isqrt limit) do
-      (when (= (sbit is-prime i) 1)
-        (loop for j from (* i i) to limit by i do
-          (setf (sbit is-prime j) 0))))
-    (setf (fill-pointer *primes*) 0)
-    (loop for i from 2 to limit do
-      (when (= (sbit is-prime i) 1)
-        (vector-push-extend i *primes*)))))
+(declaim (type integer *min-w*)
+         (type integer *best-product*))
 
-(defun is-prime-p (n)
-  (declare (type (unsigned-byte 64) n))
-  (if (<= n 1) (return-from is-prime-p nil))
-  (if (= n 2) (return-from is-prime-p t))
-  (if (= (mod n 2) 0) (return-from is-prime-p nil))
-  (loop for i from 3 to (isqrt n) by 2 do
-    (if (= (mod n i) 0) (return-from is-prime-p nil)))
-  t)
+;; -----------------------------------------------------------------------------
+;; DFS A: リストAの生成
+;; -----------------------------------------------------------------------------
+(defun dfs-a (idx w v m max-w)
+  (declare (type integer idx w max-w)
+           (type integer v m))
+  (let* ((inv (mod-inv m +p+))
+         (target (mod (- +p+ inv) +p+)))
+    (vector-push-extend target *a-mod-vals*)
+    (vector-push-extend w *a-weights*)
+    (vector-push-extend v *a-vals*))
 
-(defun mod-inverse (a m)
-  (declare (type (signed-byte 64) a m))
-  (let ((x0 1) (x1 0) (a0 a) (b0 m))
-    (declare (type (signed-byte 64) x0 x1 a0 b0))
-    (loop while (> b0 0) do
-      (multiple-value-bind (q r) (truncate a0 b0)
-        (declare (type (signed-byte 64) q r))
-        (setf a0 b0 b0 r)
-        (let ((x2 (- x0 (* q x1))))
-          (declare (type (signed-byte 64) x2))
-          (setf x0 x1 x1 x2))))
-    (if (= a0 1)
-        (mod x0 m)
-        nil)))
+  (iterate (for i from idx below 34)
+    (let* ((p (aref *primes* i))
+           (pw (1- p)))
+      (when (<= (+ w pw) max-w)
+        (dfs-a i (+ w pw) (* v p) (mod (* m p) +p+) max-w)))))
 
-(defun dfs1 (p-idx current-mod current-cost max-cost p last-q prev-idx)
-  (declare (type fixnum p-idx current-cost max-cost)
-           (type (unsigned-byte 32) current-mod p last-q prev-idx))
-  (when (>= *state-count* +MAX-STATES+)
-    (error "Max states exceeded. Reduce limit or increase array size."))
+;; -----------------------------------------------------------------------------
+;; DFS B: 枝刈り付き探索
+;; -----------------------------------------------------------------------------
+(defun dfs-b (idx w v m max-w compressed-count)
+  (declare (type integer idx w max-w)
+           (type integer v m)
+           (type fixnum compressed-count))
   
-  (let ((my-idx *state-count*))
-    (setf (aref *states-mod* my-idx) current-mod)
-    (setf (aref *states-cost* my-idx) current-cost)
-    (setf (aref *states-last-q* my-idx) last-q)
-    (setf (aref *states-prev* my-idx) prev-idx)
-    (incf *state-count*)
-
-    (loop for i from p-idx below (length *primes*) do
-      (let* ((q (aref *primes* i))
-             (next-cost (+ current-cost q -1)))
-        (declare (type fixnum next-cost q))
-        (if (> next-cost max-cost)
-            (return)
-            (dfs1 i (mod (* current-mod q) p) next-cost max-cost p q my-idx))))))
-
-(defun reconstruct-k (idx)
-  (let ((k 1)
-        (curr idx))
-    (loop while (> curr 0) do
-      (setf k (* k (aref *states-last-q* curr)))
-      (setf curr (aref *states-prev* curr)))
-    k))
-
-(defun find-matches-range (target)
-  (let ((low 0) (high (1- *state-count*)) (first-match nil))
-    (loop while (<= low high) do
-      (let* ((mid (ash (+ low high) -1))
-             (idx (aref *indices* mid))
-             (val (aref *states-mod* idx)))
-        (cond ((= val target)
-               (setf first-match mid)
-               (setf high (1- mid)))
-              ((< val target)
-               (setf low (1+ mid)))
+  ;; 二分探索
+  (let ((left 0)
+        (right (1- compressed-count)))
+    (declare (type fixnum left right))
+    (iterate (while (<= left right))
+      (let* ((mid (ash (+ left right) -1))
+             (mid-m (aref *a-mod-vals* mid)))
+        (declare (type fixnum mid) (type integer mid-m))
+        (cond ((= mid-m m)
+               (let ((total-w (+ w (aref *a-weights* mid))))
+                 (when (< total-w *min-w*)
+                   (setf *min-w* total-w)
+                   (setf *best-product* (* v (aref *a-vals* mid)))))
+               (finish))
+              ((< mid-m m)
+               (setf left (1+ mid)))
               (t
-               (setf high (1- mid))))))
-    (if first-match
-        (let ((end-match first-match))
-          (loop while (and (< end-match *state-count*)
-                           (= (aref *states-mod* (aref *indices* end-match)) target))
-                do (incf end-match))
-          (values first-match end-match))
-        (values nil nil))))
+               (setf right (1- mid)))))))
 
-(defun solve-for (p)
-  (generate-primes-list 1000)
-  (let ((limit 62) ;; コスト上限を62に設定（両側で124。P789空間にはこれで十分届く）
-        (best-cost 1000000000)
-        (best-k nil))
-    (setf *state-count* 0)
+  ;; 動的枝刈り
+  (iterate (for i from idx below 34)
+    (let* ((p (aref *primes* i))
+           (pw (1- p))
+           (next-w (+ w pw)))
+      (when (and (< next-w *min-w*) (<= next-w max-w))
+        (dfs-b i next-w (* v p) (mod (* m p) +p+) max-w compressed-count)))))
+
+;; -----------------------------------------------------------------------------
+;; ソート用インデックス管理 (C版の Item 構造体ソートを模倣)
+;; -----------------------------------------------------------------------------
+(defun sort-list-a (count)
+  (declare (type fixnum count))
+  (let ((indices (make-array count :element-type 'fixnum)))
+    (iterate (for i from 0 below count) (setf (aref indices i) i))
+    ;; mod_val でソート
+    (setf indices (sort indices #'(lambda (i j) (< (aref *a-mod-vals* i) (aref *a-mod-vals* j)))))
     
-    (dfs1 0 1 0 limit p 1 0)
+    ;; インデックスに基づいて配列を再配置
+    (let ((new-mod (make-array count :element-type 'integer))
+          (new-weight (make-array count :element-type 'integer))
+          (new-val (make-array count :element-type 'integer)))
+      (iterate (for i from 0 below count)
+        (let ((old-idx (aref indices i)))
+          (setf (aref new-mod i) (aref *a-mod-vals* old-idx))
+          (setf (aref new-weight i) (aref *a-weights* old-idx))
+          (setf (aref new-val i) (aref *a-vals* old-idx))))
+      (setf (fill-pointer *a-mod-vals*) 0 (fill-pointer *a-weights*) 0 (fill-pointer *a-vals*) 0)
+      (iterate (for i from 0 below count)
+        (vector-push-extend (aref new-mod i) *a-mod-vals*)
+        (vector-push-extend (aref new-weight i) *a-weights*)
+        (vector-push-extend (aref new-val i) *a-vals*)))))
 
-    ;; Lisp変位配列によるインプレースソート
-    (let ((active-indices (make-array *state-count* :element-type '(unsigned-byte 32) 
-                                      :displaced-to *indices*)))
-      (loop for i from 0 below *state-count* do 
-        (setf (aref active-indices i) i))
-      (sort active-indices (lambda (a b) (< (aref *states-mod* a) (aref *states-mod* b)))))
-
-    ;; Meet in the middle: 二つの生成済み状態の組み合わせ
-    (loop for i from 0 below *state-count* do
-      (let* ((idx1 (aref *indices* i))
-             (m1 (aref *states-mod* idx1))
-             (c1 (aref *states-cost* idx1)))
-        (when (< (* c1 2) best-cost)
-          (let* ((inv (mod-inverse m1 p))
-                 (target (if (null inv) -1 (mod (- p inv) p))))
-            (when (>= target 0)
-              (multiple-value-bind (start end) (find-matches-range target)
-                (when start
-                  (loop for j from start below end do
-                    (let* ((idx2 (aref *indices* j))
-                           (c2 (aref *states-cost* idx2))
-                           (total-cost (+ c1 c2)))
-                      (cond ((< total-cost best-cost)
-                             (setf best-cost total-cost)
-                             (setf best-k (* (reconstruct-k idx1) (reconstruct-k idx2))))
-                            ((= total-cost best-cost)
-                             (let ((k (* (reconstruct-k idx1) (reconstruct-k idx2))))
-                               (when (or (null best-k) (< k best-k))
-                                 (setf best-k k))))))))))))))
-
-    ;; Single-prime completion: 一方が生成済み状態、もう一方が limit 以上の巨大素数
-    (loop for i from 0 below *state-count* do
-      (let* ((m1 (aref *states-mod* i))
-             (c1 (aref *states-cost* i))
-             (inv (mod-inverse m1 p)))
-        (when inv
-          (let ((qreq (mod (- p inv) p)))
-            (when (and (> qreq limit)
-                       (<= (+ c1 qreq -1) best-cost)
-                       (is-prime-p qreq))
-              (let ((total-cost (+ c1 qreq -1)))
-                (cond ((< total-cost best-cost)
-                       (setf best-cost total-cost)
-                       (setf best-k (* (reconstruct-k i) qreq)))
-                      ((= total-cost best-cost)
-                       (let ((k (* (reconstruct-k i) qreq)))
-                         (when (or (null best-k) (< k best-k))
-                           (setf best-k k)))))))))))
-    best-k))
-
+;; -----------------------------------------------------------------------------
+;; メインエントリ
+;; -----------------------------------------------------------------------------
 (defun solve ()
-  (format t "観測: テストケース T(5) を検証中...~%")
-  (let ((ans5 (solve-for 5)))
-    (format t "観測: T(5) = ~D (Expected: 4)~%" ans5))
-    
-  (format t "観測: テストケース T(7) を検証中...~%")
-  (let ((ans7 (solve-for 7)))
-    (format t "観測: T(7) = ~D (Expected: 6)~%" ans7))
-    
-  (format t "観測: テストケース T(11) を検証中...~%")
-  (let ((ans11 (solve-for 11)))
-    (format t "観測: T(11) = ~D (Expected: 10)~%" ans11))
-    
-  (format t "観測: テストケース T(23) を検証中...~%")
-  (let ((ans23 (solve-for 23)))
-    (format t "観測: T(23) = ~D (Expected: 45)~%" ans23))
+  (setf (fill-pointer *a-mod-vals*) 0
+        (fill-pointer *a-weights*) 0
+        (fill-pointer *a-vals*) 0
+        *min-w* 1000000
+        *best-product* 0)
 
-  (format t "観測: 本探索 T(2000000011) を実行中...~%")
-  (let ((ans (solve-for 2000000011)))
-    (format t "Answer: ~D~%" ans)
-    ans))
+  (let ((w-a-max 110)
+        (w-b-max 140))
+    
+    (format t "Phase 1: Generating List A...~%")
+    (dfs-a 0 0 1 1 w-a-max)
+    
+    (let ((count (length *a-mod-vals*)))
+      (format t "Sorting and Compressing ~A elements...~%" count)
+      (sort-list-a count)
 
-#+| Do it | (project-euler-0789:solve)
+      ;; 重複削除 (圧縮)
+      (let ((compressed-count 0)
+            (prev-m #xFFFFFFFF))
+        (declare (type fixnum compressed-count) (type integer prev-m))
+        (iterate (for i from 0 below count)
+          (let ((curr-m (aref *a-mod-vals* i)))
+            (if (/= curr-m prev-m)
+                (progn
+                  (setf (aref *a-mod-vals* compressed-count) curr-m
+                        (aref *a-weights* compressed-count) (aref *a-weights* i)
+                        (aref *a-vals* compressed-count) (aref *a-vals* i))
+                  (setf prev-m curr-m)
+                  (incf compressed-count))
+                (when (< (aref *a-weights* i) (aref *a-weights* (1- compressed-count)))
+                  (setf (aref *a-weights* (1- compressed-count)) (aref *a-weights* i)
+                        (aref *a-vals* (1- compressed-count)) (aref *a-vals* i))))))
+
+        (format t "Phase 2: On-the-fly DFS with Dynamic Pruning...~%")
+        (dfs-b 0 0 1 1 w-b-max compressed-count)))
+    
+    (format t "Final Answer: ~A~%" *best-product*)
+    *best-product*))
+
+#+| Do it | (solve )
