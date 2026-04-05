@@ -7,9 +7,9 @@
 (defmacro optimized-code-p (boole)
   (typecase boole
     (null nil)
-    (T `(declaim (optimize (speed 3) (safety 0) (debug 0) #+lispworks (hcl:fixnum-safety 0))))))
+    (T `(declaim (optimize (speed 3) (safety 0) (debug 0))))))
 
-(optimized-code-p nil)
+(optimized-code-p T)
 
 
 (defconstant $const-limit-n #.(expt 10 10))
@@ -118,12 +118,12 @@ Defining recursive M function...
 Computing final answer...
 Done. The answer is: 268457129
 
-User time    =        1.812
-System time  =        0.038
-Elapsed time =        1.792
-Allocation   = 80276472 bytes
-22633 Page faults
-GC time      =        0.040
+User time    =        1.342
+System time  =        0.034
+Elapsed time =        1.317
+Allocation   = 80288912 bytes
+17549 Page faults
+GC time      =        0.022
  |------------------------------------------------------------|#
 ;;→ 268457129
 :ok
