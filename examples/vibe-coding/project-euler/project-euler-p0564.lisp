@@ -116,14 +116,14 @@
                  (let ((edge-len (car edge-cell))
                        (edge-count (cdr edge-cell)))
                    (if (= edge-len max-edge)
-                       (incf sum-angles (* (1- edge-count) (asin (min 1.0d0 (/ (coerce edge-len 'double-float) max-edge)))))
-                       (incf sum-angles (* edge-count (asin (min 1.0d0 (/ (coerce edge-len 'double-float) max-edge))))))))
+                       (incf sum-angles (* (1- edge-count) (asin (min 1.0d0 (/ edge-len max-edge)))))
+                       (incf sum-angles (* edge-count (asin (min 1.0d0 (/ edge-len max-edge))))))))
                
                (let* ((is-internal-p (> sum-angles (/ pi 2.0d0)))
                       (signed-edges (build-signed-edges edge-list max-edge is-internal-p))
                       (curvature-x (solve-curvature signed-edges max-edge is-internal-p))
                       (poly-area (calculate-area signed-edges curvature-x)))
-                 (incf expected-area (* (coerce (/ perm-count tot-perm-count) 'double-float) poly-area))))))))
+                 (incf expected-area (* (/ perm-count tot-perm-count) poly-area))))))))
      (- num-sides 3) (- num-sides 3) nil)
     expected-area))
 
