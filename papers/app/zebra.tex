@@ -1,0 +1,130 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+\title{Algebraic Representation of the Zebra Program}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Algebraic Operators}
+
+We assume the following algebraic operators:
+
+\begin{itemize}
+  \item $\circ$ : sequential composition of constraints
+  \item $\otimes$ : parallel (independent) composition
+  \item $\oplus$ : nondeterministic choice
+  \item $\mu$ : least fixpoint (recursion / search)
+\end{itemize}
+
+Primitive constraint generators:
+\[
+\mathrm{unify}(\cdot),\quad
+\mathrm{mem}(\cdot),\quad
+\mathrm{shift},\quad
+\mathrm{swap}
+\]
+
+\section*{Definition of \texttt{iright}}
+
+The right-adjacency relation is defined as a recursive constraint generator:
+
+\[
+\mathrm{ir}
+\;:=\;
+\mu X.\;
+\Big(
+  \mathrm{match}(L,R)
+  \;\oplus\;
+  \mathrm{shift} \circ X
+\Big)
+\]
+
+\section*{Definition of \texttt{nextto}}
+
+The symmetric adjacency relation is defined by disjunction:
+
+\[
+\mathrm{nt}
+\;:=\;
+\mathrm{ir}
+\;\oplus\;
+\mathrm{swap} \circ \mathrm{ir}
+\]
+
+\section*{Algebraic Form of the Zebra Program}
+
+The Zebra puzzle is represented as a single fixpoint expression:
+
+\[
+\begin{aligned}
+Z
+\;:=\;
+\mu\Bigg(
+&
+\mathrm{unify}\Big(
+[\,\mathrm{house}(\mathrm{norwegian},\_,\_,\_,\_),
+\_,
+\mathrm{house}(\_,\_,\_,\mathrm{milk},\_),
+\_,
+\_]
+\Big)
+\\[4pt]
+&\circ
+\bigotimes
+\begin{aligned}[t]
+(&\mathrm{mem}(\mathrm{house}(\mathrm{englishman},\_,\_,\_,\mathrm{red})) \\
+\otimes\;&\mathrm{mem}(\mathrm{house}(\mathrm{spaniard},\mathrm{dog},\_,\_,\_)) \\
+\otimes\;&\mathrm{mem}(\mathrm{house}(\_,\_,\_,\mathrm{coffee},\mathrm{green})) \\
+\otimes\;&\mathrm{mem}(\mathrm{house}(\mathrm{ukrainian},\_,\_,\mathrm{tea},\_)) \\
+\otimes\;&\mathrm{mem}(\mathrm{house}(\_,\mathrm{snails},\mathrm{winston},\_,\_)) \\
+\otimes\;&\mathrm{mem}(\mathrm{house}(\_,\_,\mathrm{kools},\_,\mathrm{yellow})) \\
+\otimes\;&\mathrm{mem}(\mathrm{house}(\_,\_,\mathrm{luckystrike},\mathrm{oj},\_)) \\
+\otimes\;&\mathrm{mem}(\mathrm{house}(\mathrm{japanese},\_,\mathrm{parliaments},\_,\_)) \\
+\otimes\;&\mathrm{mem}(\mathrm{house}(W,\_,\_,\mathrm{water},\_)) \\
+\otimes\;&\mathrm{mem}(\mathrm{house}(Z,\mathrm{zebra},\_,\_,\_))
+)
+\end{aligned}
+\\[6pt]
+&\circ
+\Big(
+\mathrm{ir}\big(
+\mathrm{house}(\_,\_,\_,\_,\mathrm{ivory}),
+\mathrm{house}(\_,\_,\_,\_,\mathrm{green})
+\big)
+\\
+&\qquad\otimes\;
+\mathrm{nt}\big(
+\mathrm{house}(\_,\_,\mathrm{chesterfield},\_,\_),
+\mathrm{house}(\_,\mathrm{fox},\_,\_,\_)
+\big)
+\\
+&\qquad\otimes\;
+\mathrm{nt}\big(
+\mathrm{house}(\_,\_,\mathrm{kools},\_,\_),
+\mathrm{house}(\_,\mathrm{horse},\_,\_,\_)
+\big)
+\\
+&\qquad\otimes\;
+\mathrm{nt}\big(
+\mathrm{house}(\mathrm{norwegian},\_,\_,\_,\_),
+\mathrm{house}(\_,\_,\_,\_,\mathrm{blue})
+\big)
+\Big)
+\Bigg)
+\end{aligned}
+\]
+
+\section*{Interpretation}
+
+This single expression represents the complete Zebra program.
+Execution corresponds to projection into a lower-dimensional operational
+semantics (e.g.\ Prolog), while refactoring and optimization correspond
+to algebraic transformation at this level.
+
+\end{document}
