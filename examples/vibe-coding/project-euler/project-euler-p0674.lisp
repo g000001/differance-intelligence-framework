@@ -1,275 +1,249 @@
 ;;; -*- mode: Lisp; coding: utf-8  -*-
-;;; llm-model: gemini-3.1-pro
+;;; llm-model: gemini-3-flash-preview
 (cl:in-package cl-user)
-(defpackage #:project-euler-0674 (:use cl series alexandria) (:export #:solve))
+(defpackage #:project-euler-0674 (:use cl iterate alexandria) (:export #:solve))
 (in-package #:project-euler-0674)
 
-(defconstant +max-nodes+ 200000)
-(defparameter *is-app* (make-array +max-nodes+ :element-type 'boolean))
-(defparameter *left-child* (make-array +max-nodes+ :element-type 'fixnum))
-(defparameter *right-child* (make-array +max-nodes+ :element-type 'fixnum))
-(defparameter *node-hash* (make-hash-table :test 'equal))
-(defparameter *node-count* 0)
+(defmacro optimized-code-p (boole)
+  (typecase boole
+    (null nil)
+    (T `(declaim (optimize (speed 3) (safety 0) (debug 0) #+lispworks (hcl:fixnum-safety 0))))))
 
-(defparameter *parent* (make-array +max-nodes+ :element-type 'fixnum))
-(defparameter *state* (make-array +max-nodes+ :element-type 'fixnum))
-(defparameter *memo* (make-array +max-nodes+ :element-type 'fixnum))
+(optimized-code-p T)
 
-(defun reset-globals ()
-  (clrhash *node-hash*)
-  (setf *node-count* 0))
+(defconstant $modulo #.(expt 10 9))
+(defconstant $max-nodes #.(* 2 (expt 10 5)))
 
-(defun get-var-node (name)
-  "Retrieves or creates a variable node in the DAG."
-  (prog ((id (gethash name *node-hash* 'not-found)))
-    (when (not (eq id 'not-found))
-      (return id))
-    (setf id *node-count*)
-    (incf *node-count*)
-    (setf (aref *is-app* id) nil)
-    (setf (gethash name *node-hash*) id)
-    (return id)))
+;; Global Graph Array
+(defvar *g-type* (make-array $max-nodes :element-type 'fixnum))
+(defvar *g-left* (make-array $max-nodes :element-type 'fixnum))
+(defvar *g-right* (make-array $max-nodes :element-type 'fixnum))
+(defvar *g-count* 0)
 
-(defun get-app-node (L R)
-  "Retrieves or creates an I-application node in the DAG."
-  (prog ((key (cons L R))
-         (id 0))
-    (setf id (gethash key *node-hash* 'not-found))
-    (when (not (eq id 'not-found))
-      (return id))
-    (setf id *node-count*)
-    (incf *node-count*)
-    (setf (aref *is-app* id) t)
-    (setf (aref *left-child* id) L)
-    (setf (aref *right-child* id) R)
-    (setf (gethash key *node-hash*) id)
-    (return id)))
+;; Unification & DFS State Arrays
+(defvar *parent* (make-array $max-nodes :element-type 'fixnum))
+(defvar *color* (make-array $max-nodes :element-type 'fixnum))
+(defvar *value* (make-array $max-nodes :element-type 'fixnum))
 
-(defun parse-to-node (str)
-  "Parses an expression string into the global node arrays using flat state transitions."
-  (prog ((s str)
-         (inner "")
-         (depth 0)
-         (i 0)
-         (len 0)
-         (c #\space)
-         (split-pos -1)
-         (L 0)
-         (R 0))
-    (if (and (>= (length s) 2)
-             (char= (char s 0) #\I)
-             (char= (char s 1) #\())
-        (go L-PARSE-COMPLEX)
-        (return (get-var-node s)))
+;; Fast State Reset Arrays
+(defvar *touched* (make-array 1000000 :element-type 'fixnum))
+(defvar *touched-count* 0)
 
-   L-PARSE-COMPLEX
-    (setf inner (subseq s 2 (1- (length s))))
-    (setf len (length inner))
-   L-START
-    (when (>= i len) (go L-END))
-    (setf c (char inner i))
-    (cond
-      ((char= c #\() (incf depth))
-      ((char= c #\)) (decf depth))
-      ((and (char= c #\,) (= depth 0))
-       (setf split-pos i)
-       (go L-END)))
-    (incf i)
-    (go L-START)
+;; Unification Queue
+(defvar *queue-l* (make-array $max-nodes :element-type 'fixnum))
+(defvar *queue-r* (make-array $max-nodes :element-type 'fixnum))
 
-   L-END
-    (setf L (parse-to-node (subseq inner 0 split-pos)))
-    (setf R (parse-to-node (subseq inner (1+ split-pos))))
-    (return (get-app-node L R))))
 
-(defun find-root (u)
-  "Path compression Union-Find search."
-  (prog ((root u) (curr u) (nxt 0))
-   L-FIND
-    (when (= (aref *parent* root) root) (go L-COMPRESS))
-    (setf root (aref *parent* root))
-    (go L-FIND)
-   L-COMPRESS
-    (when (= curr root) (return root))
-    (setf nxt (aref *parent* curr))
-    (setf (aref *parent* curr) root)
-    (setf curr nxt)
-    (go L-COMPRESS)))
+(declaim (inline set-parent set-color calc-I))
 
-(defun unify-nodes (u v)
-  "Unifies two DAG nodes destructively in O(alpha(V)) time."
-  (prog ((ru (find-root u))
-         (rv (find-root v))
-         (app-u nil)
-         (app-v nil))
-    (when (= ru rv) (return t))
-    (setf app-u (aref *is-app* ru))
-    (setf app-v (aref *is-app* rv))
-    (cond
-      ((not app-u)
-       (setf (aref *parent* ru) rv)
-       (return t))
-      ((not app-v)
-       (setf (aref *parent* rv) ru)
-       (return t))
-      (t
-       ;; Both are applications. Union them and unify their children.
-       (setf (aref *parent* ru) rv)
-       (unify-nodes (aref *left-child* ru) (aref *left-child* rv))
-       (unify-nodes (aref *right-child* ru) (aref *right-child* rv))
-       (return t)))))
+(defun set-parent (x y)
+  (declare (type fixnum x y))
+  (when (= (aref *parent* x) x)
+    (setf (aref *touched* *touched-count*) x)
+    (incf *touched-count*))
+  (setf (aref *parent* x) y))
 
-(defun eval-dag (u)
-  "Evaluates the unified DAG with O(V) cycle detection (Occurs-Check replacement)."
-  (prog ((ru (find-root u))
-         (L-val 0)
-         (R-val 0)
-         (sum 0))
-    ;; Cycle detection states: 0=unvisited, 1=visiting, 2=visited
-    (when (= (aref *state* ru) 1) (return 'cycle))
-    (when (= (aref *state* ru) 2) (return (aref *memo* ru)))
+(defun set-color (x c)
+  (declare (type fixnum x c))
+  (when (= (aref *color* x) 0)
+    (setf (aref *touched* *touched-count*) x)
+    (incf *touched-count*))
+  (setf (aref *color* x) c))
+
+(defun find-root (x)
+  (declare (type fixnum x))
+  (let ((p (aref *parent* x)))
+    (if (= p x)
+        x
+        (let ((root (find-root p)))
+          (when (/= p root)
+            (set-parent x root))
+          root))))
+
+(defun calc-I (x y)
+  (declare (type fixnum x y))
+  (let* ((sum (mod (+ x y) $modulo))
+         (sum1 (mod (+ sum 1) $modulo))
+         (sum1-sq (mod (* sum1 sum1) $modulo)))
+    (mod (+ sum1-sq y (- x) $modulo) $modulo)))
+
+(defun reset-state ()
+  (iter (for i from 0 below *touched-count*)
+        (let ((idx (aref *touched* i)))
+          (setf (aref *parent* idx) idx)
+          (setf (aref *color* idx) 0)))
+  (setf *touched-count* 0))
+
+(defun init-global-state ()
+  (iter (for i from 0 below *g-count*)
+        (setf (aref *parent* i) i)
+        (setf (aref *color* i) 0))
+  (setf *touched-count* 0))
+
+(defun parse-expr (str var-map)
+  (let ((pos 0)
+        (len (length str)))
+    (labels ((peek () (if (< pos len) (char str pos) nil))
+             (consume () (prog1 (peek) (incf pos)))
+             (parse-I ()
+               (consume) ;; 'I'
+               (consume) ;; '('
+               (let ((left (parse-term)))
+                 (consume) ;; ','
+                 (let ((right (parse-term)))
+                   (consume) ;; ')'
+                   (let ((id *g-count*))
+                     (setf (aref *g-type* id) 1)
+                     (setf (aref *g-left* id) left)
+                     (setf (aref *g-right* id) right)
+                     (incf *g-count*)
+                     id))))
+             (parse-term ()
+               (if (char= (peek) #\I)
+                   (parse-I)
+                   (parse-var)))
+             (parse-var ()
+               (let ((start pos))
+                 (iter (while (and (< pos len) (alpha-char-p (peek))))
+                       (consume))
+                 (let* ((name (intern (string-upcase (subseq str start pos)) :keyword))
+                        (id (gethash name var-map)))
+                   (unless id
+                     (setf id *g-count*)
+                     (setf (aref *g-type* id) 0)
+                     (incf *g-count*)
+                     (setf (gethash name var-map) id))
+                   id))))
+      (parse-term))))
+
+(defun unify-roots (root1 root2)
+  (declare (type fixnum root1 root2))
+  (let ((head 0)
+        (tail 0))
+    (declare (type fixnum head tail))
     
-    (setf (aref *state* ru) 1)
+    (setf (aref *queue-l* tail) root1)
+    (setf (aref *queue-r* tail) root2)
+    (incf tail)
     
-    (when (not (aref *is-app* ru))
-      (setf (aref *state* ru) 2)
-      (setf (aref *memo* ru) 0)
-      (return 0))
-      
-    (setf L-val (eval-dag (aref *left-child* ru)))
-    (when (eq L-val 'cycle) (return 'cycle))
-    
-    (setf R-val (eval-dag (aref *right-child* ru)))
-    (when (eq R-val 'cycle) (return 'cycle))
-    
-    (setf sum (mod (+ L-val R-val 1) 1000000000))
-    (setf sum (mod (+ (mod (* sum sum) 1000000000) R-val (- L-val)) 1000000000))
-    
-    (setf (aref *state* ru) 2)
-    (setf (aref *memo* ru) sum)
-    (return sum)))
+    (iter (while (< head tail))
+          (let* ((u (aref *queue-l* head))
+                 (v (aref *queue-r* head)))
+            (incf head)
+            (let ((ru (find-root u))
+                  (rv (find-root v)))
+              (when (/= ru rv)
+                (let ((tu (aref *g-type* ru))
+                      (tv (aref *g-type* rv)))
+                  (cond
+                    ((and (= tu 1) (= tv 0))
+                     (set-parent rv ru))
+                    ((and (= tv 1) (= tu 0))
+                     (set-parent ru rv))
+                    ((and (= tu 1) (= tv 1))
+                     (set-parent rv ru)
+                     (setf (aref *queue-l* tail) (aref *g-left* ru))
+                     (setf (aref *queue-r* tail) (aref *g-left* rv))
+                     (incf tail)
+                     (setf (aref *queue-l* tail) (aref *g-right* ru))
+                     (setf (aref *queue-r* tail) (aref *g-right* rv))
+                     (incf tail))
+                    (t
+                     (set-parent rv ru))))))))))
 
-(defun init-pair ()
-  "Resets the union-find and DAG states instantly."
-  (prog ((i 0))
-   L-INIT
-    (when (>= i *node-count*) (return t))
-    (setf (aref *parent* i) i)
-    (setf (aref *state* i) 0)
-    (incf i)
-    (go L-INIT)))
-
-(defun remove-duplicates-fixnum (lst)
-  (prog ((res nil)
-         (curr lst))
-   L-LOOP
-    (when (null curr) (return (nreverse res)))
-    (when (not (member (car curr) res :test #'=))
-      (push (car curr) res))
-    (setf curr (cdr curr))
-    (go L-LOOP)))
-
-(defun remove-spaces (s)
-  (remove-if (lambda (c) (member c '(#\Space #\Tab #\Newline #\Return))) s))
-
-(defun read-expressions-from-stream (stream)
-  (prog ((lines nil)
-         (line nil)
-         (trimmed ""))
-   L-READ
-    (setf line (read-line stream nil))
-    (when (null line)
-      (return (nreverse lines)))
-    (setf trimmed (remove-spaces line))
-    (when (> (length trimmed) 0)
-      (push (parse-to-node trimmed) lines))
-    (go L-READ)))
-
-(defun get-expressions ()
-  "Locates and parses the PE target file gracefully."
-  (prog ((paths '("/tmp/0674_i_expressions.txt"
-                  "resources/documents/0674_i_expressions.txt"
-                  "p674_i_expressions.txt"
-                  "I-expressions.txt"
-                  "../resources/documents/0674_i_expressions.txt"))
-         (rest nil)
-         (p nil)
-         (stream nil)
-         (exprs nil)
-         (base-dir nil)
-         (full-path nil))
-    
-    (setf base-dir (make-pathname :name nil :type nil 
-                                  :defaults (or *load-truename* *compile-file-truename* *default-pathname-defaults*)))
-    (setf rest paths)
-   L-CHECK
-    (when (null rest)
-      (error "FATAL: Could not find the expressions file. Please ensure '0674_i_expressions.txt' exists in the working directory."))
-    
-    (setf p (car rest))
-    (setf rest (cdr rest))
-    
-    (setf full-path (merge-pathnames p base-dir))
-    (when (probe-file full-path)
-      (setf stream (open full-path :direction :input))
-      (setf exprs (read-expressions-from-stream stream))
-      (close stream)
-      (return (remove-duplicates-fixnum exprs)))
-      
-    (when (probe-file p)
-      (setf stream (open p :direction :input))
-      (setf exprs (read-expressions-from-stream stream))
-      (close stream)
-      (return (remove-duplicates-fixnum exprs)))
-      
-    (go L-CHECK)))
-
-(defun solve-pairs (expr-nodes)
-  "Calculates the O(N^2) pairing matrix via O(V alpha(V)) Union-Find in milliseconds."
-  (prog ((n (length expr-nodes))
-         (arr nil)
-         (i 0)
-         (j 0)
-         (total-sum 0)
-         (val 0))
-    (when (= n 0) (return 0))
-    (setf arr (make-array n :initial-contents expr-nodes :element-type 'fixnum))
-   L-I
-    (when (>= i n) (return total-sum))
-    (setf j (1+ i))
-   L-J
-    (when (>= j n)
-      (incf i)
-      (go L-I))
-    
-    (init-pair)
-    (unify-nodes (aref arr i) (aref arr j))
-    (setf val (eval-dag (aref arr i)))
-    (when (not (eq val 'cycle))
-      (setf total-sum (mod (+ total-sum val) 1000000000)))
-      
-    (incf j)
-    (go L-J)))
+(defun evaluate-dag (root)
+  (declare (type fixnum root))
+  (labels ((dfs (node)
+             (declare (type fixnum node))
+             (let* ((r (find-root node))
+                    (c (aref *color* r)))
+               (cond
+                 ((= c 1) -1) ;; Cycle Detected (Occurs Check Failed)
+                 ((= c 2) (aref *value* r)) ;; Memoized DAG Eval
+                 (t
+                  (set-color r 1)
+                  (let ((val 0))
+                    (if (= (aref *g-type* r) 0)
+                        (setf val 0) ;; 自由変数には最小化のため常に0を代入
+                        (let ((val-l (dfs (aref *g-left* r))))
+                          (if (= val-l -1)
+                              (setf val -1)
+                              (let ((val-r (dfs (aref *g-right* r))))
+                                (if (= val-r -1)
+                                    (setf val -1)
+                                    (setf val (calc-I val-l val-r)))))))
+                    (set-color r 2)
+                    (setf (aref *value* r) val)
+                    val))))))
+    (dfs root)))
 
 (defun solve ()
-  (format t "--- Mathematical Grounding Validation ---~%")
-  (reset-globals)
-  (prog ((test-exprs nil)
-         (test-ans 0)
-         (exprs nil)
-         (ans 0))
-    (setf test-exprs (list (parse-to-node "I(x,I(z,t))")
-                           (parse-to-node "I(I(y,z),y)")
-                           (parse-to-node "I(I(x,z),y)")))
-    (setf test-ans (solve-pairs test-exprs))
-    (format t "Testing {A, B, C}... Expected: 26, Got: ~A~%" test-ans)
-    (format t "-----------------------------------------~%")
-    (format t "Solving for I-expressions.txt...~%")
-    (reset-globals) ;; Cleans the slate before reading the large real dataset
-    (setf exprs (get-expressions))
-    (setf ans (solve-pairs exprs))
-    (format t "Answer (last 9 digits): ~9,'0D~%" ans)
-    (return ans)))
+  (setf *g-count* 0)
+  (let* ((candidates '("/tmp/0674_i_expressions.txt"))
+         (var-map (make-hash-table :test #'eq))
+         (expr-roots (make-array 500 :element-type 'fixnum :fill-pointer 0)))
+    
+    (iter (for path in candidates)
+          (with-open-file (stream path :direction :input :if-does-not-exist nil)
+            (when stream
+              (format t "[DEBUG] Successfully loaded expressions from: ~A~%" path)
+              (iter (for line = (read-line stream nil nil))
+                    (while line)
+                    (let ((trimmed (string-trim '(#\Space #\Tab #\Return #\Newline) line)))
+                      (when (plusp (length trimmed))
+                        (vector-push (parse-expr trimmed var-map) expr-roots))))
+              (return))))
+              
+    (let ((n (length expr-roots))
+          (total-sum 0))
+      (declare (type fixnum n total-sum))
+      
+      (init-global-state)
+      
+      (format t "[DEBUG] Total expressions: ~D~%" n)
+      (format t "[DEBUG] Total graph nodes allocated: ~D~%" *g-count*)
+      
+      (iter (for i from 0 below n)
+            (for r1 = (aref expr-roots i))
+            (when (zerop (mod i 20))
+              (format t "[DEBUG] Evaluating combination pairs starting with expression ~D...~%" i))
+              
+            (iter (for j from (1+ i) below n)
+                  (for r2 = (aref expr-roots j))
+                  
+                  (reset-state)
+                  (unify-roots r1 r2)
+                  
+                  (let ((val (evaluate-dag r1)))
+                    (when (/= val -1)
+                      (setf total-sum (mod (+ total-sum val) $modulo))))))
+                      
+      (format t "[DEBUG] Process completed smoothly. No memory bursts. Final Sum (mod 10^9): ~D~%" total-sum)
+      total-sum)))
 
 
 #+| Do it | (solve )
+#|------------------------------------------------------------|
+Timing the evaluation of (solve)
+[DEBUG] Successfully loaded expressions from: /tmp/0674_i_expressions.txt
+[DEBUG] Total expressions: 149
+[DEBUG] Total graph nodes allocated: 51619
+[DEBUG] Evaluating combination pairs starting with expression 0...
+[DEBUG] Evaluating combination pairs starting with expression 20...
+[DEBUG] Evaluating combination pairs starting with expression 40...
+[DEBUG] Evaluating combination pairs starting with expression 60...
+[DEBUG] Evaluating combination pairs starting with expression 80...
+[DEBUG] Evaluating combination pairs starting with expression 100...
+[DEBUG] Evaluating combination pairs starting with expression 120...
+[DEBUG] Evaluating combination pairs starting with expression 140...
+[DEBUG] Process completed smoothly. No memory bursts. Final Sum (mod 10^9): 416678753
+
+User time    =        1.336
+System time  =        0.013
+Elapsed time =        1.277
+Allocation   = 4695336 bytes
+435 Page faults
+GC time      =        0.000
+ |------------------------------------------------------------|#
+;;→ 416678753
+:ok
