@@ -1,4 +1,4 @@
-;;; -*- mode: Lisp; coding: utf-8  -*-
+#|;;; -*- mode: Lisp; coding: utf-8  -*-
 ;;; llm-model: gemini-3-flash-preview
 (cl:in-package cl-user)
 (defpackage #:project-euler-0699 (:use cl) (:export #:solve))
@@ -257,4 +257,106 @@ end # module
       (cffi:foreign-free out-ptr))
     
     (format t "T(10^~D) = ~D~%" limit-pow result)
-    result))
+    result))|#
+
+
+;;; -*- mode: Lisp; coding: utf-8  -*-
+;;; llm-model: gemini-3-flash-preview
+(cl:in-package cl-user)
+(defpackage #:project-euler-0699 (:use cl iterate alexandria) (:export #:solve))
+(in-package #:project-euler-0699)
+
+(defmacro optimized-code-p (boole)
+  (typecase boole
+    (null nil)
+    (T `(declaim (optimize (speed 3) (safety 0) (debug 0) #+lispworks (hcl:fixnum-safety 0))))))
+
+(optimized-code-p T)
+
+(defun get-prime-factors (n)
+  (declare (type integer n))
+  (let ((factors nil))
+    (when (evenp n)
+      (push 2 factors)
+      (iterate (while (evenp n))
+               (setf n (ash n -1))))
+    (let ((d 3))
+      (declare (type integer d))
+      (iterate (while (<= (* d d) n))
+               (when (zerop (mod n d))
+                 (push d factors)
+                 (iterate (while (zerop (mod n d)))
+                          (setf n (truncate n d))))
+               (incf d 2)))
+    (when (> n 1) (push n factors))
+    factors))
+
+(defvar *prime-factors-memo* (make-hash-table :test 'eql))
+
+(defun memo-prime-factors (n)
+  (or (gethash n *prime-factors-memo*)
+      (setf (gethash n *prime-factors-memo*) (get-prime-factors n))))
+
+(defun sigma-val (p e)
+  (declare (type integer p) (type fixnum e))
+  (let ((sum 1) (term 1))
+    (declare (type integer sum term))
+    (iterate (for i from 1 to e)
+             (setf term (* term p))
+             (incf sum term))
+    sum))
+
+(defun v3-count (n)
+  (declare (type integer n))
+  (let ((count 0))
+    (declare (type fixnum count))
+    (iterate (while (zerop (mod n 3)))
+             (incf count)
+             (setf n (truncate n 3)))
+    count))
+
+(defun solve (&optional (N 100000000000000))
+  (clrhash *prime-factors-memo*)
+  (let ((ans 0)
+        (visited (make-hash-table :test 'eql)))
+    (labels ((dfs (M num avail-primes m-limit limit)
+               (when (gethash M visited)
+                 (return-from dfs))
+               (setf (gethash M visited) t)
+               
+               ;; 不変量の検証：Mが分子を割り切り、かつ約分後の3の指数が正であるか
+               (when (and (zerop (mod num M))
+                          (< (v3-count num) m-limit))
+                 (incf ans (* (expt 3 m-limit) M)))
+               
+               (iterate (for p in avail-primes)
+                 (let ((p-pow p)
+                       (e 1))
+                   (iterate (while (<= (* M p-pow) limit))
+                     (let* ((new-M (* M p-pow))
+                            (sig (sigma-val p e))
+                            (new-num (* num sig)))
+                       (unless (gethash new-M visited)
+                         ;; 次の素数候補を差分更新（経路非依存性の担保）
+                         (let ((new-factors (memo-prime-factors sig))
+                               (next-avail (copy-list avail-primes)))
+                           (iterate (for nf in new-factors)
+                             (unless (or (= nf 3) (member nf next-avail))
+                               (push nf next-avail)))
+                           ;; Mに含まれる素数は候補から除外
+                           (setf next-avail (remove-if (lambda (x) (zerop (mod new-M x))) next-avail))
+                           (dfs new-M new-num next-avail m-limit limit))))
+                     (setf p-pow (* p-pow p))
+                     (incf e))))))
+      
+      (let ((max-m (floor (log N 3))))
+        (iterate (for m from 1 to max-m)
+          (let* ((K (sigma-val 3 m))
+                 ;; 初期の利用可能な素数はKの素因数（3を除く）
+                 (K-factors (remove 3 (memo-prime-factors K)))
+                 (limit (truncate N (expt 3 m))))
+            (clrhash visited)
+            (dfs 1 K K-factors m limit)
+            ;; デバッグと進行状況の観測用ログ
+            (format t "Finished m=~2A, limit=~15A, intermediate_ans=~A~%" m limit ans))))
+      ans)))
