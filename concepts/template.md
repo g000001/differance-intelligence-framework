@@ -12,9 +12,9 @@
 ## 定理 (Propositio)
 ...定義と公理から導き出される論理的命題
 
-証明 (Demonstratio)
-...定理の正しさを演繹的に示すプロセス
-
+### 定理n
+...
+### 証明n (Demonstratio)
 ...
 
 ## 系 (Corollarium)
