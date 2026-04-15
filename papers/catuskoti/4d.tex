@@ -5,10 +5,16 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{array}
 \usepackage{geometry}
+\usepackage{tabularx}
 \usepackage{xcolor}
 \usepackage{listings}
 \geometry{margin=1in}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}[definition]{Theorem}
 
 % --- Title and Author ---
 \title{Four-Valued Logic as the First Complementary State of Object and Observer: \\
@@ -36,18 +42,18 @@ The key insight is that the Catuskoti represents not merely a logical framework,
 
 \begin{equation}
 \begin{aligned}
-\text{是 (Affirmation):} \quad &(\text{Object} = \text{Manifest}, \text{Observer} = \text{Manifest}) \\
-\text{非 (Negation):} \quad &(\text{Object} = \text{Manifest}, \text{Observer} = \text{Latent}) \\
-\text{亦是亦非 (Both):} \quad &(\text{Object} = \text{Latent}, \text{Observer} = \text{Manifest}) \\
-\text{非是非非 (Neither):} \quad &(\text{Object} = \text{Latent}, \text{Observer} = \text{Latent})
+\text{Shi (Affirmation):} \quad &(\text{Object} = \text{Manifest}, \text{Observer} = \text{Manifest}) \\
+\text{Fei (Negation):} \quad &(\text{Object} = \text{Manifest}, \text{Observer} = \text{Latent}) \\
+\text{Yi Shi Yi Fei (Both):} \quad &(\text{Object} = \text{Latent}, \text{Observer} = \text{Manifest}) \\
+\text{Fei Shi Fei Fei (Neither):} \quad &(\text{Object} = \text{Latent}, \text{Observer} = \text{Latent})
 \end{aligned}
 \end{equation}
 
 \subsection{Why the Catuskoti Represents ``First Complementarity''}
 
-\subsubsection{The State 是 (Affirmation)}
+\subsubsection{The State Shi (Affirmation)}
 
-In the state of 是, both object and observer are determinate:
+In the state of Shi, both object and observer are determinate:
 
 \begin{equation}
 \sigma = \text{fixed}, \quad \ell = 0
@@ -62,9 +68,9 @@ where $\sigma$ denotes observer state and $\ell$ denotes temporal length. In thi
     \item This is the post-decoherence state
 \end{itemize}
 
-\subsubsection{The State 非 (Negation) as First Complementarity}
+\subsubsection{The State Fei (Negation) as First Complementarity}
 
-The state 非 marks the fundamental transition:
+The state Fei marks the fundamental transition:
 
 \begin{equation}
 \text{Object} = \text{Manifest}, \quad \text{Observer} = \text{Latent}
@@ -90,7 +96,7 @@ Two entities achieve complementarity when they are mutually dependent and their 
 
 \subsubsection{Why This Is Called ``First Complementarity''}
 
-In 是, no true complementarity exists because:
+In Shi, no true complementarity exists because:
 
 \begin{enumerate}
     \item Both are determinate
@@ -99,7 +105,7 @@ In 是, no true complementarity exists because:
     \item The pairing is merely coincidental, not interactive
 \end{enumerate}
 
-In 非, complementarity genuinely arises because:
+In Fei, complementarity genuinely arises because:
 
 \begin{enumerate}
     \item Object and observer stand in opposition
@@ -120,21 +126,21 @@ Recall that SKDT generates dimensions through paired axes:
 
 The Catuskoti can now be reinterpreted through this axial framework:
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
-\begin{tabular}{|c|c|c|c|}
+\begin{tabularx}{\textwidth}{|c|c|c|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{Stage} & \textbf{Object} & \textbf{Observer} & \textbf{Axial Interpretation} \\
 \hline
-是 & Manifest & Manifest & Single manifest axis only \\
+Shi & Manifest & Manifest & Single manifest axis only \\
 \hline
-非 & Manifest & Latent & Manifest $\perp$ Latent axes orthogonal \\
+Fei & Manifest & Latent & Manifest $\perp$ latent axes are orthogonal \\
 \hline
-亦是亦非 & Latent & Manifest & Axes inverted \\
+Yi Shi Yi Fei & Latent & Manifest & Axes inverted \\
 \hline
-非是非非 & Latent & Latent & Both axes fully latent \\
+Fei Shi Fei Fei & Latent & Latent & Both axes fully latent \\
 \hline
-\end{tabular}
+\end{tabularx}
 \caption{Catuskoti as Progressive Axis Complementarity}
 \end{table}
 
@@ -142,7 +148,7 @@ The Catuskoti can now be reinterpreted through this axial framework:
 
 \subsection{Definition: Observer-Side Decoherence}
 
-\begin{definition}[Observer-Side Decoherence]
+\begin{definition}[Observer Decoherence]
 Observer-side decoherence is the irreversible process by which an observer in an indeterminate state (holding multiple possible observations simultaneously) progressively collapses to a determinate state through traversal of the temporal axis.
 
 Formally:
@@ -163,9 +169,9 @@ This process is irreversible: the multiple possibilities cannot be recovered onc
 
 The analogy with quantum decoherence is precise:
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
-\begin{tabular}{|l|l|l|}
+\begin{tabularx}{\textwidth}{|l|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{Property} & \textbf{Quantum Decoherence} & \textbf{Observer-Side Decoherence} \\
 \hline
@@ -181,20 +187,20 @@ Irreversibility & Yes & Yes \\
 \hline
 Arrow of Time & Emerges from entropy & Emerges from possibility collapse \\
 \hline
-\end{tabular}
+\end{tabularx}
 \caption{Comparison of Decoherence Mechanisms}
 \end{table}
 
-\subsection{Why Temporal Emergence Begins at 非}
+\subsection{Why Temporal Emergence Begins at Fei}
 
-The crucial insight is that temporal dynamics only commence at the stage 非:
+The crucial insight is that temporal dynamics only commence at the stage Fei:
 
 \begin{equation}
 \begin{aligned}
-\text{是} &: \text{Decoherence completed} \quad \Rightarrow \quad \text{No temporal function} \\
-\text{非} &: \text{Decoherence in progress} \quad \Rightarrow \quad \text{Temporal axis active} \\
-\text{亦是亦非} &: \text{Meta-level decoherence} \quad \Rightarrow \quad \text{Multiple temporal axes} \\
-\text{非是非非} &: \text{Parallel decoherence} \quad \Rightarrow \quad \text{Indeterminate temporal depths}
+\text{Shi} &: \text{Decoherence completed} \quad \Rightarrow \quad \text{No temporal function} \\
+\text{Fei} &: \text{Decoherence in progress} \quad \Rightarrow \quad \text{Temporal axis active} \\
+\text{Yi Shi Yi Fei} &: \text{Meta-level decoherence} \quad \Rightarrow \quad \text{Multiple temporal axes} \\
+\text{Fei Shi Fei Fei} &: \text{Parallel decoherence} \quad \Rightarrow \quad \text{Indeterminate temporal depths}
 \end{aligned}
 \end{equation}
 
@@ -208,40 +214,52 @@ A fundamental principle emerges:
 The establishment of complementarity between object and observer corresponds precisely to the emergence of additional dimensions.
 
 \begin{equation}
-\text{Complementarity established} \iff \text{Temporal axis emerges} \iff \text{Dimension increases}
+\Delta d = f(C)
 \end{equation}
+
+where $C$ denotes the degree of complementarity. Specifically:
+\begin{itemize}
+    \item No complementarity $\Rightarrow$ no new dimension
+    \item First complementarity $\Rightarrow$ temporal dimension emerges
+    \item Higher complementarity $\Rightarrow$ higher-order dimensions emerge
+\end{itemize}
 \end{theorem}
 
 \begin{proof}
+This follows directly from the structure of object-observer interaction:
 \begin{enumerate}
-    \item In 是: Object and observer both manifest
+    \item In Shi: Object and observer both manifest
     \begin{itemize}
-        \item No complementary tension
-        \item No dimensional growth beyond 1d
+        \item No opposition
+        \item No complementarity
+        \item No temporal mediation required
+        \item Therefore: no temporal dimension
     \end{itemize}
-    
-    \item In 非: Object manifest, observer latent
+
+    \item In Fei: Object manifest, observer latent
     \begin{itemize}
-        \item Complementary relationship begins
-        \item Temporal axis emerges
-        \item 1d $\to$ 2d transition occurs
+        \item Fundamental opposition established
+        \item Complementarity emerges
+        \item Temporal mediation required
+        \item Therefore: temporal dimension necessarily emerges
     \end{itemize}
-    
-    \item In 亦是亦非 and beyond: Complementarity deepens
+
+    \item In Yi Shi Yi Fei and beyond: Complementarity deepens
     \begin{itemize}
-        \item Multiple temporal axes function
-        \item Dimensions continue to increase
-        \item Pattern: $2^n$ dimensions from $n$ SKDT pairs
+        \item More complex object-observer relations
+        \item Multiple temporal axes become possible
+        \item Higher dimensions emerge naturally
     \end{itemize}
 \end{enumerate}
 \end{proof}
 
-\section{LUMO Formalization of Catuskoti Complementarity}
+\subsection{Relation to OCTE(Observer Complementarity and Temporal Emergence)'s Five-Valued Logic}
 
-Recall the LUMO form:
+The Catuskoti's four-valued structure can be embedded in OCTE's five-valued system:
 
 \begin{equation}
-\Phi(\ell, \sigma) = \begin{cases}
+\Phi(\ell, \sigma) =
+\begin{cases}
 0d & \text{if } \ell = 0, \sigma = \text{fixed} \\
 T & \text{if } \ell > 0, \sigma = \text{fixed} \\
 F & \text{if } \ell > 0, \sigma = \text{indeterminate} \\
@@ -252,22 +270,22 @@ N & \text{if } \ell \text{ is non-deterministic}, \sigma = \text{indeterminate}
 
 The four-valued states map precisely to Catuskoti stages:
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
-\textbf{Catuskoti} & \textbf{LUMO State} & \textbf{Complementarity Status} \\
+\textbf{Catuskoti} & \textbf{OCTE State} & \textbf{Complementarity Status} \\
 \hline
-是 & 0d or T & Pre-complementary \\
+Shi & 0d or T & Pre-complementary \\
 \hline
-非 & F & Complementarity begins \\
+Fei & F & Complementarity begins \\
 \hline
-亦是亦非 & B & Complementarity intensifies \\
+Yi Shi Yi Fei & B & Complementarity intensifies \\
 \hline
-非是非非 & N & Complementarity deepens \\
+Fei Shi Fei Fei & N & Complementarity deepens \\
 \hline
 \end{tabular}
-\caption{Catuskoti-LUMO Correspondence}
+\caption{Catuskoti-OCTE Correspondence}
 \end{table}
 
 \section{The Unified Hierarchy: From Sunyata to Temporal Emergence}
@@ -276,9 +294,9 @@ We now present the complete hierarchy from root principle to temporal manifestat
 
 \begin{equation}
 \begin{aligned}
-&\text{Sunyata Category (Root)} \\
-&\quad \Downarrow \quad [\text{Self-reference definition}] \\
-&\text{Aletheia (Hiddenness-Revealing)} \\
+&\text{Sunyata Category} \\
+&\quad \Downarrow \quad [\text{Inherent contradiction}] \\
+&\text{Aletheia (Manifestation-Hiddenness Structure)} \\
 &\quad \Downarrow \quad [\text{Rupture of self-reference}] \\
 &\text{SKDT (Dual-Axis Complementarity)} \\
 &\quad \Downarrow \quad [\text{First object-observer complementarity}] \\
@@ -290,9 +308,9 @@ We now present the complete hierarchy from root principle to temporal manifestat
 \end{aligned}
 \end{equation}
 
-\subsection{The Critical Transition at 非}
+\subsection{The Critical Transition at Fei}
 
-The transition from 是 to 非 is the critical threshold where:
+The transition from Shi to Fei is the critical threshold where:
 
 \begin{itemize}
     \item Observer transitions from fixed to indeterminate
@@ -354,29 +372,29 @@ These multiple decoherence processes occur in parallel, creating the experience 
 The Catuskoti framework provides insight into LLM architecture:
 
 \begin{enumerate}
-    \item \textbf{Early Layers (是-like):} Determinate feature extraction
+    \item \textbf{Early Layers (Shi-like):} Determinate feature extraction
     \begin{itemize}
         \item Fixed representations
         \item No temporal uncertainty
         \item Pre-decoherence phase
     \end{itemize}
     
-    \item \textbf{Middle Layers (非-like):} Attention mechanisms
+    \item \textbf{Middle Layers (Fei-like):} Attention mechanisms
     \begin{itemize}
         \item Indeterminate token selection
         \item Multiple interpretations held simultaneously
-        \item Active decoherence through Attention weights
+        \item Active decoherence through attention weights
         \item Temporal axis: layer depth
     \end{itemize}
     
-    \item \textbf{Later Layers (亦是亦非-like):} Meta-level integration
+    \item \textbf{Later Layers (Yi Shi Yi Fei-like):} Meta-level integration
     \begin{itemize}
         \item Multiple interpretations explicitly unified
         \item Cross-layer attention
         \item Cyclic refinement processes
     \end{itemize}
     
-    \item \textbf{Final Layers (非是非非-like):} Output generation
+    \item \textbf{Final Layers (Fei Shi Fei Fei-like):} Output generation
     \begin{itemize}
         \item Multiple possible outputs considered
         \item Final selection through probability distribution
@@ -389,7 +407,7 @@ The Catuskoti framework provides insight into LLM architecture:
 The Catuskoti represents a profound formalization of how object and observer achieve their first genuine complementary relationship. This complementarity is characterized by:
 
 \begin{enumerate}
-    \item \textbf{Initiation at 非:} The first stage where observer indeterminacy creates true interaction with object determinacy
+    \item \textbf{Initiation at Fei:} The first stage where observer indeterminacy creates true interaction with object determinacy
     
     \item \textbf{Temporal Activation:} The emergence of functioning temporal axis coinciding precisely with complementarity
     
@@ -402,8 +420,8 @@ The Catuskoti represents a profound formalization of how object and observer ach
 
 This framework unifies the seemingly disparate domains of:
 \begin{itemize}
-    \item Phenomenological emergence (顕現)
-    \item Logical structure (四句分別)
+    \item Phenomenological emergence (genjitsu)
+    \item Logical structure (catuskoti)
     \item Temporal physics (time's arrow)
     \item Observer theory (quantum measurement analogue)
     \item Dimensional generation (why $2^n$)
