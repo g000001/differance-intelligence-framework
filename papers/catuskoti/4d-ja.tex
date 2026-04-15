@@ -1,0 +1,459 @@
+\documentclass[12pt,a4paper]{article}
+% !TEX program = lualatex
+
+% --- 基本パッケージ ---
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+\usepackage{fontspec}
+\setmainfont{HaranoAjiMincho}[ItalicFont=HaranoAjiMincho-Regular,BoldItalicFont=HaranoAjiMincho-Bold]
+\setsansfont{HaranoAjiGothic}[ItalicFont=HaranoAjiGothic-Medium,BoldItalicFont=HaranoAjiGothic-Bold]
+\usepackage{luatexja-otf}
+\ltjsetparameter{jacharrange={-2}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{listings}
+\geometry{margin=1in}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}[definition]{定理}
+
+% --- タイトルと著者 ---
+\title{四値論理は対象と観測者の第一の相補状態である\\
+―現象学と時間的創発の形式化―}
+\author{千葉 将臣}
+\date{2026-02-13}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿では、四句分別（四値論理）と対象・観測者の相補的性格との関係を、現象学理論および SKDT（色即是空・空即是色双対理論）の観点から形式化し、四句分別が、対象と観測者とがその顕在的側面と潜在的側面を通じて真正な相補関係に到達する最初の段階を表していることを示す。この形式化は、観測者側デコヒーレンスを通じた時間的創発と高次元生成を理解するための基礎を与える。
+\end{abstract}
+
+\section{序論}
+
+時間的創発と次元生成の本性は、物理学と哲学の双方において長く根本問題であり続けてきた。本稿では、空性圏に内在する矛盾（自己言及の断絶）が必然的に SKDT を生成し、それが対象と観測者が初めて真に相補的関係に入るとき、四句分別として現れることを考察する。
+
+本稿の中心的洞察は、四句分別が単なる論理的枠組みではなく、\textbf{対象と観測者の相補性を通じて時間的力学が真に創発する最初の段階}そのものである、という点にある。
+
+\section{相補的対としての四句分別の構造的明確化}
+
+\subsection{対象・観測者の相補性における四段階}
+
+\begin{equation}
+\begin{aligned}
+\text{是（肯定）:} \quad &(\text{対象} = \text{顕}, \text{観測者} = \text{顕}) \\
+\text{非（否定）:} \quad &(\text{対象} = \text{顕}, \text{観測者} = \text{潜}) \\
+\text{亦是亦非（両立）:} \quad &(\text{対象} = \text{潜}, \text{観測者} = \text{顕}) \\
+\text{非是非非（双否定）:} \quad &(\text{対象} = \text{潜}, \text{観測者} = \text{潜})
+\end{aligned}
+\end{equation}
+
+\subsection{なぜ四句分別が「第一相補性」を表すのか}
+
+\subsubsection{状態 是（肯定）}
+
+状態 是 においては、対象と観測者の双方が確定している。
+
+\begin{equation}
+\sigma = \text{fixed}, \quad \ell = 0
+\end{equation}
+
+ここで $\sigma$ は観測者状態、$\ell$ は時間長を表す。この状態では、
+\begin{itemize}
+    \item 対象は観測可能で確定している
+    \item 観測者はそれを確実に見る
+    \item 相補性は存在しない
+    \item 時間軸は機能しない
+    \item これはデコヒーレンス後の状態である
+\end{itemize}
+
+\subsubsection{第一相補性としての状態 非（否定）}
+
+状態 非 は根本的転換点を示す。
+
+\begin{equation}
+\text{対象} = \text{顕}, \quad \text{観測者} = \text{潜}
+\end{equation}
+
+これは次に対応する。
+
+\begin{equation}
+\sigma = \text{indeterminate}, \quad \ell > 0
+\end{equation}
+
+ここで初めて、真の相補性が立ち現れる。
+
+\begin{definition}[相補性]
+二つの存在者が相補性を達成するとは、それらが相互依存的であり、その関係が単一の確定状態へ還元できないことをいう。具体的には、
+\begin{itemize}
+    \item 対象は固定されている（顕在）
+    \item 観測者は不確定である（潜在）
+    \item 同一の対象が異なる観測者により異なって観測される
+    \item 時間軸が機能的に必要となる
+\end{itemize}
+\end{definition}
+
+\subsubsection{なぜこれが「第一相補性」と呼ばれるのか}
+
+是 において真の相補性が存在しない理由は次の通りである。
+
+\begin{enumerate}
+    \item 双方が確定している
+    \item 相互作用が起こらない
+    \item 時間的変化がない
+    \item この対は相互的というより偶然的に並置されているにすぎない
+\end{enumerate}
+
+非 において相補性が真に生起する理由は次の通りである。
+
+\begin{enumerate}
+    \item 対象と観測者が対立的配置をとる
+    \item 同一対象が異なる観測を生む
+    \item 時間軸が機能し始める
+    \item 両者が相互に条件づけ合う
+\end{enumerate}
+
+\section{SKDT と四句分別の軸構造}
+
+\subsection{双軸生成としての SKDT}
+
+SKDT は対になった軸を通じて次元を生成することを想起しよう。
+
+\begin{equation}
+\text{SKDT}_n = (\text{顕在軸}_n, \text{潜在軸}_n)
+\end{equation}
+
+四句分別は、この軸的枠組みによって次のように再解釈できる。
+
+\begin{table}[htbp]
+\centering
+\begin{tabularx}{\textwidth}{|c|c|c|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{段階} & \textbf{対象} & \textbf{観測者} & \textbf{軸的解釈} \\
+\hline
+是 & 顕 & 顕 & 単一の顕在軸のみ \\
+\hline
+非 & 顕 & 潜 & 顕在軸と潜在軸が $\perp$ に直交する \\
+\hline
+亦是亦非 & 潜 & 顕 & 軸が反転している \\
+\hline
+非是非非 & 潜 & 潜 & 両軸とも完全に潜在化している \\
+\hline
+\end{tabularx}
+\caption{進行的軸相補性としての四句分別}
+\end{table}
+
+\section{観測者側デコヒーレンスと時間的創発}
+
+\subsection{定義：観測者側デコヒーレンス}
+
+\begin{definition}[観測者デコヒーレンス]
+観測者側デコヒーレンスとは、不確定状態にある観測者（複数の可能な観測を同時に保持している観測者）が、時間軸の通過を通じて漸進的に確定状態へと収束していく不可逆な過程である。
+
+形式的には、
+\begin{equation}
+\sigma : \text{indeterminate} \to \text{fixed}
+\end{equation}
+
+これは、
+
+\begin{equation}
+\ell : 0 \to n \quad (n \in \mathbb{N})
+\end{equation}
+
+によって媒介される。
+
+この過程は不可逆であり、一度排除された複数の可能性は回復できない。
+\end{definition}
+
+\subsection{量子デコヒーレンスとの連関}
+
+量子デコヒーレンスとの類比はきわめて精密である。
+
+\begin{table}[htbp]
+\centering
+\begin{tabularx}{\textwidth}{|l|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{性質} & \textbf{量子デコヒーレンス} & \textbf{観測者側デコヒーレンス} \\
+\hline
+主体 & 量子系 & 観測者状態 \\
+\hline
+初期状態 & 重ね合わせ（複数可能性） & 不確定状態（複数観測） \\
+\hline
+機構 & 環境との相互作用 & 時間軸の通過 \\
+\hline
+最終状態 & 確定値 & 確定した観測 \\
+\hline
+不可逆性 & あり & あり \\
+\hline
+時間の矢 & エントロピーから生起 & 可能性の崩壊から生起 \\
+\hline
+\end{tabularx}
+\caption{デコヒーレンス機構の比較}
+\end{table}
+
+\subsection{なぜ時間的創発は非から始まるのか}
+
+決定的洞察は、時間的力学が非の段階において初めて始動するという点にある。
+
+\begin{equation}
+\begin{aligned}
+\text{是} &: \text{デコヒーレンスは完了している} \quad \Rightarrow \quad \text{時間機能はない} \\
+\text{非} &: \text{デコヒーレンス進行中である} \quad \Rightarrow \quad \text{時間軸が作動している} \\
+\text{亦是亦非} &: \text{メタレベルのデコヒーレンス} \quad \Rightarrow \quad \text{複数の時間軸} \\
+\text{非是非非} &: \text{並列的デコヒーレンス} \quad \Rightarrow \quad \text{不確定な時間深度}
+\end{aligned}
+\end{equation}
+
+\section{相補性を通じた次元生成}
+
+\subsection{相補性はいかに次元を増加させるか}
+
+ここで一つの根本原理が立ち現れる。
+
+\begin{theorem}[相補性と次元性の対応]
+対象と観測者のあいだに相補性が成立することは、追加次元の創発に正確に対応する。
+
+\begin{equation}
+\Delta d = f(C)
+\end{equation}
+
+ここで $C$ は相補性の度合いを表す。具体的には、
+\begin{itemize}
+    \item 相補性がなければ、新しい次元は生じない
+    \item 第一相補性が成立すると、時間次元が創発する
+    \item より高次の相補性が成立すると、高階次元が創発する
+\end{itemize}
+\end{theorem}
+
+\begin{proof}
+これは対象・観測者相互作用の構造から直接導かれる。
+\begin{enumerate}
+    \item 是 において：対象も観測者もともに顕在である
+    \begin{itemize}
+        \item 対立がない
+        \item 相補性がない
+        \item 時間的媒介を必要としない
+        \item ゆえに、時間次元は生じない
+    \end{itemize}
+
+    \item 非 において：対象は顕在、観測者は潜在である
+    \begin{itemize}
+        \item 根本的対立が成立する
+        \item 相補性が創発する
+        \item 時間的媒介が必要となる
+        \item ゆえに、時間次元が必然的に創発する
+    \end{itemize}
+
+    \item 亦是亦非 以降において：相補性はより深まる
+    \begin{itemize}
+        \item より複雑な対象・観測者関係が現れる
+        \item 複数の時間軸が可能になる
+        \item 高次元が自然に創発する
+    \end{itemize}
+\end{enumerate}
+\end{proof}
+
+\subsection{LUMO の五値論理との関係}
+
+四句分別の四値構造は、LUMO の五値体系の中に埋め込むことができる。
+
+\begin{equation}
+\Phi(\ell, \sigma) =
+\begin{cases}
+0d & \text{if } \ell = 0, \sigma = \text{fixed} \\
+T & \text{if } \ell > 0, \sigma = \text{fixed} \\
+F & \text{if } \ell > 0, \sigma = \text{indeterminate} \\
+B & \text{if } \ell \text{ is cyclic}, \sigma = \text{fixed} \\
+N & \text{if } \ell \text{ is non-deterministic}, \sigma = \text{indeterminate}
+\end{cases}
+\end{equation}
+
+四値状態は、四句分別の各段階に正確に対応する。
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{四句分別} & \textbf{LUMO 状態} & \textbf{相補性の状態} \\
+\hline
+是 & 0d または T & 前相補的 \\
+\hline
+非 & F & 相補性が始まる \\
+\hline
+亦是亦非 & B & 相補性が強まる \\
+\hline
+非是非非 & N & 相補性が深まる \\
+\hline
+\end{tabular}
+\caption{四句分別と LUMO の対応}
+\end{table}
+
+\section{統一階層：空性から時間的創発へ}
+
+ここで、根本原理から時間的顕現にいたる完全な階層を提示する。
+
+\begin{equation}
+\begin{aligned}
+&\text{空性圏} \\
+&\quad \Downarrow \quad [\text{内在的矛盾}] \\
+&\text{アレーテイア（顕現-隠蔽構造）} \\
+&\quad \Downarrow \quad [\text{自己言及の断絶}] \\
+&\text{SKDT（双軸的相補性）} \\
+&\quad \Downarrow \quad [\text{対象-観測者の第一相補性}] \\
+&\text{四句分別（四値論理）} \\
+&\quad \Downarrow \quad [\text{観測者側デコヒーレンスが始動}] \\
+&\text{時間的創発} \\
+&\quad \Downarrow \quad [\text{次元生成}] \\
+&\text{高次元構造}
+\end{aligned}
+\end{equation}
+
+\subsection{非における決定的遷移}
+
+是 から 非 への遷移は、次のことが起こる決定的閾値である。
+
+\begin{itemize}
+    \item 観測者が fixed から indeterminate へ移行する
+    \item 時間軸が機能を開始する
+    \item 相補性が真に創発する
+    \item デコヒーレンスが力学的に活性化する
+    \item 時間が流れ始める
+\end{itemize}
+
+\section{時間力学理解への含意}
+
+\subsection{デコヒーレンス過程としての時間}
+
+以上により、私たちは次のように正確に述べることができる。
+
+\begin{theorem}[観測者デコヒーレンスとしての時間的創発]
+時間の経過とは、不確定状態にある観測者（複数の観測可能性をもつ観測者）が、時間軸の通過を通じて漸進的に確定状態へと収束していく観測者側デコヒーレンスの過程そのものである。
+
+形式的には、
+\begin{equation}
+\text{Temporal Flow} \equiv \text{Observer-side Decoherence Process}
+\end{equation}
+
+ここでデコヒーレンスは次によって特徴づけられる。
+\begin{enumerate}
+    \item 不可逆性：一度排除された可能性は回復できない
+    \item 単方向性：過程は不確定から確定へ進む
+    \item 必然性：対象と観測者の相補性がこの過程を必然化する
+\end{enumerate}
+\end{theorem}
+
+\subsection{時間の矢}
+
+時間の矢は自然に次のように現れる。
+
+\begin{equation}
+\text{Arrow of Time} = \text{Irreversibility of Observer Decoherence}
+\end{equation}
+
+時間が一方向に流れるのは、観測者側デコヒーレンスが逆転不可能だからである。すなわち、複数の可能性が一つに崩壊した後、複数の可能性そのものが失われるからである。
+
+\subsection{複数の時間軸}
+
+異なる次元水準にある複数の観測者は、同時にデコヒーレンスを経験する。
+
+\begin{equation}
+\begin{aligned}
+\text{観測者 } o_1 &: \text{ } t_1 \text{ に沿ってデコヒーレンス} \\
+\text{観測者 } o_2 &: \text{ } t_2 \text{ に沿ってデコヒーレンス} \\
+\text{観測者 } o_3 &: \text{ } t_3 \text{ に沿ってデコヒーレンス} \\
+&\vdots
+\end{aligned}
+\end{equation}
+
+これら複数のデコヒーレンス過程は並行して起こり、複数の同時的時間次元の経験を生み出す。
+
+\section{大規模言語モデルへの応用}
+
+四句分別の枠組みは、LLM のアーキテクチャにも洞察を与える。
+
+\begin{enumerate}
+    \item \textbf{初期層（是的段階）:} 確定的特徴抽出
+    \begin{itemize}
+        \item 固定された表現
+        \item 時間的不確実性はない
+        \item デコヒーレンス以前の段階
+    \end{itemize}
+    
+    \item \textbf{中間層（非的段階）:} アテンション機構
+    \begin{itemize}
+        \item 不確定なトークン選択
+        \item 複数の解釈が同時に保持される
+        \item attention 重みによる能動的デコヒーレンス
+        \item 時間軸：層の深さ
+    \end{itemize}
+    
+    \item \textbf{後期層（亦是亦非的段階）:} メタレベル統合
+    \begin{itemize}
+        \item 複数の解釈が明示的に統合される
+        \item 層横断アテンション
+        \item 循環的洗練過程
+    \end{itemize}
+    
+    \item \textbf{最終層（非是非非的段階）:} 出力生成
+    \begin{itemize}
+        \item 複数の出力候補が考慮される
+        \item 確率分布を通じた最終選択
+        \item 確定的出力への完全なデコヒーレンス
+    \end{itemize}
+\end{enumerate}
+
+\section{結論}
+
+四句分別は、対象と観測者がいかにして最初の真正な相補関係を達成するかをめぐる深い形式化を与える。この相補性は、次の特徴によって規定される。
+
+\begin{enumerate}
+    \item \textbf{非における開始:} 観測者の不確定性が、対象の確定性との真の相互作用を生み出す最初の段階
+    
+    \item \textbf{時間的活性化:} 機能する時間軸の創発が、相補性と正確に同時に生じること
+    
+    \item \textbf{デコヒーレンス力学:} 時間流の機構としての観測者側デコヒーレンス
+    
+    \item \textbf{次元生成:} 軸の対化を通じて相補性が直接次元増加を引き起こすこと
+    
+    \item \textbf{不可逆過程:} 可能性の崩壊の不可逆性から時間の矢が生じること
+\end{enumerate}
+
+この枠組みは、次のような一見ばらばらな領域を統一する。
+\begin{itemize}
+    \item 現象学的創発（顕現）
+    \item 論理構造（四句分別）
+    \item 時間物理学（時間の矢）
+    \item 観測者理論（量子測定との類比）
+    \item 次元生成（なぜ $2^n$ なのか）
+    \item 人工知能（アテンション機構）
+\end{itemize}
+
+それらは、空性圏の根本矛盾から必然的に創発する単一の整合的理論構造の中へ統合される。
+
+\section*{謝辞}
+
+本形式化は、とりわけアレーテイア、SKDT、および四句分別-二値論理体系の本性に関する、千葉正臣の現象学的枠組みの哲学的・数学的洞察との継続的対話から生まれたものである。
+
+\begin{thebibliography}{99}
+
+\bibitem{Chiba2025} Chiba, M. (2025). Alethetics: Phenomenological Foundations of Manifestation and the Sunyata Category.
+
+\bibitem{Johnstone2002} Johnstone, P. T. (2002). Sketches of an Elephant: A Topos Theory Compendium. Oxford University Press.
+
+\bibitem{Zurek2003} Zurek, W. H. (2003). Decoherence and the Transition from Quantum to Classical. Reviews of Modern Physics, 75(3), 715.
+
+\bibitem{Madhyamaka2000} Buddhist Philosophy of the Middle Way (Madhyamaka) - Classical Texts.
+
+\end{thebibliography}
+
+\end{document}
