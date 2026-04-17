@@ -4,76 +4,118 @@
 (defpackage #:project-euler-0976 (:use cl iterate alexandria) (:export #:solve))
 (in-package #:project-euler-0976)
 
-#||
-Project Euler 976: Game of Strips
-[Mathematical Autopsy & Correction]
-The previous assumption that this was an impartial game (Nim) solvable by FWT was fundamentally flawed.
-Due to the strict coloring and symbol rules, X can only ever play on X-designated squares and O on O-designated squares.
-The game is strictly a Partisan Cold Game (a Number Game) where the only thing that matters is the total number of valid moves each player can secure.
-- Even-length strips always yield an equal number of moves for X and O. (Value = 0)
-- Odd-length strips yield 1 extra move for the player who plays on them first.
-Since playing on a blank strip is compulsory, the first phase is a draft where players greedily pick odd-length strips.
-X wins if and only if X secures strictly more moves than O (T_X > T_O).
-Because X plays first, this happens if and only if there is an ODD number of odd-length strips in the chosen tuple.
-The problem collapses into pure combinatorics: How many multisets of size k <= N contain an odd number of odd elements?
-Ans = \sum_{c=1, c is odd}^N \binom{M+c-1}{c} \binom{Z+N-c}{N-c}
-where M = ceil(N/2) is the number of odd strip lengths, and Z = floor(N/2) is the number of even strip lengths.
-The complexity instantly drops from O(N log N) FWT to a single O(N) summation.
-||#
+(defmacro optimized-code-p (boole)
+  (typecase boole
+    (null nil)
+    (T `(declaim (optimize (speed 3) (safety 0) (debug 0))))))
 
-(defconstant $mod 1234567891)
-(defconstant $n #.(expt 10 7))
+(optimized-code-p T)
 
-(defparameter *fact* (make-array (1+ (* 2 $n)) :element-type 'fixnum))
-(defparameter *inv-fact* (make-array (1+ (* 2 $n)) :element-type 'fixnum))
+(defconstant +mod+ 1234567891)
+(defconstant +inv2+ 617283946) ; (1234567891 + 1) / 2
 
-(defmacro mod+ (val-a val-b) `(mod (+ ,val-a ,val-b) $mod))
-(defmacro mod* (val-a val-b) `(mod (* ,val-a ,val-b) $mod))
+(defun mod-add (num-a num-b)
+  (declare (type (unsigned-byte 62) num-a num-b))
+  (let ((sum-val (+ num-a num-b)))
+    (if (>= sum-val +mod+) (- sum-val +mod+) sum-val)))
 
-(defun mod-pow (base-val exp-val)
-  (let ((result 1)
-        (curr-base (mod base-val $mod))
-        (curr-exp exp-val))
-    (iterate (while (> curr-exp 0))
-      (when (oddp curr-exp)
-        (setf result (mod* result curr-base)))
-      (setf curr-base (mod* curr-base curr-base)
-            curr-exp (ash curr-exp -1)))
-    result))
+(defun mod-sub (num-a num-b)
+  (declare (type (unsigned-byte 62) num-a num-b))
+  (let ((diff-val (- num-a num-b)))
+    (if (< diff-val 0) (+ diff-val +mod+) diff-val)))
 
-(defun mod-inv (val)
-  (mod-pow val (- $mod 2)))
-
-(defun precompute-factorials ()
-  (setf (aref *fact* 0) 1)
-  (iterate (for idx from 1 to (* 2 $n))
-    (setf (aref *fact* idx) (mod* (aref *fact* (1- idx)) idx)))
-  (setf (aref *inv-fact* (* 2 $n)) (mod-inv (aref *fact* (* 2 $n))))
-  (iterate (for idx from (1- (* 2 $n)) downto 0)
-    (setf (aref *inv-fact* idx) (mod* (aref *inv-fact* (1+ idx)) (1+ idx)))))
-
-(defun ncr (n-val r-val)
-  (if (or (< r-val 0) (> r-val n-val))
-      0
-      (mod* (aref *fact* n-val)
-            (mod* (aref *inv-fact* r-val) (aref *inv-fact* (- n-val r-val))))))
+(defun mod-mul (num-a num-b)
+  (declare (type (unsigned-byte 62) num-a num-b))
+  (mod (* num-a num-b) +mod+))
 
 (defun solve ()
-  (precompute-factorials)
-  (let* ((m-odds (ceiling $n 2))
-         (z-evens (floor $n 2))
-         (total-winning-tuples 0))
+  (let* (($limit #.(expt 10 7))
+         ($n $limit)
+         ;; バケツの要素数を計算
+         ($n1 (floor (+ $n 3) 4))
+         ($n3 (floor (+ $n 1) 4))
+         ($ne (floor $n 2))
+         
+         ;; 母関数のパラメータ
+         ($u1 $n)
+         ($v1 $ne)
+         ($u2 (+ $n1 $ne))
+         ($v2 (+ $n3 $ne))
+         
+         ;; 漸化式用の定数
+         ($diff-1 (mod-sub (mod $u1 +mod+) (mod $v1 +mod+)))
+         ($sum-1  (mod-add (mod $u1 +mod+) (mod $v1 +mod+)))
+         ($diff-2 (mod-sub (mod $u2 +mod+) (mod $v2 +mod+)))
+         ($sum-2  (mod-add (mod $u2 +mod+) (mod $v2 +mod+)))
+         
+         ($ans 0)
+         ($inv-array (make-array (1+ $limit) :element-type '(unsigned-byte 62))))
     
-    ;; Sum over all odd counts 'c' of odd-length strips
-    ;; \sum_{c is odd} \binom{M+c-1}{c} \binom{Z+N-c}{N-c}
-    (iterate (for c-idx from 1 to $n by 2)
-      (let* ((term-odds (ncr (+ m-odds c-idx -1) c-idx))
-             (term-evens (ncr (+ z-evens $n c-idx) (- $n c-idx))) ; Hockey-stick simplified: \binom{Z+N-c}{N-c}
-             (ways (mod* term-odds term-evens)))
-        (setf total-winning-tuples (mod+ total-winning-tuples ways))))
-        
-    (format t "Log: Final Answer Modulo 1234567891 = ~A~%" total-winning-tuples)
-    total-winning-tuples))
+    (format t "Step 1: O(K) 逆元テーブルの構築中...~%")
+    (setf (aref $inv-array 1) 1)
+    (iterate (for i from 2 to $limit)
+             (setf (aref $inv-array i)
+                   (mod-sub 0 (mod-mul (floor +mod+ i)
+                                       (aref $inv-array (mod +mod+ i))))))
+    
+    (format t "Step 2: 母関数の微分漸化式による計算を実行中...~%")
+    (let ((p-prev 1)
+          (p-curr $diff-1)
+          (q-prev 1)
+          (q-curr $diff-2)
+          (c-curr (mod $n +mod+)))
+      
+      ;; k = 1 の初期処理
+      (let ((e-1 (mod-mul (mod-add p-curr q-curr) +inv2+)))
+        (setf $ans (mod-add $ans e-1)))
+      
+      (iterate (for k from 2 to $limit)
+               (let* ((inv-k (aref $inv-array k))
+                      
+                      ;; p_k の漸化式計算
+                      (term1-1 (mod-mul $diff-1 p-curr))
+                      (term1-2 (mod-mul (+ $sum-1 (- k 2)) p-prev))
+                      (p-next (mod-mul (mod-add term1-1 term1-2) inv-k))
+                      
+                      ;; q_k の漸化式計算
+                      (term2-1 (mod-mul $diff-2 q-curr))
+                      (term2-2 (mod-mul (+ $sum-2 (- k 2)) q-prev))
+                      (q-next (mod-mul (mod-add term2-1 term2-2) inv-k))
+                      
+                      ;; 総組み合わせ C_k の更新
+                      (c-next (mod-mul c-curr (mod-mul (+ $n k -1) inv-k)))
+                      
+                      ;; 相殺ペア成分 E_k
+                      (e-k (mod-mul (mod-add p-next q-next) +inv2+)))
+                 
+                 (if (evenp k)
+                     (setf $ans (mod-add $ans (mod-sub c-next e-k)))
+                     (setf $ans (mod-add $ans e-k)))
+                 
+                 ;; 状態のシフト
+                 (setf p-prev p-curr)
+                 (setf p-curr p-next)
+                 (setf q-prev q-curr)
+                 (setf q-curr q-next)
+                 (setf c-curr c-next))))
+    
+    (format t "Final Result P(~A, ~A): ~A~%" $limit $limit $ans)
+    $ans))
 
 
 #+| Do it | (solve )
+#|------------------------------------------------------------|
+Timing the evaluation of (solve)
+Step 1: O(K) 逆元テーブルの構築中...
+Step 2: 母関数の微分漸化式による計算を実行中...
+Final Result P(10000000, 10000000): 675608326
+
+User time    =        2.479
+System time  =        0.047
+Elapsed time =        2.471
+Allocation   = 93089976 bytes
+20115 Page faults
+GC time      =        0.000
+ |------------------------------------------------------------|#
+;;→ 675608326
+:ok
