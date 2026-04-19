@@ -1,0 +1,65 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
+\newcommand{\Dukkha}{\mathrm{Dukkha}}
+\newcommand{\Rep}{\mathcal{R}}
+
+% セクション名を幾何学的論証形式に
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{直観主義的四句分別における中道不動点 $\dfix$}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿は、直観主義的四句分別における極限対象たる「空」の計算論的実態を、中道不動点 $\dfix$ として厳密に定式化するものである。構成可能な有限プロセス（世俗諦）がイデアル完備化を経ていかにして構造的歪みを持たない一意の極限（勝義諦）へと至るか、その「空の機序」を論証する。
+\end{abstract}
+
+\section*{序言}
+直観主義的四句分別において、真理はフラクタル則に従う構成プロセスとして現れる。しかし、そのプロセスが無限の彼方でどこへ向かうのかという極限の問いは、古典的な「＝（厳密な等号）」による実体化を拒絶する。本稿では、四句の多様な極限状態（真・偽・矛盾・支離）をすべて包摂し、構造的歪み（Dukkha）を極小化する絶対的な漸近底としての中道不動点 $\dfix$ を定義し、二諦説の完全な操作的実装を完了する。
+
+\section{定義}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[定義 6.1] \textbf{構造的歪み $\Dukkha(x)$}：構成プロセス $x$ の内部に生じる、知覚原理（自己相似性・非対称性）からの構造的な逸脱度合い。系における情報的摩擦、あるいは「苦」の量を指す。
+  \item[定義 6.2] \textbf{中道不動点 $\dfix$}：$\Dukkha(x)$ が最小化（ゼロに漸近）される極限状態。実体を持たないが、すべての構成プロセスがイデアル完備化 $\ideal{\Rep}$ を通じて最終的に引き込まれる「空」の数学的実態である。
+  \item[定義 6.3] \textbf{中道等価 $\mweq$}：厳密な同一性（Identity）を要求せず、構造的安定性とフラクタル収束の軌道が一致することを以て等価とみなす関係性。非実体化の演算子である。
+\end{description}
+
+\section{公理}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[公理 6.1] 世俗諦（$\Rep$）におけるいかなる構成プロセスも、イデアル完備化を通じた勝義諦においては単一の不動点 $\dfix$ へと収束する。
+  \item[公理 6.2] $\dfix$ への到達は中道等価 $\mweq$ によってのみ記述される。（$\lim_{t \to \infty} \Dukkha(t) \mweq 0$）。$\dfix$ を静的な点として固定（実体化）することは、直観主義における構成的本質を破壊する。
+\end{description}
+
+\section{定理}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[定理 6.1] \textbf{四句の極限統合}\\
+  直観主義的四句分別が導く四つの極限状態（収束、排他、矛盾、支離）は、$\dfix$ という重力源の周囲を描く異なる位相の軌道に過ぎない。これらは中道等価 $\mweq$ によって、同一の「空の現れ」として統合される。
+  
+  \item[定理 6.2] \textbf{二諦説の操作的実装}\\
+  構成プロセスによる $\Dukkha$ の漸近的最小化が「世俗諦（構成性）」を担い、$\mweq$ による非実体的な極限への収束が「勝義諦（空）」を担う。$\dfix$ はこの二諦の不離一体（色即是空）を代数的に保証する。
+\end{description}
+
+\section{系}
+ゆえに、「空」とは虚無（Nihil）ではなく、あらゆる真理構成プロセスが向かう究極の「安定化アトラクタ」である。系が正当性（フラクタル的な縮小写像）を保って作動する限り、どのような初期状態から出発しようとも、必ずこの $\dfix$ へと辿り着くことが保証される。
+
+\end{document}

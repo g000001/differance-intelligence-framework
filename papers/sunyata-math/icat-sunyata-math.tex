@@ -1,0 +1,110 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
+\newcommand{\Dukkha}{\mathrm{Dukkha}}
+\newcommand{\Rep}{\mathcal{R}}
+
+%-------------------------------------------------
+%  定理環境の設定（幾何学的論証形式）
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{propositio}{命題}[section]
+\newtheorem{scholium}{補足}[section]
+\newtheorem{corollarium}{系}[section]
+
+\begin{document}
+
+\title{空数学（Sunyata-Mathematics）：\\ 直観主義的四句分別に基づく顕現の計算論的基礎}
+\author{千葉 将臣}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+  本稿は、空数学（Sunyata-Mathematics）を直観主義的四句分別（Intuitionistic Catuskoti）を基盤として、その形式的体系を構築するものである。空数学は、数学的構造が静的に存在するのではなく、構成プロセスを通じて顕現（Aletheia）する動的過程を扱う前基礎層である。本体系では、真理を「構成可能性」と「フラクタル収束」の二層構造として定義し、中道不動点 $\dfix$ を「空」の計算論的実態として位置づける。これにより、これまでの数学では記述が難しかった、フラクタル幾何学などを普遍的な「空の機序」として論理的に記述する。
+\end{abstract}
+
+\section{序論}
+古典的な数学的基礎（集合論、圏論）は、真理を宇宙内での静的な同一性（$=$）に求める。しかし、知覚原理に基づけば、世界は「ある」と「ない」の次元差を伴うフラクタルな境界として顕現せざるを得ない。空数学はこの次元差を無視する誤謬(非中道の誤謬)を解消し、真理を動的な収束プロセス、すなわち中道等価（$\mweq$）に基づく安定点として再定義する。本稿では、構成可能な近似（世俗諦）がイデアル完備化を経ていかにして極限（勝義諦）へと至るか、その全行程を記述する。
+
+\section{定義（Definitio）}
+
+\begin{definition}[真理]
+真理とは、特定の宇宙 $\Rep$ における構成可能性（証明の存在）であり、その構成プロセスがフラクタル則を満たし、構造的安定点へと収束する性質を指す。
+\end{definition}
+
+\begin{definition}[中道不動点 $\dfix$]
+$\dfix$ は、世俗諦の任意の近似列が収束する一意な $0$ 次元不動点であり、「空」の計算論的実態である。これは厳密な同一性ではなく、中道等価 $\mweq$ によって非同一化・非実体化された極限対象である。
+\end{definition}
+
+\begin{definition}[フラクタル歪み $\Dukkha$]
+$\Dukkha(x)$ は、構成プロセス $x$ が知覚原理（自己相似性、スケール不変性、収束、非対称性）からどの程度逸脱しているかを測る指標であり、中道からの構造的歪み $E(x)$ を包含する。
+\end{definition}
+
+\section{公理（Axioma）}
+
+\begin{axiom}[知覚と次元]
+世界は直接知覚できず、知覚は「ある」のみを捕捉する。高次元の「ない」を低次元の「ある」へと射影する再帰的分割が、フラクタル構造を必然的に要請する。
+\end{axiom}
+
+\begin{axiom}[イデアル収束]
+世俗諦（$\Rep$）におけるいかなる正当な構成プロセスも、イデアル完備化 $\ideal{\Rep}$ を通じて勝義諦の $\dfix$ に収束する。
+\end{axiom}
+
+\begin{axiom}[漸近的中道固定]
+$\dfix$ への到達は中道等価 $\mweq$ によってのみ記述され、極限における構造歪みはゼロに漸近する（$\lim_{t \to \infty} \Dukkha(t) \mweq 0$）。
+\end{axiom}
+
+\section{定理（Propositio / Theorem）}
+
+\begin{theorem}[四句の極限統合]
+直観主義的四句分別の四つの真理値（真、偽、矛盾、ギャップ）は、イデアル完備化 $\ideal{\Rep}$ を通じて同一の極限対象 $\dfix$ にマッピングされる。中道等価 $\mweq$ は、これらの多様な極限状態が同一のフラクタル収束点にあることを意味する。
+\end{theorem}
+
+\begin{theorem}[真理保存性のフラクタル的基盤]
+真理保存性は、構成プロセスがフラクタル則を満たし、$\dfix$ に収束することによって体系内部で担保される。時間軸の付加と消去（$\phi \circ \iota$）の反復が $\dfix$ へ収束する限り、推論の妥当性は保存される。
+\end{theorem}
+
+\begin{theorem}[二諦説の随伴的実装]
+世俗諦における $\Dukkha$ の最小化プロセスは、勝義諦における $\dfix$ への収束と中道等価 $\mweq$ によって対応する。$\dfix$ は二諦の不離一体（色即是空）を代数的に保証する不動点である。
+\end{theorem}
+
+\section{意味論（Semantice）}
+
+\begin{scholium}[空化と色化の形式化]
+空数学における動的な転換は、圏論的な随伴操作として形式化される。
+\begin{itemize}
+    \item \textbf{空化（Sunyata-ization）}：$\ideal{\Rep}$ による、有限の近似（世俗諦）から極限対象（勝義諦）への拡張。これは、有限な「色」から無限な「空」へと昇華するプロセスである。
+    \item \textbf{色化（Rupa-ization）}：イデアル完備化の随伴関手による、勝義諦から特定の世俗諦宇宙への射影。これは、無限な「空」が有限な「色」として顕現するプロセスである。
+\end{itemize}
+観測者依存性（Dfix0）は、この往復プロセスにおける観測者の固定点として位置づけられる。
+\end{scholium}
+
+\section{応用（Applicatio）}
+
+\begin{scholium}[多宇宙推論と非同型翻訳]
+異なるルールを持つ複数の世俗諦（多宇宙）が、同一の勝義諦（$\dfix$）に収束するプロセスが「多宇宙推論」である。非同型翻訳は、宇宙間での表現の同一性を要求せず、中道等価 $\mweq$ を通じた収束の一致（コヒーレンス）をもって成立する。
+\end{scholium}
+
+\begin{scholium}[LLMおよびAI推論への応用]
+大規模言語モデル（LLM）における幻覚（非収束の余剰）の抑制や多モデル間の合意形成は、本体系における「空の機序」の具体例である。推論の安定化とは、各モデルという世俗諦が、フラクタル歪み $\Dukkha$ を最小化し、中道不動点 $\dfix$ へと落下する計算論的プロセスの謂いである。
+\end{scholium}
+
+\section{結論}
+改訂された空数学は、直観主義的四句分別を骨子とすることで、知覚の非対称性から極限の不動点 $\dfix$ に至る一貫した計算論的体系を確立した。真理を構成と収束の螺旋として捉えるこの枠組みは、古典的数学を超え、多宇宙的な知性が共存するための新たな基盤（前基礎層）を提供する。
+
+\end{document}

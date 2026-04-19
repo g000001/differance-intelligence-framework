@@ -1,0 +1,171 @@
+% !TEX program = lualatex
+\documentclass[12pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+% マクロ
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+
+%-------------------------------------------------
+% 定理環境
+%-------------------------------------------------
+\newtheorem{definition}{定義}
+\newtheorem{axiom}{公理}
+\newtheorem{theorem}{定理}
+\newtheorem{scholium}{補足}
+
+\begin{document}
+
+\title{空数学における二分木収束の存在証明}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿では、二分木分割列の収束を、構造的安定点 $\dfix$ に対する
+中道等価 $\mweq$ によって記述する。
+構造的歪み汎関数と中道等価の最小公理系を導入し、
+二分木収束定理を示す。
+\end{abstract}
+
+\section{定義}
+
+\begin{definition}[構造的歪み]
+分割列 $(z_n)$ に対し、
+\[
+E_{n+1}=\frac12 E_n
+\]
+で定義する。
+\end{definition}
+
+\begin{definition}[歪み汎関数]
+構造的安定点 $\dfix$ に対し
+\[
+D(z_n,\dfix):=E_n
+\]
+と定義する。
+\end{definition}
+
+\section{公理}
+
+\begin{axiom}[中道等価導入]
+もし
+\[
+D(x_n,\dfix)\to 0
+\]
+ならば
+\[
+x_n \mweq \dfix.
+\]
+\end{axiom}
+
+\begin{axiom}[中道等価の反射律]
+任意の $x$ に対し
+\[
+x \mweq x.
+\]
+\end{axiom}
+
+\begin{axiom}[中道等価の対称律]
+\[
+x \mweq y
+\quad\Rightarrow\quad
+y \mweq x.
+\]
+\end{axiom}
+
+\begin{axiom}[中道等価の推移律]
+\[
+x \mweq y
+\;\land\;
+y \mweq z
+\quad\Rightarrow\quad
+x \mweq z.
+\]
+\end{axiom}
+
+\section{定理}
+
+\begin{theorem}[二分木収束定理]
+任意の二分木分割列 $(z_n)$ が
+
+\[
+E_{n+1}\le cE_n
+\qquad (0<c<1)
+\]
+
+を満たすならば
+
+\[
+\lim_{n\to\infty}
+z_n
+\mweq
+\dfix.
+\]
+
+\end{theorem}
+
+\begin{proof}
+
+定義より
+
+\[
+E_n=2^{-n}E_0.
+\]
+
+したがって
+
+\[
+\lim_{n\to\infty}E_n=0.
+\]
+
+歪み汎関数の定義より
+
+\[
+D(z_n,\dfix)=E_n
+\]
+
+なので
+
+\[
+D(z_n,\dfix)\to 0.
+\]
+
+ゆえに中道等価導入公理より
+
+\[
+\lim_{n\to\infty}
+z_n
+\mweq
+\dfix.
+\]
+
+が成立する。
+
+\end{proof}
+
+\section{補足}
+
+\begin{scholium}[Banach型類似]
+本定理は
+\[
+E_{n+1}\le cE_n
+\]
+という縮小条件を通じて
+\textit{Banach型}の収束構造を持つ。
+ただし到達点ではなく
+中道等価による安定化として解釈される。
+\end{scholium}
+
+\begin{scholium}[K\H{o}nig補題との関係]
+本定理は
+有限分岐無限木の存在論を
+収束論的に再解釈する。
+\end{scholium}
+
+\end{document}

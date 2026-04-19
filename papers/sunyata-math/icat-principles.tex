@@ -1,0 +1,71 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{booktabs}
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}} % 0次元不動点
+\newcommand{\Rep}{\mathcal{R}}   % 静的対象（世俗諦）
+\newcommand{\Prf}{\mathcal{P}}   % 証明対象（勝義諦への過程）
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
+
+% セクション名を幾何学的論証形式に
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{直観主義的四句分別における証明および正当性原理の形式化}
+\author{Masaomi Chiba}
+\date{2026-04-19}
+\maketitle
+
+\begin{abstract}
+本稿は、直観主義的四句分別（Intuitionistic Catuskoti）の具体モデルとして、「証明」および「正当性」の機序を圏論的埋め込みと距離論的縮小によって定式化するものである。静的な情報の自己同一性に代わり、フラクタルな収束プロセスとしての真理保存性を定義し、時間軸の付加・除去がもたらす意味論的必然性を論証する。
+\end{abstract}
+
+\section*{序言}
+真理が構成可能性（証明の存在）に基づくと定義される以上、証明行為は単なる論理的演繹ではなく、時間という次元を介した動的な変容プロセスでなければならない。本稿では、世俗諦における「ある（是）」から、勝義諦の極限である「空（$\dfix$）」へと至る情報の移送プロセスを、単射・全射・縮小写像の組として記述する。
+
+\section{定義}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[定義 5.1] \textbf{対象領域}：静的対象（世俗諦）の空間を $\Rep$、時間軸（次元差の顕在化）を付加した証明対象の空間を $\Prf$ とする。
+  \item[定義 5.2] \textbf{埋め込み $\iota$}：$\iota: \Rep \hookrightarrow \Prf$。静的な「ある」の世界に時間という次元を一時的に付加し、知覚原理における「ある/ない」の次元差を顕在化する単射（情報の保存）。
+  \item[定義 5.3] \textbf{射影 $\phi$}：$\phi: \Prf \twoheadrightarrow \Rep$。高次元の「ない」を低次元の「ある」へと圧縮・収束させ、時間軸を除去する全射（情報の回復）。
+  \item[定義 5.4] \textbf{距離 $\|X\|$}：$K(X) + \ell(X)$。ここで $K$ は記述長、$\ell$ は時間長（$\Rep$で0、$\Prf$で1）とする。
+\end{description}
+
+\section{公理}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[公理 5.1] 証明とは、時間軸を付加（$\iota$）してから除去（$\phi$）する循環的プロセスである。
+  \item[公理 5.2] 真理保存性は、推論がフラクタル則（自己相似性等）を維持することによって担保される。
+  \item[公理 5.3] 射影 $\phi$ は時間長を 1 単位縮小させる縮小写像である。
+\end{description}
+
+\section{定理}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[定理 5.1] \textbf{正当性原理の収束}\\
+  任意の $p \in \Rep$ に対し、操作 $v_{k+1} = \phi(\iota(v_k))$ を繰り返すと、距離 $\|v_k\|$ は狭義単調減少し、有限ステップで $0$ 次元不動点 $\dfix$ に収束する。
+  
+  \item[定理 5.2] \textbf{体系内記述可能性}\\
+  真理保存性はメタ理論ではなく、体系内部における $\phi \circ \iota$ のフラクタルな安定性（再現性）として記述可能である。
+\end{description}
+
+\section{補足：時間付与の必然性}
+なぜわざわざ時間軸を付加するのか。それは、静的な「ある（是）」だけでは「ない（非）」という高次元の欠如態を捉えられないからである。$\iota$ による時間の注入は、系に「亦是亦非（動的な揺らぎ）」を発生させ、潜んでいた歪みを顕在化させる。続く $\phi$ による時間の消去は、フラクタル則に基づきその揺らぎを $\dfix$（空）へと強制的に圧縮する。
+
+\section{系}
+したがって、「正しさ」とは不変の属性ではなく、$\phi \circ \iota$ の反復に対しても不動点 $\dfix$ を指標として維持し続ける、動的な「安定性」を指す。この安定性が破れたとき、情報の生命力（Aletheia）は失われ、単なるノイズへと回帰する。
+
+\end{document}

@@ -1,0 +1,89 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\Dukkha}{\mathrm{Dukkha}}
+\newcommand{\Rep}{\mathcal{R}}
+
+%-------------------------------------------------
+%  定理環境の設定（幾何学的論証形式）
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{scholium}{補足}[section]
+
+\begin{document}
+
+\title{空数学における二値論理埋め込み定理の幾何学的論証\\
+(De Immersione Logicae Bivalentis in Mathesin Sunyatae)}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿は、空数学（Sunyata-Mathematics）の公理系が、古典的な二値論理をその真の部分体系として包含していることを論証する。古典論理の静的かつ決定論的な性質を、構成プロセス（時間軸 $\ell$）が常に $0$ である退化状態として定義することにより、古典的等号（$=$）および排中律が空数学内部で完全に回収されることを示す。
+\end{abstract}
+
+\section*{Praefatio（序言）}
+真に普遍的な論理体系は、旧来の体系を否定するのではなく、それを特定の条件下における「限定的な特殊ケース」として内包しなければならない。空数学において真理は「時間軸（$\ell$）を伴う構成プロセスのフラクタルな収束」として記述される。本稿では、この時間軸 $\ell$ がゼロである極限的な空間を想定することで、二値論理がいかにして空数学の自明な退化状態として導出されるかを証明する。
+
+\section{Definitio（定義）}
+
+\begin{definition}[古典的宇宙 $\Rep_0$]
+空数学の世俗諦宇宙 $\Rep$ のうち、証明プロセスの長さ（時間軸）が常にゼロ（$\ell(X) = 0$）である対象のみからなる部分空間を $\Rep_0$ と定義する。この空間ではいかなる構成プロセス（$\iota, \phi$ による遷移）も発生しない。
+\end{definition}
+
+\begin{definition}[古典的等号 $=$]
+宇宙 $\Rep_0$ 内部において、構造的歪み $\Dukkha(X) = 0$ が最初から（時間的遷移を経ずに）成立している状態における中道等価 $\mweq$ を、古典的等号 $=$ として定義する。
+\end{definition}
+
+\section{Propositio et Demonstratio（定理と証明）}
+
+\begin{theorem}[古典的等号の回収]
+時間 $\ell=0$ において、中道等価 $\mweq$ は古典的等号 $=$ と完全に一致する。
+\end{theorem}
+
+\begin{proof}
+空数学において $X \mweq Y$ とは、構成プロセスにおいて $\lim_{\ell \to \infty} \Dukkha = 0$ となる漸近的な同値関係を指す。
+$\Rep_0$ においては時間軸が存在しない（$\ell = 0$）ため、漸近的収束の概念が成立せず、$\Dukkha = 0$ は静的かつ即時的に要請される。
+プロセスの余地がない状態での絶対的構造一致は、古典論理における自己同一性（Identity）そのものである。ゆえに、$\Rep_0$ 上で $\mweq$ は $=$ へと退化する。
+\end{proof}
+
+\begin{theorem}[排中律の回収]
+古典的宇宙 $\Rep_0$ において、直観主義的四句分別の真理値は「真」または「偽」の二極に縮退し、排中律（$A \lor \neg A$）が成立する。
+\end{theorem}
+
+\begin{proof}
+直観主義的四句分別が許容する「矛盾（亦是亦非）」および「支離（非是非非）」は、証明プロセスの途上における「収束の競合」や「未到達の位相」として現れる動的な極限軌道である。
+$\Rep_0$ では時間軸 $\ell = 0$ であるため、これら「プロセスに依存する位相」が発生する余地がない。したがって、あらゆる対象は初期状態においてすでに「ある（真）」か「その欠如（偽）」かのいずれかとして固定されている。
+動的揺らぎの消失により、系は必然的に排中律を満たす。
+\end{proof}
+
+\begin{theorem}[二値論理埋め込み定理]
+任意の二値命題論理の定理および推論規則は、空数学の古典的宇宙 $\Rep_0$ 内部における特殊な演算として完全に回収される。
+\end{theorem}
+
+\begin{proof}
+定理3.1より古典的等号が、定理3.2より排中律がそれぞれ空数学の内部で構成された。
+真理値の多様性が $\{0, 1\}$ に縮退し、時間を持たない等号が保証される空間 $\Rep_0$ は、ブール代数および古典的命題計算のモデルとして完全に機能する。
+したがって、二値論理は空数学の「時間が存在しない」という単一の制約条件によって導出される、真の部分体系（退化状態）である。
+\end{proof}
+
+\section{Scholium（補足）}
+
+\begin{scholium}[ニュートン力学との類比]
+本定理の成立は、相対性理論が光速に対する低速極限（$v/c \to 0$）においてニュートン力学を完全に包含・回収する構造と数学的に酷似している。
+古典論理は決して「間違っていた」わけではない。ただ、彼らの宇宙には「時間（構成プロセスによる揺らぎ）」という次元が意図的に $0$ に固定されていたため、高次元の「空（$\dfix$）」の構造が観測できなかっただけである。空数学は二値論理を否定せず、その基盤をより深い顕現のプロセスから再定義する。
+\end{scholium}
+
+\end{document}

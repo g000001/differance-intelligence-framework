@@ -1,4 +1,4 @@
-;;; -*- mode: Lisp; coding: utf-8  -*-
+#|;;; -*- mode: Lisp; coding: utf-8  -*-
 ;;; llm-model: gemini-3-flash-preview
 (cl:in-package cl-user)
 (defpackage #:project-euler-0821 (:use cl iterate alexandria) (:export #:solve))
@@ -7,101 +7,167 @@
 (defmacro optimized-code-p (boole)
   (typecase boole
     (null nil)
-    (T `(declaim (optimize (speed 3) (safety 0) (debug 0))))))
+    (T `(declaim (optimize (speed 3) (safety 0) (debug 0) #+lispworks (hcl:fixnum-safety 0))))))
+
+(optimized-code-p T)
+
+
+(declaim (inline count-coprime-to-6))
+(defun count-coprime-to-6 (m)
+  "1からmまでの整数のうち、6と互いに素(2でも3でも割り切れない)な数の個数を包除原理で求める"
+  (declare (type integer m))
+  (+ (- m (floor m 2) (floor m 3)) (floor m 6)))
+
+(defun solve ()
+  (let* (($n 10000000000000000)
+         ($omitted 0))
+    (declare (type integer $n $omitted))
+    
+    (format t "Step 1: 空間のパリティ同値類への分解および O(log^2 N) の次元崩壊ループを開始...~%")
+    
+    ;; 2の奇数乗のループ
+    (iterate (for a from 0)
+             (declare (type fixnum a))
+             (let ((pow2 (expt 2 (1+ (* 2 a)))))
+               (declare (type integer pow2))
+               (when (> pow2 $n) (leave))
+               
+               ;; 3の奇数乗のループ
+               (iterate (for b from 0)
+                        (declare (type fixnum b))
+                        (let* ((pow3 (expt 3 (1+ (* 2 b))))
+                               (p (* pow2 pow3)))
+                          (declare (type integer pow3 p))
+                          (when (> p $n) (leave))
+                          
+                          ;; p = 2^(2a+1) * 3^(2b+1) を固定し、条件を満たす y の数を集計
+                          (let* ((m (floor $n p))
+                                 (cnt (count-coprime-to-6 m)))
+                            (declare (type integer m cnt))
+                            (incf $omitted cnt)
+                            
+                            ;; 観測点での中間ログ（影響の大きい最初期の項のみ出力）
+                            (when (and (= a 0) (= b 0))
+                              (format t "  [Debug] a=0, b=0 (p=6): ~A elements excluded.~%" cnt)))))))
+                              
+    (format t "Step 2: 制約と周期性の適用完了。最悪計算回数は約230回。~%")
+    
+    (let (($ans (- $n $omitted)))
+      (declare (type integer $ans))
+      (format t "Final Result F(~A): ~A~%" $n $ans)
+      $ans)))
+
+
+9166666666666666 で不正解でした
+
+過去の不正解の値は下記のとおりです。不正解の値を解析して正答を考察してください。
+9249084249084257
+9212454212454204
+9214701193867859|#
+
+
+;;; -*- mode: Lisp; coding: utf-8  -*-
+;;; llm-model: gemini-3-flash
+(cl:in-package cl-user)
+(defpackage #:project-euler-0821 (:use cl iterate alexandria) (:export #:solve))
+(in-package #:project-euler-0821)
+
+(defmacro optimized-code-p (boole)
+  (typecase boole
+    (null nil)
+    (T `(declaim (optimize (speed 3) (safety 0) (debug 0) #+lispworks (hcl:fixnum-safety 0))))))
 
 (optimized-code-p T)
 
 (declaim (inline count-coprime-to-6))
 (defun count-coprime-to-6 (m)
-  "1からmまでの整数のうち、2でも3でも割り切れないものの個数"
-  (declare (type (unsigned-byte 64) m))
-  (let ((q (truncate m 6))
-        (r (rem m 6)))
-    (+ (* 2 q)
-       (cond ((= r 0) 0)
-             ((<= r 4) 1)
-             (t 2)))))
+  ;"1からmまでの整数のうち、6と互いに素(2でも3でも割り切れない)な数の個数を包除原理で求める"
+  (declare (type (integer 0 *) m))
+  (+ (- m (floor m 2) (floor m 3)) (floor m 6)))
 
-(defvar *f-cache* (make-hash-table))
+(defun get-valid-masks (height)
+  "連続する1を持たない高さHの有効なビットマスクを生成"
+  (declare (type fixnum height))
+  (let ((masks '()))
+    (iterate (for m from 0 below (ash 1 height))
+             (when (zerop (logand m (ash m 1)))
+               (push m masks)))
+    (nreverse masks)))
 
-(defun get-grid-data (K)
-  (let ((pts nil))
-    (iterate (for b from 0)
-      (let ((p3 (expt 3 b)))
-        (if (> p3 K) (finish))
-        (iterate (for a from 0)
-          (let ((p2 (expt 2 a)))
-            (if (> (* p2 p3) K) (finish))
-            (push (cons a b) pts)))))
-    (let* ((sorted-pts (coerce (sort pts (lambda (p1 p2)
-                                           (if (= (cdr p1) (cdr p2))
-                                               (< (car p1) (car p2))
-                                               (< (cdr p1) (cdr p2)))))
-                               'simple-vector))
-           (n (length sorted-pts))
-           (pt-map (make-hash-table :test 'equal)))
-      (iterate (for i from 0 below n)
-        (setf (gethash (aref sorted-pts i) pt-map) i))
-      (values sorted-pts n pt-map))))
+(defun solve ()
+  (let* (($n 10000000000000000)
+         ($v-list '())
+         ($ans 0)
+         ;; 状態遷移のメモ化テーブル (hash-tableで列の状態をキャッシュ)
+         ($memo (make-hash-table :test 'equal)))
+    (declare (type (integer 0 *) $n $ans))
 
-(defun compute-f (K)
-  "グリッド Ω_K における最大重みパッキングを計算"
-  (declare (type (unsigned-byte 64) K))
-  (if (gethash K *f-cache*) (return-from compute-f (gethash K *f-cache*)))
-  (multiple-value-bind (pts n pt-map) (get-grid-data K)
-    (let ((memo (make-hash-table :test 'equal)))
-      (labels ((rec (idx mask)
-                 (if (>= idx n) 0
-                     (let ((state (cons idx mask)))
-                       (or (gethash state memo)
-                           (setf (gethash state memo)
-                                 (if (logbitp 0 mask)
-                                     (rec (1+ idx) (ash mask -1))
-                                     (let* ((p (aref pts idx))
-                                            (a (car p)) (b (cdr p))
-                                            ;; 1. (a,b) を S に入れない場合
-                                            (res (rec (1+ idx) (ash mask -1)))
-                                            ;; 2. (a,b) を S に入れる場合 (Lトロミノ配置)
-                                            (w 1)
-                                            (new-mask (ash mask -1))
-                                            (idx-r (gethash (cons (1+ a) b) pt-map))
-                                            (idx-u (gethash (cons a (1+ b)) pt-map)))
-                                       (when (and idx-r (not (logbitp (1- (- idx-r idx)) new-mask)))
-                                         (incf w)
-                                         (setf new-mask (logior new-mask (ash 1 (1- (- idx-r idx))))))
-                                       (when (and idx-u (not (logbitp (1- (- idx-u idx)) new-mask)))
-                                         (incf w)
-                                         (setf new-mask (logior new-mask (ash 1 (1- (- idx-u idx))))))
-                                       (max res (+ w (rec (1+ idx) new-mask)))))))))))
-        (let ((result (rec 0 0)))
-          (setf (gethash K *f-cache*) result)
-          result)))))
-
-(defun solve (&optional (n 10000000000000000))
-  (declare (type (unsigned-byte 64) n))
-  (format t "Phase 1: Identifying ~A unique grid shapes...~%" 935)
-  (let ((ks nil))
-    (iterate (for i from 0 to 60)
-      (let ((p2 (expt 2 i)))
-        (if (> p2 n) (finish))
-        (iterate (for j from 0 to 40)
-          (let ((p3 (expt 3 j)))
-            (let ((val (* p2 p3)))
-              (if (<= val n) 
-                  (push (truncate n val) ks) 
-                  (finish)))))))
-    (setf ks (sort (remove-duplicates ks) #'<))
+    (format t "Step 1: グリッド形状を決定する 2^i * 3^j の閾値を生成中...~%")
+    (iterate (for a from 0)
+             (let ((pow2 (expt 2 a)))
+               (when (> pow2 $n) (leave))
+               (iterate (for b from 0)
+                        (let* ((pow3 (expt 3 b))
+                               (val (* pow2 pow3)))
+                          (when (> val $n) (leave))
+                          (push val $v-list)))))
     
-    (format t "Phase 2: Summing optimal solutions for each K...~%")
-    (let ((ans 0)
-          (prev-k 0))
-      (declare (type (unsigned-byte 64) ans prev-k))
-      (iterate (for k in ks)
-        (let ((count (- (count-coprime-to-6 k) (count-coprime-to-6 prev-k))))
-          (incf ans (* count (compute-f k)))
-          (setf prev-k k)))
+    ;; 昇順にソートし、無限大の番兵を追加
+    (setf $v-list (sort $v-list #'<))
+    (let ((v-arr (make-array (length $v-list) :initial-contents $v-list))
+          (k-max (length $v-list)))
       
-      (format t "F(6) = ~A (expected 5)~%" (let ((*f-cache* (make-hash-table))) (solve 6)))
-      (format t "F(20) = ~A (expected 19)~%" (let ((*f-cache* (make-hash-table))) (solve 20)))
-      (format t "Result: F(~A) = ~A~%" n ans)
-      ans)))
+      (format t "Step 2: ~A 個の独立した同値類 (グリッド形状) に対する Profile DP を実行...~%" k-max)
+      
+      (labels ((solve-dp (col M prev-mask)
+                 "列col以降の最大カバー要素数を計算するメモ化DP"
+                 (when (zerop M) (return-from solve-dp 0))
+                 
+                 (let* ((H (1+ (floor (log M 3))))
+                        ;; 前の列のマスクのうち、現在の列に干渉する H+1 ビットのみを抽出
+                        (trunc-prev (logand prev-mask (1- (ash 1 (1+ H)))))
+                        (memo-key (list M trunc-prev))
+                        (cached (gethash memo-key $memo)))
+                   
+                   (when cached (return-from solve-dp cached))
+                   
+                   (let ((max-reward 0)
+                         (M-next (floor M 2))
+                         (H-next (if (zerop (floor M 2)) 0 (1+ (floor (log (floor M 2) 3)))))
+                         (forbidden (logior trunc-prev (ash trunc-prev -1))))
+                     
+                     (dolist (curr-mask (get-valid-masks H))
+                       (declare (type fixnum curr-mask))
+                       ;; 前の列との水平・アンチダイアゴナルの衝突判定
+                       (when (zerop (logand curr-mask forbidden))
+                         (let ((reward 0))
+                           (declare (type fixnum reward))
+                           ;; 各ビット(ノード)がカバーする要素数を計算
+                           (iterate (for j from 0 below H)
+                                    (when (logbitp j curr-mask)
+                                      (incf reward) ; 自身
+                                      (when (< j H-next) (incf reward)) ; Right
+                                      (when (< (1+ j) H) (incf reward)))) ; Up
+                           
+                           (let ((total (+ reward (solve-dp (1+ col) M-next curr-mask))))
+                             (when (> total max-reward)
+                               (setf max-reward total))))))
+                     
+                     (setf (gethash memo-key $memo) max-reward)
+                     max-reward))))
+
+        (format t "Step 3: 各同値類に属する種 y の個数を掛け合わせて最終集計...~%")
+        (iterate (for k from 0 below k-max)
+                 (let* ((vk (aref v-arr k))
+                        (vk-next (if (< (1+ k) k-max) (aref v-arr (1+ k)) (1+ $n)))
+                        (y-max (floor $n vk))
+                        (y-min (floor $n vk-next))
+                        (count (- (count-coprime-to-6 y-max) (count-coprime-to-6 y-min))))
+                   
+                   (when (> count 0)
+                     (let ((max-covered (solve-dp 0 vk 0)))
+                       (incf $ans (* count max-covered)))))))
+                       
+      (format t "Final Result F(~A): ~A~%" $n $ans)
+      $ans)))
+

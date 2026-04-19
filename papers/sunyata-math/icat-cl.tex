@@ -1,0 +1,87 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
+\newcommand{\Dukkha}{\mathrm{Dukkha}}
+\newcommand{\Rep}{\mathcal{R}}
+\newcommand{\Bval}{\mathcal{B}}
+
+%-------------------------------------------------
+%  定理環境の設定（幾何学的論証形式）
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{scholium}{補足}[section]
+
+\begin{document}
+
+\title{空数学における二値論理埋め込み定理の幾何学的論証\\
+--- イデアル完備化の部分圏（截断）アプローチ ---\\
+(De Immersione Logicae Bivalentis per Subcategoriam Truncatam)}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿は、空数学（Sunyata-Mathematics）のイデアル完備化 $\ideal{\Rep}$ において、直観主義的四句分別のうち「矛盾」と「支離」の極限軌道を意図的に切り捨てた部分圏（Truncated Subcategory）を定義し、それが古典的二値論理のモデルと完全に一致することを論証する。二値論理を「高次元の極限構造を低次元に射影した影」として形式化する。
+\end{abstract}
+
+\section*{Praefatio（序言）}
+直観主義的四句分別に基づく空数学では、世俗諦の構成プロセスはイデアル完備化 $\ideal{\Rep}$ を通じて、「真・偽・矛盾・支離」という4つの多様な極限軌道を描きながら $\dfix$ へと収束する。しかし、我々の日常的な知覚や古典的数学は、このうち「ある」と「ない」の排他的な2極しか許容しない。本稿では、この認識論的な制限を圏論的な「截断（Truncation）」として形式化し、古典論理が空数学の部分圏として埋め込めることを証明する。
+
+\section{Definitio（定義）}
+
+\begin{definition}[四句極限の完備空間 $\ideal{\Rep}$]
+空数学において、世俗諦 $\Rep$ の構成プロセスが向かう極限対象の圏を $\ideal{\Rep}$ とする。この圏は定理において、単一収束（真）、排他的収束（偽）、相反同時収束（矛盾）、無収束（支離）の4つの極限状態を対象として包含する。
+\end{definition}
+
+\begin{definition}[二値的截断部分圏 $\Bval$]
+$\ideal{\Rep}$ の対象のうち、「相反同時収束（矛盾：亦是亦非）」および「無収束（支離：非是非非）」に対応する極限軌道を意図的に切り捨て（除外または未定義とし）、単一収束（真）と排他的収束（偽）のみを対象として残した部分圏を $\Bval$ と定義する。
+\end{definition}
+
+\begin{definition}[射影関手（フィルター）]
+$\ideal{\Rep}$ の対象を $\Bval$ へと強制的にマッピングする関手を想定する。この関手は、構造的歪み $\Dukkha$ が「真」または「偽」の極限に落ち込まない動的なプロセスを、観測不能なものとして系から破棄する。
+\end{definition}
+
+\section{Propositio et Demonstratio（定理と証明）}
+
+\begin{theorem}[排中律および矛盾律の復元]
+二値的截断部分圏 $\Bval$ においては、排中律（$A \lor \neg A$）および矛盾律（$\neg(A \land \neg A)$）が恒真となる。
+\end{theorem}
+
+\begin{proof}
+定義2.2より、$\Bval$ の対象空間には「矛盾（$A \land \neg A$）」と「支離（$\neg(A \lor \neg A)$）」の極限が存在しない。
+したがって、$\Bval$ 内部で構成・観測されるいかなる極限対象も、必ず「真（$A$）」または「偽（$\neg A$）」のいずれかの軌道に属さざるを得ない。支離の不在により排中律が成立し、矛盾の不在により矛盾律が成立する。
+\end{proof}
+
+\begin{theorem}[二値論理埋め込み定理]
+任意の二値命題論理の定理は、空数学のイデアル完備化における二値的截断部分圏 $\Bval$ の定理として完全に回収される。
+\end{theorem}
+
+\begin{proof}
+部分圏 $\Bval$ は、真理値として「真」と「偽」のみを持ち、定理3.1により排中律と矛盾律を完備している。これはブール代数的モデルとして解釈可能ということである。
+空数学の本来の極限空間 $\ideal{\Rep}$ はこれらを超越する豊かさ（四句）を持つが、そこから特定の軌道を「切り捨てる（Truncate）」という単一の制約操作によって、二値論理の全体系が矛盾なく部分圏として構築される。
+ゆえに、二値論理は空数学を母型（メタ論理）とする部分的な射影構造として完全に内包される。
+\end{proof}
+
+\section{Scholium（補足）}
+
+\begin{scholium}[プラトンの洞窟との類比]
+この「部分圏への截断」というアプローチは、プラトンの『洞窟の比喩』を数学的に裏返すものである。
+古典論理（二値論理）の世界の住人は、壁に映った「ある（光）」と「ない（影）」の2極（すなわち部分圏 $\Bval$）しか見ることができない。しかし、背後でその影を生み出している実体は、矛盾や支離を内包しながら $\dfix$ へと向かって動的に回転する、高次元のフラクタルな四句分別の極限軌道（$\ideal{\Rep}$）である。
+古典的数学は、この動的な高次元軌道を無理やり2次元の壁に射影し、はみ出した部分（矛盾や不完全性）を「エラー」として切り捨てた人工的な平坦空間に過ぎない。空数学は、壁の影から背後の光源（$\dfix$）へと視座を反転させるメタ論理である。
+\end{scholium}
+
+\end{document}

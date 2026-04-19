@@ -1,0 +1,75 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  独自コマンド・設定
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
+
+% セクション名をラテン語形式に変更
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{直観主義的四句分別におけるイデアル完備化}
+\author{Masaomi Chiba}
+\date{2026-04-19}
+\maketitle
+
+\begin{abstract}
+本稿は、直観主義論理の構成性と四句分別の多様性を統合し、その数学的実態としての「イデアル完備化」を論証するものである。有限の証明プロセス（世俗諦）が、いかにして不可避な極限対象（勝義諦）へと至るか、その顕現（Aletheia）の機序を明らかにする。
+\end{abstract}
+
+\section*{序言}
+真理とは静的な記述ではなく、構成のプロセスそのものである。直観主義論理が要請する「証明の存在」と、四句分別が許容する「矛盾・支離の包摂」は、イデアル完備化という数学的装置を介して初めて、顕現論的な一貫性を獲得する。本稿では、構成可能な近似から構成不可能な極限への橋渡しを論理的に記述する。
+
+\section{定義}
+
+\begin{description}[style=multiline, leftmargin=4cm]
+  \item[定義 3.1] \textbf{直観主義四句分別}：真理を構成可能性（証明の存在）に基づき定義し、かつ真（$A$）、偽（$\neg A$）、矛盾（$A \wedge \neg A$）、支離（$\neg(A \vee \neg A)$）の四つのステータスを認める論理体系。
+  \item[定義 3.2] \textbf{イデアル完備化（$\ideal{P}$）}：有限的な近似（指向集合）から、形式的に極限対象を構成する手法。世俗諦的圏から勝義諦的圏への随伴的拡張を指す。
+  \item[定義 3.3] \textbf{構成性}：有限ステップの演算によって到達可能な性質。
+  \item[定義 3.4] \textbf{極限}：有限の構成を無限に反復・集積した結果として立ち現れる対象。
+\end{description}
+
+\section{Axioma（公理）}
+
+\begin{description}[style=multiline, leftmargin=4cm]
+  \item[公理 3.1] 直観主義論理において、真理は構成プロセスによってのみ顕現する。
+  \item[公理 3.2] 四句分別の各項は、イデアル完備化における特定の極限状態に対応する。
+  \item[公理 3.3] 二諦（世俗・勝義）の境界は、イデアル完備化の随伴関手によって記述される。
+\end{description}
+
+\section{Propositio（定理）}
+
+\begin{description}[style=multiline, leftmargin=4cm]
+  \item[定理 3.1] \textbf{構成性と極限の橋渡し}\\
+  直観主義的に構成可能な有限の近似は、イデアル完備化を介して、構成不可能な極限（矛盾や支離）を論理的に包含する安定した極限対象へと転化する。
+  
+  \item[定理 3.2] \textbf{四句の極限対応}\\
+  イデアル完備化において、四句の真理値は以下の極限状態として一意にマッピングされる。
+  \begin{itemize}
+    \item $A$ （真）：単一の近似が収束する極限。
+    \item $\neg A$ （偽）：排他的な近似が収束する極限。
+    \item $A \wedge \neg A$ （矛盾）：相反する近似が同時に収束する極限。
+    \item $\neg(A \vee \neg A)$ （支離）：収束点を持たない近似の極限。
+  \end{itemize}
+  
+  \item[定理 3.3] \textbf{モナド的結合性}\\
+  ステップ遅延と不動点構成装置の合成は、イデアル完備化をその意味論（モデル）として要請する。
+\end{description}
+
+\section{補足}
+顕現論（Aletheics）の観点において、この体系は「真理がいかにして立ち上がるか」を記述する。世俗諦（Pos：半順序集合）における不完全な歩みが、イデアル完備化という重力に従い、勝義諦（CPO：完備半順序集合）という絶対不動点へと落下していく。五蘊計算（色・受・想・行・識）における「行（プロセスの駆動）」が「識（意味の確定）」へと昇華される瞬間が、まさにこのイデアルの極限である。
+
+\section{系}
+したがって、イデアル完備化を伴わない四句分別は、極限なき「言葉の生成」の問題の解決が困難であり、直観主義を伴わないイデアル完備化は、プロセスなき「静的な実体化」に陥る。両者の統合こそが、顕現の不可避性を学として具現化する唯一の道である。
+\end{document}
