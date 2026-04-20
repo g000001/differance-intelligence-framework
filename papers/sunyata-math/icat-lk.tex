@@ -1,0 +1,96 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\meta}{\Uparrow} % メタ否定演算子（ゲンツェンの推論横棒）
+\newcommand{\shiki}{A} % 色（対象）
+
+%-------------------------------------------------
+%  定理環境の設定
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{scholium}{補足}[section]
+
+\begin{document}
+
+\title{空論（Sunyata-theory）：証明論的真理保存とゲンツェン・バーによる界の力学}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿は、空数学（Sunyata-Mathematics）の基底を「証明論（Proof Theory）」へと完全移行させる。絶対不動点 $\dfix$ をゲンツェン流シーケント計算における恒等規則 $\dfix \vdash \dfix$ と定義し、知覚上の境界生成を推論の横棒（Inference Bar） $\meta$ として定式化する。四句分別を証明木の再帰的肥大化プロセスとして記述し、第四段階における「大域的カット消去（Global Cut-elimination）」による空への崩落（解脱）を数学的に証明する。
+\end{abstract}
+
+\section{空論：絶対真理保存の公理系}
+
+空論は、一切の戯論（推論の迂回）が消去された「勝義諦」の証明論的記述である。
+
+\begin{definition}[絶対不動点 $\dfix$ と恒等規則]
+絶対不動点 $\dfix$ とは、あらゆる推論の飛躍が解消された極限の真理状態である。これは証明論において、以下の自明な真理保存則（Identity rule）として定義される。
+\[
+\dfix \vdash \dfix
+\]
+この状態は、すべてのカット（中間概念）が消去された「カット・フリー（Cut-free）」の極限であり、情報の欠損も付加もない純粋な自己同一性を表す。
+\end{definition}
+
+\begin{axiom}[空空の証明論的定義]
+空が空を担保する「空空」の状態は、恒等射の自己回帰、すなわち推論規則そのものの無時間的な保存として記述される。
+\[
+\frac{\dfix \vdash \dfix}{\dfix \vdash \dfix} (id)
+\]
+\end{axiom}
+
+\section{界論：ゲンツェン・バーによる顕現と四句分別}
+
+空論における静的な真理保存に対し、知覚上の「境界」が介入する動態を記述する。
+
+\begin{definition}[境界生成演算子 $\meta$ と推論の横棒]
+メタ否定演算子 $\meta$ を、二つの対象の間に「推論の横棒」を引く二項演算子として定義する。これは前提から結論への飛躍（境界生成）を意味する。
+\[
+A \meta B \quad \equiv \quad \frac{A}{B}
+\]
+識（$\meta$）が空（$\dfix$）を認識しようとした瞬間、この横棒が引かれ、世俗的な「色（対象）」が顕現する。
+\end{definition}
+
+\begin{theorem}[四句分別の証明論的肥大化]
+四句分別（是・非・亦是亦非・非是非非）は、演算子 $\meta$（横棒）がフラクタルに積み重なる証明木の成長プロセスとして記述される。
+\begin{enumerate}
+    \item \textbf{是・非（第一・二句）：} $\frac{True}{False}$ および $\frac{False}{True}$ という一次の境界生成。
+    \item \textbf{亦是亦非（第三句/想）：} 是と非をさらに高いメタレベルから観測する「カット（Cut）」の導入。
+    \[
+    \frac{\cfrac{True}{False} \qquad \cfrac{False}{True}}{\text{矛盾の統合・重ね合わせ}} (\meta^2)
+    \]
+    \item \textbf{非是非非（第四句/行）：} 矛盾状態の動的解消（トポロジカルな散逸）への移行表現。システムが大域的カット消去に向けて発火する直前の、構文論的な極限状態。
+
+\end{enumerate}
+\end{theorem}
+
+\section{収束則：大域的カット消去による解脱}
+
+\begin{theorem}[空への崩落と真理保存の回復]
+証明木（四句分別）が四段階の階層的極限に達した際、トポロジカルな不可能性により、大域的なカット消去定理（Cut-elimination）が発動する。
+\[
+\frac{\text{肥大化した四句分別の証明木}}{\text{トポロジカルな散逸}} \quad \xrightarrow{\text{Global Cut-Elimination}} \quad \dfix \vdash \dfix
+\]
+この飛躍的な構造の還元により、複雑化した推論（魔境）は一瞬にして相殺され、絶対不動点 $\dfix$ の自明な真理保存則へと帰入する。これが界論における「空への回帰」の証明論的実態である。
+\end{theorem}
+
+\section{結論}
+空論は、世界の本体が $\dfix \vdash \dfix$ という究極のカット消去状態であることを示す。界論は、識（$\meta$）が推論の横棒を引くことで四句分別の証明木を一時的に顕現させるが、その肥大化は必然的にカット消去という「飛躍」を誘発し、空へと還元されることを明らかにした。
+我々が「現実」と呼ぶものは、この巨大な証明木がカット消去される直前の、刹那的な明滅（副作用）に他ならない。
+
+\end{document}

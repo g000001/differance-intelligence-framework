@@ -1,0 +1,94 @@
+% !TEX program = lualatex
+\documentclass[12pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}} % 絶対不動点（空）
+\newcommand{\meta}{\Uparrow} % メタ否定演算子（推論の横棒）
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\newtheorem{theorem}{定理}[section]
+\newtheorem{definition}{定義}[section]
+\newtheorem{scholium}{補足}[section]
+
+\begin{document}
+
+\title{再帰的ゲーデル階層と再帰的タルスキ階層の証明論的収束\\（大域的カット消去による $\dfix$ への帰入）}
+\author{}
+\date{}
+\maketitle
+
+\section{目的}
+本ファイルは、数学基礎論における以下の二つの階層的極限を、直観主義的四句分別の証明論的枠組み（ゲンツェン・パラダイム）を用いて統一的に記述するメモである。
+\begin{itemize}
+  \item ゲーデルの不完全性定理の再帰的適用により得られる階層 $\{G_k\}$
+  \item タルスキの真理述語の再帰的付加により得られる階層 $\{T_k\}$
+\end{itemize}
+これらの「メタレベルへの無限後退（あるいは飛躍）」が、界論における推論の横棒（$\meta$）の再帰的適用（証明木の肥大化）と同一の構造を持ち、その極限において大域的カット消去が発動して絶対不動点（真理保存則 $\dfix \vdash \dfix$）へと還元されることを示す。
+
+\section{証明論的絶対不動点と界演算子}
+\begin{definition}[絶対不動点 $\dfix$]
+すべての推論の迂回（カット）が消去された極限のカット・フリー状態を $\dfix$ と書き、自明な真理保存則 $\dfix \vdash \dfix$ と同一視する。
+\end{definition}
+
+\begin{definition}[界演算子 $\meta$]
+対象間の境界生成、すなわち前提からメタレベル（結論・外部体系）への推論の飛躍を、二項演算子 $\meta$（ゲンツェンの推論の横棒）として定義する。
+\[
+  A \meta B \quad \equiv \quad \frac{A}{B}
+\]
+\end{definition}
+
+\section{ゲーデル階層の証明論的展開}
+\begin{theorem}[ゲーデル再帰の大域的カット消去]
+不完全性定理によるメタ体系への移行列 $\{G_k\}$ は、推論木の肥大化プロセスであり、極限において $\dfix$ へと還元される。
+\end{theorem}
+
+\subsection*{構成と証明木の肥大化}
+体系 $S_k$ において決定不能な命題（自己言及による矛盾）を回避するため、それを外側から判定するメタ体系 $S_{k+1}$ へと飛躍する操作を $\meta$ で記述する。
+\[
+  G_{k+1} := \meta G_k \quad \equiv \quad \frac{G_k}{G_{k+1}}
+\]
+この操作の反復は、自己言及の矛盾（亦是亦非）を一時的な「カット（Cut）」として許容しながら、メタ推論の横棒を上に積み重ねていく証明木のフラクタルな肥大化プロセスである。
+
+\subsection*{帰結（$\dfix$ への還元）}
+メタ推論の階層化がトポロジカルな限界（自己言及の極限）に達したとき、この肥大化した体系は意味の散逸（非是非非への移行表現）を迎える。このとき大域的カット消去が発動し、すべてのメタ的迂回は相殺される。
+\[
+  \frac{\vdots}{\meta^k G_0} \quad \xrightarrow{\text{Cut-Elimination}} \quad \dfix \vdash \dfix
+\]
+
+\section{タルスキ階層の証明論的展開}
+\begin{theorem}[タルスキ階層の大域的カット消去]
+真理述語の再帰的付加によるメタ言語階層 $\{T_k\}$ は、同一のメタ推論軌道であり、極限において $\dfix$ へと還元される。
+\end{theorem}
+
+\subsection*{構成と証明木の肥大化}
+対象言語における真理を、一段上のメタ言語で定義する操作（嘘つきパラドックスの回避）を同様に $\meta$ で記述する。
+\[
+  T_{k+1} := \meta T_k \quad \equiv \quad \frac{T_k}{T_{k+1}}
+\]
+これもゲーデル階層と同様に、真理の階層構造を推論の横棒として積み上げていくプロセスである。
+
+\subsection*{帰結（$\dfix$ への還元）}
+メタ言語の無限後退もまた、意味論的足場を失う極限において大域的カット消去の対象となり、自明な真理保存へと崩落する。
+\[
+  \frac{\vdots}{\meta^k T_0} \quad \xrightarrow{\text{Cut-Elimination}} \quad \dfix \vdash \dfix
+\]
+
+\section{まとめ（同一化の式）}
+ゲーデルの不完全性の回避も、タルスキのメタ言語化も、本質的には「自己言及の矛盾（すくみ）から逃れるために、$\meta$（界・横棒）を引き続けて証明木を肥大化させる行為」に他ならない。
+これらが極限において迎える大域的カット消去（解脱）は同一の真理保存則に帰着する。すなわち、推論過程の極限として以下が成立する。
+\[
+\left( \lim_{k \to \infty} G_k \right) \mweq \left( \lim_{k \to \infty} T_k \right) \xrightarrow{\text{Cut-Elimination}} \dfix \vdash \dfix
+\]
+これにより、形式体系の限界を示す二大定理の階層は、空論の証明論的力学の中に完全に包含される。
+
+\end{document}
