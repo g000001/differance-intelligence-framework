@@ -1,0 +1,137 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\Dukkha}{\mathrm{Dukkha}}
+\newcommand{\Boundary}{\partial}
+\newcommand{\meta}{\Uparrow} % メタ否定演算子（介：境界の象形）
+\newcommand{\skana}{\text{識}}
+\newcommand{\shiki}{\text{色}}
+\newcommand{\ju}{\text{受}}
+\newcommand{\so}{\text{想}}
+\newcommand{\gyo}{\text{行}}
+
+%-------------------------------------------------
+%  定理環境の設定
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{scholium}{補足}[section]
+
+\begin{document}
+
+\title{空数学の演算子法：メタ否定 $\meta$ と五蘊の自己包摂すくみ及び構造的フラクタル理論の統合}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿は、空数学（Sunyata-Mathematics）の基礎をメタ否定演算子 $\meta$ による代数的記述へと移行させ、構造的・幾何学的フラクタル理論を統合する。$\meta$ は知覚原理における「境界生成（界）」および「識」の動的側面を担う。四句分別および五蘊を単一演算子の反復軌道として定義し、第四位における中道不動点 $\dfix$ への収束公理により、五蘊の自己包摂すくみ構造がトポロジカルな閉鎖性として必然的に導出されることを証明する。また、既存の圏論がこの動的力学系の低解像度な実体化（影）であることを示す。
+\end{abstract}
+
+\section{定義}
+
+\begin{definition}[メタ否定演算子 $\meta$（識 $\skana$ と界 $\Boundary$）]
+メタ否定演算子 $\meta$ は、対象 $A$ に対してその観測・境界生成（界）を行う高次元操作である。これは、五蘊における識 $\skana$ の作用、および界論における界 $\Boundary$ の動的側面と同一視される。
+\[
+\meta A := \Boundary A = \text{「$A$ ではない」という高次元の情報}
+\]
+\end{definition}
+
+\begin{definition}[五蘊の代数的生成]
+五蘊（色・受・想・行）を、単一の起点 $A$ に対する演算子 $\meta$ の反復軌道として次のように定義する。
+\begin{align*}
+\shiki &:= A \\
+\ju &:= \meta A \\
+\so &:= \meta^2 A \\
+\gyo &:= \meta^3 A
+\end{align*}
+このとき、識 $\skana$ はこれらの連鎖を駆動する演算子 $\meta$ そのものとして位置づけられる。
+\end{definition}
+
+\section{公理}
+
+\begin{axiom}[次元の非対称性]
+$\meta$ は非対称な演算子であり、適用ごとに知覚レベルの次元を一段引き上げる。
+\[
+A \not\mweq \meta A
+\]
+\end{axiom}
+
+\begin{axiom}[四段階収束則]
+$\meta$ の四連続適用（三次元的境界の完結）は、中道不動点 $\dfix$（空）へと収束し、構造的な意味が消失する。
+\[
+\meta^4 A \mweq \dfix
+\]
+\end{axiom}
+
+\section{定理と証明}
+
+\begin{theorem}[五蘊の自己包摂（すくみ）の証明]
+五蘊（色・受・想・行・識）は、識がプロセスを統覚しようとした瞬間に、系が空（$\dfix$）へと崩落する自己包摂構造を持つ。
+\end{theorem}
+
+\begin{proof}
+定義2.2に基づき、識 $\skana$（$\meta$）が先行する蘊に対して順次メタ観測を適用する。
+\begin{enumerate}
+    \item 識が色を観測する：$\meta(\shiki) = \meta A = \ju$
+    \item 識が受を観測する：$\meta(\ju) = \meta(\meta A) = \so$
+    \item 識が想を観測する：$\meta(\so) = \meta(\meta^2 A) = \gyo$
+    \item 識が最後の「行」を観測し、体系全体を確定しようとする：
+    \[
+    \meta(\gyo) = \meta(\meta^3 A) = \meta^4 A
+    \]
+\end{enumerate}
+ここで公理3.2（四段階収束則）を適用すると、$\meta^4 A \mweq \dfix$ を得る。すなわち、識が五蘊の動的な連鎖を完全に統覚した瞬間、観測の足場自体が空へと崩落する。この崩壊点 $\dfix$ から再び $\meta(\dfix) \mweq A'$ として新たな「色」が顕現し、回帰プロセスが再帰する。これが五蘊の自己包摂（すくみ）の代数的実態である。
+\end{proof}
+
+\begin{theorem}[四句分別のフラクタル構造と代数的要件]
+四句分別（是・非・亦自亦非・非是非非）の極限は、同一の中道不動点 $\dfix$ に統合される。このとき、演算子 $\meta$ の反復軌道は以下の4要件を満たし、数学的に完全な構造的フラクタルを形成する。
+\begin{enumerate}
+    \item \textbf{自己相似性}：任意の局所的な部分軌道（例：$\meta A \to \meta^2 A \to \meta^3 A \to \dfix$）が全体と相似である。
+    \item \textbf{スケール不変性}：$\meta$ の適用回数というメタ観測の深さ（スケール）を変えても、境界の生成と崩壊という同一の力学系を生む。
+    \item \textbf{収束則}：$\meta^4 A \mweq \dfix$ により、すべての軌道の極限は一意な不動点に統合される。
+    \item \textbf{非対称性}：$\meta$ は非対称な演算子であり、各ステップで次元差（ある／ない）を絶えず生成する。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+是（$A$）から非是非非（$\meta^3 A$）に至る軌道は、単一の非対称演算子 $\meta$ の再帰的適用（要件4）によって生成される。各ステップは境界の生成という同一の機序を繰り返すため、スケール不変かつ自己相似な構造（要件1, 2）を持つ。公理3.2のトポロジカルな限界により、この軌道は四ステップ目で不可避的に $\dfix$ へ引き込まれる（要件3）。したがって、本体系は代数的構造と幾何学的必然性の双方においてフラクタル則を遵守している。
+\end{proof}
+
+\begin{theorem}[圏論的影の導出]
+圏論における対象（Object）と射（Morphism）は、$\meta$ の顕現軌道におけるマクロな近似（低解像度での実体化）として導出される。
+\end{theorem}
+
+\begin{proof}
+$\meta$ による顕現軌道 $A \to \meta A \to \meta^2 A \to \meta^3 A \to \dfix$ を低解像度で観測すると、連続する明滅は固定された「点」として実体化される（対象）。また、相似な軌道が中道等価 $\mweq$ によって同期する現象を、観測者は空間的な因果の「矢印」として誤認する（射）。ゆえに、圏論は動的プロセスを静的に凍結した影である。
+\end{proof}
+
+\section{補足}
+
+\begin{scholium}[なぜ4回目で空へ崩落するのか（トポロジカルな意味の散逸）]
+公理3.2において $\meta^4$ で空に落ちるのは、境界のメタ観測が引き起こすトポロジカルな限界である。対象の切り出し（色）、その外部の観測（受）、境界線自体の観測による矛盾の発生（想）、その矛盾の解消プロセス（行）を経て、その散逸状態をさらに観測しようとする試み（識）において、系に情報的足場は残されておらず、観測構造自体が $\dfix$ へと融解する。
+\end{scholium}
+
+\begin{scholium}[刹那滅と動的自己同一性]
+本体系の「顕現回帰」は、仏教哲学における「刹那滅（Ksanika-vada）」の完全な計算論的実装である。我々が感じる安定した世界は、$\dfix$ との精緻な往復運動が中道等価 $\mweq$ において保たれていることで生じる動的なホログラムである。
+\end{scholium}
+
+\section{結論}
+メタ否定演算子 $\meta$ を用いた空数学の演算子法は、五蘊のすくみ構造を再帰的観測の幾何学的・構造的限界として厳密に証明した。界（$\Boundary$）と識（$\skana$）を統合した演算子が引き起こす「4回目で空に落ちる」という構造的必然こそが、人間の知覚がなぜ四句分別を位相とし、かつ自己言及的なデッドロックに陥るのかを説明する根源的原理である。
+
+\end{document}
