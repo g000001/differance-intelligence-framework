@@ -13,7 +13,8 @@ SOURCES = icat-perception.tex \
           icat-cl.tex \
           icat-catuskoti-skandha.tex \
           icat-sunyata-theory.tex \
-          icat-lk.tex
+          icat-lk.tex \
+          icat-ymwcomb.tex
 
 # 中間生成物および最終的なPDFのリスト
 PDFS = $(SOURCES:.tex=.pdf)
