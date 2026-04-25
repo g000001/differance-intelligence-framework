@@ -1,0 +1,170 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}}
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\meta}{\Uparrow}
+\newcommand{\Kvoid}{K_{\emptyset}}
+\newcommand{\Bou}{\mathbf{Bou}}
+\newcommand{\nCat}{\mathbf{nCat}}
+\newcommand{\Leadsto}{\rightsquigarrow}
+\newcommand{\susp}[1]{#1^*}
+\newcommand{\Ymw}{Y_{\mathrm{mw}}}
+
+\renewcommand{\abstractname}{Abstract}
+
+\begin{document}
+
+\title{1Bou:nCat：プログラム実行システムのまとめ}
+\author{Masaomi Chiba}
+\date{2026-04-25}
+\maketitle
+
+\begin{abstract}
+本稿は、界論（Bou）と下位圏（nCat）を統合した
+1Bou:nCat のプログラム実行システムをまとめる。
+世俗諦的な構造（nCat）と勝義諦的な構造（Bou）の間の
+埋め込み・遷移・完備化・解脱のプロセスを形式化し、
+任意の形式体系 $N$ に対し $N \otimes I_N$ が実行可能なプログラミング言語となる
+ことを示す。
+\end{abstract}
+
+\section{1Bou:nCat の構成}
+
+\begin{definition}[1Bou:nCat]
+1Bou:nCat は、以下の二つの層から成る。
+\begin{itemize}
+\item $\nCat$：下位圏の層（世俗諦）  
+  - 例：CCC（型付きラムダ計算）、モノイダル圏（線形論理）、LCCC（依存型）、確率的圏、線形圏など
+\item $\Bou$：界論の層（勝義諦）  
+  - 演算子：$\Leadsto$（遷移）、$\meta$（メタ否定）、$\susp{}$（保留）、$\dfix$（絶対不動点）
+\end{itemize}
+\end{definition}
+
+\begin{definition}[埋め込み関手 $\mathcal{E}$]
+下位圏 $\nCat$ から界 $\Bou$ への埋め込み関手 $\mathcal{E}$ を定義する。
+\begin{align*}
+\mathcal{E} &: \nCat \hookrightarrow \Bou \\
+\mathcal{E}(A) &= \susp{A} \quad\text{（対象の保留）} \\
+\mathcal{E}(f) &= A \meta B \quad\text{（射のメタ否定）}
+\end{align*}
+\end{definition}
+
+\section{プログラム実行のプロセス}
+
+\begin{definition}[帰納フラクタロイド $I_N$]
+古典的な「モナド」は自己同一性と平坦な結合律を要求するため、本体系には適合しない。
+代わって、界 $\Bou$ 上で動的プロセスを生成する文脈演算子を
+「帰納フラクタロイド（Inductive Fractaloid）$I_N$」と定義する。
+$I_N$ は、中道不動点コンビネータ $\Ymw$ を駆動エンジンとし、
+静的な対象を「保留・遷移・解脱」のフラクタル軌道へと乗せる作用素である。
+\end{definition}
+
+\begin{definition}[プログラム $P$ の実行結合 $\otimes$]
+任意の形式体系 $N$（論理・文法・計算：$\nCat$ 上の構造）に対し、
+プログラム $P$ は、静的構造 $N$ と動的フラクタロイド $I_N$ の
+結合（着火）として定義される。
+\begin{align*}
+P &:= N \otimes I_N \\
+\text{実行軌道} &: \susp{P_0} \Leadsto P_1 \Leadsto \dots \Leadsto \meta^4 P_k \mweq \dfix
+\end{align*}
+静的対象は $\Bou$ に埋め込まれた瞬間に保留（$\susp{P_0}$）され、
+$\Ymw$ の作用により状態遷移（$\Leadsto$）を繰り返し、最終的に $\dfix$ へと解脱する。
+\end{definition}
+
+\begin{theorem}[$N \otimes I_N$ の実行可能性と停止性]
+任意の形式体系 $N$ に対し、$N \otimes I_N$ は実行可能なプログラミング言語となる。
+\end{theorem}
+\begin{proof}
+$N$ を埋め込み関手 $\mathcal{E}$ により界 $\Bou$ へ移行させる。
+$\Bou$ 上において、自己同一性を要求する古典的評価は行われず、
+帰納フラクタロイド $I_N$ に従った中道推論（大域的カット消去）が適用される。
+$\Ymw$ による自己参照（無明の生成）は、系に蓄積された構造的負債（Cut）を
+消費しながら進行し、負債が尽きた時点で $\meta^4$ の相転移を起こし、
+無記状態 $\dfix$ へと必然的に収束（停止）する。
+\end{proof}
+
+\section{典型例}
+
+\begin{corollary}[ペアノ算術 $\mathbb{P}$]
+$\mathbb{P} \otimes \text{Free}(\Sigma_+)$ は項書換え系・純関数言語となる。
+\end{corollary}
+
+\begin{corollary}[最小論理 $\mathrm{ML}$]
+$\mathrm{ML} \otimes \text{Cont}_R$ は古典論理 + call/cc となる。
+\end{corollary}
+
+\begin{corollary}[文脈自由文法 $\mathrm{CFG}$]
+$\mathrm{CFG} \otimes \text{State}_{\mathbb{N}}$ は再帰下降パーザとなる。
+\end{corollary}
+
+\begin{corollary}[ホーン節 $\mathrm{Horn}$]
+$\mathrm{Horn} \otimes \text{List}$ は Prolog となる。
+\end{corollary}
+
+\section{界論（Bou）の演算子とプログラム実行}
+
+\begin{definition}[遷移 $\Leadsto$]
+プログラム $P$ の状態遷移を表す。
+$$P \Leadsto P'$$
+は、$P$ が次の状態 $P'$ へ遷移することを意味する。
+\end{definition}
+
+\begin{definition}[メタ否定 $\meta$]
+世俗諦から勝義諦へのメタレベル上昇を表す。
+$$A \meta B$$
+は、$A$ の境界を生成し、知覚次元を一段引き上げる。
+\end{definition}
+
+\begin{definition}[保留 $\susp{}$]
+局所的境界を生成し、世俗諦へ戻る操作を表す。
+$$\susp{A}$$
+は、$A$ を保留状態に置き、局所的な境界を生成する。
+\end{definition}
+
+\begin{definition}[絶対不動点 $\dfix$]
+すべての境界が融解した極限状態を表す。
+$$\meta^4 A \mweq \dfix$$
+プログラム実行の終了点・解脱点として機能する。
+\end{definition}
+
+\section{中道不動点コンビネータ $\Ymw$}
+
+\begin{definition}[中道不動点コンビネータ $\Ymw$]
+$\meta$ に対し、以下の中道等価を満たすコンビネータ $\Ymw$ を定義する。
+$$\Ymw\, \meta \mweq \meta\,(\Ymw\, \meta)$$
+$\Ymw$ はフラクタル四則から必然的に導出される
+「無明（自己参照の閉じ損ね）」のジェネレータであり、
+$\Kvoid$ への相転移（大域的カット消去）によって停止する。
+\end{definition}
+
+\section*{備考：1Bou:nCat の意義}
+
+1Bou:nCat は、
+- 世俗諦的な構造（nCat）と勝義諦的な構造（Bou）を統合し、
+- 任意の形式体系 $N$ に対し $N \otimes I_N$ が実行可能なプログラミング言語となる
+ことを示した。
+
+これにより、
+- 論理・文法・計算・確率・線形性など、多様な構造を
+- 一つの枠組み（1Bou:nCat）で統一的に扱える
+という理論的基盤が確立された。
+
+\end{document}

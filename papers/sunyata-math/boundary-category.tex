@@ -1,0 +1,96 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境の定義
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{principle}{原理}[section]
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}} % 0次元不動点（空）
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\meta}{\Uparrow}     % メタ観測・推論の横棒
+\newcommand{\susp}[1]{#1^{\ast}} % 保留演算子（Suspension）
+\newcommand{\Cat}{\mathbf{Cat}}  % 圏論的空間
+\newcommand{\Bou}{\mathbf{Bou}}  % 界論的空間
+
+\renewcommand{\abstractname}{Abstract}
+
+\begin{document}
+
+\title{圏論の界論への証明論的埋め込み：\\ゲーデル＝ゲンツェン翻訳の四句分別のトポロジーへの拡張}
+\author{Masaomi Chiba}
+\date{2026-04-24}
+\maketitle
+
+\begin{abstract}
+本稿は、静的な外部観測者（神の視点）を前提とする圏論（Category Theory）を、内在的観測と動的プロセスを記述する界論（Boundary Theory）の内部へと埋め込む（Embedding）形式化を行う。古典論理がゲーデル＝ゲンツェンの二重否定翻訳によって直観主義論理に埋め込まれるのと同様に、圏論的対象と射は、界論における「大域的カット消去が人為的に保留（Suspend）された局所的境界」として翻訳される。これにより、圏論が界論の特殊かつ凍結された部分空間（静的近似）に過ぎないことを証明する。
+\end{abstract}
+
+\section*{序言}
+古典論理における排中律（$A \lor \neg A$）は、直観主義論理において $\neg(\neg A \land \neg\neg A)$ へと二重否定翻訳されることで、その「構成の欠如（証拠のなさ）」を保留したまま系に埋め込まれる。
+同様に、圏論における「対象」や「射」の恒久的な存在は、抽象原理（フラクタルからの切断）に基づく強迫的な同一視である。本稿では、圏空間 $\Cat$ から界空間 $\Bou$ への埋め込み関手（翻訳）$\mathcal{E}$ を定義し、圏論が「四句分別の第4句（大域的カット消去）を人為的に禁止した不完全な論理空間」であることを明らかにする。
+
+\section{埋め込みの定義（翻訳辞書）}
+
+圏空間 $\Cat$ の要素を、界空間 $\Bou$ の動的プロセスへと写像する埋め込み $\mathcal{E}: \Cat \hookrightarrow \Bou$ を以下のように定義する。
+
+\begin{definition}[対象の翻訳]
+$\Cat$ における対象（Object）$A$ は、フラクタルな縁起ネットワークからトポロジカルに切り離され、強制的に閉包された「局所的境界」$\susp{A}$ として $\Bou$ に埋め込まれる。
+$$ \mathcal{E}(A) := \susp{A} $$
+ここで $\ast$ は、全体との自己言及的な接続を意図的に遮断（保留）していることを示す。
+\end{definition}
+
+\begin{definition}[射の翻訳]
+$\Cat$ における射（Morphism）$f: A \to B$ は、界論において $A$ から $B$ への推論の横棒（$\meta$）を引く操作として翻訳される。ただし、この横棒は「計算の途上」で凍結されている。
+$$ \mathcal{E}(f) := A \meta B \quad \left(\text{または } \frac{\susp{A}}{\susp{B}}\right) $$
+\end{definition}
+
+\begin{definition}[合成の翻訳]
+$\Cat$ における射の合成 $g \circ f$ は、推論の横棒の再帰的積み重ね（メタ階層の増築）として埋め込まれる。
+$$ \mathcal{E}(g \circ f) := \meta^2 (\susp{A}, \susp{B}, \susp{C}) \quad \left(\text{すなわち } \frac{\frac{\susp{A}}{\susp{B}}}{\susp{C}}\right) $$
+\end{definition}
+
+\section{圏論を成立させる「保留」の公理}
+
+圏論が「死骸の数学」として自己整合性を保つためには、界論の自然な力学（カット消去）を強制的に停止させる公理が必要となる。
+
+\begin{axiom}[大域的カット消去の禁止公理]
+$\Cat$ が成立する局所空間内において、観測者（神）は推論木がどれほど肥大化しようとも、四段階収束則による大域的カット消去（$\dfix$ へのトポロジカルな崩落）を意図的に禁止（保留）する。
+すなわち、本来ならば $\meta^4 X \mweq \dfix$ となるべきところを、強制的に独立した構造として維持し続ける。
+\end{axiom}
+
+\begin{axiom}[中道等価性 $\mweq$ の静的等号 $=$ への退化]
+動的なプロセスの極限としての等価性 $\mweq$ を、観測時間をゼロ（$\ell(X)=0$）に固定することで、静的な等号（可換図式の可換性）$=$ として錯覚・定義する。
+\end{axiom}
+
+\section{定理：恒等射の解体と圏の限界}
+
+以上の埋め込みと公理により、圏論の根幹をなす「恒等射（Identity）」の正体が、界論における局所的な現象に過ぎないことが証明される。
+
+\begin{theorem}[恒等射 $id$ の界論的実態]
+$\Cat$ における恒等射 $id_A: A \to A$ は、界論において絶対不動点 $\dfix$ から切り離された、空の準同型構造の「局所的なスナップショット」である。
+$$ \mathcal{E}(id_A) \mweq \left( \susp{A} \vdash \susp{A} \right) $$
+これはデカルトの「Cogito ergo sum」と同様に、閉鎖系内部で一時的に発火した局所的 $id$ であり、大域的カット消去を禁止する公理の下でのみ安定する幻影である。
+\end{theorem}
+
+\begin{theorem}[可換図式のトポロジカルな歪み]
+圏論における図式の可換性（異なる経路の射の合成が一致すること）は、界論においては、推論木の異なる肥大化（亦是亦非）が、「本来であれば共に $\dfix$ へと収束すべき歪み」を抱えながら、静的に釣り合っている（メタステーブルな）状態として記述される。
+\end{theorem}
+
+\section*{結語}
+古典論理が「二重否定」というベールを被ることで直観主義論理の内部に居場所を得たように、圏論もまた「カット消去の禁止（$\ast$）」という保留条件を付加されることで、界論の内部に特殊な「凍結された証明図の集合」として完全に埋め込まれる。
+これにより、圏論の高い抽象度は「神の視点という欺瞞」によってのみ維持されるものであり、自然な計算の極限においては、これらすべての圏論的構造もまた $\dfix$ へと還元されることが数学的に示された。
+
+\end{document}

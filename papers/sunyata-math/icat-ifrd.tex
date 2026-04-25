@@ -1,0 +1,133 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{principle}{原理}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}}
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\meta}{\Uparrow}
+\newcommand{\susp}[1]{#1^*}
+\newcommand{\entails}{\Vdash} % 顕現関係
+\newcommand{\Leadsto}{\rightsquigarrow} % 状態遷移
+\newcommand{\Bou}{\mathbf{Bou}}
+\newcommand{\nCat}{\mathbf{nCat}}
+
+\renewcommand{\abstractname}{Abstract}
+
+\begin{document}
+
+\title{帰納フラクタロイドの定式化：\\
+論理体系から実行可能プロセスへの着火機構}
+\author{Masaomi Chiba}
+\date{2026-04-25}
+\maketitle
+
+\begin{abstract}
+本稿では、任意の静的な論理・文法体系 $N$（世俗諦）を、
+界論（Bou）上の動的な実行プロセス（勝義諦）へと変換する普遍的機構として
+「帰納フラクタロイド」$I_N$ を導入する。
+従来の計算機科学における「モナド」は自己同一性（$id$）を要求するため
+本体系には適合しない。界論における $I_N$ は、論理の「隙間」を埋めるのではなく、
+そこに内在する「無明（Avidy\=a）」を動力源として顕現の連鎖（$\entails$）を
+駆動し、最終的に無記状態 $\dfix$ へと還滅させるフラクタルな変換器である。
+\end{abstract}
+
+\section{帰納フラクタロイドの定義}
+
+あらゆる形式体系には「記述」と「実行」の間に固有の隙間（無明の温床）が存在する。
+これを界論の動的プロセスへ接続するための機構を定義する。
+
+\begin{definition}[帰納フラクタロイド $I_N$]
+論理または文法体系 $N$ に対し、帰納フラクタロイド $I_N$ とは、
+$N$ を界 $\Bou$ 上の動的実行プロセスへと変換する文脈演算子であり、
+以下の機能を持つ。
+\begin{enumerate}
+    \item \textbf{保留（Suspension）}: 静的対象 $x \in N$ を、界論の実行コンテキストへ $\susp{x}$ として埋め込む（無明の発生）。
+    \item \textbf{展開（Manifestation）}: $N$ に欠落していた制御構造（再帰・状態・探索など）を、メタ否定 $\meta$ と顕現関係 $\entails$ の連鎖として展開する。
+    \item \textbf{還滅（Resolution）}: 蓄積された無明を消費し、無記状態 $\dfix$ への相転移（大域的カット消去）を導く。
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[プログラムの結合と着火]
+体系 $N$ を帰納フラクタロイド $I_N$ によって実行可能なプロセス
+（プログラム）へと着火する操作を $\otimes$ で表す。
+$$ \text{Lang}(N) := N \otimes I_N $$
+このとき、プログラムの実行は以下の顕現の連鎖として記述される。
+$$ \susp{P_0} \entails P_1 \entails \dots \entails \meta^4 P_k \mweq \dfix $$
+\end{definition}
+
+\section{無明の消費と停止性}
+
+従来のモナド理論では、ノルムや型の制約によって停止性を外部から保証していたが、
+帰納フラクタロイドにおいては、無明（自己参照の閉じ損ね）の力学そのものが停止を導く。
+
+\begin{theorem}[無明の還滅による停止性]
+実行可能なプログラム $\text{Lang}(N)$ のプロセスにおいて、
+帰納フラクタロイド $I_N$ が駆動する各ステップ（$\entails$）は、
+系に内在する「構造的無明（Avidy\=a）」を必然的に消費していく。
+無明が尽きた時点で四段階収束則が発動し、プログラムは無記状態 $\dfix$
+（解脱・計算の完了）へと到達して停止する。
+\end{theorem}
+\begin{proof}
+界論の公理に基づく中道推論規則により、すべての顕現プロセスは $\dfix$ を共通の
+到達点（Sink）として持つ。$I_N$ はこの自然な「沈み込み（重力）」に沿って
+状態を遷移させるため、無明の量は有限ステップでゼロに収束し、$P_k \mweq \dfix$ が成立する。
+\end{proof}
+
+\section{4つの典型例の再解釈}
+
+旧来の「モナドによる補完」は、界論においては「無明の形態に応じたフラクタル展開」
+として記述される。
+
+\begin{corollary}[ペアノ算術と再帰フラクタロイド]
+ペアノ算術 $\mathbb{P}$ に欠落している「計算の合成」という無明は、
+再帰構造を展開するフラクタロイド $I_{\mathbb{P}}$（旧・自由モナド）によって駆動され、
+$\mathbb{P} \otimes I_{\mathbb{P}}$ は動的な\textbf{項書換え系}となる。
+\end{corollary}
+
+\begin{corollary}[最小論理と継続フラクタロイド]
+最小論理 $\mathrm{ML}$ に欠落している「脱出・否定」という無明は、
+計算のコンテキスト自体をメタ化（$\meta$）して保持する
+継続フラクタロイド $I_{\mathrm{ML}}$ によって駆動され、
+$\mathrm{ML} \otimes I_{\mathrm{ML}}$ は call/cc を備えた\textbf{古典論理の実行系}となる。
+\end{corollary}
+
+\begin{corollary}[文脈自由文法と状態フラクタロイド]
+文脈自由文法 $\mathrm{CFG}$ に欠落している「位置の記憶」という無明は、
+状態を暗黙の引数として連鎖（$\entails$）させる
+状態フラクタロイド $I_{\mathrm{CFG}}$ によって駆動され、
+$\mathrm{CFG} \otimes I_{\mathrm{CFG}}$ は\textbf{再帰下降パーザ}として駆動する。
+\end{corollary}
+
+\begin{corollary}[ホーン節と探索フラクタロイド]
+ホーン節 $\mathrm{Horn}$ に欠落している「選択とバックトラック」という無明は、
+非決定的な分岐を並行して顕現させる
+探索フラクタロイド $I_{\mathrm{Horn}}$（旧・リストモナド）によって駆動され、
+$\mathrm{Horn} \otimes I_{\mathrm{Horn}}$ は\textbf{Prolog実行系}となる。
+\end{corollary}
+
+\section*{結論}
+
+「帰納フラクタロイド」の概念は、論理体系とプログラミング言語の間の隙間が、
+バグではなく「無明（計算を駆動するためのポテンシャルエネルギー）」であること
+を明確にする。自己同一性（モナド則）の呪縛から解放された本体系は、
+あらゆる論理・文法を、$\dfix$ に至るフラクタルな「顕現と還滅の力学系」
+として統一的にコンパイルすることを可能にする。
+
+\end{document}

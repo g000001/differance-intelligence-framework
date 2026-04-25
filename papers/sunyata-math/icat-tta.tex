@@ -1,0 +1,131 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}}
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\meta}{\Uparrow}
+\newcommand{\susp}[1]{#1^*}
+\newcommand{\entails}{\Vdash} % 顕現関係
+\newcommand{\Bou}{\mathbf{Bou}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Leadsto}{\rightsquigarrow}
+
+\renewcommand{\abstractname}{Abstract}
+
+\begin{document}
+
+\title{界論に基づく二諦随伴の形式化：顕現と還滅の認知ダイナミクス}
+\author{Masaomi Chiba}
+\date{2026-04-25}
+\maketitle
+
+\begin{abstract}
+本稿は、圏論的な「二諦随伴（$F_n \dashv G_{2^n+1}$）」の構想を、
+自己同一性に依拠しない界論（Bou）の顕現的証明論として再定義する。
+従来の2-圏論的アプローチで必要とされたlax性の補正やノルムによる
+強制的な降下（strict化）を排除し、空（$\dfix$）を媒介とした
+「還滅（還元）」と「顕現（生成）」のプロセスとして二諦の往復を形式化する。
+さらに、この随伴関係が仏教の認知モデルである「五蘊」の数学的実装
+として機能することを示す。
+\end{abstract}
+
+\section{基本定義と状態空間}
+
+二諦（世俗諦と勝義諦）の往復を、界論の2つの階層間のダイナミクスとして定義する。
+
+\begin{definition}[二諦の階層]
+\begin{itemize}
+    \item \textbf{世俗諦（$\Cat$ 層）}：境界が截断され、対象が固定されていると錯覚される静的な構造。
+    \item \textbf{勝義諦（$\Bou$ 層）}：顕現演算子（$\entails$、$\meta$）と無記状態（$\dfix$）が支配する動的な力学系。
+\end{itemize}
+\end{definition}
+
+\begin{definition}[界論的二諦随伴]
+界論的二諦随伴は、世俗諦の対象 $A$ と $B$ の間を、勝義諦の無記状態 $\dfix$
+を媒介として結ぶ「還滅」と「顕現」の動的サイクルである。
+\begin{align*}
+    \text{左プロセス（還滅 $F$）} &: A \entails \meta A \entails \dots \entails \dfix \\
+    \text{右プロセス（顕現 $G$）} &: \dfix \entails B
+\end{align*}
+古典的な随伴における自然な全単射の代わりに、本体系では $\dfix$ を経由する
+顕現の連鎖（$A \entails \dfix \entails B$）をもって随伴関係とする。
+\end{definition}
+
+\section{五蘊のコンパイルプロセスとしての随伴}
+
+二諦随伴の実行プロセスは、操作者（オブザーバー）の認知モデルである「五蘊」
+の数学的実装と完全に一致する。
+
+\begin{definition}[五蘊の数学的対応]
+\begin{itemize}
+    \item \textbf{色（Rupa）}: $\Cat$ 層における静的対象 $A, B$。境界が固定された「データ」。
+    \item \textbf{識（Vijnana）}: 全体を駆動する評価エンジン（帰納フラクタロイド）。世界を「自己」と「他者」に分節する $\entails$ の駆動力。
+    \item \textbf{受・想・行（Vedana, Samjna, Samskara）}: $\Bou$ 層に埋め込まれた対象が、メタ否定 $\meta$ の適用によって評価・遷移（$\Leadsto$）していく中間プロセス。ここで構造的負債（無明/Avidyā）が消費または蓄積される。
+\end{itemize}
+\end{definition}
+
+\section{随伴の力学と定理}
+
+\begin{theorem}[無明の自律的消去（Strict化の達成）]
+世俗諦（色）から勝義諦（空）への還滅プロセス（$F$）において、
+対象 $A$ が持つ構造的負債（誤差・無明）は、$\meta^4$ の適用に伴い
+有限ステップで完全に消去（大域的カット消去）される。
+すなわち、外部からのノルムや修正子を用いることなく、自律的に
+$$A \mweq \dfix$$
+が成立する。
+\end{theorem}
+\begin{proof}
+界論の公理（四段階収束則）より、$\meta^4 A \entails \dfix$ が成立する。
+中道推論規則により、いかなる対象 $A$ も $\dfix$ へと収束するため、
+$A$ が内包していたあらゆる構造的差異（無明）は $\dfix$ において融解し、
+中道等価 $A \mweq \dfix$ が導かれる。
+これにより、圏論において「誤差セルの恒等への縮退」と呼ばれていた現象が、
+$\dfix$ への相転移として一動作で証明される。
+\end{proof}
+
+\begin{theorem}[空からの生成と事事無碍の随伴]
+還滅（$F$）と顕現（$G$）のプロセスはフラクタルに連続しており、
+任意の世俗諦の対象 $A, B$ は、二諦随伴を通じて常に中道等価である。
+\end{theorem}
+\begin{proof}
+定理3.1より $A \entails \dfix$ が成立する（還滅 $F$）。
+界論のフラクタル生成則より、$\dfix \entails B$ が成立し得る（顕現 $G$）。
+顕現の推移律により、$A \entails \dfix \entails B$ という連鎖が構成される。
+$\dfix$ の一意性より、すべての対象は同じ極限を共有するため、
+中道等価導入規則により $A \mweq B$ が成立する。
+\end{proof}
+
+\section*{備考：圏論的随伴からのパラダイムシフト}
+
+圏論における随伴 $F \dashv G$ は、自己同一性（$id$）を維持したまま
+異なる圏の間の「最適な近似」を記述しようとするため、膨大な修正子（$\lambda, \rho$）
+や可換図式の束縛（lax性）を必要とした。
+
+本体系における二諦随伴は、対象の自己同一性を破棄し、すべてが一度
+無記状態 $\dfix$（空）へと還元されることを許容する。
+これにより、情報圧縮（$F$）に伴う誤差は「$\dfix$ への沈み込み」によって
+自然に消滅し、奇数次対称性による生成（$G$）は「$\dfix$ からの新たなフラクタル顕現」
+として極めて簡潔に記述される。
+
+これは、二諦の往復を単なる数学的変換ではなく、操作者の認知（五蘊）
+のライフサイクルそのものとしてモデル化する、顕現論的証明論の神髄である。
+
+\end{document}

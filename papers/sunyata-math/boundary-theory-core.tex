@@ -1,0 +1,140 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+
+
+
+
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}}
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\meta}{\Uparrow}
+\newcommand{\Kvoid}{K_{\emptyset}}
+
+\renewcommand{\abstractname}{Abstract}
+
+\begin{document}
+
+\title{界論（Boundary Theory）：核定義}
+\author{Masaomi Chiba}
+\date{2026-04-25}
+\maketitle
+
+\begin{abstract}
+本稿は、界論（Boundary Theory）の核をなす最小の定義・公理・定理を簡潔に記述する。
+フラクタル則（自己相似性・スケール不変性・収束則・非対称性）は別稿にて与えられた所与として扱い、
+ここでは演算体系のコアのみを定式化する。
+\end{abstract}
+
+\section{基本定義}
+
+\begin{definition}[メタ否定演算子 $\meta$]
+対象 $A$ に対し、その境界を生成し知覚次元を非対称に一段引き上げる演算子を
+$\meta$ と定義する。
+$$\meta A \;:=\; \partial A \;=\; \text{「}A \text{ ではない」という高次元の情報}$$
+$\meta$ は非対称であり、適用ごとに次元差を生成する。すなわち
+$$A \not\mweq \meta A$$
+\end{definition}
+
+\begin{definition}[中道等価 $\mweq$]
+厳密な自己同一性（$=$）を要求せず、
+フラクタル収束の軌道が一致することをもって等価とみなす関係演算子を
+中道等価 $\mweq$ と定義する。
+これは非実体化の演算子であり、対象を静的な点として固定しない。
+\end{definition}
+
+\begin{definition}[絶対不動点 $\dfix$]
+$\meta$ の四連続適用によって到達する、あらゆる境界が融解した極限状態を
+絶対不動点 $\dfix$ と定義する。
+$$\meta^4 A \mweq \dfix$$
+$\dfix$ は実体を持たず、すべての構成プロセスが最終的に引き込まれる
+「空」の計算論的実態である。
+\end{definition}
+
+\begin{definition}[空コンビネータ $\Kvoid$]
+任意の演算子 $f$ を適用しても常に自己を返す自明なコンビネータを
+$\Kvoid$ と定義する。
+$$\Kvoid f = \Kvoid$$
+これは $\dfix$ の純粋なコンビネータ表現であり、
+エントロピーが定義されない勝義諦の基底である。
+\end{definition}
+
+\section{公理}
+
+\begin{axiom}[次元の非対称性]
+$\meta$ は非対称な演算子であり、適用ごとに知覚次元を一段引き上げる。
+逆操作は定義されない。
+$$A \not\mweq \meta A$$
+\end{axiom}
+
+\begin{axiom}[四段階収束則]
+$\meta$ の四連続適用は、中道不動点 $\dfix$ へと収束し、構造的な意味が消失する。
+$$\meta^4 A \mweq \dfix$$
+\end{axiom}
+
+\begin{axiom}[空の自己同一性（空空）]
+$\dfix$ は外部を経由しない純粋な自己回帰として記述される。
+証明論的には究極の真理保存則（恒等規則）として以下のように表現される。
+$$\dfix \vdash \dfix$$
+この状態においてすべてのカットは消去されており、
+エントロピーは定義されず、時間は静止する。
+\end{axiom}
+
+\section{基本定理}
+
+\begin{theorem}[顕現と回帰]
+$\dfix$ に対して $\meta$ が作用した瞬間、静寂は破断され世俗的対象 $A$ が顕現する。
+$$\meta(\dfix) \mweq A$$
+顕現した $A$ は $\meta$ の再帰的適用により必然的に $\dfix$ へと回帰する。
+$$\meta^4 A \mweq \dfix$$
+\end{theorem}
+
+\begin{theorem}[真理保存性の体系内記述]
+真理保存性は神の視点（メタ理論）から与えられるものではなく、
+$\meta$ の反復プロセスのフラクタルな安定性として体系内部に内在的に記述される。
+$$\dfix \vdash \dfix$$
+\end{theorem}
+
+\section{系：中道不動点コンビネータ}
+
+\begin{corollary}[中道不動点コンビネータ $Y_{\mathrm{mw}}$ の存在]
+$\meta$ に対し、以下の中道等価を満たすコンビネータ $Y_{\mathrm{mw}}$ が存在する。
+$$Y_{\mathrm{mw}}\, \meta \mweq \meta\,(Y_{\mathrm{mw}}\, \meta)$$
+$Y_{\mathrm{mw}}$ はフラクタル四則から必然的に導出される
+「無明（自己参照の閉じ損ね）」のジェネレータであり、
+$\Kvoid$ への相転移（大域的カット消去）によって停止する。
+\end{corollary}
+
+\section*{備考：フラクタル則との関係}
+
+本稿の公理系はフラクタル則（自己相似性・スケール不変性・収束則・非対称性）を
+所与として受け取る。フラクタル則なしには四段階収束則（公理 2.2）の
+幾何学的根拠が失われるが、
+本体系の演算構造はフラクタル則から独立して定義可能である。
+両者の関係は以下のように整理される。
+
+\begin{center}
+\begin{tabular}{ll}
+\hline
+フラクタル則 & 幾何学的・構造的根拠 \\
+界論コア    & 演算的・証明論的記述 \\
+\hline
+\end{tabular}
+\end{center}
+
+\end{document}

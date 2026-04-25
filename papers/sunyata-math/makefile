@@ -14,7 +14,13 @@ SOURCES = icat-perception.tex \
           icat-catuskoti-skandha.tex \
           icat-sunyata-theory.tex \
           icat-lk.tex \
-          icat-ymwcomb.tex
+          icat-ymwcomb.tex \
+          boundary-theory-core.tex \
+          aletheic-proof-theory.tex \
+          boundary-category.tex \
+          icat-tta.tex \
+          icat-ifrd.tex
+
 
 # 中間生成物および最終的なPDFのリスト
 PDFS = $(SOURCES:.tex=.pdf)

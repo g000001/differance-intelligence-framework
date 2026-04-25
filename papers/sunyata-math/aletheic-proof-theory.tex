@@ -1,0 +1,162 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{\mathfrak{0}}
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\meta}{\Uparrow}
+\newcommand{\Kvoid}{K_{\emptyset}}
+\newcommand{\vdashmw}{\vdash_{\mathrm{mw}}}
+\newcommand{\entails}{\Vdash} % 顕現関係
+
+\renewcommand{\abstractname}{Abstract}
+
+\begin{document}
+
+\title{自己同一性に依拠しない証明論の構築：顕現論的証明論の提案}
+\author{Masaomi Chiba}
+\date{2026-04-25}
+\maketitle
+
+\begin{abstract}
+本稿は、自己同一性（$A = A$）を前提としない証明論の枠組みを提案する。
+通常の証明論が「真偽の決定」を目的とするのに対し、
+本体系は「顕現（manifestation）」と「無記（indeterminate）」を中心に、
+フラクタルな縁起の力学を記述することを目的とする。
+極限まで洗練された2つの推論規則から、万物の等価性（事事無碍法界）と
+次元を越えた中道等価（色即是空）の形式的証明を行う。
+\end{abstract}
+
+\section{基本定義}
+
+\begin{definition}[顕現関係 $\entails$]
+対象 $A$ が世界に現れるプロセスを、顕現関係 $\entails$ で表す。
+$$A \entails B$$
+は、「$A$ が顕現することにより $B$ が指し示される（縁起的に後続する）」ことを意味する。
+ここで $A, B$ は自己同一性を前提としない。
+\end{definition}
+
+\begin{definition}[無記状態 $\dfix$]
+すべての境界が融解した極限状態を無記状態 $\dfix$ と定義する。
+$\dfix$ は「是でもなく、非でもない」状態である。
+\end{definition}
+
+\begin{definition}[中道等価 $\mweq$]
+フラクタル収束の軌道が共有されることをもって等価とみなす関係演算子である。
+$$A \mweq B \quad\text{iff}\quad \exists C \ (A \entails C \;\text{かつ}\; B \entails C)$$
+\end{definition}
+
+\section{公理}
+
+\begin{axiom}[顕現の無記性]
+$$\dfix \entails \dfix$$
+\end{axiom}
+
+\begin{axiom}[メタ否定の顕現]
+$$A \entails \meta A$$
+\end{axiom}
+
+\begin{axiom}[四段階収束則]
+$$\meta^4 A \entails \dfix$$
+\end{axiom}
+
+\begin{axiom}[無記状態の一意性]
+全体系において、収束の極限状態としての $\dfix$ は唯一絶対である。
+\end{axiom}
+
+\begin{axiom}[フラクタル生成則]
+無記状態 $\dfix$ は終点であると同時に、新たなスケールの生成の起点でもある。
+すなわち、ある対象 $B$ に対して $\dfix \entails B$ が成立し得る。
+\end{axiom}
+
+\section{推論規則}
+
+本体系のエンジンとなる推論規則は以下の2つのみである。
+
+\begin{definition}[中道推論規則]
+\begin{align*}
+\text{(顕現の推移律)}&\quad
+\frac{A \entails B \quad B \entails C}{A \entails C} \\[6pt]
+\text{(中道等価導入)}&\quad
+\frac{A \entails C \quad B \entails C}{A \mweq B}
+\end{align*}
+\end{definition}
+
+\section{補題と定理}
+
+\begin{lemma}[顕現の拡張]
+任意の対象 $A, B$ について、$A \entails B$ ならば $A \entails \meta B$ が成立する。
+\end{lemma}
+\begin{proof}
+前提 $A \entails B$ と、公理2.2（$B \entails \meta B$）に対し、推移律を適用する。
+\end{proof}
+
+\begin{lemma}[無記等価性]
+任意の対象 $A$ は、無記状態 $\dfix$ と中道等価である。
+$$A \mweq \dfix$$
+\end{lemma}
+\begin{proof}
+対象 $A$ に公理2.2と推移律を繰り返し適用し、公理2.3と結びつけることで
+$A \entails \dfix$ を得る。一方、公理2.1より $\dfix \entails \dfix$ である。
+両者は共通の $\dfix$ を指し示すため、中道等価導入により $A \mweq \dfix$ が成立する。
+\end{proof}
+
+\begin{theorem}[階層を越えた中道等価：色即是空]
+任意の対象 $A$ に対し、
+$$A \mweq \meta A$$
+が成立する。
+\end{theorem}
+\begin{proof}
+補題4.2の証明過程より、$A \entails \dfix$ および $\meta A \entails \dfix$ が共に成立する。
+公理2.4の一意性により、中道等価導入を適用し $A \mweq \meta A$ を得る。
+\end{proof}
+
+\section{系：万物の相互等価性}
+
+\begin{corollary}[事事無碍法界：万物の等価性]
+本体系において、顕現し得る任意の二つの対象 $X, Y$ は中道等価である。
+$$X \mweq Y$$
+\end{corollary}
+\begin{proof}
+補題4.2の証明過程より、任意の対象 $X, Y$ はそれぞれ $X \entails \dfix$、
+$Y \entails \dfix$ を満たす。中道等価導入により $X \mweq Y$ が成立する。
+（カオスとフラクタルの等価性 $C \mweq F$ も本系の特殊例として内包される）。
+\end{proof}
+
+\section{備考：通常の証明論との違いと公理体系の性質}
+
+通常の証明論は、自己同一性（$A = A$）を絶対の前提とし、
+排中律を用いた真偽の決定（$\vdash$）を目的とする。
+
+本体系は、自己同一性を前提とせず、顕現の連鎖（$\entails$）と無記（$\dfix$）を中心に、
+言語や次元を越えた関係を「指し示し」と「中道等価（$\mweq$）」によって提示する。
+
+\paragraph{公理2.5（フラクタル生成則）の位置づけについて}
+本稿の定理群（階層を越えた中道等価や万物の等価性）の導出において、
+公理2.5は直接的には使用されていない。等価性の証明自体は、
+対象が無記状態 $\dfix$ へと収束する「沈み込み（Sink）」の性質のみで完結する。
+しかし、公理2.5が存在しない場合、本体系はすべての計算が $\dfix$ で停止して二度と
+何も生成されない「熱的死（純粋なニヒリズム）」の宇宙となってしまう。
+公理2.5は、空（$\dfix$）が単なる計算の終点ではなく、万物を生成する再帰的な起点
+（White hole）でもあることを明示し、フラクタル宇宙が永続的に駆動し続けること
+（Livenessプロパティ）を保証するための、構造的・存在論的な要請として配置されている。
+
+
+\end{document}
