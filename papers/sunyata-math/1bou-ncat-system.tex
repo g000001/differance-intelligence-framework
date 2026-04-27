@@ -23,7 +23,7 @@
 \newcommand{\metanegation}{\Uparrow}
 \newcommand{\Kvoid}{K_{\emptyset}}
 \newcommand{\Bou}{\mathbf{Bou}}
-\newcommand{\nCat}{\mathbf{nCat}}
+\newcommand{\Cat}{\mathbf{Cat}}
 \newcommand{\Leadsto}{\rightsquigarrow}
 \newcommand{\susp}[1]{#1^*}
 \newcommand{\Ymw}{Y_{\mathrm{mw}}}
@@ -38,9 +38,9 @@
 \maketitle
 
 \begin{abstract}
-本稿は、界論（Bou）と下位圏（nCat）を統合した
+本稿は、界論（Bou）と下位圏（Cat）を統合した
 1Bou:nCat のプログラム実行システムをまとめる。
-世俗諦的な構造（nCat）と勝義諦的な構造（Bou）の間の
+世俗諦的な構造（Cat）と勝義諦的な構造（Bou）の間の
 埋め込み・遷移・完備化・解脱のプロセスを形式化し、
 任意の形式体系 $N$ に対し $N \otimes I_N$ が実行可能なプログラミング言語となる
 ことを示す。
@@ -51,7 +51,7 @@
 \begin{definition}[1Bou:nCat]
 1Bou:nCat は、以下の二つの層から成る。
 \begin{itemize}
-\item $\nCat$：下位圏の層（世俗諦）  
+\item $\Cat$：下位圏の層（世俗諦）  
   - 例：CCC（型付きラムダ計算）、モノイダル圏（線形論理）、LCCC（依存型）、確率的圏、線形圏など
 \item $\Bou$：界論の層（勝義諦）  
   - 演算子：$\Leadsto$（遷移）、$\metanegation$（メタ否定）、$\susp{}$（保留）、$\dfix$（絶対不動点）
@@ -59,9 +59,9 @@
 \end{definition}
 
 \begin{definition}[埋め込み関手 $\mathcal{E}$]
-下位圏 $\nCat$ から界 $\Bou$ への埋め込み関手 $\mathcal{E}$ を定義する。
+下位圏 $\Cat$ から界 $\Bou$ への埋め込み関手 $\mathcal{E}$ を定義する。
 \begin{align*}
-\mathcal{E} &: \nCat \hookrightarrow \Bou \\
+\mathcal{E} &: \Cat \hookrightarrow \Bou \\
 \mathcal{E}(A) &= \susp{A} \quad\text{（対象の保留）} \\
 \mathcal{E}(f) &= A \metanegation B \quad\text{（射のメタ否定）}
 \end{align*}
@@ -78,7 +78,7 @@ $I_N$ は、中道不動点コンビネータ $\Ymw$ を駆動エンジンとし
 \end{definition}
 
 \begin{definition}[プログラム $P$ の実行結合 $\otimes$]
-任意の形式体系 $N$（論理・文法・計算：$\nCat$ 上の構造）に対し、
+任意の形式体系 $N$（論理・文法・計算：$\Cat$ 上の構造）に対し、
 プログラム $P$ は、静的構造 $N$ と動的フラクタロイド $I_N$ の
 結合（着火）として定義される。
 \begin{align*}
@@ -158,7 +158,7 @@ $\Kvoid$ への相転移（大域的カット消去）によって停止する�
 \section*{備考：1Bou:nCat の意義}
 
 1Bou:nCat は、
-- 世俗諦的な構造（nCat）と勝義諦的な構造（Bou）を統合し、
+- 世俗諦的な構造（Cat）と勝義諦的な構造（Bou）を統合し、
 - 任意の形式体系 $N$ に対し $N \otimes I_N$ が実行可能なプログラミング言語となる
 ことを示した。
 

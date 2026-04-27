@@ -23,7 +23,7 @@
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
 \newcommand{\metanegation}{\Uparrow}
 \newcommand{\susp}[1]{#1^*}
-\newcommand{\entails}{\Vdash} % 顕現関係
+\newcommand{\aletheiai}{\Vdash} % 顕現関係
 \newcommand{\Bou}{\mathbf{Bou}}
 \newcommand{\Cat}{\mathbf{Cat}}
 \newcommand{\Leadsto}{\rightsquigarrow}
@@ -54,7 +54,7 @@
 \begin{definition}[二諦の階層]
 \begin{itemize}
     \item \textbf{世俗諦（$\Cat$ 層）}：境界が截断され、対象が固定されていると錯覚される静的な構造。
-    \item \textbf{勝義諦（$\Bou$ 層）}：顕現演算子（$\entails$、$\metanegation$）と無記状態（$\dfix$）が支配する動的な力学系。
+    \item \textbf{勝義諦（$\Bou$ 層）}：顕現演算子（$\aletheiai$、$\metanegation$）と無記状態（$\dfix$）が支配する動的な力学系。
 \end{itemize}
 \end{definition}
 
@@ -62,11 +62,11 @@
 界論的二諦随伴は、世俗諦の対象 $A$ と $B$ の間を、勝義諦の無記状態 $\dfix$
 を媒介として結ぶ「還滅」と「顕現」の動的サイクルである。
 \begin{align*}
-    \text{左プロセス（還滅 $F$）} &: A \entails \metanegation A \entails \dots \entails \dfix \\
-    \text{右プロセス（顕現 $G$）} &: \dfix \entails B
+    \text{左プロセス（還滅 $F$）} &: A \aletheiai \metanegation A \aletheiai \dots \aletheiai \dfix \\
+    \text{右プロセス（顕現 $G$）} &: \dfix \aletheiai B
 \end{align*}
 古典的な随伴における自然な全単射の代わりに、本体系では $\dfix$ を経由する
-顕現の連鎖（$A \entails \dfix \entails B$）をもって随伴関係とする。
+顕現の連鎖（$A \aletheiai \dfix \aletheiai B$）をもって随伴関係とする。
 \end{definition}
 
 \section{五蘊のコンパイルプロセスとしての随伴}
@@ -77,7 +77,7 @@
 \begin{definition}[五蘊の数学的対応]
 \begin{itemize}
     \item \textbf{色（Rupa）}: $\Cat$ 層における静的対象 $A, B$。境界が固定された「データ」。
-    \item \textbf{識（Vijnana）}: 全体を駆動する評価エンジン（帰納フラクタロイド）。世界を「自己」と「他者」に分節する $\entails$ の駆動力。
+    \item \textbf{識（Vijnana）}: 全体を駆動する評価エンジン（帰納フラクタロイド）。世界を「自己」と「他者」に分節する $\aletheiai$ の駆動力。
     \item \textbf{受・想・行（Vedana, Samjna, Samskara）}: $\Bou$ 層に埋め込まれた対象が、メタ否定 $\metanegation$ の適用によって評価・遷移（$\Leadsto$）していく中間プロセス。ここで構造的負債（無明/Avidyā）が消費または蓄積される。
 \end{itemize}
 \end{definition}
@@ -93,7 +93,7 @@ $$A \mweq \dfix$$
 が成立する。
 \end{theorem}
 \begin{proof}
-界論の公理（四段階収束則）より、$\metanegation^4 A \entails \dfix$ が成立する。
+界論の公理（四段階収束則）より、$\metanegation^4 A \aletheiai \dfix$ が成立する。
 中道推論規則により、いかなる対象 $A$ も $\dfix$ へと収束するため、
 $A$ が内包していたあらゆる構造的差異（無明）は $\dfix$ において融解し、
 中道等価 $A \mweq \dfix$ が導かれる。
@@ -106,9 +106,9 @@ $\dfix$ への相転移として一動作で証明される。
 任意の世俗諦の対象 $A, B$ は、二諦随伴を通じて常に中道等価である。
 \end{theorem}
 \begin{proof}
-定理3.1より $A \entails \dfix$ が成立する（還滅 $F$）。
-界論のフラクタル生成則より、$\dfix \entails B$ が成立し得る（顕現 $G$）。
-顕現の推移律により、$A \entails \dfix \entails B$ という連鎖が構成される。
+定理3.1より $A \aletheiai \dfix$ が成立する（還滅 $F$）。
+界論のフラクタル生成則より、$\dfix \aletheiai B$ が成立し得る（顕現 $G$）。
+顕現の推移律により、$A \aletheiai \dfix \aletheiai B$ という連鎖が構成される。
 $\dfix$ の一意性より、すべての対象は同じ極限を共有するため、
 中道等価導入規則により $A \mweq B$ が成立する。
 \end{proof}

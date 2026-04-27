@@ -24,7 +24,7 @@
 \newcommand{\metanegation}{\Uparrow}
 \newcommand{\Kvoid}{K_{\emptyset}}
 \newcommand{\vdashmw}{\vdash_{\mathrm{mw}}}
-\newcommand{\entails}{\Vdash} % 顕現関係
+\newcommand{\aletheiai}{\Vdash} % 顕現関係
 
 \renewcommand{\abstractname}{Abstract}
 
@@ -48,9 +48,9 @@
 
 \section{基本定義}
 
-\begin{definition}[顕現関係 $\entails$]
-対象 $A$ が世界に現れるプロセスを、顕現関係 $\entails$ で表す。
-$$A \entails B$$
+\begin{definition}[顕現関係 $\aletheiai$]
+対象 $A$ が世界に現れるプロセスを、顕現関係 $\aletheiai$ で表す。
+$$A \aletheiai B$$
 は、「$A$ が顕現することにより $B$ が指し示される（縁起的に後続する）」ことを意味する。
 ここで $A, B$ は自己同一性を前提としない。
 \end{definition}
@@ -74,21 +74,21 @@ $$A \entails B$$
 
 \begin{definition}[中道等価 $\mweq$]
 フラクタル収束の軌道が共有されることをもって等価とみなす関係演算子である。
-$$A \mweq B \quad\text{iff}\quad \exists X \ (A \entails X \;\text{かつ}\; B \entails X)$$
+$$A \mweq B \quad\text{iff}\quad \exists X \ (A \aletheiai X \;\text{かつ}\; B \aletheiai X)$$
 \end{definition}
 
 \section{公理}
 
 \begin{axiom}[空の自己顕現]
-$$\dfix \entails \dfix$$
+$$\dfix \aletheiai \dfix$$
 \end{axiom}
 
 \begin{axiom}[メタ否定の顕現]
-$$A \entails \metanegation A$$
+$$A \aletheiai \metanegation A$$
 \end{axiom}
 
 \begin{axiom}[四段階収束則]
-$$\metanegation^4 A \entails \dfix$$
+$$\metanegation^4 A \aletheiai \dfix$$
 \end{axiom}
 
 \begin{axiom}[空の一意性]
@@ -97,7 +97,7 @@ $$\metanegation^4 A \entails \dfix$$
 
 \begin{axiom}[空からのフラクタル生成則]
 極限状態 $\dfix$ は終点であると同時に、新たなスケールの生成の起点でもある。
-すなわち、ある対象 $B$ に対して $\dfix \entails B$ が成立し得る。
+すなわち、ある対象 $B$ に対して $\dfix \aletheiai B$ が成立し得る。
 \end{axiom}
 
 \section{推論規則}
@@ -107,24 +107,24 @@ $$\metanegation^4 A \entails \dfix$$
 \begin{definition}[中道推論規則]
 \begin{align*}
 \text{(顕現の推移律)}&\quad
-\frac{A \entails B \quad B \entails C}{A \entails C} \\[6pt]
+\frac{A \aletheiai B \quad B \aletheiai C}{A \aletheiai C} \\[6pt]
 \text{(中道等価導入)}&\quad
-\frac{A \entails C \quad B \entails C}{A \mweq B}
+\frac{A \aletheiai C \quad B \aletheiai C}{A \mweq B}
 \end{align*}
 \end{definition}
 
 \section{補題と定理}
 
 \begin{lemma}[顕現の拡張]
-任意の対象 $A, B$ について、$A \entails B$ ならば $A \entails \metanegation B$ が成立する。
+任意の対象 $A, B$ について、$A \aletheiai B$ ならば $A \aletheiai \metanegation B$ が成立する。
 \end{lemma}
 \begin{proof}
-前提 $A \entails B$ と、公理2.2（$B \entails \metanegation B$）に対し、推移律を適用する。
+前提 $A \aletheiai B$ と、公理2.2（$B \aletheiai \metanegation B$）に対し、推移律を適用する。
 \end{proof}
 
 \begin{lemma}[無記から空への収束プロセス]
 無記状態 $N$ から出発するメタ否定の反復は、空 $\dfix$ に収束する。
-$$N \entails \metanegation N \entails \metanegation^2 N \entails \metanegation^3 N \entails \dfix$$
+$$N \aletheiai \metanegation N \aletheiai \metanegation^2 N \aletheiai \metanegation^3 N \aletheiai \dfix$$
 \end{lemma}
 \begin{proof}
 定義1.3より、無記 $N$ はプロセスの中途にある対象（出発点）である。
@@ -137,7 +137,7 @@ $$A \mweq \dfix$$
 \end{lemma}
 \begin{proof}
 対象 $A$ に公理2.2と推移律を繰り返し適用し、公理2.3と結びつけることで
-$A \entails \dfix$ を得る。一方、公理2.1より $\dfix \entails \dfix$ である。
+$A \aletheiai \dfix$ を得る。一方、公理2.1より $\dfix \aletheiai \dfix$ である。
 両者は共通の $\dfix$ を指し示すため、中道等価導入により $A \mweq \dfix$ が成立する。
 \end{proof}
 
@@ -158,7 +158,7 @@ $$F \mweq C$$
 \end{theorem}
 \begin{proof}
 フラクタル $F$ およびカオス $C$ もまた、本体系において顕現する対象である。
-したがって補題4.3の証明過程より、$F \entails \dfix$ および $C \entails \dfix$ が成立する。
+したがって補題4.3の証明過程より、$F \aletheiai \dfix$ および $C \aletheiai \dfix$ が成立する。
 公理2.4（空の一意性）により、両者は共通の $\dfix$ を指し示すため、
 中道等価導入を適用し $F \mweq C$ を得る。
 \end{proof}
@@ -169,7 +169,7 @@ $$A \mweq \metanegation A$$
 が成立する。
 \end{theorem}
 \begin{proof}
-補題4.3の証明過程より、$A \entails \dfix$ および $\metanegation A \entails \dfix$ が共に成立する。
+補題4.3の証明過程より、$A \aletheiai \dfix$ および $\metanegation A \aletheiai \dfix$ が共に成立する。
 公理2.4の一意性により、中道等価導入を適用し $A \mweq \metanegation A$ を得る。
 \end{proof}
 
@@ -180,8 +180,8 @@ $$A \mweq \metanegation A$$
 $$X \mweq Y$$
 \end{corollary}
 \begin{proof}
-補題4.3の証明過程より、任意の対象 $X, Y$ はそれぞれ $X \entails \dfix$、
-$Y \entails \dfix$ を満たす。中道等価導入により $X \mweq Y$ が成立する。
+補題4.3の証明過程より、任意の対象 $X, Y$ はそれぞれ $X \aletheiai \dfix$、
+$Y \aletheiai \dfix$ を満たす。中道等価導入により $X \mweq Y$ が成立する。
 \end{proof}
 
 \section{備考：通常の証明論との違いと公理体系の性質}
@@ -189,7 +189,7 @@ $Y \entails \dfix$ を満たす。中道等価導入により $X \mweq Y$ が成
 通常の証明論は、自己同一性（$A = A$）を絶対の前提とし、
 排中律を用いた真偽の決定（$\vdash$）を目的とする。
 
-本体系は、自己同一性を前提とせず、顕現の連鎖（$\entails$）と極限としての空（$\dfix$）を中心に、
+本体系は、自己同一性を前提とせず、顕現の連鎖（$\aletheiai$）と極限としての空（$\dfix$）を中心に、
 言語や次元を越えた関係を「指し示し」と「中道等価（$\mweq$）」によって提示する。
 定理4.4に示されるように、「同一ではないが等価である（$N \neq \dfix \land N \mweq \dfix$）」という事態を論理的に許容し証明できる点が、本体系の最大の特徴である。
 
