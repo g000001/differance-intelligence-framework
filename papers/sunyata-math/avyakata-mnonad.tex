@@ -1,0 +1,133 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境・独自マクロ
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{remark}{注釈}[section]
+
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
+\newcommand{\meta}{\Uparrow}     % メタ観測・推論の横棒
+
+\begin{document}
+
+\title{圏論からの界論への接続：無記モナドの定式化}
+\author{}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+本稿では、圏論の厳密な構造（自己同一性）を保持したまま、界論（Boundary Theory）における「無記（$\dfix$）」の動的プロセスを接続する枠組みとして「無記モナド」を導入する。圏論的には恒等モナドと同型であるこの構造が、二諦（世俗諦と勝義諦）のブリッジとしていかに機能するかを形式化する。
+\end{abstract}
+
+\section{前提：圏論と界論の関係}
+
+\subsection{圏論の基本構造}
+圏 $\mathcal{C}$ は次のデータからなる：
+\begin{itemize}
+    \item 対象の集合 $\mathrm{Ob}(\mathcal{C})$
+    \item 射の集合 $\mathrm{Hom}_{\mathcal{C}}(A,B)$ （$A,B \in \mathrm{Ob}(\mathcal{C})$）
+    \item 恒等射 $\mathrm{id}_A : A \to A$
+    \item 合成 $g \circ f : A \to C$ （$f : A \to B$, $g : B \to C$）
+\end{itemize}
+これらは次の公理を満たす：
+\begin{align}
+    \text{結合律} &: (h \circ g) \circ f = h \circ (g \circ f) \\
+    \text{単位律} &: f \circ \mathrm{id}_A = f = \mathrm{id}_B \circ f
+\end{align}
+
+\subsection{界論の無記（$\dfix$）}
+界論では、無記（$\dfix$）が根源的概念として定義される：
+\begin{itemize}
+    \item 四段階収束則：$\meta^4 A \mweq \dfix$
+    \item 空の自己同一性：$\dfix \vdash \dfix$ （真理保存の極限）
+    \item 空コンビネータ：$K_\emptyset f = K_\emptyset$
+\end{itemize}
+ここで、$\meta$ はメタ否定（境界生成）、$\mweq$ は中道等価（軌道の一致）を表す。
+
+\section{無記モナドの構成}
+
+\subsection{モナドの定義}
+圏 $\mathcal{C}$ 上のモナド $(T, \eta, \mu)$ は次の三つ組である：
+\begin{itemize}
+    \item 関手 $T : \mathcal{C} \to \mathcal{C}$
+    \item 自然変換 $\eta : \mathrm{Id}_{\mathcal{C}} \Rightarrow T$ （単位）
+    \item 自然変換 $\mu : T^2 \Rightarrow T$ （乗法）
+\end{itemize}
+これらは次の等式を満たす：
+\begin{align}
+    \text{単位律} &: \mu_A \circ T\eta_A = \mathrm{id}_{TA} = \mu_A \circ \eta_{TA} \\
+    \text{結合律} &: \mu_A \circ T\mu_A = \mu_A \circ \mu_{TA}
+\end{align}
+
+\subsection{無記モナド $T_0$ の定義}
+圏 $\mathcal{C}$ 上の\textbf{無記モナド（Avidy\=a/Zero Monad）} $T_0$ を次のように定義する：
+\begin{definition}[無記モナド]
+\begin{itemize}
+    \item 対象の対応：$T_0 A = A$ （対象は不変）
+    \item 射の対応：$T_0 f = f$ （射も不変）
+    \item 単位 $\eta_A : A \to T_0 A$ ：$\eta_A = \mathrm{id}_A$
+    \item 乗法 $\mu_A : T_0 T_0 A \to T_0 A$ ：$\mu_A = \mathrm{id}_A$
+\end{itemize}
+\end{definition}
+形式的には、$T_0$ は恒等関手 $\mathrm{Id}_{\mathcal{C}}$ と同型である。
+
+\subsection{無記モナドの意味付け}
+$T_0$ は圏論的には自明なモナドに見えるが、界論的には次のように解釈される：
+\begin{itemize}
+    \item $T_0 A$ は「対象 $A$ を無記（$\dfix$）と中道等価な極限状態として再解釈したもの」。
+    \item $\eta_A = \mathrm{id}_A$ は「世俗諦（圏論）から勝義諦（界論）への一時的な次元付与」。
+    \item $\mu_A = \mathrm{id}_A$ は「多重適用を一段に潰し、無記（$\dfix$）へ収束させる動的プロセス」。
+\end{itemize}
+
+\section{無記モナドを通した活用}
+
+\subsection{無記（$\dfix$）への収束}
+無記モナド $T_0$ を用いると、界論の四段階収束則を次のように表現できる。
+メタ否定の反復 $\meta^n A$ を $T_0^n A$ と同一視すると、四段階収束則は
+$$ T_0^4 A \mweq \dfix $$
+として記述される。ここで $T_0^4 A$ は圏論的には単に $A$ であるが、界論的には「四段階のメタ否定を経た極限状態」を表す。
+
+\subsection{真理保存性の表現}
+空の自己同一性 $\dfix \vdash \dfix$ は、無記モナドを用いて次のように解釈できる：
+\begin{itemize}
+    \item $T_0 \dfix = \dfix$ （対象としての $\dfix$ は不変）
+    \item $\mu_0 : T_0 T_0 \dfix \to T_0 \dfix$ は $\mathrm{id}_0$
+\end{itemize}
+これは「無記（$\dfix$）が自己同一性を保ちつつ、真理保存の極限として振る舞う」ことを意味する。
+
+\subsection{世俗諦と勝義諦の接続}
+無記モナド $T_0$ を通すことで、世俗諦の対象 $A$ を勝義諦の極限状態へ接続できる。
+\begin{itemize}
+    \item \textbf{世俗諦}：$A$ （自己同一性を前提とする静的構造）
+    \item \textbf{勝義諦}：$T_0 A \mweq \dfix$ （無記を根源とする動的極限）
+\end{itemize}
+この二諦構造が、無記モナドを介して自然に現れる。
+
+\section{圏論の自己同一性は破壊されない}
+
+\subsection{構造の完全な保存}
+無記モナド $T_0$ は、対象（$T_0 A = A$）、射（$T_0 f = f$）、単位（$\eta_A = \mathrm{id}_A$）、乗法（$\mu_A = \mathrm{id}_A$）として定義されているため、圏論の恒等射 $\mathrm{id}_A$ は完全に保存される。
+
+さらに、$T_0$ は恒等関手と同型であるため、結合律および単位律はそのまま成立する。したがって、圏論の自己同一性（$A = A$）や、恒等射・合成の構造は一切破壊されない。
+
+\subsection{界論的解釈との両立}
+\begin{remark}
+圏論的には $T_0$ は自明なモナドであるが、この解釈は、圏論の自己同一性を破壊することなく、無記（$\dfix$）を根源とする動的プロセスを表現することを可能にする。
+\end{remark}
+
+\section{まとめ}
+無記モナド $T_0$ は、圏論的には恒等関手と同型な自明なモナドである。しかし、界論的解釈においては、世俗諦（圏論）の対象を勝義諦（界論）の極限状態へ接続し、無記（$\dfix$）を根源とする動的プロセスを表現する役割を果たす。
+
+圏論の自己同一性（恒等射・結合律・単位律）は一切破壊されず、無記モナドは「圏論の上に乗る追加構造」として安全に利用できる。圏論からの界論の無記モナドを経由した利用は、圏論の構造を保ちつつ、界論の動的プロセスを表現するための極めて有効な手段である。
+
+\end{document}

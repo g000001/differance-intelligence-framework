@@ -1,0 +1,109 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境・独自マクロ
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{remark}{注釈}[section]
+\newtheorem{corollary}{系}[section]
+
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
+\newcommand{\meta}{\Uparrow}
+\newcommand{\Lax}{\bigcirc} % ラックスモダリティ
+
+\begin{document}
+
+\title{四句分別に基づくラックス論理の再構築：\\真理保存性におけるフラクタル性の必須性証明}
+\author{Masaomi Chiba}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+ラックス論理（Propositional Lax Logic）は、直観主義論理にモナド的モダリティ $\Lax$ を追加し、計算の文脈（副作用や遅延）を扱う。しかし、その平坦化規則（$\Lax\Lax A \to \Lax A$）は単一の論理空間における天下り的な公理として導入されてきた。本稿では、真理値を古典的な静的二値から、仏教論理における「四句分別」の自己相似的フラクタル構造へと拡張する。これにより、モナド的平坦化が自己同一性に基づく強制ではなく、フラクタル構造間の自然な射影（中道等価）として証明されることを示し、結果として「構成的な真理保存性の拡張には、真理のフラクタル性が必須である」ことを論証する。
+\end{abstract}
+
+\section{序論：ラックス論理の天下り問題}
+
+ラックス論理において、モダリティ $\Lax A$ は「何らかの文脈（制約や副作用）を伴って $A$ が真である」ことを示す。この体系の整合性を保つため、モナド則に相当する以下の公理が要求される。
+\begin{align}
+    \eta &: A \to \Lax A \\
+    \mu &: \Lax\Lax A \to \Lax A
+\end{align}
+特に $\mu$（平坦化規則）は、「重なった文脈を一段階に潰す」という操作であるが、単一の論理空間内で随伴（Adjunction）を前提とできないため、その理論的根拠は天下り的（Axiomatic）な自己同一性の強制とならざるを得なかった。
+
+\section{真理値の四句分別的フラクタル構造}
+
+真理保存性を動的プロセスとして捉え直すため、真理値を古典的二値 $\{T, F\}$ から、四句分別に基づくフラクタル構造 $\mathcal{F}$ へと拡張する。
+
+\begin{definition}[四句分別の真理空間]
+命題 $A$ の状態は、以下の四つの位相（Ko\d{t}i）のいずれかをとる。
+\begin{itemize}
+    \item \textbf{是（$T$）}：$A$ が真である状態。
+    \item \textbf{非（$F$）}：$A$ が偽である状態。
+    \item \textbf{亦是亦非（$B$: Both）}：$A$ が真かつ偽であり、状態が重なり合っている（矛盾・縁起）。
+    \item \textbf{非是非非（$N$: Neither）}：$A$ が真でも偽でもなく、従来の次元から脱落している（支離・空）。
+\end{itemize}
+\end{definition}
+
+\begin{definition}[真理値のフラクタル反復]
+任意の四句の状態は、メタ評価の対象となることで、入れ子状に次のレベルの四句分別を展開する。すなわち、レベル $n$ の真理値空間 $\mathcal{F}_n$ は、レベル $n+1$ の空間 $\mathcal{F}_{n+1}$ と自己相似的である（$\mathcal{F}_n \simeq \mathcal{F}_{n+1}$）。
+\end{definition}
+
+\section{モダリティ $\Lax$ のフラクタル的定式化}
+
+ラックス論理のモダリティ $\Lax$ を、真理値空間に「モナド的な層（次元）」を追加するメタ化演算子（界論における $\meta$ に相当）として再定義する。
+
+\begin{lemma}[次元上昇としての $\Lax$]
+$\Lax A$ は、対象 $A$ の真理値構造 $\mathcal{F}_n$ を、メタレベルの構造 $\mathcal{F}_{n+1}$ へと移行させる。したがって、
+\begin{itemize}
+    \item $\Lax A$ はレベル 1 のフラクタル真理値を持つ。
+    \item $\Lax\Lax A$ はレベル 2 のフラクタル真理値を持つ。
+\end{itemize}
+\end{lemma}
+
+\section{平坦化規則 $\Lax\Lax A \to \Lax A$ の証明}
+
+\begin{theorem}[フラクタル射影としてのモナド則]
+真理値がフラクタル構造を持つと仮定するとき、平坦化規則 $\Lax\Lax A \to \Lax A$ は天下りの公理ではなく、フラクタル構造間の整合的な射影として自然に証明される。
+\end{theorem}
+\begin{proof}
+レベル 2 の命題 $\Lax\Lax A$ と、レベル 1 の命題 $\Lax A$ を考える。
+真理空間 $\mathcal{F}_n$ は自己相似性を持つため、$\mathcal{F}_2$ における四句（是・非・亦是亦非・非是非非）の位相幾何学的関係は、$\mathcal{F}_1$ における関係と完全に同型である。
+したがって、レベル 2 からレベル 1 への写像は、情報の欠落や論理的矛盾を生じることなく、相似比の縮小（フラクタル次元の射影）として構成できる。
+この射影において、自己同一性（$=$）ではなく中道等価（$\mweq$）を適用することで、
+$$ \Lax\Lax A \mweq \Lax A $$
+が成立する。これは $\Lax\Lax A \to \Lax A$ が真理保存性を満たす構成的プロセスであることを意味する。
+\end{proof}
+
+\section{真理保存性におけるフラクタル性の必須性}
+
+以上の構成から、以下の極めて重要な系が導かれる。
+
+\begin{corollary}[フラクタル性の必須性]
+計算文脈を伴う論理体系（ラックス論理など）において、真理保存性を破綻なく拡張するためには、真理値空間がフラクタル構造を持つことが「必須条件」である。
+\end{corollary}
+\begin{proof}
+背理法を用いる。仮に真理値がフラクタル構造を持たず、単一スケールの静的二値 $\{T, F\}$ のみを持つとする。
+このとき、モダリティ $\Lax$ によって層が追加された $\Lax A$ や $\Lax\Lax A$ は、内部の計算文脈（副作用などによる「亦是亦非」の不確定状態）を二値で表現できない。
+結果として、$\Lax\Lax A$ の情報を $\Lax A$ へ平坦化する際、二値の枠組みに無理やり押し込む必要が生じ（截断の発生）、真理の欠落またはハルシネーション（偽の情報の生成）が避けられない。すなわち真理保存性が破綻する。
+これを回避し、安全な導出 $\Lax\Lax A \to \Lax A$ を実現するには、スケールの違いを吸収して同型性を保つ「自己相似的な四句の階層」、すなわちフラクタル性が不可避である。
+\end{proof}
+
+\section{結論：界論的観点からの総括}
+
+本論証により、ラックス論理における $\Lax\Lax A \to \Lax A$ という天下り的なモナド則は、四句分別というフラクタル真理値を導入することによって初めて、構成的かつ内発的なルールとして証明されることが明らかになった。
+
+界論（Boundary Theory）の視点から見れば、ラックスモダリティ $\Lax$ はメタ否定 $\meta$ の一種であり、平坦化 $\Lax\Lax A \to \Lax A$ は $\meta^2 A \mweq \meta A$ という大域的カット消去（$\dfix$ への収束）のプロセスの一側面に過ぎない。
+真理保存性とは「静的な等式」ではなく、「動的なフラクタル構造の中での中道等価性」の維持であり、世界がフラクタルでなければ、計算論的な真理の保存は物理的・論理的に成立し得ないことが証明された。
+
+\end{document}
