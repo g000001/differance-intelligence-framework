@@ -17,9 +17,11 @@ SOURCES = icat-perception.tex \
           icat-ymwcomb.tex \
           boundary-theory-core.tex \
           aletheic-proof-theory.tex \
-          boundary-category.tex \
-          icat-tta.tex \
-          icat-ifrd.tex
+          boundary-category.tex
+          #avyakata-mnonad.tex \
+          #lax-catuskoti.tex
+          # icat-tta.tex \
+          #icat-ifrd.tex
 
 
 # 中間生成物および最終的なPDFのリスト
@@ -38,6 +40,9 @@ $(TARGET): $(PDFS)
 	$(LATEX) $(LATEX_FLAGS) $<
 	# 目次や参照がある場合、2回実行する必要がある場合は以下を有効にしてください
 	# $(LATEX) $(LATEX_FLAGS) $<
+
+bigtex: $(SOURCES)
+	cat $(SOURCES) > icat.tex
 
 # 掃除用
 clean:
