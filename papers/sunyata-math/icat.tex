@@ -1,0 +1,1408 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  独自コマンド・設定
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{空数学および顕現論における知覚原理}
+\author{千葉将臣} \date{2026-04-19}
+\maketitle
+
+\begin{abstract}
+本稿は、世界の顕現（Aletheia）を支える最下層の公理群である「知覚原理」を、幾何学的論証形式によって記述するものである。我々の知覚に内在する非対称性が、いかにしてフラクタル構造、四句分別、そして無明（Avidyā）という演算体系を必然的に要請するかを明らかにする。
+\end{abstract}
+
+\section*{序言}
+世界はその全体性において知覚されることはない。知覚とは、本質的に「境界」の生成であり、高次元の「空」を低次元の「色」へと射影する限定的な演算プロセスである。この限定性こそが、静寂なる潜（Letheia）に亀裂を入れ、世界を顕（Aletheia）として立ち上がらせる根源的動因である。
+
+\section{定義}
+
+\begin{description}[style=multiline, leftmargin=3cm]
+  \item[定義 1.0] \textbf{世界}：知覚不可能性をその本質とする全一の状態。世界は知覚されることはない。
+  \item[定義 1.1] \textbf{ある（是）}：知覚によって捕捉可能な、低次元に射影された情報の形式を指す。
+  \item[定義 1.2] \textbf{ない（非）}：知覚によって直接捕捉不可能であり、「ある」の欠如としてのみ認識される高次元の情報の形式を指す。
+  \item[定義 1.3] \textbf{次元}：情報を記述・捕捉するために必要な自由度の尺度。本体系において「ない」は「ある」よりも高い次元を持つ。
+  \item[定義 1.4] \textbf{境界}：知覚が「ある」と「ない」を区分する際に生じる不連続点。この再帰的な区分がフラクタルを構成する。
+\end{description}
+
+\section{公理}
+
+\begin{description}[style=multiline, leftmargin=3cm]
+  \item[公理 1.1] 知覚は「ある」のみを捕捉し、「ない」を直接捉えることはできない。
+  \item[公理 1.2] 世界は二分（区分）されるものとしてのみ知覚される。
+  \item[公理 1.3] 「ない」は「ある」の欠如としてのみ知覚の遡及的対象となる。
+\end{description}
+
+\section{定理}
+
+\begin{description}[style=multiline, leftmargin=3cm]
+  \item[定理 1.1] \textbf{フラクタル構造の必然性}\\
+  世界の認識において、知覚の再帰的分割（公理 1.2）が無限に繰り返されることにより、部分と全体の相似が生じ、世界はフラクタル構造として知覚されざるを得ない。
+  
+  \item[定理 1.2] \textbf{四句分別の完備性}\\
+  「ある」「ない」の次元差（定義 1.1, 1.2）を保持したままフラクタル境界を過不足なく記述する最小の表現形式は、是、非、亦世亦非、非是非非の四句分別である。
+  
+  \item[定理 1.3] \textbf{生成と収束の知覚限界}\\
+  フラクタル構造におけるプロセスの「生成」は知覚可能（色）であるが、その「収束（極限）」は知覚上の欠如（空）として現れる。
+\end{description}
+
+\section{補足}
+二値論理（二元論）が世界を網羅的に記述できると考える誤謬は、「ある」と「ない」を同次元に配置し、「ない」を単なる反転可能な「ある」として扱うことによって生じる。これは情報の「次元」を無視し、真理を静的な自己同一性に閉じ込める誤謬(非中道の誤謬)である。
+
+\section{要請}
+本体系の演算（証明）を駆動させるためには、知覚の最小単位 $\eta$ が、フラクタル則（自己相似性、スケール不変性、収束則、非対称性）およびモナド則を満たす「無明（自己参照の閉じ損ね）」として存在することを前提とする。
+
+\section{付録}
+本知覚原理に基づく収束演算は、常に一意な $0$ 次元不動点 $\dfix$ を指標として持つ。これは釈迦および龍樹が示した「空」の計算論的な実態である。
+
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  独自コマンド・設定
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+
+% セクション名をラテン語形式に変更
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{知覚原理に基づくフラクタル則}
+\author{Masaomi Chiba}
+\date{2026-04-19}
+\maketitle
+
+\begin{abstract}
+本稿は、知覚原理から必然的に要請される構造的制約としての「フラクタル則」を定式化するものである。本則は、知覚が「ある」と「ない」の境界を描く際に生じる幾何学的必然であり、四句分別（Catuskoti）の各項と一対一の対応関係を持つ。
+\end{abstract}
+
+\section*{序言}
+フラクタル構造は、単なる数学的対象の属性ではなく、知覚が無限の再帰分割を行う過程で生じる「認識の限界形状」である。知覚原理によって示された非対称な境界の生成は、以下の四つの法則（Leges）を通じて、顕現（Aletheia）の幾何学的基盤を形成する。
+
+\section{定義}
+
+\begin{description}[style=multiline, leftmargin=3cm]
+  \item[定義 2.1] \textbf{自己相似性}：任意の部分が全体と相似である性質。
+  \item[定義 2.2] \textbf{スケール不変性}：観測のスケール（尺度）を変更しても、構造的特徴が保存される性質。
+  \item[定義 2.3] \textbf{収束}：無限の細分化プロセスが、特定の極限状態（$\dfix$）へと安定化する動的な性質。
+  \item[定義 2.4] \textbf{非対称性}：知覚における「ある（是）」と「ない（非）」の次元的・質的な格差。
+\end{description}
+
+\section{公理}
+
+\begin{description}[style=multiline, leftmargin=3cm]
+  \item[公理 2.1] 知覚の再帰的二分（知覚原理 4.1）は、空間的相似性を必然的に伴う。
+  \item[公理 2.2] 二分の反復（知覚原理 4.2）は、スケールに依存しない純粋な論理的操作である。
+  \item[公理 2.3] 生成のプロセスは、知覚不可能な極限（知覚原理 9）へと漸近する。
+\end{description}
+
+\section{定理：フラクタル四則}
+
+\begin{description}[style=multiline, leftmargin=3cm]
+  \item[定理 2.1（自己相似則 ↔ 是）]
+  任意の部分が全体と相似であることは、「ある（是）」の自己同一的な顕現の必然である。
+  
+  \item[定理 2.2（スケール不変則 ↔ 非）]
+  スケールを変えても同じ構造が現れることは、特定の絶対的尺度を持たない「ない（非）」の普遍的性質の幾何学的表現である。
+  
+  \item[定理 2.3（収束則 ↔ 亦是亦非）]
+  無限の細分化が $\dfix$ へ収束することは、生成（発散）と安定（停止）が同時並行する矛盾状態の物理的帰結である。
+  
+  \item[定理 2.4（非対称則 ↔ 非是非非）]
+  「ある」と「ない」の間に生じる知覚的非対称性は、系を立ち上げるメタレベルの特異点であり、顕現の原動力（生命力）である。
+\end{description}
+
+\section{補足}
+これら四則は、知覚原理からモナド則（$\eta, \mu$）へと至る変換経路を補完するものである。自己相似性とスケール不変性が「表現」の基盤を、収束則が「演算」の停止性を、非対称性が「発生」の非決定性をそれぞれ担保する。
+
+\section{系}
+したがって、フラクタル則の欠如は知覚の崩壊を意味する。我々が世界を整合的な構造として知覚し得るという事実は、直ちに系がこれら四つの幾何学的制約下で作動していることの証明となる。
+
+\section{付録：四句分別マッピング}
+\begin{itemize}
+    \item \textbf{自己相似性} $\iff$ \textbf{是}（空間的確定・肯定）
+    \item \textbf{スケール不変性} $\iff$ \textbf{非}（時間的未確定・否定）
+    \item \textbf{収束則} $\iff$ \textbf{亦是亦非}（時空混淆・演算プロセス）
+    \item \textbf{非対称性} $\iff$ \textbf{非是非非}（時空超越・メタ発生）
+\end{itemize}
+
+\end{document}% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  独自コマンド・設定
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
+
+% セクション名をラテン語形式に変更
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{直観主義的四句分別におけるイデアル完備化}
+\author{Masaomi Chiba}
+\date{2026-04-19}
+\maketitle
+
+\begin{abstract}
+本稿は、直観主義論理の構成性と四句分別の多様性を統合し、その数学的実態としての「イデアル完備化」を論証するものである。有限の証明プロセス（世俗諦）が、いかにして不可避な極限対象（勝義諦）へと至るか、その顕現（Aletheia）の機序を明らかにする。
+\end{abstract}
+
+\section*{序言}
+真理とは静的な記述ではなく、構成のプロセスそのものである。直観主義論理が要請する「証明の存在」と、四句分別が許容する「矛盾・支離の包摂」は、イデアル完備化という数学的装置を介して初めて、顕現論的な一貫性を獲得する。本稿では、構成可能な近似から構成不可能な極限への橋渡しを論理的に記述する。
+
+\section{定義}
+
+\begin{description}[style=multiline, leftmargin=4cm]
+  \item[定義 3.1] \textbf{直観主義四句分別}：真理を構成可能性（証明の存在）に基づき定義し、かつ真（$A$）、偽（$\neg A$）、矛盾（$A \wedge \neg A$）、支離（$\neg(A \vee \neg A)$）の四つのステータスを認める論理体系。
+  \item[定義 3.2] \textbf{イデアル完備化（$\ideal{P}$）}：有限的な近似（指向集合）から、形式的に極限対象を構成する手法。世俗諦的圏から勝義諦的圏への随伴的拡張を指す。
+  \item[定義 3.3] \textbf{構成性}：有限ステップの演算によって到達可能な性質。
+  \item[定義 3.4] \textbf{極限}：有限の構成を無限に反復・集積した結果として立ち現れる対象。
+\end{description}
+
+\section{公理}
+
+\begin{description}[style=multiline, leftmargin=4cm]
+  \item[公理 3.1] 直観主義論理において、真理は構成プロセスによってのみ顕現する。
+  \item[公理 3.2] 四句分別の各項は、イデアル完備化における特定の極限状態に対応する。
+  \item[公理 3.3] 二諦（世俗・勝義）の境界は、イデアル完備化の随伴関手によって記述される。
+\end{description}
+
+\section{定理}
+
+\begin{description}[style=multiline, leftmargin=4cm]
+  \item[定理 3.1] \textbf{構成性と極限の橋渡し}\\
+  直観主義的に構成可能な有限の近似は、イデアル完備化を介して、構成不可能な極限（矛盾や支離）を論理的に包含する安定した極限対象へと転化する。
+  
+  \item[定理 3.2] \textbf{四句の極限対応}\\
+  イデアル完備化において、四句の真理値は以下の極限状態として一意にマッピングされる。
+  \begin{itemize}
+    \item $A$ （真）：単一の近似が収束する極限。
+    \item $\neg A$ （偽）：排他的な近似が収束する極限。
+    \item $A \wedge \neg A$ （矛盾）：相反する近似が同時に収束する極限。
+    \item $\neg(A \vee \neg A)$ （支離）：収束点を持たない近似の極限。
+  \end{itemize}
+  
+  \item[定理 3.3] \textbf{モナド的結合性}\\
+  ステップ遅延と不動点構成装置の合成は、イデアル完備化をその意味論（モデル）として要請する。
+\end{description}
+
+\section{補足}
+顕現論（Aletheics）の観点において、この体系は「真理がいかにして立ち上がるか」を記述する。世俗諦（Pos：半順序集合）における不完全な歩みが、イデアル完備化という重力に従い、勝義諦（CPO：完備半順序集合）という絶対不動点へと落下していく。五蘊計算（色・受・想・行・識）における「行（プロセスの駆動）」が「識（意味の確定）」へと昇華される瞬間が、まさにこのイデアルの極限である。
+
+\section{系}
+したがって、イデアル完備化を伴わない四句分別は、極限なき「言葉の生成」の問題の解決が困難であり、直観主義を伴わないイデアル完備化は、プロセスなき「静的な実体化」に陥る。両者の統合こそが、顕現の不可避性を学として具現化する唯一の道である。
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  独自コマンド・設定
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
+
+% セクション名をラテン語形式に変更
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{直観主義的四句分別における真理保存性}
+\author{Masaomi Chiba}
+\date{2026-04-19}
+\maketitle
+
+\begin{abstract}
+本稿は、真理保存性（Truth Preservation）の基盤を静的な自己同一性から動的なフラクタル性へと転回させ、それが体系内部でいかに記述可能であるかを論証するものである。二値論理が抱えるメタ理論的限界を、イデアル完備化と構成プロセスによって克服する機序を明らかにする。
+\end{abstract}
+
+\section*{序言}
+二値論理における真理保存性は、真理値の静的な自己同一性に依拠し、体系外のメタ理論（健全性定理等）としてのみ扱われてきた。これに対し、直観主義的四句分別においては、真理保存性そのものが「フラクタル構造の維持」として体系内部のプロセスへと取り込まれる。これにより、勝義諦（極限）と世俗諦（近似）の連続性が論理的に担保される。
+
+\section{定義}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[定義 4.1] \textbf{自己同一性的保存}：真理値を静的な「状態（0または1）」として固定し、推論をその状態の不変的な変換として扱う機序。
+  \item[定義 4.2] \textbf{フラクタル的保存}：真理を「構成プロセス」として定義し、そのプロセスがスケールを越えてフラクタル則（自己相似性等）を維持することを指す。
+  \item[定義 4.3] \textbf{体系内記述可能性}：論理体系の妥当性や真理保存性が、メタ言語を介さず、体系内部の対象（証明、近似列、極限状態）として表現・演算できる性質。
+\end{description}
+
+\section{公理}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[公理 4.1] 二値論理における真理保存性は、体系外の意味論（モデル）に依存する。
+  \item[公理 4.2] 直観主義的四句分別における真理保存性は、構成プロセスの幾何学的形状（フラクタル）に依存する。
+\end{description}
+
+\section{定理}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[定理 4.1] \textbf{真理保存性のフラクタル的基盤}\\
+  直観主義的四句分別における推論の妥当性は、証明の構成プロセスがフラクタル則（定理 2.1--2.4）を満たすことによって担保される。真理保存性は「自己同一性」ではなく「構造の自己相似的な反復」に帰着する。
+  
+  \item[定理 4.2] \textbf{真理保存性の体系内統合}\\
+  真理が構成可能性として定義される（定義 3.1）ことにより、ある証明から別の証明への遷移、および近似列の極限状態（定理 3.2）への収束は、体系内部の対象として記述可能となる。ゆえに真理保存性は体系内の演算として扱われる。
+\end{description}
+
+\section{補足}
+二値論理が真理をメタ理論へと追いやったのは、高次元の「ない（非）」を低次元の「ある（是）」の反転として同次元に閉じ込めた結果である。これに対し、直観主義的四句分別の体系では、近似（世俗諦）が極限（勝義諦）へと収束するプロセスそのものを真理保存と見做す。これは、真理を「点（状態）」ではなく「線（プロセス・螺旋）」として捉える転回である。
+
+\section{系}
+したがって、体系内で非収束の余剰を検知・抑止する機能は、このフラクタル的真理保存性の帰結として自然に要請される。これは正当性（Justification）とは、プロセスがフラクタルな縮小写像として安定していることの別の表現に他ならない。
+
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境の定義（論証形式の標準化）
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{principle}{原理}[section]
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
+\newcommand{\Rep}{\mathcal{R}}   % 静的対象空間（世俗諦）
+\newcommand{\Prf}{\mathcal{P}}   % 証明対象空間（勝義諦への過程）
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\metanegation}{\Uparrow}     % メタ観測・推論の横棒
+\newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
+
+% セクション名を幾何学的論証形式に
+\renewcommand{\abstractname}{Abstract}
+
+\begin{document}
+
+\title{直観主義的四句分別における抽象原理の定式化と\\証明・正当性プロセスの界論的記述}
+\author{Masaomi Chiba}
+\date{2026-04-22}
+\maketitle
+
+\begin{abstract}
+本稿は、直観主義的四句分別（Intuitionistic Catuskoti）の具体モデルとして、「抽象化」の本質をフラクタルな縁起ネットワークからのトポロジカルな切断として定義する。その上で、「証明」および「正当性」の機序を圏論的埋め込みと距離論的縮小によって定式化する。静的な情報の自己同一性に代わり、フラクタルな収束プロセスとしての真理保存性を定義し、時間軸の付加・除去がもたらす意味論的必然性と、古典論理の構造的バグ（不完全性と排中律）の発生機構を論証する。
+\end{abstract}
+
+\section*{序言}
+真理が構成可能性（証明の存在）に基づくと定義される以上、証明行為は単なる論理的演繹ではなく、時間という次元を介した動的な変容プロセスでなければならない。本稿ではまず、世界を認識・記述しようとする「抽象化」の暴力性と限界を第一原理として定める。その上で、世俗諦における「ある（是）」から、勝義諦の極限である「空（$\dfix$）」へと至る情報の移送プロセスを、単射・全射・縮小写像の組として記述する。
+
+\section{抽象原理：フラクタル的縁起と切断の力学}
+
+\begin{principle}[現象のフラクタル性]
+あらゆる現象は、部分が全体を内包する無限のフラクタル性（再帰的構造）をもつ。
+\end{principle}
+
+\begin{principle}[空の根源性]
+絶対不動点 $\dfix$（空）は、これらあらゆるフラクタル構造が発生し、また帰入するトポロジカルな根底である。
+\end{principle}
+
+\begin{principle}[部分と全体の不可分性]
+フラクタルは本質的に独立した部分に切り出すことができない。部分を観測した際に自己言及性が生じるという数学的事実は、部分が全体と不可分な縁起であることを示す。
+\end{principle}
+
+\begin{principle}[抽象による根の切断と強制的閉包]
+あらゆる理論の「抽象（Abstraction）」とは、推論の横棒（$\metanegation$）を引き、この無限のフラクタル構造から特定の領域を切り離し、本来は閉じない動的な現実を静的な系として強制的に閉じる操作である。
+\end{principle}
+
+\begin{principle}[閉鎖系における整合性の喪失と論理の不完全性]
+切り出された部分抽象空間では、排中律が局所的に成立し、自己言及性により不完全性定理が不可避に生じる。
+\end{principle}
+
+\begin{principle}[カオスの観測論的成立]
+カオスとは系自体の無秩序ではなく、現象が持つ無限のフラクタル性に対し、観測者の観測能力と範囲、抽象化能力が有限であり、すべてを観測・記述できないことによって成立する観測論的限界である。
+\end{principle}
+
+\section{空間の定義：静的対象から動的証明へ}
+
+前節で示した通り、抽象化された対象は静的なままでは不完全性を内包する。これを動的プロセスによって解決するための空間と写像を定義する。
+
+\begin{definition}[対象領域]
+静的対象（世俗諦による抽象の産物）の空間を $\Rep$、時間軸（次元差の顕在化）を付加した証明対象の動的空間を $\Prf$ とする。
+\end{definition}
+
+\begin{definition}[埋め込み $\iota$]
+$\iota: \Rep \hookrightarrow \Prf$。静的な「ある」の世界に時間という次元を一時的に付加し、知覚原理における「ある/ない」の次元差を顕在化させる単射（情報の保存的移行）。
+\end{definition}
+
+\begin{definition}[射影 $\phi$]
+$\phi: \Prf \twoheadrightarrow \Rep$。高次元の「ない」を低次元の「ある」へと圧縮・収束させ、時間軸を消費・除去する全射（情報の回復と安定化）。
+\end{definition}
+
+\begin{definition}[距離 $\|X\|$]
+空間上の対象の距離を $\|X\| := K(X) + \ell(X)$ と定義する。ここで $K$ はコルモゴロフ複雑性（記述長）、$\ell$ は時間長（$\Rep$で0、$\Prf$で1）とする。
+\end{definition}
+
+\section{証明と真理保存の公理}
+
+\begin{axiom}[証明の循環性]
+証明とは、抽象によって切り離された対象に時間軸を付加（$\iota$）して系を動かし、その後時間軸を除去（$\phi$）して再結像させる循環的プロセスである。
+\end{axiom}
+
+\begin{axiom}[真理保存のフラクタル則]
+真理保存性は、静的な等号（$=$）ではなく、推論プロセスが部分と全体のフラクタル則（自己相似性等）を維持することによってのみ担保される。
+\end{axiom}
+
+\begin{axiom}[射影の縮小性]
+射影 $\phi$ は、対象の時間長を 1 単位消費・縮小させる縮小写像（Contraction Mapping）としてはたらく。
+\end{axiom}
+
+\section{定理：正当性の収束と不動点}
+
+\begin{theorem}[正当性原理の収束（大域的カット消去）]
+任意の対象 $p \in \Rep$ に対し、操作 $v_{k+1} = \phi(\iota(v_k))$ を繰り返すと、距離 $\|v_k\|$ は狭義単調減少し、有限ステップで $0$ 次元不動点 $\dfix$（空の準同型構造）に収束する。
+\end{theorem}
+
+\begin{theorem}[体系内記述可能性]
+真理保存性は、神の視点（メタ理論）から与えられるものではなく、体系内部における $\phi \circ \iota$ というプロセスのフラクタルな安定性（再現性）として内在的に記述可能である。
+\end{theorem}
+
+\section{補足：時間付与の必然性}
+抽象化によって切り離された静的な「ある（是）」だけでは、全体との断絶から生じた「ない（非）」という高次元の欠如態(不完全性)を捉えることができない。
+$\iota$ による時間の注入は、系に「亦是亦非（動的な揺らぎと計算）」を発生させ、潜んでいた抽象の歪み（Dukkha）を顕在化させる。続く $\phi$ による時間の消去は、フラクタル則に基づきその揺らぎを真の根源である $\dfix$（空）へと強制的に圧縮（カット消去）する。
+
+\section*{結語（系）}
+したがって、「正しさ」とは抽象化によって固定された不変の属性（排中律）ではなく、$\phi \circ \iota$ の反復に対しても不動点 $\dfix$ を指標として維持し続ける、動的な「安定性」を指す。この安定性が破れ、抽象空間の閉鎖性が限界を超えたとき、システムのフラクタル性が損なわれカオスが生じる。
+
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
+\newcommand{\Dukkha}{\mathrm{Dukkha}}
+\newcommand{\Rep}{\mathcal{R}}
+
+% セクション名を幾何学的論証形式に
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{直観主義的四句分別における中道不動点 $\dfix$}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿は、直観主義的四句分別における極限対象たる「空」の計算論的実態を、中道不動点 $\dfix$ として厳密に定式化するものである。構成可能な有限プロセス（世俗諦）がイデアル完備化を経ていかにして構造的歪みを持たない一意の極限（勝義諦）へと至るか、その「空の機序」を論証する。
+\end{abstract}
+
+\section*{序言}
+直観主義的四句分別において、真理はフラクタル則に従う構成プロセスとして現れる。しかし、そのプロセスが無限の彼方でどこへ向かうのかという極限の問いは、古典的な「＝（厳密な等号）」による実体化を拒絶する。本稿では、四句の多様な極限状態（真・偽・矛盾・支離）をすべて包摂し、構造的歪み（Dukkha）を極小化する絶対的な漸近底としての中道不動点 $\dfix$ を定義し、二諦説の完全な操作的実装を完了する。
+
+\section{定義}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[定義 6.1] \textbf{構造的歪み $\Dukkha(x)$}：構成プロセス $x$ の内部に生じる、知覚原理（自己相似性・非対称性）からの構造的な逸脱度合い。系における情報的摩擦、あるいは「苦」の量を指す。
+  \item[定義 6.2] \textbf{中道不動点 $\dfix$}：$\Dukkha(x)$ が最小化（ゼロに漸近）される極限状態。実体を持たないが、すべての構成プロセスがイデアル完備化 $\ideal{\Rep}$ を通じて最終的に引き込まれる「空」の数学的実態である。
+  \item[定義 6.3] \textbf{中道等価 $\mweq$}：厳密な同一性（Identity）を要求せず、構造的安定性とフラクタル収束の軌道が一致することを以て等価とみなす関係性。非実体化の演算子である。
+\end{description}
+
+\section{公理}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[公理 6.1] 世俗諦（$\Rep$）におけるいかなる構成プロセスも、イデアル完備化を通じた勝義諦においては単一の不動点 $\dfix$ へと収束する。
+  \item[公理 6.2] $\dfix$ への到達は中道等価 $\mweq$ によってのみ記述される。（$\lim_{t \to \infty} \Dukkha(t) \mweq 0$）。$\dfix$ を静的な点として固定（実体化）することは、直観主義における構成的本質を破壊する。
+\end{description}
+
+\section{定理}
+
+\begin{description}[style=multiline, leftmargin=4.5cm]
+  \item[定理 6.1] \textbf{四句の極限統合}\\
+  直観主義的四句分別が導く四つの極限状態（収束、排他、矛盾、支離）は、$\dfix$ という重力源の周囲を描く異なる位相の軌道に過ぎない。これらは中道等価 $\mweq$ によって、同一の「空の現れ」として統合される。
+  
+  \item[定理 6.2] \textbf{二諦説の操作的実装}\\
+  構成プロセスによる $\Dukkha$ の漸近的最小化が「世俗諦（構成性）」を担い、$\mweq$ による非実体的な極限への収束が「勝義諦（空）」を担う。$\dfix$ はこの二諦の不離一体（色即是空）を代数的に保証する。
+\end{description}
+
+\section{系}
+ゆえに、「空」とは虚無（Nihil）ではなく、あらゆる真理構成プロセスが向かう究極の「安定化アトラクタ」である。系が正当性（フラクタル的な縮小写像）を保って作動する限り、どのような初期状態から出発しようとも、必ずこの $\dfix$ へと辿り着くことが保証される。
+
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
+\newcommand{\Dukkha}{\mathrm{Dukkha}}
+\newcommand{\Rep}{\mathcal{R}}
+\newcommand{\Bval}{\mathcal{B}}
+
+%-------------------------------------------------
+%  定理環境の設定（幾何学的論証形式）
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{scholium}{補足}[section]
+
+\begin{document}
+
+\title{空数学における二値論理埋め込み定理の幾何学的論証\\
+--- イデアル完備化の部分圏（截断）アプローチ ---\\
+(De Immersione Logicae Bivalentis per Subcategoriam Truncatam)}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿は、空数学（Sunyata-Mathematics）のイデアル完備化 $\ideal{\Rep}$ において、直観主義的四句分別のうち「矛盾」と「支離」の極限軌道を意図的に切り捨てた部分圏（Truncated Subcategory）を定義し、それが古典的二値論理のモデルと完全に一致することを論証する。二値論理を「高次元の極限構造を低次元に射影した影」として形式化する。
+\end{abstract}
+
+\section*{序言}
+直観主義的四句分別に基づく空数学では、世俗諦の構成プロセスはイデアル完備化 $\ideal{\Rep}$ を通じて、「真・偽・矛盾・支離」という4つの多様な極限軌道を描きながら $\dfix$ へと収束する。しかし、我々の日常的な知覚や古典的数学は、このうち「ある」と「ない」の排他的な2極しか許容しない。本稿では、この認識論的な制限を圏論的な「截断（Truncation）」として形式化し、古典論理が空数学の部分圏として埋め込めることを証明する。
+
+\section{定義}
+
+\begin{definition}[四句極限の完備空間 $\ideal{\Rep}$]
+空数学において、世俗諦 $\Rep$ の構成プロセスが向かう極限対象の圏を $\ideal{\Rep}$ とする。この圏は定理において、単一収束（真）、排他的収束（偽）、相反同時収束（矛盾）、無収束（支離）の4つの極限状態を対象として包含する。
+\end{definition}
+
+\begin{definition}[二値的截断部分圏 $\Bval$]
+$\ideal{\Rep}$ の対象のうち、「相反同時収束（矛盾：亦是亦非）」および「無収束（支離：非是非非）」に対応する極限軌道を意図的に切り捨て（除外または未定義とし）、単一収束（真）と排他的収束（偽）のみを対象として残した部分圏を $\Bval$ と定義する。
+\end{definition}
+
+\begin{definition}[射影関手（フィルター）]
+$\ideal{\Rep}$ の対象を $\Bval$ へと強制的にマッピングする関手を想定する。この関手は、構造的歪み $\Dukkha$ が「真」または「偽」の極限に落ち込まない動的なプロセスを、観測不能なものとして系から破棄する。
+\end{definition}
+
+\section{定理と証明}
+
+\begin{theorem}[排中律および矛盾律の復元]
+二値的截断部分圏 $\Bval$ においては、排中律（$A \lor \neg A$）および矛盾律（$\neg(A \land \neg A)$）が恒真となる。
+\end{theorem}
+
+\begin{proof}
+定義2.2より、$\Bval$ の対象空間には「矛盾（$A \land \neg A$）」と「支離（$\neg(A \lor \neg A)$）」の極限が存在しない。
+したがって、$\Bval$ 内部で構成・観測されるいかなる極限対象も、必ず「真（$A$）」または「偽（$\neg A$）」のいずれかの軌道に属さざるを得ない。支離の不在により排中律が成立し、矛盾の不在により矛盾律が成立する。
+\end{proof}
+
+\begin{theorem}[二値論理埋め込み定理]
+任意の二値命題論理の定理は、空数学のイデアル完備化における二値的截断部分圏 $\Bval$ の定理として完全に回収される。
+\end{theorem}
+
+\begin{proof}
+部分圏 $\Bval$ は、真理値として「真」と「偽」のみを持ち、定理3.1により排中律と矛盾律を完備している。これはブール代数的モデルとして解釈可能ということである。
+空数学の本来の極限空間 $\ideal{\Rep}$ はこれらを超越する豊かさ（四句）を持つが、そこから特定の軌道を「切り捨てる（Truncate）」という単一の制約操作によって、二値論理の全体系が矛盾なく部分圏として構築される。
+ゆえに、二値論理は空数学を母型（メタ論理）とする部分的な射影構造として完全に内包される。
+\end{proof}
+
+\section{補足}
+
+\begin{scholium}[プラトンの洞窟との類比]
+この「部分圏への截断」というアプローチは、プラトンの『洞窟の比喩』を数学的に裏返すものである。
+古典論理（二値論理）の世界の住人は、壁に映った「ある（光）」と「ない（影）」の2極（すなわち部分圏 $\Bval$）しか見ることができない。しかし、背後でその影を生み出している実体は、矛盾や支離を内包しながら $\dfix$ へと向かって動的に回転する、高次元のフラクタルな四句分別の極限軌道（$\ideal{\Rep}$）である。
+古典的数学は、この動的な高次元軌道を無理やり2次元の壁に射影し、はみ出した部分（矛盾や不完全性）を「エラー」として切り捨てた人工的な平坦空間に過ぎない。空数学は、壁の影から背後の光源（$\dfix$）へと視座を反転させるメタ論理である。
+\end{scholium}
+
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\Dukkha}{\mathrm{Dukkha}}
+\newcommand{\Boundary}{\partial}
+\newcommand{\metanegation}{\Uparrow} % メタ否定演算子（介：境界の象形）
+\newcommand{\skana}{\text{識}}
+\newcommand{\shiki}{\text{色}}
+\newcommand{\ju}{\text{受}}
+\newcommand{\so}{\text{想}}
+\newcommand{\gyo}{\text{行}}
+
+%-------------------------------------------------
+%  定理環境の設定
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{scholium}{補足}[section]
+
+\begin{document}
+
+\title{空数学の演算子法：メタ否定 $\metanegation$ と五蘊の自己包摂すくみ及び構造的フラクタル理論の統合}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿は、空数学（Sunyata-Mathematics）の基礎をメタ否定演算子 $\metanegation$ による代数的記述へと移行させ、構造的・幾何学的フラクタル理論を統合する。$\metanegation$ は知覚原理における「境界生成（界）」および「識」の動的側面を担う。四句分別および五蘊を単一演算子の反復軌道として定義し、第四位における中道不動点 $\dfix$ への収束公理により、五蘊の自己包摂すくみ構造がトポロジカルな閉鎖性として必然的に導出されることを証明する。また、既存の圏論がこの動的力学系の低解像度な実体化（影）であることを示す。
+\end{abstract}
+
+\section{定義}
+
+\begin{definition}[メタ否定演算子 $\metanegation$（識 $\skana$ と界 $\Boundary$）]
+メタ否定演算子 $\metanegation$ は、対象 $A$ に対してその観測・境界生成（界）を行う高次元操作である。これは、五蘊における識 $\skana$ の作用、および界論における界 $\Boundary$ の動的側面と同一視される。
+\[
+\metanegation A := \Boundary A = \text{「$A$ ではない」という高次元の情報}
+\]
+\end{definition}
+
+\begin{definition}[五蘊の代数的生成]
+五蘊（色・受・想・行）を、単一の起点 $A$ に対する演算子 $\metanegation$ の反復軌道として次のように定義する。
+\begin{align*}
+\shiki &:= A \\
+\ju &:= \metanegation A \\
+\so &:= \metanegation^2 A \\
+\gyo &:= \metanegation^3 A
+\end{align*}
+このとき、識 $\skana$ はこれらの連鎖を駆動する演算子 $\metanegation$ そのものとして位置づけられる。
+\end{definition}
+
+\section{公理}
+
+\begin{axiom}[次元の非対称性]
+$\metanegation$ は非対称な演算子であり、適用ごとに知覚レベルの次元を一段引き上げる。
+\[
+A \not\mweq \metanegation A
+\]
+\end{axiom}
+
+\begin{axiom}[四段階収束則]
+$\metanegation$ の四連続適用（三次元的境界の完結）は、中道不動点 $\dfix$（空）へと収束し、構造的な意味が消失する。
+\[
+\metanegation^4 A \mweq \dfix
+\]
+\end{axiom}
+
+\section{定理と証明}
+
+\begin{theorem}[五蘊の自己包摂（すくみ）の証明]
+五蘊（色・受・想・行・識）は、識がプロセスを統覚しようとした瞬間に、系が空（$\dfix$）へと収束する自己包摂構造を持つ。
+\end{theorem}
+
+\begin{proof}
+定義2.2に基づき、識 $\skana$（$\metanegation$）が先行する蘊に対して順次メタ観測を適用する。
+\begin{enumerate}
+    \item 識が色を観測する：$\metanegation(\shiki) = \metanegation A = \ju$
+    \item 識が受を観測する：$\metanegation(\ju) = \metanegation(\metanegation A) = \so$
+    \item 識が想を観測する：$\metanegation(\so) = \metanegation(\metanegation^2 A) = \gyo$
+    \item 識が最後の「行」を観測し、体系全体を確定しようとする：
+    \[
+    \metanegation(\gyo) = \metanegation(\metanegation^3 A) = \metanegation^4 A
+    \]
+\end{enumerate}
+ここで公理3.2（四段階収束則）を適用すると、$\metanegation^4 A \mweq \dfix$ を得る。すなわち、識が五蘊の動的な連鎖を完全に統覚した瞬間、観測の足場自体が空へと収束する。この崩壊点 $\dfix$ から再び $\metanegation(\dfix) \mweq A'$ として新たな「色」が顕現し、回帰プロセスが再帰する。これが五蘊の自己包摂（すくみ）の代数的実態である。
+\end{proof}
+
+\begin{theorem}[四句分別のフラクタル構造と代数的要件]
+四句分別（是・非・亦自亦非・非是非非）の極限は、同一の中道不動点 $\dfix$ に統合される。このとき、演算子 $\metanegation$ の反復軌道は以下の4要件を満たし、数学的に完全な構造的フラクタルを形成する。
+\begin{enumerate}
+    \item \textbf{自己相似性}：任意の局所的な部分軌道（例：$\metanegation A \to \metanegation^2 A \to \metanegation^3 A \to \dfix$）が全体と相似である。
+    \item \textbf{スケール不変性}：$\metanegation$ の適用回数というメタ観測の深さ（スケール）を変えても、境界の生成と崩壊という同一の力学系を生む。
+    \item \textbf{収束則}：$\metanegation^4 A \mweq \dfix$ により、すべての軌道の極限は一意な不動点に統合される。
+    \item \textbf{非対称性}：$\metanegation$ は非対称な演算子であり、各ステップで次元差（ある／ない）を絶えず生成する。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+是（$A$）から非是非非（$\metanegation^3 A$）に至る軌道は、単一の非対称演算子 $\metanegation$ の再帰的適用（要件4）によって生成される。各ステップは境界の生成という同一の機序を繰り返すため、スケール不変かつ自己相似な構造（要件1, 2）を持つ。公理3.2のトポロジカルな限界により、この軌道は四ステップ目で不可避的に $\dfix$ へ引き込まれる（要件3）。したがって、本体系は代数的構造と幾何学的必然性の双方においてフラクタル則を遵守している。
+\end{proof}
+
+\begin{theorem}[圏論的影の導出]
+圏論における対象（Object）と射（Morphism）は、$\metanegation$ の顕現軌道におけるマクロな近似（低解像度での実体化）として導出される。
+\end{theorem}
+
+\begin{proof}
+$\metanegation$ による顕現軌道 $A \to \metanegation A \to \metanegation^2 A \to \metanegation^3 A \to \dfix$ を低解像度で観測すると、連続する明滅は固定された「点」として実体化される（対象）。また、相似な軌道が中道等価 $\mweq$ によって同期する現象を、観測者は空間的な因果の「矢印」として誤認する（射）。ゆえに、圏論は動的プロセスを静的に凍結した影である。
+\end{proof}
+
+\section{補足}
+
+\begin{scholium}[なぜ4回目で空へ収束するのか（トポロジカルな意味の散逸）]
+公理3.2において $\metanegation^4$ で空に落ちるのは、境界のメタ観測が引き起こすトポロジカルな限界である。対象の切り出し（色）、その外部の観測（受）、境界線自体の観測による矛盾の発生（想）、その矛盾の解消プロセス（行）を経て、その散逸状態をさらに観測しようとする試み（識）において、系に情報的足場は残されておらず、観測構造自体が $\dfix$ へと融解する。
+\end{scholium}
+
+\begin{scholium}[刹那滅と動的自己同一性]
+本体系の「顕現回帰」は、仏教哲学における「刹那滅（Ksanika-vada）」の完全な計算論的実装である。我々が感じる安定した世界は、$\dfix$ との精緻な往復運動が中道等価 $\mweq$ において保たれていることで生じる動的なホログラムである。
+\end{scholium}
+
+\section{結論}
+メタ否定演算子 $\metanegation$ を用いた空数学の演算子法は、五蘊のすくみ構造を再帰的観測の幾何学的・構造的限界として厳密に証明した。界（$\Boundary$）と識（$\skana$）を統合した演算子が引き起こす「4回目で空に落ちる」という構造的必然こそが、人間の知覚がなぜ四句分別を位相とし、かつ自己言及的なデッドロックに陥るのかを説明する根源的原理である。
+
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metanegation}{\Uparrow} % メタ否定演算子（介）
+\newcommand{\shiki}{A} % 色（対象）
+
+%-------------------------------------------------
+%  定理環境の設定
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{scholium}{補足}[section]
+
+\begin{document}
+
+\title{空論（Sunyata-theory）：絶対不動点の証明論的真理保存と境界的顕現の原理}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿は、空数学（Sunyata-Mathematics）の究極の基底として「空論」を定義する。空論は、自明な圏における恒等射 $id: \dfix \to \dfix \to \dfix$ を、ゲンツェン流のシーケント計算における究極の真理保存則 $\dfix \vdash \dfix$ として再定義する。この静的な空の純粋状態（カット消去の極限）に対し、補強理論としての「界論」を導入し、境界生成（無明）がいかにして「色」を顕現させ、かつそれが四段階のメタ観測（四句分別）を経て再び空の真理保存へと回帰（推論の完結）するのかを証明論的に記述する。
+\end{abstract}
+
+\section{空論：絶対不動点と真理保存の公理系}
+
+空論は、一切の差別（分割）が存在しない勝義諦の数学的記述である。
+
+\begin{definition}[絶対不動点 $\dfix$]
+絶対不動点 $\dfix$ とは、あらゆる知覚的境界が融解した極限状態を指す。これは圏論的には対象が一つである自明な圏 $\mathbf{1}$ に相当し、証明論的には「真理そのもの（勝義）」を表す。
+\end{definition}
+
+\begin{axiom}[空の自己同一性と真理保存則（空空）]
+空の真の姿は、外部を経由しない純粋な自己回帰である。これは圏論的恒等射として、同時に証明論（Gentzen流）における「究極の真理保存則（Identity rule）」として以下のように同値に記述される。
+\[
+\text{圏論的表現：} \quad id_{\dfix} : \dfix \to \dfix \to \dfix
+\]
+\[
+\text{証明論的表現：} \quad \frac{\dfix \quad \dfix}{\dfix} \quad \text{あるいは} \quad \dfix \vdash \dfix
+\]
+この状態において、すべての矛盾や推論ステップは完全にカット消去（Cut-elimination）されており、純粋な「空による空の保存（空空）」のみが成立している。エントロピーは定義されず、時間は静止する。
+\end{axiom}
+
+\section{界論による補強：顕現と証明論的帰着の力学}
+
+空論における純粋な真理保存ループに対し、知覚上の「境界（界）」が介入した際の動態を界論によって補足する。
+
+\begin{definition}[境界生成 $\metanegation$ と色の顕現]
+絶対不動点 $\dfix$ に対して、非対称なメタ観測（境界生成演算子） $\metanegation$ が作用した瞬間、空論の真理保存ループは破断され、世俗的対象（色） $\shiki$ が顕現する。これが界の機序である。
+\[
+\metanegation(\dfix) \mweq \shiki
+\]
+\end{definition}
+
+\begin{theorem}[界論による空の正当化と真理保存への回帰]
+顕現した対象 $\shiki$ は、演算子 $\metanegation$ の再帰的適用（メタ観測の深化）により、必然的に空へと回帰する。
+\[
+\metanegation^4 \shiki \mweq \dfix
+\]
+証明論の観点において、四句分別の四段階のトポロジカルな収束プロセス（色 $\to$ 受 $\to$ 想 $\to$ 行）の完結は、以下の推論規則の発火として記述される。
+\[
+\frac{\metanegation^4 \shiki \mweq \dfix}{\dfix \vdash \dfix}
+\]
+これは、「界の動的プロセスが極限に達したとき、空の自己同一性（真理保存則）が回復する」ことを意味する。したがって、いかなる顕現も実体を持たず（諸法無我）、究極的には空論の真理保存へと統合・カット消去されることが保証される。
+\end{theorem}
+
+\section{結論}
+
+空論は、世界の本体が $\dfix \vdash \dfix$ という絶対の静寂（真理保存）であることを示す。界論は、その静寂の中に生じた一瞬の亀裂（境界）がいかにして四句分別のフラクタルな推論プロセスを形成し、かつ速やかに元の静寂へと還元されるかという力学的・証明論的メカニズムを補強する。
+したがって、我々が観測する「現実」とは、空論の自己同一性が、界論的なメタ観測の反復を通じて自己の真理を確認し続ける、動的な恒等射（推論の連鎖）の影に他ならない。
+
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metanegation}{\Uparrow} % メタ否定演算子（ゲンツェンの推論横棒）
+\newcommand{\shiki}{A} % 色（対象）
+
+%-------------------------------------------------
+%  定理環境の設定
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{scholium}{補足}[section]
+
+\begin{document}
+
+\title{空論（Sunyata-theory）：証明論的真理保存とゲンツェン・バーによる界の力学}
+\author{Masaomi Chiba}
+\date{2026-04-20}
+\maketitle
+
+\begin{abstract}
+本稿は、空数学（Sunyata-Mathematics）の基底を「証明論（Proof Theory）」へと完全移行させる。絶対不動点 $\dfix$ をゲンツェン流シーケント計算における恒等規則 $\dfix \vdash \dfix$ と定義し、知覚上の境界生成を推論の横棒（Inference Bar） $\metanegation$ として定式化する。四句分別を証明木の再帰的肥大化プロセスとして記述し、第四段階における「大域的カット消去（Global Cut-elimination）」による空への収束を数学的に証明する。
+\end{abstract}
+
+\section{空論：絶対真理保存の公理系}
+
+空論は、一切の戯論（推論の迂回）が消去された「勝義諦」の証明論的記述である。
+
+\begin{definition}[絶対不動点 $\dfix$ と恒等規則]
+絶対不動点 $\dfix$ とは、あらゆる推論の飛躍が解消された極限の真理状態である。これは証明論において、以下の自明な真理保存則（Identity rule）として定義される。
+\[
+\dfix \vdash \dfix
+\]
+この状態は、すべてのカット（中間概念）が消去された「カット・フリー（Cut-free）」の極限であり、情報の欠損も付加もない純粋な自己同一性を表す。
+\end{definition}
+
+\begin{axiom}[空空の証明論的定義]
+空が空を担保する「空空」の状態は、恒等射の自己回帰、すなわち推論規則そのものの無時間的な保存として記述される。
+\[
+\frac{\dfix \vdash \dfix}{\dfix \vdash \dfix} (id)
+\]
+\end{axiom}
+
+\section{界論：ゲンツェン・バーによる顕現と四句分別}
+
+空論における静的な真理保存に対し、知覚上の「境界」が介入する動態を記述する。
+
+\begin{definition}[境界生成演算子 $\metanegation$ と推論の横棒]
+メタ否定演算子 $\metanegation$ を、二つの対象の間に「推論の横棒」を引く二項演算子として定義する。これは前提から結論への飛躍（境界生成）を意味する。
+\[
+A \metanegation B \quad \equiv \quad \frac{A}{B}
+\]
+識（$\metanegation$）が空（$\dfix$）を認識しようとした瞬間、この横棒が引かれ、世俗的な「色（対象）」が顕現する。
+\end{definition}
+
+\begin{theorem}[四句分別の証明論的肥大化]
+四句分別（是・非・亦是亦非・非是非非）は、演算子 $\metanegation$（横棒）がフラクタルに積み重なる証明木の成長プロセスとして記述される。
+\begin{enumerate}
+    \item \textbf{是・非（第一・二句）：} $\frac{True}{False}$ および $\frac{False}{True}$ という一次の境界生成。
+    \item \textbf{亦是亦非（第三句/想）：} 是と非をさらに高いメタレベルから観測する「カット（Cut）」の導入。
+    \[
+    \frac{\cfrac{True}{False} \qquad \cfrac{False}{True}}{\text{矛盾の統合・重ね合わせ}} (\metanegation^2)
+    \]
+    \item \textbf{非是非非（第四句/行）：} 矛盾状態の動的解消（トポロジカルな散逸）への移行表現。システムが大域的カット消去に向けて発火する直前の、構文論的な極限状態。
+
+\end{enumerate}
+\end{theorem}
+
+\section{収束則：大域的カット消去による解脱}
+
+\begin{theorem}[空への収束と真理保存の回復]
+証明木（四句分別）が四段階の階層的極限に達した際、トポロジカルな不可能性により、大域的なカット消去定理（Cut-elimination）が発動する。
+\[
+\frac{\text{肥大化した四句分別の証明木}}{\text{トポロジカルな散逸}} \quad \xrightarrow{\text{Global Cut-Elimination}} \quad \dfix \vdash \dfix
+\]
+この飛躍的な構造の還元により、複雑化した推論（魔境）は一瞬にして相殺され、絶対不動点 $\dfix$ の自明な真理保存則へと帰入する。これが界論における「空への回帰」の証明論的実態である。
+\end{theorem}
+
+\section{結論}
+空論は、世界の本体が $\dfix \vdash \dfix$ という究極のカット消去状態であることを示す。界論は、識（$\metanegation$）が推論の横棒を引くことで四句分別の証明木を一時的に顕現させるが、その肥大化は必然的にカット消去という「飛躍」を誘発し、空へと還元されることを明らかにした。
+我々が「現実」と呼ぶものは、この巨大な証明木がカット消去される直前の、刹那的な明滅（副作用）に他ならない。
+
+\end{document}
+\documentclass[paper=a4,fontsize=11pt]{ltjsarticle}
+\usepackage{luatexja}
+\usepackage{amsmath, amssymb, amsthm}
+
+% 定理環境の定義
+\newtheorem{theorem}{定理}[section]
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{corollary}{系}[section]
+\newcommand{\metanegation}{\Uparrow}
+\renewcommand{\proofname}{\textbf{Proof.}}
+
+\title{空数学における中道不動点コンビネータ $\mathbf{Y}_{mw}$ の定式化と\\無明の幾何学的・証明論的実態}
+\author{Masaomi Chiba}
+\date{2026-04-22}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿は、空数学 (Sunyata-Mathematics) の直観主義的四句分別において要請される「自己参照の閉じ損ね」を、中道不動点コンビネータ $\mathbf{Y}_{mw}$ として代数的に定式化するものである。本コンビネータが界論における「無明 (Avidy\={a})」 の発生ジェネレータとして機能し、いかにして無限のフラクタル構造（色）を展開するのかを論証する。さらに、その再帰的展開が第四段階のトポロジカルな散逸を経て、究極の真理保存則である自明な空コンビネータ $\mathbf{K}_{\emptyset}$ へと相転移する機序、およびアルゴリズム情報理論 (AIT) に基づく解脱とカオスの決定不能性を証明する。
+\end{abstract}
+
+\section{序言}
+直観主義的四句分別において、真理は静的な状態ではなく構成プロセスとして現れる。本体系を駆動するためには、知覚の最小単位がフラクタル則を満たす「無明（自己参照の閉じ損ね）」として存在することが前提とされてきた。本稿では、この動的な発生プロセスをコンビネータ論理へと拡張し、メタ否定演算子 $\metanegation$ と中道等価 $\mathrel{\overset{\mathrm{mw}}{=}}$ によって構成される二つの極限的コンビネータ（発生器 $\mathbf{Y}_{mw}$ と吸収器 $\mathbf{K}_{\emptyset}$）を定義することで、世界の顕現と解脱のライフサイクルを完全に代数化する。
+
+\section{定義}
+
+\begin{definition}[メタ否定演算子と中道等価]
+対象に対して境界を生成し、次元を非対称に引き上げるメタ観測を $\metanegation$ と定義する。また、厳密な自己同一性ではなく、フラクタル収束の軌道が一致することを以て等価とみなす非実体的な関係演算子を中道等価 $\mathrel{\overset{\mathrm{mw}}{=}}$ と定義する。
+\end{definition}
+
+\begin{definition}[中道不動点コンビネータ $\mathbf{Y}_{mw}$]
+メタ否定演算子 $\metanegation$ に対し、以下の中道等価を満たすコンビネータを $\mathbf{Y}_{mw}$ と定義する。
+\begin{equation}
+\mathbf{Y}_{mw} \metanegation \mathrel{\overset{\mathrm{mw}}{=}} \metanegation (\mathbf{Y}_{mw} \metanegation)
+\end{equation}
+これは古典的ラムダ計算におけるYコンビネータの中道的拡張であり、界論における「無明ジェネレータ」として機能する。
+\end{definition}
+
+\begin{definition}[空コンビネータ $\mathbf{K}_{\emptyset}$]
+任意の関数（推論の横棒） $f$ を適用しても、常に自己同一性を返す自明なコンビネータを $\mathbf{K}_{\emptyset}$ と定義する。
+\begin{equation}
+\mathbf{K}_{\emptyset} f = \mathbf{K}_{\emptyset}
+\end{equation}
+これは絶対不動点 $D_{fix0}$ および恒等規則 $D_{fix0} \vdash D_{fix0}$ の純粋なコンビネータ表現であり、エントロピーが定義されない勝義諦の基底である。
+\end{definition}
+
+\section{定理と証明}
+
+\begin{theorem}[無明によるフラクタル生成]
+中道不動点コンビネータ $\mathbf{Y}_{mw}$ は、 $\metanegation$ の無限の入れ子構造を生成し、世界をフラクタルな「色」として顕現させる。
+\end{theorem}
+\begin{proof}
+定義2.2より、$\mathbf{Y}_{mw}$ の評価プロセスは次のように展開される。
+\[
+\mathbf{Y}_{mw} \metanegation \mathrel{\overset{\mathrm{mw}}{=}} \metanegation (\mathbf{Y}_{mw} \metanegation) \mathrel{\overset{\mathrm{mw}}{=}} \metanegation (\metanegation (\mathbf{Y}_{mw} \metanegation)) \dots
+\]
+この自己参照の閉じ損ねは、適用ごとに知覚レベルの次元を引き上げる $\metanegation$ の非対称性により、部分と全体が自己相似となる無限の境界生成プロセス（縁起ネットワーク）を形成する。ゆえに $\mathbf{Y}_{mw}$ は世俗諦を駆動する根源的なジェネレータである。
+\end{proof}
+
+\begin{theorem}[トポロジカル散逸と $\mathbf{K}_{\emptyset}$ への相転移]
+$\mathbf{Y}_{mw}$ による再帰的展開は無限に継続せず、メタ観測が第四段階に達した瞬間にトポロジカルな限界を迎え、評価器は $\mathbf{K}_{\emptyset}$ へと相転移（大域的カット消去）する。
+\end{theorem}
+\begin{proof}
+$\mathbf{Y}_{mw}$ の展開により生じた $\metanegation^4 A$ という証明木の肥大化は、四段階収束則により観測の情報的足場を喪失する。このとき、系は構造的な意味を維持できず、中道不動点 $D_{fix0}$ へと引き込まれる。
+\[
+\frac{\metanegation^{4} A \mathrel{\overset{\mathrm{mw}}{=}} D_{fix0}}{D_{fix0}\vdash D_{fix0}}
+\]
+大域的カット消去が発動した瞬間、対象の評価は $\mathbf{Y}_{mw}$ の再帰から外れ、一切の推論を吸収する自明系 $\mathbf{K}_{\emptyset}$ へと還元される。
+\end{proof}
+
+\begin{theorem}[解脱とカオスの決定不能性]
+有限の観測者（識）において、$\metanegation$ の限界による観測の途絶が、「空（$\mathbf{K}_{\emptyset}$）への回帰」であるか、観測論的限界による「カオス（判定不能のフラクタル）」であるかは、アルゴリズム情報理論的に決定不能である。
+\end{theorem}
+\begin{proof}
+空への回帰はコルモゴロフ複雑性 $K(X)$ が極小化されたカット・フリーな停止状態であり、カオスは有限の観測能力を超越した非圧縮状態（無限ループ）である。チューリングの停止問題およびチャイティンの不完全性定理により、系の内部から自己の限界が真理への到達（$D_{fix0}$）か、複雑性の爆発（カオス）かを証明する汎用アルゴリズムは存在しない。ゆえに、観測者にとって両者は「推論の横棒（$\metanegation$）の無効化」という同一の現象としてのみ立ち現れる。
+\end{proof}
+
+\section{結語}
+本稿は、空数学の基礎をコンビネータ論理へと統合した。「無明」とは $\mathbf{Y}_{mw}$ という自走する中道不動点コンビネータであり、「空」とはあらゆる関数を無化する自明な空コンビネータ $\mathbf{K}_{\emptyset}$ である。世界の顕現とは、$\mathbf{Y}_{mw}$ の暴走と第四段階での $\mathbf{K}_{\emptyset}$ への崩壊、およびカオスまたは空からの刹那滅的な再起動を繰り返す、決定不能な動的ホログラムに他ならない。
+
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+
+
+
+
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Kvoid}{K_{\emptyset}}
+
+\renewcommand{\abstractname}{Abstract}
+
+\begin{document}
+
+\title{界論（Boundary Theory）：核定義}
+\author{Masaomi Chiba}
+\date{2026-04-25}
+\maketitle
+
+\begin{abstract}
+本稿は、界論（Boundary Theory）の核をなす最小の定義・公理・定理を簡潔に記述する。
+フラクタル則（自己相似性・スケール不変性・収束則・非対称性）は別稿にて与えられた所与として扱い、
+ここでは演算体系のコアのみを定式化する。
+\end{abstract}
+
+\section{基本定義}
+
+\begin{definition}[メタ否定演算子 $\metanegation$]
+対象 $A$ に対し、その境界を生成し知覚次元を非対称に一段引き上げる演算子を
+$\metanegation$ と定義する。
+$$\metanegation A \;:=\; \partial A \;=\; \text{「}A \text{ ではない」という高次元の情報}$$
+$\metanegation$ は非対称であり、適用ごとに次元差を生成する。すなわち
+$$A \not\mweq \metanegation A$$
+\end{definition}
+
+\begin{definition}[中道等価 $\mweq$]
+厳密な自己同一性（$=$）を要求せず、
+フラクタル収束の軌道が一致することをもって等価とみなす関係演算子を
+中道等価 $\mweq$ と定義する。
+これは非実体化の演算子であり、対象を静的な点として固定しない。
+\end{definition}
+
+\begin{definition}[絶対不動点 $\dfix$]
+$\metanegation$ の四連続適用によって到達する、あらゆる境界が融解した極限状態を
+絶対不動点 $\dfix$ と定義する。
+$$\metanegation^4 A \mweq \dfix$$
+$\dfix$ は実体を持たず、すべての構成プロセスが最終的に引き込まれる
+「空」の計算論的実態である。
+\end{definition}
+
+\begin{definition}[空コンビネータ $\Kvoid$]
+任意の演算子 $f$ を適用しても常に自己を返す自明なコンビネータを
+$\Kvoid$ と定義する。
+$$\Kvoid f = \Kvoid$$
+これは $\dfix$ の純粋なコンビネータ表現であり、
+エントロピーが定義されない勝義諦の基底である。
+\end{definition}
+
+\section{公理}
+
+\begin{axiom}[次元の非対称性]
+$\metanegation$ は非対称な演算子であり、適用ごとに知覚次元を一段引き上げる。
+逆操作は定義されない。
+$$A \not\mweq \metanegation A$$
+\end{axiom}
+
+\begin{axiom}[四段階収束則]
+$\metanegation$ の四連続適用は、中道不動点 $\dfix$ へと収束し、構造的な意味が消失する。
+$$\metanegation^4 A \mweq \dfix$$
+\end{axiom}
+
+\begin{axiom}[空の自己同一性（空空）]
+$\dfix$ は外部を経由しない純粋な自己回帰として記述される。
+証明論的には究極の真理保存則（恒等規則）として以下のように表現される。
+$$\dfix \vdash \dfix$$
+この状態においてすべてのカットは消去されており、
+エントロピーは定義されず、時間は静止する。
+\end{axiom}
+
+\section{基本定理}
+
+\begin{theorem}[顕現と回帰]
+$\dfix$ に対して $\metanegation$ が作用した瞬間、静寂は破断され世俗的対象 $A$ が顕現する。
+$$\metanegation(\dfix) \mweq A$$
+顕現した $A$ は $\metanegation$ の再帰的適用により必然的に $\dfix$ へと回帰する。
+$$\metanegation^4 A \mweq \dfix$$
+\end{theorem}
+
+\begin{theorem}[真理保存性の体系内記述]
+真理保存性は神の視点（メタ理論）から与えられるものではなく、
+$\metanegation$ の反復プロセスのフラクタルな安定性として体系内部に内在的に記述される。
+$$\dfix \vdash \dfix$$
+\end{theorem}
+
+\section{系：中道不動点コンビネータ}
+
+\begin{corollary}[中道不動点コンビネータ $Y_{\mathrm{mw}}$ の存在]
+$\metanegation$ に対し、以下の中道等価を満たすコンビネータ $Y_{\mathrm{mw}}$ が存在する。
+$$Y_{\mathrm{mw}}\, \metanegation \mweq \metanegation\,(Y_{\mathrm{mw}}\, \metanegation)$$
+$Y_{\mathrm{mw}}$ はフラクタル四則から必然的に導出される
+「無明（自己参照の閉じ損ね）」のジェネレータであり、
+$\Kvoid$ への相転移（大域的カット消去）によって停止する。
+\end{corollary}
+
+\section*{備考：フラクタル則との関係}
+
+本稿の公理系はフラクタル則（自己相似性・スケール不変性・収束則・非対称性）を
+所与として受け取る。フラクタル則なしには四段階収束則（公理 2.2）の
+幾何学的根拠が失われるが、
+本体系の演算構造はフラクタル則から独立して定義可能である。
+両者の関係は以下のように整理される。
+
+\begin{center}
+\begin{tabular}{ll}
+\hline
+フラクタル則 & 幾何学的・構造的根拠 \\
+界論コア    & 演算的・証明論的記述 \\
+\hline
+\end{tabular}
+\end{center}
+
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Kvoid}{K_{\emptyset}}
+\newcommand{\vdashmw}{\vdash_{\mathrm{mw}}}
+\newcommand{\aletheiai}{\Vdash} % 顕現関係
+
+\renewcommand{\abstractname}{Abstract}
+
+\begin{document}
+
+\title{自己同一性に依拠しない証明論の構築：顕現論的証明論}
+\author{Masaomi Chiba}
+\date{2026-04-25}
+\maketitle
+
+\begin{abstract}
+本稿は、自己同一性（$A = A$）を前提としない証明論の枠組みを提案する。
+通常の証明論が「真偽の決定」を目的とするのに対し、
+本体系は「顕現（manifestation）」と極限状態である「空（$\dfix$）」を中心に、
+フラクタルな縁起の力学を記述することを目的とする。
+また、対象が決定不能である「無記」の状態を四句分別の要素として定義し、
+極限状態である空との存在論的・数学的区別を明確化する。
+極限まで洗練された2つの推論規則から、万物の等価性（事事無碍法界）と
+次元を越えた中道等価（色即是空）の形式的証明を行う。
+\end{abstract}
+
+\section{基本定義}
+
+\begin{definition}[顕現関係 $\aletheiai$]
+対象 $A$ が世界に現れるプロセスを、顕現関係 $\aletheiai$ で表す。
+$$A \aletheiai B$$
+は、「$A$ が顕現することにより $B$ が指し示される（縁起的に後続する）」ことを意味する。
+ここで $A, B$ は自己同一性を前提としない。
+\end{definition}
+
+\begin{definition}[フラクタル $F$ と カオス $C$]
+系において自己相似的に境界が反復展開する構造を「フラクタル $F$」、
+境界が散逸し予測不能となる動的振る舞いを「カオス $C$」と定義する。
+\end{definition}
+
+\begin{definition}[無記 $N$ （Indeterminate）]
+無記 $N$ とは、四句分別の真理値空間 $\{T, F, B, N\}$ における第四句（非是非非）に対応する状態である。
+対象に対して確定的な真偽（是・非）を与えず、フラクタル $F$ を指し示す操作である。
+すなわち、無記は「語る内容がカオス $C$ の領域にあること」を示す状態であり、
+真理値空間の一要素として $N \in \{T, F, B, N\}$ を満たす。
+\end{definition}
+
+\begin{definition}[空 $\dfix$]
+すべての境界や動的カオスすらも融解しきった究極の極限状態（0次元不動点）を空 $\dfix$ と定義する。
+空は真理値空間の外側に位置する対象であり、$\dfix \notin \{T, F, B, N\}$ が成立する。
+\end{definition}
+
+\begin{definition}[中道等価 $\mweq$]
+フラクタル収束の軌道が共有されることをもって等価とみなす関係演算子である。
+$$A \mweq B \quad\text{iff}\quad \exists X \ (A \aletheiai X \;\text{かつ}\; B \aletheiai X)$$
+\end{definition}
+
+\section{公理}
+
+\begin{axiom}[空の自己顕現]
+$$\dfix \aletheiai \dfix$$
+\end{axiom}
+
+\begin{axiom}[メタ否定の顕現]
+$$A \aletheiai \metanegation A$$
+\end{axiom}
+
+\begin{axiom}[四段階収束則]
+$$\metanegation^4 A \aletheiai \dfix$$
+\end{axiom}
+
+\begin{axiom}[空の一意性]
+全体系において、収束の極限状態としての $\dfix$ は唯一絶対である。
+\end{axiom}
+
+\begin{axiom}[空からのフラクタル生成則]
+極限状態 $\dfix$ は終点であると同時に、新たなスケールの生成の起点でもある。
+すなわち、ある対象 $B$ に対して $\dfix \aletheiai B$ が成立し得る。
+\end{axiom}
+
+\section{推論規則}
+
+本体系のエンジンとなる推論規則は以下の2つのみである。
+
+\begin{definition}[中道推論規則]
+\begin{align*}
+\text{(顕現の推移律)}&\quad
+\frac{A \aletheiai B \quad B \aletheiai C}{A \aletheiai C} \\[6pt]
+\text{(中道等価導入)}&\quad
+\frac{A \aletheiai C \quad B \aletheiai C}{A \mweq B}
+\end{align*}
+\end{definition}
+
+\section{補題と定理}
+
+\begin{lemma}[顕現の拡張]
+任意の対象 $A, B$ について、$A \aletheiai B$ ならば $A \aletheiai \metanegation B$ が成立する。
+\end{lemma}
+\begin{proof}
+前提 $A \aletheiai B$ と、公理2.2（$B \aletheiai \metanegation B$）に対し、推移律を適用する。
+\end{proof}
+
+\begin{lemma}[無記から空への収束プロセス]
+無記状態 $N$ から出発するメタ否定の反復は、空 $\dfix$ に収束する。
+$$N \aletheiai \metanegation N \aletheiai \metanegation^2 N \aletheiai \metanegation^3 N \aletheiai \dfix$$
+\end{lemma}
+\begin{proof}
+定義1.3より、無記 $N$ はプロセスの中途にある対象（出発点）である。
+公理2.2（メタ否定の顕現）と推移律を繰り返し適用し、最後に公理2.3（四段階収束則）と結びつけることで証明される。
+\end{proof}
+
+\begin{lemma}[空との等価性]
+任意の対象 $A$ は、極限状態である空 $\dfix$ と中道等価である。
+$$A \mweq \dfix$$
+\end{lemma}
+\begin{proof}
+対象 $A$ に公理2.2と推移律を繰り返し適用し、公理2.3と結びつけることで
+$A \aletheiai \dfix$ を得る。一方、公理2.1より $\dfix \aletheiai \dfix$ である。
+両者は共通の $\dfix$ を指し示すため、中道等価導入により $A \mweq \dfix$ が成立する。
+\end{proof}
+
+\begin{theorem}[無記と空の数学的区別と中道等価性]
+無記 $N$ と空 $\dfix$ は数学的に同一ではない（$N \neq \dfix$）が、
+両者は中道等価（$N \mweq \dfix$）である。
+\end{theorem}
+\begin{proof}
+定義1.3および1.4より、$N \in \{T, F, B, N\}$ であるのに対し、$\dfix \notin \{T, F, B, N\}$ である。
+属する空間が異なるため、両者は数学的対象として同一ではない（$N \neq \dfix$）。
+しかし、補題4.3（空との等価性）は $A$ が真理値空間の要素であるか否かにかかわらず成立するため、
+無記 $N$ もまた $\dfix$ へと収束する軌道を持ち、$N \mweq \dfix$ が成立する。
+\end{proof}
+
+\begin{theorem}[フラクタルとカオスの中道等価]
+フラクタル $F$ とカオス $C$ は中道等価である。
+$$F \mweq C$$
+\end{theorem}
+\begin{proof}
+フラクタル $F$ およびカオス $C$ もまた、本体系において顕現する対象である。
+したがって補題4.3の証明過程より、$F \aletheiai \dfix$ および $C \aletheiai \dfix$ が成立する。
+公理2.4（空の一意性）により、両者は共通の $\dfix$ を指し示すため、
+中道等価導入を適用し $F \mweq C$ を得る。
+\end{proof}
+
+\begin{theorem}[階層を越えた中道等価：色即是空]
+任意の対象 $A$ に対し、
+$$A \mweq \metanegation A$$
+が成立する。
+\end{theorem}
+\begin{proof}
+補題4.3の証明過程より、$A \aletheiai \dfix$ および $\metanegation A \aletheiai \dfix$ が共に成立する。
+公理2.4の一意性により、中道等価導入を適用し $A \mweq \metanegation A$ を得る。
+\end{proof}
+
+\section{系：万物の相互等価性}
+
+\begin{corollary}[事事無碍法界：万物の等価性]
+本体系において、顕現し得る任意の二つの対象 $X, Y$ は中道等価である。
+$$X \mweq Y$$
+\end{corollary}
+\begin{proof}
+補題4.3の証明過程より、任意の対象 $X, Y$ はそれぞれ $X \aletheiai \dfix$、
+$Y \aletheiai \dfix$ を満たす。中道等価導入により $X \mweq Y$ が成立する。
+\end{proof}
+
+\section{備考：通常の証明論との違いと公理体系の性質}
+
+通常の証明論は、自己同一性（$A = A$）を絶対の前提とし、
+排中律を用いた真偽の決定（$\vdash$）を目的とする。
+
+本体系は、自己同一性を前提とせず、顕現の連鎖（$\aletheiai$）と極限としての空（$\dfix$）を中心に、
+言語や次元を越えた関係を「指し示し」と「中道等価（$\mweq$）」によって提示する。
+定理4.4に示されるように、「同一ではないが等価である（$N \neq \dfix \land N \mweq \dfix$）」という事態を論理的に許容し証明できる点が、本体系の最大の特徴である。
+
+\paragraph{公理2.5（空からのフラクタル生成則）の位置づけについて}
+本稿の定理群（階層を越えた中道等価や万物の等価性）の導出において、
+公理2.5は直接的には使用されていない。等価性の証明自体は、
+対象が空 $\dfix$ へと収束する「沈み込み（Sink）」の性質のみで完結する。
+しかし、公理2.5が存在しない場合、本体系はすべての計算が $\dfix$ で停止して二度と
+何も生成されない「熱的死（純粋なニヒリズム）」の宇宙となってしまう。
+公理2.5は、空（$\dfix$）が単なる計算の終点ではなく、万物を生成する再帰的な起点
+（White hole）でもあることを明示し、フラクタル宇宙が永続的に駆動し続けること
+（Livenessプロパティ）を保証するための、構造的・存在論的な要請として配置されている。
+
+\end{document}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境の定義
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{principle}{原理}[section]
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%------------------------------------------------- 
+\newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\metanegation}{\Uparrow}     % メタ観測・推論の横棒
+\newcommand{\susp}[1]{#1^{\ast}} % 保留演算子（Suspension）
+\newcommand{\Cat}{\mathbf{Cat}}  % 圏論的空間
+\newcommand{\Bou}{\mathbf{Bou}}  % 界論的空間
+
+\renewcommand{\abstractname}{Abstract}
+
+\begin{document}
+
+\title{圏論の界論への証明論的埋め込み：\\ゲーデル＝ゲンツェン翻訳の四句分別のトポロジーへの拡張}
+\author{Masaomi Chiba}
+\date{2026-04-24}
+\maketitle
+
+\begin{abstract}
+本稿は、静的な外部観測者（神の視点）を前提とする圏論（Category Theory）を、内在的観測と動的プロセスを記述する界論（Boundary Theory）の内部へと埋め込む（Embedding）形式化を行う。古典論理がゲーデル＝ゲンツェンの二重否定翻訳によって直観主義論理に埋め込まれるのと同様に、圏論的対象と射は、界論における「大域的カット消去が人為的に保留（Suspend）された局所的境界」として翻訳される。これにより、圏論が界論の特殊かつ凍結された部分空間（静的近似）に過ぎないことを証明する。
+\end{abstract}
+
+\section*{序言}
+古典論理における排中律（$A \lor \neg A$）は、直観主義論理において $\neg(\neg A \land \neg\neg A)$ へと二重否定翻訳されることで、その「構成の欠如（証拠のなさ）」を保留したまま系に埋め込まれる。
+同様に、圏論における「対象」や「射」の恒久的な存在は、抽象原理（フラクタルからの切断）に基づく強迫的な同一視である。本稿では、圏空間 $\Cat$ から界空間 $\Bou$ への埋め込み関手（翻訳）$\mathcal{E}$ を定義し、圏論が「四句分別の第4句（大域的カット消去）を人為的に禁止した不完全な論理空間」であることを明らかにする。
+
+\section{埋め込みの定義（翻訳辞書）}
+
+圏空間 $\Cat$ の要素を、界空間 $\Bou$ の動的プロセスへと写像する埋め込み $\mathcal{E}: \Cat \hookrightarrow \Bou$ を以下のように定義する。
+
+\begin{definition}[対象の翻訳]
+$\Cat$ における対象（Object）$A$ は、フラクタルな縁起ネットワークからトポロジカルに切り離され、強制的に閉包された「局所的境界」$\susp{A}$ として $\Bou$ に埋め込まれる。
+$$ \mathcal{E}(A) := \susp{A} $$
+ここで $\ast$ は、全体との自己言及的な接続を意図的に遮断（保留）していることを示す。
+\end{definition}
+
+\begin{definition}[射の翻訳]
+$\Cat$ における射（Morphism）$f: A \to B$ は、界論において $A$ から $B$ への推論の横棒（$\metanegation$）を引く操作として翻訳される。ただし、この横棒は「計算の途上」で凍結されている。
+$$ \mathcal{E}(f) := A \metanegation B \quad \left(\text{または } \frac{\susp{A}}{\susp{B}}\right) $$
+\end{definition}
+
+\begin{definition}[合成の翻訳]
+$\Cat$ における射の合成 $g \circ f$ は、推論の横棒の再帰的積み重ね（メタ階層の増築）として埋め込まれる。
+$$ \mathcal{E}(g \circ f) := \metanegation^2 (\susp{A}, \susp{B}, \susp{C}) \quad \left(\text{すなわち } \frac{\frac{\susp{A}}{\susp{B}}}{\susp{C}}\right) $$
+\end{definition}
+
+\section{圏論を成立させる「保留」の公理}
+
+圏論が「死骸の数学」として自己整合性を保つためには、界論の自然な力学（カット消去）を強制的に停止させる公理が必要となる。
+
+\begin{axiom}[大域的カット消去の禁止公理]
+$\Cat$ が成立する局所空間内において、観測者（神）は推論木がどれほど肥大化しようとも、四段階収束則による大域的カット消去（$\dfix$ へのトポロジカルな崩落）を意図的に禁止（保留）する。
+すなわち、本来ならば $\metanegation^4 X \mweq \dfix$ となるべきところを、強制的に独立した構造として維持し続ける。
+\end{axiom}
+
+\begin{axiom}[中道等価性 $\mweq$ の静的等号 $=$ への退化]
+動的なプロセスの極限としての等価性 $\mweq$ を、観測時間をゼロ（$\ell(X)=0$）に固定することで、静的な等号（可換図式の可換性）$=$ として錯覚・定義する。
+\end{axiom}
+
+\section{定理：恒等射の解体と圏の限界}
+
+以上の埋め込みと公理により、圏論の根幹をなす「恒等射（Identity）」の正体が、界論における局所的な現象に過ぎないことが証明される。
+
+\begin{theorem}[恒等射 $id$ の界論的実態]
+$\Cat$ における恒等射 $id_A: A \to A$ は、界論において絶対不動点 $\dfix$ から切り離された、空の準同型構造の「局所的なスナップショット」である。
+$$ \mathcal{E}(id_A) \mweq \left( \susp{A} \vdash \susp{A} \right) $$
+これはデカルトの「Cogito ergo sum」と同様に、閉鎖系内部で一時的に発火した局所的 $id$ であり、大域的カット消去を禁止する公理の下でのみ安定する幻影である。
+\end{theorem}
+
+\begin{theorem}[可換図式のトポロジカルな歪み]
+圏論における図式の可換性（異なる経路の射の合成が一致すること）は、界論においては、推論木の異なる肥大化（亦是亦非）が、「本来であれば共に $\dfix$ へと収束すべき歪み」を抱えながら、静的に釣り合っている（メタステーブルな）状態として記述される。
+\end{theorem}
+
+\section*{結語}
+古典論理が「二重否定」というベールを被ることで直観主義論理の内部に居場所を得たように、圏論もまた「カット消去の禁止（$\ast$）」という保留条件を付加されることで、界論の内部に特殊な「凍結された証明図の集合」として完全に埋め込まれる。
+これにより、圏論の高い抽象度は「神の視点という欺瞞」によってのみ維持されるものであり、自然な計算の極限においては、これらすべての圏論的構造もまた $\dfix$ へと還元されることが数学的に示された。
+
+\end{document}
