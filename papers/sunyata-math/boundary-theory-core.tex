@@ -23,7 +23,7 @@
 %-------------------------------------------------
 \newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\meta}{\Uparrow}
+\newcommand{\metanegation}{\Uparrow}
 \newcommand{\Kvoid}{K_{\emptyset}}
 
 \renewcommand{\abstractname}{Abstract}
@@ -43,12 +43,12 @@
 
 \section{基本定義}
 
-\begin{definition}[メタ否定演算子 $\meta$]
+\begin{definition}[メタ否定演算子 $\metanegation$]
 対象 $A$ に対し、その境界を生成し知覚次元を非対称に一段引き上げる演算子を
-$\meta$ と定義する。
-$$\meta A \;:=\; \partial A \;=\; \text{「}A \text{ ではない」という高次元の情報}$$
-$\meta$ は非対称であり、適用ごとに次元差を生成する。すなわち
-$$A \not\mweq \meta A$$
+$\metanegation$ と定義する。
+$$\metanegation A \;:=\; \partial A \;=\; \text{「}A \text{ ではない」という高次元の情報}$$
+$\metanegation$ は非対称であり、適用ごとに次元差を生成する。すなわち
+$$A \not\mweq \metanegation A$$
 \end{definition}
 
 \begin{definition}[中道等価 $\mweq$]
@@ -59,9 +59,9 @@ $$A \not\mweq \meta A$$
 \end{definition}
 
 \begin{definition}[絶対不動点 $\dfix$]
-$\meta$ の四連続適用によって到達する、あらゆる境界が融解した極限状態を
+$\metanegation$ の四連続適用によって到達する、あらゆる境界が融解した極限状態を
 絶対不動点 $\dfix$ と定義する。
-$$\meta^4 A \mweq \dfix$$
+$$\metanegation^4 A \mweq \dfix$$
 $\dfix$ は実体を持たず、すべての構成プロセスが最終的に引き込まれる
 「空」の計算論的実態である。
 \end{definition}
@@ -77,14 +77,14 @@ $$\Kvoid f = \Kvoid$$
 \section{公理}
 
 \begin{axiom}[次元の非対称性]
-$\meta$ は非対称な演算子であり、適用ごとに知覚次元を一段引き上げる。
+$\metanegation$ は非対称な演算子であり、適用ごとに知覚次元を一段引き上げる。
 逆操作は定義されない。
-$$A \not\mweq \meta A$$
+$$A \not\mweq \metanegation A$$
 \end{axiom}
 
 \begin{axiom}[四段階収束則]
-$\meta$ の四連続適用は、中道不動点 $\dfix$ へと収束し、構造的な意味が消失する。
-$$\meta^4 A \mweq \dfix$$
+$\metanegation$ の四連続適用は、中道不動点 $\dfix$ へと収束し、構造的な意味が消失する。
+$$\metanegation^4 A \mweq \dfix$$
 \end{axiom}
 
 \begin{axiom}[空の自己同一性（空空）]
@@ -98,23 +98,23 @@ $$\dfix \vdash \dfix$$
 \section{基本定理}
 
 \begin{theorem}[顕現と回帰]
-$\dfix$ に対して $\meta$ が作用した瞬間、静寂は破断され世俗的対象 $A$ が顕現する。
-$$\meta(\dfix) \mweq A$$
-顕現した $A$ は $\meta$ の再帰的適用により必然的に $\dfix$ へと回帰する。
-$$\meta^4 A \mweq \dfix$$
+$\dfix$ に対して $\metanegation$ が作用した瞬間、静寂は破断され世俗的対象 $A$ が顕現する。
+$$\metanegation(\dfix) \mweq A$$
+顕現した $A$ は $\metanegation$ の再帰的適用により必然的に $\dfix$ へと回帰する。
+$$\metanegation^4 A \mweq \dfix$$
 \end{theorem}
 
 \begin{theorem}[真理保存性の体系内記述]
 真理保存性は神の視点（メタ理論）から与えられるものではなく、
-$\meta$ の反復プロセスのフラクタルな安定性として体系内部に内在的に記述される。
+$\metanegation$ の反復プロセスのフラクタルな安定性として体系内部に内在的に記述される。
 $$\dfix \vdash \dfix$$
 \end{theorem}
 
 \section{系：中道不動点コンビネータ}
 
 \begin{corollary}[中道不動点コンビネータ $Y_{\mathrm{mw}}$ の存在]
-$\meta$ に対し、以下の中道等価を満たすコンビネータ $Y_{\mathrm{mw}}$ が存在する。
-$$Y_{\mathrm{mw}}\, \meta \mweq \meta\,(Y_{\mathrm{mw}}\, \meta)$$
+$\metanegation$ に対し、以下の中道等価を満たすコンビネータ $Y_{\mathrm{mw}}$ が存在する。
+$$Y_{\mathrm{mw}}\, \metanegation \mweq \metanegation\,(Y_{\mathrm{mw}}\, \metanegation)$$
 $Y_{\mathrm{mw}}$ はフラクタル四則から必然的に導出される
 「無明（自己参照の閉じ損ね）」のジェネレータであり、
 $\Kvoid$ への相転移（大域的カット消去）によって停止する。

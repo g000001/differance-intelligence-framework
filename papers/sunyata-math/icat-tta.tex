@@ -21,7 +21,7 @@
 %-------------------------------------------------
 \newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\meta}{\Uparrow}
+\newcommand{\metanegation}{\Uparrow}
 \newcommand{\susp}[1]{#1^*}
 \newcommand{\entails}{\Vdash} % 顕現関係
 \newcommand{\Bou}{\mathbf{Bou}}
@@ -54,7 +54,7 @@
 \begin{definition}[二諦の階層]
 \begin{itemize}
     \item \textbf{世俗諦（$\Cat$ 層）}：境界が截断され、対象が固定されていると錯覚される静的な構造。
-    \item \textbf{勝義諦（$\Bou$ 層）}：顕現演算子（$\entails$、$\meta$）と無記状態（$\dfix$）が支配する動的な力学系。
+    \item \textbf{勝義諦（$\Bou$ 層）}：顕現演算子（$\entails$、$\metanegation$）と無記状態（$\dfix$）が支配する動的な力学系。
 \end{itemize}
 \end{definition}
 
@@ -62,7 +62,7 @@
 界論的二諦随伴は、世俗諦の対象 $A$ と $B$ の間を、勝義諦の無記状態 $\dfix$
 を媒介として結ぶ「還滅」と「顕現」の動的サイクルである。
 \begin{align*}
-    \text{左プロセス（還滅 $F$）} &: A \entails \meta A \entails \dots \entails \dfix \\
+    \text{左プロセス（還滅 $F$）} &: A \entails \metanegation A \entails \dots \entails \dfix \\
     \text{右プロセス（顕現 $G$）} &: \dfix \entails B
 \end{align*}
 古典的な随伴における自然な全単射の代わりに、本体系では $\dfix$ を経由する
@@ -78,7 +78,7 @@
 \begin{itemize}
     \item \textbf{色（Rupa）}: $\Cat$ 層における静的対象 $A, B$。境界が固定された「データ」。
     \item \textbf{識（Vijnana）}: 全体を駆動する評価エンジン（帰納フラクタロイド）。世界を「自己」と「他者」に分節する $\entails$ の駆動力。
-    \item \textbf{受・想・行（Vedana, Samjna, Samskara）}: $\Bou$ 層に埋め込まれた対象が、メタ否定 $\meta$ の適用によって評価・遷移（$\Leadsto$）していく中間プロセス。ここで構造的負債（無明/Avidyā）が消費または蓄積される。
+    \item \textbf{受・想・行（Vedana, Samjna, Samskara）}: $\Bou$ 層に埋め込まれた対象が、メタ否定 $\metanegation$ の適用によって評価・遷移（$\Leadsto$）していく中間プロセス。ここで構造的負債（無明/Avidyā）が消費または蓄積される。
 \end{itemize}
 \end{definition}
 
@@ -86,14 +86,14 @@
 
 \begin{theorem}[無明の自律的消去（Strict化の達成）]
 世俗諦（色）から勝義諦（空）への還滅プロセス（$F$）において、
-対象 $A$ が持つ構造的負債（誤差・無明）は、$\meta^4$ の適用に伴い
+対象 $A$ が持つ構造的負債（誤差・無明）は、$\metanegation^4$ の適用に伴い
 有限ステップで完全に消去（大域的カット消去）される。
 すなわち、外部からのノルムや修正子を用いることなく、自律的に
 $$A \mweq \dfix$$
 が成立する。
 \end{theorem}
 \begin{proof}
-界論の公理（四段階収束則）より、$\meta^4 A \entails \dfix$ が成立する。
+界論の公理（四段階収束則）より、$\metanegation^4 A \entails \dfix$ が成立する。
 中道推論規則により、いかなる対象 $A$ も $\dfix$ へと収束するため、
 $A$ が内包していたあらゆる構造的差異（無明）は $\dfix$ において融解し、
 中道等価 $A \mweq \dfix$ が導かれる。

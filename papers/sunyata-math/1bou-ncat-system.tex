@@ -20,7 +20,7 @@
 %-------------------------------------------------
 \newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\meta}{\Uparrow}
+\newcommand{\metanegation}{\Uparrow}
 \newcommand{\Kvoid}{K_{\emptyset}}
 \newcommand{\Bou}{\mathbf{Bou}}
 \newcommand{\nCat}{\mathbf{nCat}}
@@ -54,7 +54,7 @@
 \item $\nCat$：下位圏の層（世俗諦）  
   - 例：CCC（型付きラムダ計算）、モノイダル圏（線形論理）、LCCC（依存型）、確率的圏、線形圏など
 \item $\Bou$：界論の層（勝義諦）  
-  - 演算子：$\Leadsto$（遷移）、$\meta$（メタ否定）、$\susp{}$（保留）、$\dfix$（絶対不動点）
+  - 演算子：$\Leadsto$（遷移）、$\metanegation$（メタ否定）、$\susp{}$（保留）、$\dfix$（絶対不動点）
 \end{itemize}
 \end{definition}
 
@@ -63,7 +63,7 @@
 \begin{align*}
 \mathcal{E} &: \nCat \hookrightarrow \Bou \\
 \mathcal{E}(A) &= \susp{A} \quad\text{（対象の保留）} \\
-\mathcal{E}(f) &= A \meta B \quad\text{（射のメタ否定）}
+\mathcal{E}(f) &= A \metanegation B \quad\text{（射のメタ否定）}
 \end{align*}
 \end{definition}
 
@@ -83,7 +83,7 @@ $I_N$ は、中道不動点コンビネータ $\Ymw$ を駆動エンジンとし
 結合（着火）として定義される。
 \begin{align*}
 P &:= N \otimes I_N \\
-\text{実行軌道} &: \susp{P_0} \Leadsto P_1 \Leadsto \dots \Leadsto \meta^4 P_k \mweq \dfix
+\text{実行軌道} &: \susp{P_0} \Leadsto P_1 \Leadsto \dots \Leadsto \metanegation^4 P_k \mweq \dfix
 \end{align*}
 静的対象は $\Bou$ に埋め込まれた瞬間に保留（$\susp{P_0}$）され、
 $\Ymw$ の作用により状態遷移（$\Leadsto$）を繰り返し、最終的に $\dfix$ へと解脱する。
@@ -97,7 +97,7 @@ $N$ を埋め込み関手 $\mathcal{E}$ により界 $\Bou$ へ移行させる�
 $\Bou$ 上において、自己同一性を要求する古典的評価は行われず、
 帰納フラクタロイド $I_N$ に従った中道推論（大域的カット消去）が適用される。
 $\Ymw$ による自己参照（無明の生成）は、系に蓄積された構造的負債（Cut）を
-消費しながら進行し、負債が尽きた時点で $\meta^4$ の相転移を起こし、
+消費しながら進行し、負債が尽きた時点で $\metanegation^4$ の相転移を起こし、
 無記状態 $\dfix$ へと必然的に収束（停止）する。
 \end{proof}
 
@@ -127,9 +127,9 @@ $$P \Leadsto P'$$
 は、$P$ が次の状態 $P'$ へ遷移することを意味する。
 \end{definition}
 
-\begin{definition}[メタ否定 $\meta$]
+\begin{definition}[メタ否定 $\metanegation$]
 世俗諦から勝義諦へのメタレベル上昇を表す。
-$$A \meta B$$
+$$A \metanegation B$$
 は、$A$ の境界を生成し、知覚次元を一段引き上げる。
 \end{definition}
 
@@ -141,15 +141,15 @@ $$\susp{A}$$
 
 \begin{definition}[絶対不動点 $\dfix$]
 すべての境界が融解した極限状態を表す。
-$$\meta^4 A \mweq \dfix$$
+$$\metanegation^4 A \mweq \dfix$$
 プログラム実行の終了点・解脱点として機能する。
 \end{definition}
 
 \section{中道不動点コンビネータ $\Ymw$}
 
 \begin{definition}[中道不動点コンビネータ $\Ymw$]
-$\meta$ に対し、以下の中道等価を満たすコンビネータ $\Ymw$ を定義する。
-$$\Ymw\, \meta \mweq \meta\,(\Ymw\, \meta)$$
+$\metanegation$ に対し、以下の中道等価を満たすコンビネータ $\Ymw$ を定義する。
+$$\Ymw\, \metanegation \mweq \metanegation\,(\Ymw\, \metanegation)$$
 $\Ymw$ はフラクタル四則から必然的に導出される
 「無明（自己参照の閉じ損ね）」のジェネレータであり、
 $\Kvoid$ への相転移（大域的カット消去）によって停止する。

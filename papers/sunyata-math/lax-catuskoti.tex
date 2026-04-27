@@ -18,7 +18,7 @@
 
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
 \newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
-\newcommand{\meta}{\Uparrow}
+\newcommand{\metanegation}{\Uparrow}
 \newcommand{\Lax}{\bigcirc} % ラックスモダリティ
 
 \begin{document}
@@ -61,7 +61,7 @@
 
 \section{モダリティ $\Lax$ のフラクタル的定式化}
 
-ラックス論理のモダリティ $\Lax$ を、真理値空間に「モナド的な層（次元）」を追加するメタ化演算子（界論における $\meta$ に相当）として再定義する。
+ラックス論理のモダリティ $\Lax$ を、真理値空間に「モナド的な層（次元）」を追加するメタ化演算子（界論における $\metanegation$ に相当）として再定義する。
 
 \begin{lemma}[次元上昇としての $\Lax$]
 $\Lax A$ は、対象 $A$ の真理値構造 $\mathcal{F}_n$ を、メタレベルの構造 $\mathcal{F}_{n+1}$ へと移行させる。したがって、
@@ -103,7 +103,7 @@ $$ \Lax\Lax A \mweq \Lax A $$
 
 本論証により、ラックス論理における $\Lax\Lax A \to \Lax A$ という天下り的なモナド則は、四句分別というフラクタル真理値を導入することによって初めて、構成的かつ内発的なルールとして証明されることが明らかになった。
 
-界論（Boundary Theory）の視点から見れば、ラックスモダリティ $\Lax$ はメタ否定 $\meta$ の一種であり、平坦化 $\Lax\Lax A \to \Lax A$ は $\meta^2 A \mweq \meta A$ という大域的カット消去（$\dfix$ への収束）のプロセスの一側面に過ぎない。
+界論（Boundary Theory）の視点から見れば、ラックスモダリティ $\Lax$ はメタ否定 $\metanegation$ の一種であり、平坦化 $\Lax\Lax A \to \Lax A$ は $\metanegation^2 A \mweq \metanegation A$ という大域的カット消去（$\dfix$ への収束）のプロセスの一側面に過ぎない。
 真理保存性とは「静的な等式」ではなく、「動的なフラクタル構造の中での中道等価性」の維持であり、世界がフラクタルでなければ、計算論的な真理の保存は物理的・論理的に成立し得ないことが証明された。
 
 \end{document}

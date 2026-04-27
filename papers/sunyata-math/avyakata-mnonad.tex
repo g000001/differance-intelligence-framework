@@ -16,7 +16,7 @@
 
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
 \newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
-\newcommand{\meta}{\Uparrow}     % メタ観測・推論の横棒
+\newcommand{\metanegation}{\Uparrow}     % メタ観測・推論の横棒
 
 \begin{document}
 
@@ -48,11 +48,11 @@
 \subsection{界論の無記（$\dfix$）}
 界論では、無記（$\dfix$）が根源的概念として定義される：
 \begin{itemize}
-    \item 四段階収束則：$\meta^4 A \mweq \dfix$
+    \item 四段階収束則：$\metanegation^4 A \mweq \dfix$
     \item 空の自己同一性：$\dfix \vdash \dfix$ （真理保存の極限）
     \item 空コンビネータ：$K_\emptyset f = K_\emptyset$
 \end{itemize}
-ここで、$\meta$ はメタ否定（境界生成）、$\mweq$ は中道等価（軌道の一致）を表す。
+ここで、$\metanegation$ はメタ否定（境界生成）、$\mweq$ は中道等価（軌道の一致）を表す。
 
 \section{無記モナドの構成}
 
@@ -93,7 +93,7 @@ $T_0$ は圏論的には自明なモナドに見えるが、界論的には次�
 
 \subsection{無記（$\dfix$）への収束}
 無記モナド $T_0$ を用いると、界論の四段階収束則を次のように表現できる。
-メタ否定の反復 $\meta^n A$ を $T_0^n A$ と同一視すると、四段階収束則は
+メタ否定の反復 $\metanegation^n A$ を $T_0^n A$ と同一視すると、四段階収束則は
 $$ T_0^4 A \mweq \dfix $$
 として記述される。ここで $T_0^4 A$ は圏論的には単に $A$ であるが、界論的には「四段階のメタ否定を経た極限状態」を表す。
 

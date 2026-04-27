@@ -21,7 +21,7 @@
 %-------------------------------------------------
 \newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\meta}{\Uparrow}
+\newcommand{\metanegation}{\Uparrow}
 \newcommand{\Kvoid}{K_{\emptyset}}
 \newcommand{\vdashmw}{\vdash_{\mathrm{mw}}}
 \newcommand{\entails}{\Vdash} % 顕現関係
@@ -84,11 +84,11 @@ $$\dfix \entails \dfix$$
 \end{axiom}
 
 \begin{axiom}[メタ否定の顕現]
-$$A \entails \meta A$$
+$$A \entails \metanegation A$$
 \end{axiom}
 
 \begin{axiom}[四段階収束則]
-$$\meta^4 A \entails \dfix$$
+$$\metanegation^4 A \entails \dfix$$
 \end{axiom}
 
 \begin{axiom}[空の一意性]
@@ -116,15 +116,15 @@ $$\meta^4 A \entails \dfix$$
 \section{補題と定理}
 
 \begin{lemma}[顕現の拡張]
-任意の対象 $A, B$ について、$A \entails B$ ならば $A \entails \meta B$ が成立する。
+任意の対象 $A, B$ について、$A \entails B$ ならば $A \entails \metanegation B$ が成立する。
 \end{lemma}
 \begin{proof}
-前提 $A \entails B$ と、公理2.2（$B \entails \meta B$）に対し、推移律を適用する。
+前提 $A \entails B$ と、公理2.2（$B \entails \metanegation B$）に対し、推移律を適用する。
 \end{proof}
 
 \begin{lemma}[無記から空への収束プロセス]
 無記状態 $N$ から出発するメタ否定の反復は、空 $\dfix$ に収束する。
-$$N \entails \meta N \entails \meta^2 N \entails \meta^3 N \entails \dfix$$
+$$N \entails \metanegation N \entails \metanegation^2 N \entails \metanegation^3 N \entails \dfix$$
 \end{lemma}
 \begin{proof}
 定義1.3より、無記 $N$ はプロセスの中途にある対象（出発点）である。
@@ -165,12 +165,12 @@ $$F \mweq C$$
 
 \begin{theorem}[階層を越えた中道等価：色即是空]
 任意の対象 $A$ に対し、
-$$A \mweq \meta A$$
+$$A \mweq \metanegation A$$
 が成立する。
 \end{theorem}
 \begin{proof}
-補題4.3の証明過程より、$A \entails \dfix$ および $\meta A \entails \dfix$ が共に成立する。
-公理2.4の一意性により、中道等価導入を適用し $A \mweq \meta A$ を得る。
+補題4.3の証明過程より、$A \entails \dfix$ および $\metanegation A \entails \dfix$ が共に成立する。
+公理2.4の一意性により、中道等価導入を適用し $A \mweq \metanegation A$ を得る。
 \end{proof}
 
 \section{系：万物の相互等価性}

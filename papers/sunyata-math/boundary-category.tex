@@ -20,7 +20,7 @@
 %------------------------------------------------- 
 \newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\meta}{\Uparrow}     % メタ観測・推論の横棒
+\newcommand{\metanegation}{\Uparrow}     % メタ観測・推論の横棒
 \newcommand{\susp}[1]{#1^{\ast}} % 保留演算子（Suspension）
 \newcommand{\Cat}{\mathbf{Cat}}  % 圏論的空間
 \newcommand{\Bou}{\mathbf{Bou}}  % 界論的空間
@@ -53,13 +53,13 @@ $$ \mathcal{E}(A) := \susp{A} $$
 \end{definition}
 
 \begin{definition}[射の翻訳]
-$\Cat$ における射（Morphism）$f: A \to B$ は、界論において $A$ から $B$ への推論の横棒（$\meta$）を引く操作として翻訳される。ただし、この横棒は「計算の途上」で凍結されている。
-$$ \mathcal{E}(f) := A \meta B \quad \left(\text{または } \frac{\susp{A}}{\susp{B}}\right) $$
+$\Cat$ における射（Morphism）$f: A \to B$ は、界論において $A$ から $B$ への推論の横棒（$\metanegation$）を引く操作として翻訳される。ただし、この横棒は「計算の途上」で凍結されている。
+$$ \mathcal{E}(f) := A \metanegation B \quad \left(\text{または } \frac{\susp{A}}{\susp{B}}\right) $$
 \end{definition}
 
 \begin{definition}[合成の翻訳]
 $\Cat$ における射の合成 $g \circ f$ は、推論の横棒の再帰的積み重ね（メタ階層の増築）として埋め込まれる。
-$$ \mathcal{E}(g \circ f) := \meta^2 (\susp{A}, \susp{B}, \susp{C}) \quad \left(\text{すなわち } \frac{\frac{\susp{A}}{\susp{B}}}{\susp{C}}\right) $$
+$$ \mathcal{E}(g \circ f) := \metanegation^2 (\susp{A}, \susp{B}, \susp{C}) \quad \left(\text{すなわち } \frac{\frac{\susp{A}}{\susp{B}}}{\susp{C}}\right) $$
 \end{definition}
 
 \section{圏論を成立させる「保留」の公理}
@@ -68,7 +68,7 @@ $$ \mathcal{E}(g \circ f) := \meta^2 (\susp{A}, \susp{B}, \susp{C}) \quad \left(
 
 \begin{axiom}[大域的カット消去の禁止公理]
 $\Cat$ が成立する局所空間内において、観測者（神）は推論木がどれほど肥大化しようとも、四段階収束則による大域的カット消去（$\dfix$ へのトポロジカルな崩落）を意図的に禁止（保留）する。
-すなわち、本来ならば $\meta^4 X \mweq \dfix$ となるべきところを、強制的に独立した構造として維持し続ける。
+すなわち、本来ならば $\metanegation^4 X \mweq \dfix$ となるべきところを、強制的に独立した構造として維持し続ける。
 \end{axiom}
 
 \begin{axiom}[中道等価性 $\mweq$ の静的等号 $=$ への退化]

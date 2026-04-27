@@ -21,7 +21,7 @@
 %-------------------------------------------------
 \newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\meta}{\Uparrow}
+\newcommand{\metanegation}{\Uparrow}
 \newcommand{\susp}[1]{#1^*}
 \newcommand{\entails}{\Vdash} % 顕現関係
 \newcommand{\Leadsto}{\rightsquigarrow} % 状態遷移
@@ -59,7 +59,7 @@ $N$ を界 $\Bou$ 上の動的実行プロセスへと変換する文脈演算�
 以下の機能を持つ。
 \begin{enumerate}
     \item \textbf{保留（Suspension）}: 静的対象 $x \in N$ を、界論の実行コンテキストへ $\susp{x}$ として埋め込む（無明の発生）。
-    \item \textbf{展開（Manifestation）}: $N$ に欠落していた制御構造（再帰・状態・探索など）を、メタ否定 $\meta$ と顕現関係 $\entails$ の連鎖として展開する。
+    \item \textbf{展開（Manifestation）}: $N$ に欠落していた制御構造（再帰・状態・探索など）を、メタ否定 $\metanegation$ と顕現関係 $\entails$ の連鎖として展開する。
     \item \textbf{還滅（Resolution）}: 蓄積された無明を消費し、無記状態 $\dfix$ への相転移（大域的カット消去）を導く。
 \end{enumerate}
 \end{definition}
@@ -69,7 +69,7 @@ $N$ を界 $\Bou$ 上の動的実行プロセスへと変換する文脈演算�
 （プログラム）へと着火する操作を $\otimes$ で表す。
 $$ \text{Lang}(N) := N \otimes I_N $$
 このとき、プログラムの実行は以下の顕現の連鎖として記述される。
-$$ \susp{P_0} \entails P_1 \entails \dots \entails \meta^4 P_k \mweq \dfix $$
+$$ \susp{P_0} \entails P_1 \entails \dots \entails \metanegation^4 P_k \mweq \dfix $$
 \end{definition}
 
 \section{無明の消費と停止性}
@@ -103,7 +103,7 @@ $\mathbb{P} \otimes I_{\mathbb{P}}$ は動的な\textbf{項書換え系}とな�
 
 \begin{corollary}[最小論理と継続フラクタロイド]
 最小論理 $\mathrm{ML}$ に欠落している「脱出・否定」という無明は、
-計算のコンテキスト自体をメタ化（$\meta$）して保持する
+計算のコンテキスト自体をメタ化（$\metanegation$）して保持する
 継続フラクタロイド $I_{\mathrm{ML}}$ によって駆動され、
 $\mathrm{ML} \otimes I_{\mathrm{ML}}$ は call/cc を備えた\textbf{古典論理の実行系}となる。
 \end{corollary}
