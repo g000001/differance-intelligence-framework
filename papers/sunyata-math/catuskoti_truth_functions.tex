@@ -1,0 +1,162 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage[table]{xcolor}
+
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{remark}{備考}[section]
+
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{再帰的四句分別とグレイコード：\\16真理関数との対応表}
+\author{千葉将臣}
+\date{2026-04-28}
+\maketitle
+
+\begin{abstract}
+四句分別の再帰的展開（$4^2 = 16$）と古典論理の16真理関数は、
+同じ濃度を持ちながら異なる順序原理に基づいて並んでいる。
+本稿は、四句分別がグレイコード的変化（隣接項の1ビット変化）を持つのに対し、
+16真理関数が順序数的変化（バイナリの逐次増加）を持つことを示し、
+両者の対応表をグレイコード／バイナリ変換として導出する。
+\end{abstract}
+
+\section{順序原理の差異}
+
+\begin{definition}[グレイコード的変化]
+系列における隣接項が、ビット表現において常に1ビットのみ異なる変化様式。
+境界の最小変化に対応する。
+\end{definition}
+
+\begin{definition}[順序数的変化]
+$0, 1, 2, \ldots, 2^n - 1$ というバイナリの逐次増加による変化様式。
+自己同一性を前提とした線形順序に対応する。
+\end{definition}
+
+四句分別の系列における変化は以下の通りである：
+
+\[
+\text{是}(00) \;\to\; \text{非}(01) \;\to\; \text{亦是亦非}(11) \;\to\; \text{非是非非}(10)
+\]
+
+隣接項の差分はそれぞれ1ビットであり、グレイコードの定義を満たす。
+
+一方、16真理関数は入力パターン $(T,T),(T,F),(F,T),(F,F)$ への出力割り当てとして
+$f_0, f_1, \ldots, f_{15}$（$0 = 0000_2$ から $15 = 1111_2$）という
+順序数的列挙として導入される。
+
+\section{グレイコード／バイナリ変換による対応}
+
+四句値をグレイコードに対応させる：
+
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+四句値 & グレイコード & バイナリ（順序数） \\
+\midrule
+是      & \texttt{00} & 0 \\
+非      & \texttt{01} & 1 \\
+亦是亦非 & \texttt{11} & 2 \\
+非是非非 & \texttt{10} & 3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+外軸・内軸のグレイコードを連結した4ビット値をバイナリに変換することで、
+対応する真理関数の順序数が得られる。
+
+\section{対応表}
+
+\renewcommand{\arraystretch}{1.25}
+\begin{center}
+\begin{tabular}{llcccp{4.5cm}}
+\toprule
+外軸 & 内軸 & 連結GC & 順序数 & 真理関数 & 意味 \\
+\midrule
+\rowcolor{gray!10}
+是 & 是     & \texttt{0000} & 0  & $f_0$  & $\bot$（恒偽） \\
+是 & 非     & \texttt{0001} & 1  & $f_1$  & NOR $(\downarrow)$：$\neg P \wedge \neg Q$ \\
+\rowcolor{gray!10}
+是 & 亦是亦非 & \texttt{0011} & 2  & $f_2$  & $\neg P \wedge Q$ \\
+是 & 非是非非 & \texttt{0010} & 3  & $f_3$  & $\neg P$ \\
+\midrule
+\rowcolor{gray!10}
+非 & 是     & \texttt{0100} & 7  & $f_7$  & NAND $(\uparrow)$：$\neg(P \wedge Q)$ \\
+非 & 非     & \texttt{0101} & 6  & $f_6$  & XOR $(\oplus)$：$P \oplus Q$ \\
+\rowcolor{gray!10}
+非 & 亦是亦非 & \texttt{0111} & 5  & $f_5$  & $\neg Q$ \\
+非 & 非是非非 & \texttt{0110} & 4  & $f_4$  & $P \wedge \neg Q$ \\
+\midrule
+\rowcolor{gray!10}
+亦是亦非 & 是     & \texttt{1100} & 8  & $f_8$  & AND $(\wedge)$ \\
+亦是亦非 & 非     & \texttt{1101} & 9  & $f_9$  & XNOR $(\leftrightarrow)$：$P \leftrightarrow Q$ \\
+\rowcolor{gray!10}
+亦是亦非 & 亦是亦非 & \texttt{1111} & 10 & $f_{10}$ & $Q$（射影） \\
+亦是亦非 & 非是非非 & \texttt{1110} & 11 & $f_{11}$ & $P \to Q$（含意） \\
+\midrule
+\rowcolor{gray!10}
+非是非非 & 是     & \texttt{1000} & 15 & $f_{15}$ & $\top$（恒真） \\
+非是非非 & 非     & \texttt{1001} & 14 & $f_{14}$ & OR $(\vee)$ \\
+\rowcolor{gray!10}
+非是非非 & 亦是亦非 & \texttt{1011} & 13 & $f_{13}$ & $Q \to P$（逆含意） \\
+非是非非 & 非是非非 & \texttt{1010} & 12 & $f_{12}$ & $P$（射影） \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{対応表の構造的観察}
+
+\begin{theorem}[順序数の非単調性]
+四句分別マトリクスの行順に読んだ真理関数の順序数列は
+$0,1,2,3,7,6,5,4,8,9,10,11,15,14,13,12$
+であり、単調増加しない。
+各ブロック内では単調増加または減少が交互に現れる。
+\end{theorem}
+
+\begin{remark}[非単調性の意味]
+真理関数の順序数的並びは $id$ を前提とした線形順序であり、
+四句分別マトリクスのグレイコード的並びはフラクタル境界の最小変化に対応する。
+両者の対応が非単調になることは、二つの順序原理が根本的に異なることの
+直接的な反映である。
+\end{remark}
+
+\begin{remark}[$\bot$ と $\top$ の位置]
+順序数的並びでは $\bot = f_0$（先頭）、$\top = f_{15}$（末尾）であり、
+対称的な両端に位置する。
+四句分別マトリクスでは $\bot$（是×是）と $\top$（非是非非×是）が
+対角的な位置に現れ、線形な対称性を持たない。
+これは $\top, \bot$ が $id$ を前提とした線形順序の両端ではなく、
+フラクタル構造の特定の位置として現れることを示している。
+\end{remark}
+
+\section{変換の界論的意味}
+
+グレイコード／バイナリ変換は、四句分別マトリクスから真理関数への
+座標変換として機能する。
+
+\begin{itemize}
+  \item グレイコード座標：境界の最小変化を基準とするフラクタル的記述
+  \item バイナリ座標：$id$ を前提とした線形順序による記述
+\end{itemize}
+
+二元論（古典論理）が真理関数を順序数として列挙したのは、
+グレイコード座標の存在を知らずにバイナリ座標のみを採用したからである。
+界論的には、グレイコード座標が生成機序に対応し、
+バイナリ座標はその静的断面である。
+
+\end{document}
