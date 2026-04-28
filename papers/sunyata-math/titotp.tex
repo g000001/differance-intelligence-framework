@@ -1,0 +1,76 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% 定理環境の設定
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{proof_outline}{証明の骨格}
+
+\title{真理保存性の不完全性定理に関する定式化}
+\author{千葉将臣}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿は、形式体系や力学系における「真理保存性」の概念を一般化し、任意の真理保存方式 $T$ に対して、その体系内部では証明不可能な命題 $G_T$ が存在することを示すメタ定理を定式化する。本定理は、Gödelの不完全性定理やChaitinの不完全性定理を、自己同一性や不変量の「先験的要請」に起因する構造的限界として統一的に包摂するものである。
+\end{abstract}
+
+\section{導入}
+数学的、論理的、あるいは物理的な体系は、特定の状態、関係、または不変量を推論・時間発展の過程で維持・保存することを前提として構築される。本稿では、この性質を一般化して「真理保存性」と呼称する。本稿の目的は、体系が何らかの真理保存性を要請する限り、その保存則の基盤自体に起因する構造的な証明不可能性が必然的に生じることを形式的に記述することである。
+
+\section{定義}
+
+\begin{definition}[真理保存方式 $T$]
+真理保存方式（Truth Preservation System）$T$ とは、状態空間 $X$ とその上の操作群（推論規則、時間発展演算子等）の組であり、初期状態に付与された特定の性質 $P$（不変量、無矛盾性、自己同一性 $A=A$ など）を、任意の有限回の操作を通じて恒久的に維持するよう定義された体系である。
+\end{definition}
+
+\begin{definition}[$T$ における証明可能性]
+命題 $S$ が $T$ の下で証明可能であるとは、$T$ が要請する真理保存性 $P$ を前提とする有限回の演繹推論・演算手続きによって、$S$ が導出可能であることを指す。これを $T \vdash S$ と表記する。
+\end{definition}
+
+\section{主定理}
+
+\begin{theorem}[真理保存性の不完全性定理]
+\label{thm:incompleteness}
+十分に強力な任意の真理保存方式 $T$ に対して、$T$ の記述言語によって構成可能であるが、$T$ の下では証明も反証もできない命題 $G_T$ が必ず存在する。
+\[
+\forall T, \exists G_T \text{ s.t. } (T \nvdash G_T) \land (T \nvdash \neg G_T)
+\]
+\end{theorem}
+
+\begin{proof_outline}
+定理\ref{thm:incompleteness}の構造的理由は以下の通りである。
+\begin{enumerate}
+    \item $T$ が推論または演算を実行するためには、その前提として真理保存性 $P$ が先験的（a priori）に与えられていなければならない。
+    \item 体系 $T$ が自らの完全性を証明しようと試みる場合、$T$ の内部操作を用いて「$P$ が常に保持されること」あるいは「$P$ を規定する境界条件の妥当性」を導出する必要がある。
+    \item しかし、$T$ の内部操作は定義上すでに $P$ の成立に依存している。したがって、$P$ の成立限界や、真理保存操作の反復によって生成される大域的な位相的性質（例：外部への無限伸展の限界）に関する命題 $G_T$ を評価しようとした際、$T$ は循環論法に陥るか、決定不能となる。
+    \item 故に、$T$ を固定したままでは、真理保存性 $P$ がもたらす境界的性質 $G_T$ を $T$ 内部で決定することは構造上不可能である。
+\end{enumerate}
+\end{proof_outline}
+
+\section{既存の不完全性定理の包摂}
+
+本定理により、歴史的に知られる不完全性定理は、真理保存性 $T$ の具体的なインスタンスとして位置づけられる。
+
+\begin{corollary}[Gödelの第一不完全性定理の包摂]
+$T_{Gödel}$ を「論理的無矛盾性（偽が導出されないこと）」を真理保存性とする形式的算術体系とする。このとき、$T_{Gödel}$ の論理的真理保存性の限界を問う自己言及命題 $G_{Gödel}$ は証明不可能である。
+\end{corollary}
+
+\begin{corollary}[Chaitinの不完全性定理の包摂]
+$T_{Chaitin}$ を「公理系の持つアルゴリズム的情報量（コルモゴロフ複雑性）」を真理保存性の不変量とする体系とする。このとき、$T_{Chaitin}$ の情報量を超えるランダム性に関する命題 $G_{Chaitin}$ は、$T_{Chaitin}$ 内部の真理保存演算では圧縮（証明）不可能である。
+\end{corollary}
+
+\section{結論}
+「証明」という行為は、真理保存方式 $T$ に依存した局所的な操作である。真理保存性（自己同一性や論理的整合性）の要請は体系を駆動する必須条件であると同時に、その体系内部からは観測不能な構造的盲点（$G_T$）を必然的に生成する。本定理は、自己同一性の概念を超え、任意の不変量を要請するすべての体系において不完全性が普遍的に成立することを示すものである。
+
+\end{document}

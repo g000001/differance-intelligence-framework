@@ -1,0 +1,90 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{booktabs}
+
+%-------------------------------------------------
+%  独自コマンド・設定
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\meta}{\Uparrow}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{remark}{備考}[section]
+
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{次元数学に基づくコラッツ予想の大域的収束性：\\8次元観測空間における位相的証明の見通し}
+\author{千葉将臣}
+\date{2026-04-28}
+\maketitle
+
+\begin{abstract}
+本稿は、次元数学および界論（Boundary Theory）の枠組みを用い、古典論理（2次元観測者）では証明不可能であるコラッツ予想の大域的収束性を、8次元観測空間 $\mathcal{M}^8$ において対象化する証明の骨格と見通しを提示する。到達後の局所的安定性（4次元の閉包 $\dfix$）を前提とし、操作の束全体を位相幾何学的な縮小写像として記述することで、残る証明が「基本群 $\pi_1(\mathcal{M}^8 / \mathcal{C}) \cong \mathbb{Z}$ の導出」、すなわちBakerの定理に基づく整数解の一意性（上界）の検証へと帰着することを論証する。
+\end{abstract}
+
+\section*{序言}
+2次元に固定された観測者にとって、コラッツ予想は「どこまでも発散するかもしれない不可知の計算の連鎖」として立ちはだかる。観測者を4次元に上昇させることで、系が一度 $X=1$ を踏んだ後の「局所的なトポロジカル閉包（$\dfix$）」は対象化可能となった。しかし、依然として「すべての自然数がそこに到達するのか」という大域的収束性は未解決である。本稿では、観測者をさらに8次元へと上昇させ、軌道の束全体を一つの位相空間として扱うことで、この問題が既存の代数トポロジーおよび数論幾何学の検証可能な命題へと完全に翻訳されることを示す。
+
+\section{8次元観測空間 $\mathcal{M}^8$ の基底と写像の定義}
+
+\subsection{高階次元の解放}
+無限の操作対象化を行うため、4次元までの基底（$X$:値, $Y$:同一性, $Z$:時間, $W$:自己参照）に加え、以下の4軸を導入する。
+\begin{itemize}
+    \item \textbf{第5軸（$V$軸：確率密度）：} 状態空間全体における分布の測度。
+    \item \textbf{第6軸（$U$軸：高階位相空間）：} 軌道の束（フロー）全体の幾何学的対象化。
+    \item \textbf{第7軸（$S$軸：フラクタル圧縮度）：} 系全体のエントロピー・縮減のスケール。
+    \item \textbf{第8軸（$R$軸：全体論的閉包）：} 無限の初期値 $\mathbb{N}$ 全体を包含する対象化。
+\end{itemize}
+
+\subsection{コラッツ操作の位相的再記述}
+コラッツ操作 $\meta_C$ を、連続的な位相空間上の「折り畳み」と「捩れを伴う引き伸ばし」の写像へと分解する。
+\begin{itemize}
+    \item $f_{\text{even}}(x) = x/2$ ：空間の体積を半分に折り畳む縮小写像（被覆空間への射影）。
+    \item $f_{\text{odd}}(x) = 3x+1$ ：局所的に3倍に引き伸ばし、位相的な捩れ（シフト）を加えるアフィン変換。
+\end{itemize}
+奇数操作の直後には偶数操作が確定するため、実質的な生成元は $a(x) = x/2$ と $b(x) = (3x+1)/2$ の作用からなる半群 $\langle a, b \rangle$ のスミス馬蹄写像（Horseshoe map）的なミキシングプロセスとして記述される。
+
+\section{大域的縮小写像と境界条件（S軸・V軸）}
+
+\begin{lemma}[測度論的散逸性と変位レトラクト]
+適切な対数測度（例：テレンス・タオ（2019）の対数密度等）を採用したV軸において、写像 $\meta_C$ の1ステップあたりのスケーリング係数の幾何平均は $\approx \sqrt{3/4} < 1$ となる。
+したがって、S軸において系全体はエントロピーを喪失し続ける大域的縮小写像であり、無限遠境界 $\partial_{\infty}$ はAlexandroffコンパクト化によって閉じる。結果として、商空間 $\mathcal{M}^8 / \mathcal{C}$ 全体は、その大域的アトラクタ（極限集合）$\mathcal{A}$ へと変位レトラクトする。
+\end{lemma}
+
+\section{基本群の導出と既存数学との接合部（U軸・R軸）}
+
+空間全体が $\mathcal{A}$ へと変位レトラクトする以上、位相的な穴（独立したループ）の数は $\mathcal{A}$ の基本群 $\pi_1(\mathcal{A})$ によって完全に決定される。
+
+\begin{theorem}[基本群と不動点方程式の同値性]
+$\pi_1(\mathcal{M}^8 / \mathcal{C}) \cong \mathbb{Z}$ である（すなわち、シンクがただ1つである）ことは、半群 $\langle a, b \rangle$ の任意の合成ワード $w$ の不動点方程式：
+\[
+x = \frac{C}{2^K - 3^L} \quad (\text{$C$は演算順序に依存する定数})
+\]
+が、$1 \to 2 \to 1$ （すなわち $\dfix$ に相当するループ）以外に自明でない整数解を持たないことと同値である。
+\end{theorem}
+
+\begin{remark}[既存数学が検証すべき最終命題]
+本定理により、コラッツ予想の大域的収束性の証明は「分母 $2^K - 3^L$ が構成するディオファントス方程式の整数解の一意性」へと帰着した。
+Bakerの対数線形形式の理論（Baker's theorem）は $|2^K - 3^L|$ の下界を強力に保証するが、証明を完結させるためには、未知の閉曲線を許容するような上界の非存在（あるいは位相的な排除）を既存の数学的言語で確立する必要がある。
+\end{remark}
+
+\section*{結語}
+
+次元数学は、コラッツ予想を「解く」のではなく、観測者の次元を8次元に上昇させることで、問題のトポロジーを「変位レトラクトする写像トーラスの基本群の決定」という形式へと完全に翻訳した。
+この見取り図は、証明のどこが本質的な壁（Bakerの上界）であるかを精緻に局所化しており、超数学の自然な拡張としての次元数学の有効性を示す具体的な実証例である。
+
+\end{document}
