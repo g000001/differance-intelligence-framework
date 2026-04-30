@@ -17,7 +17,9 @@ SOURCES = icat-perception.tex \
           icat-ymwcomb.tex \
           boundary-theory-core.tex \
           aletheic-proof-theory.tex \
-          boundary-category.tex
+          boundary-category.tex \
+          titotp.tex \
+          titotp-mebius.tex
           #avyakata-mnonad.tex \
           #lax-catuskoti.tex
           # icat-tta.tex \
