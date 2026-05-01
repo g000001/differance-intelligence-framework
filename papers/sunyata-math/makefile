@@ -10,6 +10,8 @@ SOURCES = icat-perception.tex \
           icat-truth-preservation.tex \
           icat-principles.tex \
           icat-dfix0.tex \
+          titotp.tex \
+          titotp-mebius.tex \
           icat-cl.tex \
           icat-catuskoti-skandha.tex \
           icat-sunyata-theory.tex \
@@ -17,9 +19,7 @@ SOURCES = icat-perception.tex \
           icat-ymwcomb.tex \
           boundary-theory-core.tex \
           aletheic-proof-theory.tex \
-          boundary-category.tex \
-          titotp.tex \
-          titotp-mebius.tex
+          boundary-category.tex
           #avyakata-mnonad.tex \
           #lax-catuskoti.tex
           # icat-tta.tex \

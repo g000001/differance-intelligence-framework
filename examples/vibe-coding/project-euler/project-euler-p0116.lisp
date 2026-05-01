@@ -1,3 +1,17 @@
+;;; -*- mode: Lisp; coding: utf-8  -*-
+;;; llm-model: gemini-1.5-pro
+(cl:in-package cl-user)
+(defpackage #:project-euler-0116 (:use cl iterate alexandria) (:export #:solve))
+(in-package #:project-euler-0116)
+
+(defmacro optimized-code-p (boole)
+  (typecase boole
+    (null nil)
+    (T `(declaim (optimize (speed 3) (safety 0) (debug 0) #+lispworks (hcl:fixnum-safety 0))))))
+
+(optimized-code-p nil)
+
+#||
 (cl-comment "=== 6. Exact Integer Projection (勝義的整数化による浮動小数点の排除) ===")
 (cl-comment "本問題は組合せ論的な数え上げであり、浮動小数点演算を一切介在させず、")
 (cl-comment "整数の加算のみによる動的計画法（DP）へ還元する。")
@@ -17,19 +31,7 @@
 (cl-comment "制約 N=50 に対して、各色の計算量は O(N) であり、全体でも O(3N) である。")
 (cl-comment "これはフェルミ推定による 10^7 の壁を遥かに下回る極めて効率的な解法である。")
 
-
-;;; -*- mode: Lisp; coding: utf-8  -*-
-;;; llm-model: gemini-1.5-pro
-(cl:in-package cl-user)
-(defpackage #:project-euler-0116 (:use cl iterate alexandria) (:export #:solve))
-(in-package #:project-euler-0116)
-
-(defmacro optimized-code-p (boole)
-  (typecase boole
-    (null nil)
-    (T `(declaim (optimize (speed 3) (safety 0) (debug 0) #+lispworks (hcl:fixnum-safety 0))))))
-
-(optimized-code-p nil)
+||#
 
 
 (defun count-ways-for-color (target-length tile-length)
@@ -66,11 +68,22 @@
     (format t "Total ways for N=~D: ~D~%" $target-n total-ways)
     total-ways))
 
-;; 実行例:
-;; (project-euler-0116:solve)
-;; Color(length=2): 20365011073 ways
-;; Color(length=3): 1221060969 ways
-;; Color(length=4): 54537650 ways
-;; ---------------------------
-;; Total ways for N=50: 21641110000
-;; => 21641110000
+
+#+| Do it | (solve )
+#|------------------------------------------------------------|
+Timing the evaluation of (solve)
+Color(length=2): 20365011073 ways
+Color(length=3): 122106096 ways
+Color(length=4): 5453760 ways
+---------------------------
+Total ways for N=50: 20492570929
+
+User time    =        0.000
+System time  =        0.000
+Elapsed time =        0.000
+Allocation   = 65976 bytes
+12 Page faults
+GC time      =        0.000
+ |------------------------------------------------------------|#
+;;→ 20492570929
+:ok
