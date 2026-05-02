@@ -1,6 +1,6 @@
+
 % !TEX program = lualatex
-\documentclass[11pt,a4paper]{article}
-\usepackage{luatexja}
+\documentclass[11pt,a4paper]{ltjsarticle}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{geometry}
 \geometry{margin=1in}
@@ -11,6 +11,7 @@
 %-------------------------------------------------
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
 \newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metanegation}{\Uparrow}     % メタ観測・推論の横棒
 
 \renewcommand{\abstractname}{Abstract}
 
@@ -38,6 +39,7 @@
   \item[定義 1.2] \textbf{ない（非）}：知覚によって直接捕捉不可能であり、「ある」の欠如としてのみ認識される高次元の情報の形式を指す。「ない」の指し示しは「無記」と呼ぶ。
   \item[定義 1.3] \textbf{次元}：情報を記述・捕捉するために必要な自由度の尺度。本体系において「ない」は「ある」よりも高い次元を持つ。
   \item[定義 1.4] \textbf{境界}：知覚が「ある」と「ない」を区分する際に生じる不連続点。この再帰的な区分がフラクタルを構成する。
+  \item[定義 1.5] \textbf{時間性}：時間性は「ない」が「ある」よりも高い次元を持つことに起因し、次元差を埋めるための境界生成プロセス（$\metanegation$）として発生する。
 \end{description}
 
 \section{公理}
