@@ -1,0 +1,73 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% Theorem environments
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{proof_topological}{Topological Construction of Proof}
+
+\title{A Topological Model of the Truth-Preservation Incompleteness Theorem:\\
+Dissolution of Self-Referential Structure in the M\"{o}bius Manifold}
+\author{Masaomi Chiba}
+\date{2026-04-30}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper models the requirement of ``truth preservation'' in formal systems and the associated limitative phenomena (incompleteness) by means of the topological properties of fiber bundles over one-dimensional manifolds. A truth-preservation system that requires strict self-identity ($A = A$) is constructed as a product space (cylinder), while a system that admits isomorphic identity ($A \cong A$) is constructed as a non-orientable space (M\"{o}bius strip). We show that the undecidability of self-referential propositions in classical systems can thereby be interpreted geometrically as a global topological obstruction (disconnectedness). Note that this paper does not intend a syntactic generalization of G\"{o}del's incompleteness theorems; rather, it presents a topological model of limitative phenomena as a concrete example of such a construction.
+\end{abstract}
+
+\section{Introduction and Definition of the Geometric Model}
+
+We model the propagation of ``truth values'' in a formal reasoning system as a fiber bundle over the base space $S^1$ (representing the iterative process of inference). The fiber of the state space is set to $F = \{-1, 1\}$, with $1$ corresponding to truth ($A$) and $-1$ to falsehood ($\neg A$).
+
+\begin{definition}[System $T_{=}$: Strict Truth Preservation]
+The state space $E_{=}$ of the system $T_{=}$, which maintains strict self-identity $A = A$, is defined as the trivial fiber bundle (boundary of a cylinder):
+$$ E_{=} = S^1 \times \{-1, 1\}. $$
+This space is topologically homeomorphic to two disjoint closed curves $S^1 \sqcup S^1$ and is therefore disconnected ($\pi_0(E_{=}) = 2$).
+\end{definition}
+
+\begin{definition}[System $T_{\cong}$: Truth Preservation via Isomorphism]
+The state space $E_{\cong}$ of the system $T_{\cong}$, which maintains isomorphic identity $A \cong A$ as a whole, is defined as the non-orientable fiber bundle (boundary of the M\"{o}bius strip). That is, it is the quotient space obtained from $[0, 1] \times \{-1, 1\}$ by imposing the equivalence relation $(0, y) \sim (1, -y)$:
+$$ E_{\cong} = \frac{[0, 1] \times \{-1, 1\}}{(0,\, y) \sim (1,\, -y)}. $$
+This space is topologically homeomorphic to a single closed curve $S^1$ and is therefore connected ($\pi_0(E_{\cong}) = 1$).
+\end{definition}
+
+\section{Topological Formulation of Limitative Phenomena}
+
+We formulate the verification of the self-referential negation proposition $G$ (``this process reaches its own negated state'') within a system as a continuous inference path $\gamma(t)$ along the base space.
+
+\begin{definition}[Representation of Proposition $G$ via a Continuous Map]
+We say that proposition $G$ is constructible in a given space if there exists a continuous map $\gamma: [0, 1] \to E$ starting from the initial state $\gamma(0) = (0, 1)$ and arriving, after a full traversal of the base space, at its own negated state $\gamma(1) = (1, -1)$.
+\end{definition}
+
+\begin{theorem}[Boundary of Truth Preservation and Topological Obstruction]
+\label{thm:mobius_incompleteness}
+\begin{enumerate}
+\item[(1)] In system $T_{=}$, which requires strict self-identity, the self-referential path $G$ cannot be constructed (is unreachable).
+\item[(2)] In system $T_{\cong}$, which requires isomorphic identity, the path $G$ can be constructed, and its structure coincides with a generator of the fundamental group of the space.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof_topological}
+\textbf{(1) Topological obstruction in system $T_{=}$ (cylinder):}
+
+In the space $E_{=} = S^1 \times \{-1, 1\}$, the connected component containing initial state $y = 1$ and the component containing state $y = -1$ are completely separated. Therefore, any continuous map satisfying $\gamma(0) = (0, 1)$ must remain within the component $\gamma(t) = (t, 1)$, and no path satisfying $\gamma(1) = (1, -1)$ exists. This shows that the topological boundary imposed by self-identity (disconnectedness) structurally prevents any path from reaching the negated state.
+
+\textbf{(2) Structural dissolution in system $T_{\cong}$ (M\"{o}bius manifold):}
+
+The space $E_{\cong}$ carries the equivalence relation $(0, 1) \sim (1, -1)$. The path $\gamma(t) = (t, 1)$ proceeds through the local coordinate system while maintaining ``truth ($y = 1$)''; however, as $t \to 1$ after a full traversal of the base space, the global equivalence relation of the space identifies the endpoint geometrically with $(1, -1)$. That is, the continuous local propagation of ``truth'' is realized globally as ``arrival at its own negated state.'' This closed curve $\gamma$ constitutes a generator of the fundamental group $\pi_1(E_{\cong}) \cong \mathbb{Z}$ of the space $E_{\cong}$.
+\end{proof_topological}
+
+\section{Conclusion}
+
+According to the present model, the self-referential paradoxes and undecidability that constitute limitative phenomena in classical logical systems are interpreted geometrically as topological constraints arising from defining truth preservation as ``spatial disconnectedness'' (a trivial product space). By extending the condition of truth preservation to continuous isomorphism (a non-orientable manifold), the proposition $G$ that was previously unreachable transforms into a structure describing the global topological property of the space (connectedness with a twist). This model provides an intuitive foundation, from the perspective of topology, for visualizing the relationship between the limits of formal systems and dimensional extension (relaxation of truth-preservation conditions).
+
+\end{document}
