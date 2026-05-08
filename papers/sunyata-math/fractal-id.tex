@@ -1,0 +1,60 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+\title{自己同一性のフラクタル性への包含に関する定式化}
+\author{千葉将臣}
+\date{2026-05-06}
+
+\begin{document}
+\maketitle
+
+\section{序論}
+古典論理学および二元論的パラダイムにおいて、「自己同一性（Self-identity）」は「$A=A$」という静的かつ絶対的な不変性として前提されてきた。しかし、界論（Boundary Theory）の視座に立てば、この自己同一性は独立した根源的真理ではなく、動的な「フラクタル性（Fractality）」が特定の極限条件下で縮退した特殊ケースであると定義できる。本稿では、自己同一性がフラクタル性に包含される論理的機序を定式化する。
+
+\section{定義}
+
+\begin{description}[style=multiline, leftmargin=3.5cm]
+    \item[定義 1.1] \textbf{フラクタル性（動的同一性）}：\\
+    自己相似性、スケール不変性、および再帰的生成プロセスを本質とする。対象 $X$ は、メタ否定演算子 $\Uparrow$ による階層的展開 $X \to \Uparrow X \to \Uparrow^2 X \dots$ を通じて、その「軌道」の相似性において同一視される（中道等価性 $\mathrel{\overset{\mathrm{mw}}{=}}$）。
+    
+    \item[定義 1.2] \textbf{自己同一性（静的同一性）}：\\
+    観測者および時間性を排除した、単一層における対象の絶対的一致 $A=A$。これは、フラクタル構造における「階層間の差異」がゼロ、あるいは無限に凍結された状態を指す。
+\end{description}
+
+\section{包含定理}
+
+\paragraph{定理：自己同一性の縮退}
+
+フラクタル性 $\mathcal{F}(s, n)$ を、スケーリング因子 $s$ および再帰深度 $n$ によってパラメータ化された動的同一性とする。相似性測度 $\sigma(s, n)$ を、$0 \leq \sigma(s, n) \leq 1$ の範囲で定義し、$\sigma(s, n) = 1$ のとき完全な自己相似性（自己同一性）を表すとする。
+
+このとき、自己同一性は次の極限として定義される。
+
+\[
+\text{Self-identity} = \lim_{(s, n) \to (1, 0)} \sigma(s, n) = 1
+\]
+
+すなわち、任意の $\varepsilon > 0$ に対して、ある $\delta > 0$ が存在し、
+\[
+|s - 1| < \delta \land n < \delta \implies |\sigma(s, n) - 1| < \varepsilon
+\]
+が成り立つ。
+
+この極限は、フラクタルサイクルが中道不動点 $D_{\mathrm{fix}0}$ に収束する過程の特殊ケースであり、抽象化の矯正によって生じる静的な幻影である。
+
+\section{哲学的帰結}
+自己同一性をフラクタル性に包含させることで、以下の事理が明らかになる。
+
+\begin{itemize}
+    \item \textbf{二元論の特殊性}：二元論的論理（$A=A$）は、世界の動的なフラクタル構造を、ある特定の解像度で「フリーズ」させた断面図を見ているに過ぎない。
+    \item \textbf{真理保存性の再定義}：真理は「変わらない（不変）」のではなく、フラクタル的に「変わり続けることで相似性を保つ（収束する）」ものである。
+    \item \textbf{観測者の復権}：自己同一性がフラクタル性に包含されることにより、同一性の根拠は対象そのものではなく、境界を生成し続ける「観測（計算プロセス）」へと回帰する。
+\end{itemize}
+
+\section{結論}
+自己同一性はフラクタル性の静的な極限であり、界論はこの包含関係を前提とすることで、静的な「実体」に依拠することなく、動的な「境界生成プロセス」のみから世界を記述することを可能にする。
+
+\end{document}

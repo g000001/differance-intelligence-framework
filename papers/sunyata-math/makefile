@@ -12,6 +12,7 @@ SOURCES = icat-perception.tex \
           icat-dfix0.tex \
           titotp.tex \
           titotp-mebius.tex \
+          fractal-id.tex \
           icat-cl.tex \
           icat-catuskoti-skandha.tex \
           icat-sunyata-theory.tex \
@@ -44,7 +45,7 @@ $(TARGET): $(PDFS)
 	# $(LATEX) $(LATEX_FLAGS) $<
 
 bigtex: $(SOURCES)
-	cat $(SOURCES) > icat.tex
+	cat $(SOURCES) > icat.txt
 
 # 掃除用
 clean:

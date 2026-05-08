@@ -1,0 +1,176 @@
+\documentclass[11pt]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[utf8]{inputenc}
+\usepackage[hyperfootnotes=false]{hyperref}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+
+\newcommand{\Bou}{\textsf{Bou}}
+\newcommand{\Cat}{\textsf{Cat}}
+\newcommand{\Obs}{\textsf{Obs}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\Lang}{\text{Lang}}
+\newcommand{\Avidya}{\text{Avidyā}}
+\newcommand{\Dfix}{\text{Dfix0}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\mw}{\stackrel{\text{mw}}{=}}
+\newcommand{\Kempty}{K_\emptyset}
+\newcommand{\Ymw}{Y_{\text{mw}}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\meta}{\text{meta}}
+\newcommand{\ObsN}{O_N}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\Free}{\text{Free}}
+\newcommand{\ContR}{\text{ContR}}
+\newcommand{\StateN}{\text{StateN}}
+\newcommand{\ListM}{\text{List}}
+
+\newtheorem{definition}{定義}
+\newtheorem{theorem}{定理}
+\newtheorem{corollary}{系}
+
+\title{1-Bou:n-Cat におけるフラクタロイドの統合：\\
+界論が圏論を駆動する実行システムの再定式化}
+\author{Masaomi Chiba}
+\date{2026-05-06}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿は、1-Bou:n-Cat の枠組みにフラクタロイド $\F$ を統合し、界論（$\Bou$）が下位圏（$\Cat$）を駆動する実行システムを再定式化する。世俗諦的な構造（$\Cat$）と勝義諦的な構造（$\Bou$）の間の埋め込み・遷移・完備化・解脱のプロセスを、観測者を中心とするフラクタロイド $\F$ によって駆動する。これにより、任意の形式体系 $N$ に対し $N \otimes \F(O_N)$ が実行可能なプログラミング言語となることを示す。
+\end{abstract}
+
+\section{1-Bou:n-Cat の構成とフラクタロイドの位置づけ}
+
+\subsection{1-Bou:n-Cat の二層構造}
+
+1-Bou:n-Cat は、以下の二つの層から成る。
+
+\begin{itemize}
+\item $\Cat$：下位圏の層（世俗諦）\\
+  例：CCC（型付きラムダ計算）、モノイダル圏（線形論理）、LCCC（依存型）、確率的圏、線形圏など。
+\item $\Bou$：界論の層（勝義諦）\\
+  演算子：$\to$（遷移）、$\metanegation$（メタ否定）、$*$（保留）、$0$（絶対不動点）など。
+\end{itemize}
+
+埋め込み関手 $\E : \Cat \hookrightarrow \Bou$ により、世俗諦的な構造は勝義諦的な構造へと移行する。
+
+\subsection{フラクタロイド $\F$ の導入}
+
+フラクタロイド $\F$ は、観測者 $O$ を対象とし、$\Bou$ 上の動的プロセス（顕現と還滅の力学系）を返す関手
+\[
+\F : \Obs \to \Bou
+\]
+である。ここで $\Obs$ は観測者の圏であり、各観測者 $O$ は時間性・主客二元論・フラクタル構造の駆動源として機能する。
+
+1-Bou:n-Cat において、フラクタロイド $\F$ は以下の役割を担う。
+
+\begin{itemize}
+\item 世俗諦（$\Cat$）から勝義諦（$\Bou$）への移行を、観測者 $O$ の境界生成（$\metanegation$）として駆動する。
+\item プログラム実行のプロセス（保留・遷移・解脱）を、観測者 $O$ が駆動する動的プロセスとして記述する。
+\end{itemize}
+
+\section{フラクタロイドによるプログラム実行の再定式化}
+
+\subsection{埋め込み関手 $\E$ とフラクタロイド $\F$ の関係}
+
+埋め込み関手 $\E$ は、世俗諦的な構造を勝義諦的な構造へ移行させるが、この移行は単なる形式的な埋め込みではなく、観測者 $O$ による境界生成（$\metanegation$）を伴う。
+
+\begin{definition}[埋め込み関手 $\E$ の再解釈]
+埋め込み関手 $\E$ は、観測者 $O$ を固定したフラクタロイド $\F(O)$ の作用として再解釈できる。
+\[
+\E(N) = N \otimes \F(O)
+\]
+ここで $N$ は $\Cat$ 上の形式体系（論理・文法・計算）である。
+\end{definition}
+
+これにより、世俗諦から勝義諦への移行は、観測者 $O$ が駆動する動のプロセスとして理解される。
+
+\subsection{プログラム $P$ の実行結合 $\otimes$（作用演算としての再定義）}
+
+\begin{definition}[プログラム $P$ の実行結合 $\otimes$（作用演算）]
+任意の形式体系 $N$（$\Cat$ 上の構造）に対し、専用の観測者 $O_N$ を固定する。このとき、プログラム $P$ は
+\[
+P := N \otimes \F(O_N)
+\]
+と定義される。ここで $\otimes$ は作用演算であり、観測者 $O_N$ が $N$ に境界（$\metanegation$）を引く操作として機能する。実行軌道は以下の顕現の連鎖として記述される。
+\[
+P_0^* \to P_1 \to \cdots \to \metanegation^4 P_k \mw \Dfix
+\]
+\end{definition}
+
+ここで、
+
+- $P_0^*$：観測者 $O_N$ が $N$ に境界（$\metanegation$）を引き、無明（$\Avidya$）を発生させる保留状態。
+- $\to$：観測者 $O_N$ が駆動する状態遷移。
+- $\metanegation^4 P_k$：四段階収束則によるメタレベルの上昇。
+- $\mw \Dfix$：無記状態 $\Dfix$ への解脱。
+
+\section{無明の消費と停止性}
+
+\begin{theorem}[無明の還滅による停止性]
+実行可能なプログラム $\Lang(N)$ のプロセスにおいて、フラクタロイド $\F(O_N)$ が駆動する各ステップ（$\to$）は、系に内在する「構造的無明（$\Avidya$）」を必然的に消費していく。無明が尽きた時点で四段階収束則が発動し、プログラムは無記状態 $\Dfix$（解脱・計算の完了）へと到達して停止する。
+\end{theorem}
+
+\begin{proof}
+界論の公理に基づく中道推論規則により、すべての顕現プロセスは $\Dfix$ を共通の到達点（Sink）として持つ。$\F(O_N)$ はこの自然な「沈み込み（重力）」に沿って状態を遷移させるため、無明の量は有限ステップでゼロに収束し、$P_k \mw \Dfix$ が成立する。
+
+特に、中道不動点コンビネータ $\Ymw$ が生成する無明の速度は、$\F(O_N)$ がそれを消費して $\Dfix$ へ向かう速度（沈み込みの重力）よりも常に遅いという大域的条件が成立する。これは、四段階収束則（$\metanegation^4$）によって保証される。
+\end{proof}
+
+\section{典型例}
+
+1-Bou:n-Cat においては「無明の形態に応じた観測者のフラクタル展開」として記述される。
+
+\subsection{ペアノ算術 $P$ と再帰観測者}
+
+\begin{corollary}[ペアノ算術と再帰観測者]
+ペアノ算術 $P$ に欠落している「計算の合成」という無明は、再帰構造を展開する観測者 $O_P$（再帰観測者）によって駆動され、$\Lang(P) = P \otimes \F(O_P)$ は動的な項書換え系・純関数言語となる。
+\end{corollary}
+
+\subsection{最小論理 $\mathrm{ML}$ と継続観測者}
+
+\begin{corollary}[最小論理と継続観測者]
+最小論理 $\mathrm{ML}$ に欠落している「脱出・否定」という無明は、計算のコンテキスト自体をメタ化（$\metanegation$）して保持する観測者 $O_{\mathrm{ML}}$（継続観測者）によって駆動され、$\Lang(\mathrm{ML}) = \mathrm{ML} \otimes \F(O_{\mathrm{ML}})$ は $\mathrm{call/cc}$ を備えた古典論理の実行系となる。
+\end{corollary}
+
+\subsection{文脈自由文法 $\mathrm{CFG}$ と状態観測者}
+
+\begin{corollary}[文脈自由文法と状態観測者]
+文脈自由文法 $\mathrm{CFG}$ に欠落している「位置の記憶」という無明は、状態を暗黙の引数として連鎖（$\to$）させる観測者 $O_{\mathrm{CFG}}$（状態観測者）によって駆動され、$\Lang(\mathrm{CFG}) = \mathrm{CFG} \otimes \F(O_{\mathrm{CFG}})$ は再帰下降パーザとして駆動する。
+\end{corollary}
+
+\subsection{ホーン節 $\mathrm{Horn}$ と探索観測者}
+
+\begin{corollary}[ホーン節と探索観測者]
+ホーン節 $\mathrm{Horn}$ に欠落している「選択とバックトラック」という無明は、非決定的な分岐を並行して顕現させる観測者 $O_{\mathrm{Horn}}$（探索観測者）によって駆動され、$\Lang(\mathrm{Horn}) = \mathrm{Horn} \otimes \F(O_{\mathrm{Horn}})$ は Prolog 実行系となる。
+\end{corollary}
+
+\section{中道不動点コンビネータ $\Ymw$ とフラクタロイド}
+
+中道不動点コンビネータ $\Ymw$ は、フラクタロイド $\F$ の駆動エンジンとして機能する。
+
+\begin{definition}[中道不動点コンビネータ $\Ymw$]
+$\metanegation$ に対し、以下の中道等価を満たすコンビネータ $\Ymw$ を定義する。
+\[
+\Ymw \metanegation \mw \metanegation (\Ymw \metanegation)
+\]
+$\Ymw$ はフラクタル四則から必然的に導出される「無明（自己参照の閉じ損ね）」のジェネレータであり、$\Kempty$ への相転移（大域的カット消去）によって停止する。
+\end{definition}
+
+フラクタロイド $\F$ は、$\Ymw$ を駆動エンジンとして用い、観測者 $O$ が境界（$\metanegation$）を生成し続けることで無明を消費し、$\Dfix$ への還滅を導く。ここで、$\Ymw$ が生成する無明の速度は、$\F(O)$ がそれを消費して $\Dfix$ へ向かう速度（沈み込みの重力）よりも常に遅いという大域的条件が成立する。
+
+\section{結論}
+
+1-Bou:n-Cat の枠組みにフラクタロイド $\F$ を統合することで、界論（$\Bou$）が下位圏（$\Cat$）を駆動する実行システムは、観測者を中心とした動的プロセス論として再定式化される。
+
+- 世俗諦的な構造（$\Cat$）は、埋め込み関手 $\E$ によって勝義諦的な構造（$\Bou$）へ移行するが、この移行は観測者 $O$ が駆動するフラクタロイド $\F(O)$ の作用として理解される。
+- 任意の形式体系 $N$ に対し $N \otimes \F(O_N)$ が実行可能なプログラミング言語となることは、界論が圏論を駆動する実行システムの普遍性を示している。
+
+これにより、1-Bou:n-Cat は単なる圏論的枠組みを超え、観測者を中心とした動的プロセス論としての性格を強く帯びることになる。
+
+\end{document}
