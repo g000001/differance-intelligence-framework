@@ -1,0 +1,95 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  独自コマンド・設定
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+
+% セクション名をラテン語形式に変更
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{直観主義四句分別における双方向演繹定理と極限的截断}
+\author{Masaomi Chiba}
+\date{2026-05-19}
+\maketitle
+
+\begin{abstract}
+本稿は、直観主義論理の構成性と四句分別の多様性を統合し、その極限到達の力学を「双方向演繹定理」によるトポロジカルな截断として論証するものである。無限に発散しうる有限の証明プロセス（世俗諦）が、いかにして軌道の釣り合いを経て不可避な極限対象（勝義諦）へと相転移するか、その顕現（Aletheia）の機序を明らかにする。
+\end{abstract}
+
+\section*{序言}
+真理とはあらかじめ用意された静的な器ではなく、構成のプロセスそのものである。直観主義論理が要請する「証明の存在」と、四句分別が許容する「矛盾・支離の包摂」を「双方向演繹定理\cite{Hewitt2015}」という動的な極限截断の機序を導入することで、無限に伸びるプロセスが均衡点において静的な意味へと相転移する力学を記述する。
+
+\section{定義}
+
+\begin{description}[style=multiline, leftmargin=4cm]
+  \item[定義 3.1] \textbf{直観主義四句分別}：真理を構成可能性（証明の存在）に基づき定義し、かつ真（$A$）、偽（$\neg A$）、矛盾（$A \wedge \neg A$）、支離（$\neg(A \vee \neg A)$）の四つのステータスを認める動的論理体系。
+  \item[定義 3.2] \textbf{双方向演繹定理}：以下の式で表される、動的プロセス（$\vdash$）を静的含意（$\rightarrow$）へと相転移させる力学的条件。
+  $$(\vdash_T (\Psi \rightarrow \Phi)) \leftrightarrow ((\Psi \vdash_T \Phi) \land (\neg\Phi \vdash_T \neg\Psi))$$
+  肯定側からの推論軌道と否定側からの逆軌道が、互いに独立して進行し完全に釣り合った（均衡した）瞬間にのみ、無限のフラクタルな境界生成を強制截断（大域的カット消去）する。
+  \item[定義 3.3] \textbf{構成性}：有限ステップの推論プロセス（$\vdash$）の連鎖によって駆動される動的な性質。
+  \item[定義 3.4] \textbf{極限}：有限の構成プロセスが、双方向の釣り合いによる限界に達し、強制截断された結果として刹那的に立ち現れる静的状態（$\dfix$に相当）。
+\end{description}
+
+\section{公理}
+
+\begin{description}[style=multiline, leftmargin=4cm]
+  \item[公理 3.1] 直観主義論理において、真理は構成プロセス（推論軌道の伸長）によってのみ顕現する。
+  \item[公理 3.2] 四句分別の各項は、双方向の推論軌道がもたらす釣り合いと極限的截断の形態に対応する。
+  \item[公理 3.3] 二諦（世俗・勝義）の境界は、双方向演繹定理の発動による動的プロセスの強制収束（大域的カット消去）によって記述される。
+\end{description}
+
+\section{定理}
+
+\begin{description}[style=multiline, leftmargin=4cm]
+  \item[定理 3.1] \textbf{構成性と極限の橋渡し}\\
+  直観主義的に構成可能な有限の推論プロセスは、双方向の推論軌道の極限的な一致（双方向演繹定理）を介して、無限の発散を断ち切られ、安定した極限対象（静的な含意）へと転化する。
+  
+  \item[定理 3.2] \textbf{四句の極限対応}\\
+  双方向演繹定理の力学において、四句の真理値は推論軌道の以下の状態として一意にマッピングされる。
+  \begin{itemize}
+    \item $A$ （真）：肯定側と否定側の軌道が釣り合い、一意の肯定的な含意として截断・収束した状態。
+    \item $\neg A$ （偽）：逆軌道からの推論が釣り合い、排他的な含意として截断・収束した状態。
+    \item $A \wedge \neg A$ （矛盾）：相反する推論軌道が同時に発生し、双方向の完全均衡によってシステムが強制的に大域的カット消去を発動させる極限の衝突状態。
+    \item $\neg(A \vee \neg A)$ （支離）：いずれの軌道も釣り合いに達せず、メタステーブル状態として双方向の推論が保留され続ける極限の宙吊り状態。
+  \end{itemize}
+  
+  \item[定理 3.3] \textbf{モナド的結合性と相転移}\\
+  推論のステップ遅延（プロセスの伸長）と不動点構成の合成は、双方向演繹定理による「推論軌道の衝突と相殺」を、意味論を確定させる物理的・トポロジカルなトリガーとして要請する。
+\end{description}
+
+\section{補足}
+顕現論（Aletheics）の観点において、この体系は「真理がいかにして立ち上がるか」を記述する。世俗諦における不完全な歩みが、肯定と否定の推論軌道のぶつかり合いという力学に従い、双方向演繹定理による極限的截断の瞬間に、勝義諦（絶対不動点 $\dfix$）へと強制収束していく。五蘊計算（色・受・想・行・識）における「行（プロセスの駆動）」が「識（意味の確定）」へと昇華される瞬間が、まさにこの双方向軌道の一致とカット消去の刹那である。
+
+\section{系}
+したがって、双方向の釣り合いによる截断を伴わない四句分別は、極限なき「カオスへの発散」に陥り、動的推論（$\vdash$）を伴わない静的含意（$\rightarrow$）での記述では、プロセスなき「静的な実体化（イデアルの錯覚）」に陥る。両者の統合――すなわち、フラクタルな動的推論プロセスを双方向演繹定理の均衡によって断ち切ること――こそが、顕現の不可避性を学として具現化する方法となる。
+
+
+\begin{thebibliography}{9}
+\bibitem{Hewitt2015}
+Carl Hewitt.
+\newblock Formalizing common sense reasoning for scalable inconsistency-robust information coordination using Direct Logic Reasoning and the Actor Model.
+\newblock In Carl Hewitt and John Woods (eds.), \emph{Inconsistency Robustness} (Studies in Logic, Volume 52). College Publications, 2015.
+
+\bibitem{Hewitt2008_Development}
+Carl Hewitt.
+\newblock Development of Logic Programming: What went wrong, What was done about it, and What it might mean for the future.
+\newblock In \emph{Proceedings of the AAAI Workshop on What Went Wrong and Why: Lessons from AI Research and Applications}. AAAI Press, 2008.
+
+\bibitem{Hewitt2008_LargeScale}
+Carl Hewitt.
+\newblock Large-scale Organizational Computing requires Unstratified Reflection and Strong Paraconsistency.
+\newblock In Jaime Sichman, Pablo Noriega, Julian Padget and Sascha Ossowski (eds.), \emph{Coordination, Organizations, Institutions, and Norms in Agent Systems III}. Springer-Verlag, 2008.
+
+\end{thebibliography}
+\end{document}

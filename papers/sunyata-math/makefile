@@ -6,7 +6,7 @@ LATEX_FLAGS = -interaction=nonstopmode
 # ソースファイルのリスト（指定された順番を維持）
 SOURCES = icat-perception.tex \
           icat-leges-fractales.tex \
-          icat-ideal.tex \
+          icat-twdt.tex \
           icat-truth-preservation.tex \
           icat-principles.tex \
           icat-dfix0.tex \
