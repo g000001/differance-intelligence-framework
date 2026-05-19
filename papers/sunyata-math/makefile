@@ -20,11 +20,8 @@ SOURCES = icat-perception.tex \
           icat-ymwcomb.tex \
           boundary-theory-core.tex \
           aletheic-proof-theory.tex \
-          boundary-category.tex
-          #avyakata-mnonad.tex \
-          #lax-catuskoti.tex
-          # icat-tta.tex \
-          #icat-ifrd.tex
+          boundary-category.tex \
+	  emb-twdt.tex
 
 
 # 中間生成物および最終的なPDFのリスト
