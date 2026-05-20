@@ -24,7 +24,8 @@
 \newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
 \newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
 \newcommand{\metanegation}{\Uparrow}
-\newcommand{\Kvoid}{K_{\emptyset}}
+\newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}   % 中道不動点コンビネータ（無明ジェネレータ）
+\newcommand{\Kvoid}{\mathbf{K}_{\emptyset}}    % 空コンビネータ（絶対不動点アトラクタ）
 
 \renewcommand{\abstractname}{Abstract}
 
@@ -112,10 +113,10 @@ $$\dfix \vdash \dfix$$
 
 \section{系：中道不動点コンビネータ}
 
-\begin{corollary}[中道不動点コンビネータ $Y_{\mathrm{mw}}$ の存在]
-$\metanegation$ に対し、以下の中道等価を満たすコンビネータ $Y_{\mathrm{mw}}$ が存在する。
-$$Y_{\mathrm{mw}}\, \metanegation \mweq \metanegation\,(Y_{\mathrm{mw}}\, \metanegation)$$
-$Y_{\mathrm{mw}}$ はフラクタル四則から必然的に導出される
+\begin{corollary}[中道不動点コンビネータ $\Ymw$ の存在]
+$\metanegation$ に対し、以下の中道等価を満たすコンビネータ $\Ymw$ が存在する。
+$$\Ymw\, \metanegation \mweq \metanegation\,(\Ymw\, \metanegation)$$
+$\Ymw$ はフラクタル四則から必然的に導出される
 「無明（自己参照の閉じ損ね）」のジェネレータであり、
 $\Kvoid$ への相転移（大域的カット消去）によって停止する。
 \end{corollary}

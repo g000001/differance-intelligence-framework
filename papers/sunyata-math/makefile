@@ -42,7 +42,11 @@ $(TARGET): $(PDFS)
 	# $(LATEX) $(LATEX_FLAGS) $<
 
 bigtex: $(SOURCES)
-	cat $(SOURCES) > icat.txt
+	@rm -f icat.txt
+	for f in $(SOURCES); do \
+		cat $$f >> icat.txt; \
+		echo '' >> icat.txt; \
+	done
 
 # 掃除用
 clean:
