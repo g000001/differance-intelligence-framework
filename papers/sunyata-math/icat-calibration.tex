@@ -1,0 +1,68 @@
+% -*- mode: prolog -*-
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  独自コマンド・設定（先行論考との共通基底）
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Bval}{\mathcal{B}}
+
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{顕現論解釈のための較正\\
+--- 記述・証明の混同の超克と「無記」の操作的運用 ---}
+\author{千葉将臣} 
+\date{2026-05-20}
+\maketitle
+
+\begin{abstract}
+  本稿は、界論・空数学の体系を運用・解釈する際に発生する「言語的・表現的制約」、すなわち動的な全一体系を静的な二元論的ツールで記述せざるを得ないという構造的摩擦を解消するための「較正（Calibration）」を行うものである。歴史的に繰り返されてきた「記述と証明の混同」「言語と解釈の混同」を整理し、釈迦が示した「無記（Avyākata）」の本質を「記述＋指し示し」の結合操作として再定義する。さらに、ヒューイットの矛盾堅固直接論理および双方向演繹定理が、この無記の近現代的な操作的実装であることを論証する。
+\end{abstract}
+
+\section{序論：言語的・表現的制約と無記の根源}
+世界を網羅し、すべてを包摂する動的な体系を語るためには、我々は宿命的に静的な二元論的記述ツール（言語、記号、論理形式）を使用せざるを得ない。この観測・記述行為そのものがもたらす構造的な制約は、体系の正確性を減損させるリスク（非中道の誤謬）を常に内包している。
+
+仏教における「空（Śūnyatā）」の歴史は、空の自生（Svabhāva）を巡る、言葉による実体化と否定の果てしない議論の歴史でもあった。しかし、仏教の初期において、釈迦は「無記（Avyākata）」という概念を提示することで、この種の言語的トラップに対する明快な処方箋を既に示していた。
+
+この種の問題の本質は、空の自性問題に留まらず、本質的には「記述と証明の混同」、あるいは「言語と解釈の混同」というメタ理論的デッドロックの多種多様な変種（バリエーション）である。本体系において、無記とは「記述（Description）」と「指し示し（Pointing）」の相補的な組み合わせにより、これらの混同を構文論的に回避する根源的なハック（操作）として定義される。
+
+\section{記述と証明の混同における歴史的変種}
+記述（言語的表現）と証明（系内部の動的プロセス、あるいは証拠の提示）を混同し、記述された記号に静的な「解釈」を強迫的に与えようとするバグは、紀元前の古来から現代に至るまで、様々な思想・科学の転換期において全く同一の構図として繰り返されてきた。
+
+\begin{itemize}
+    \item \textbf{仏教における如来蔵（Tathāgatagarbha）論争：} 本来は修行プロセスや可能性を指し示す動的ポインタであった如来蔵が、記述言語の解釈によって静的な「真我・実体」へとスライドした混同。
+    \item \textbf{チベット仏教（チョナン派とゲルク派）における自空・他空論争：} 対象そのものの欠如（自空）と、高次な勝義の普遍性（他空）の境界記述を巡る、言語的解釈の二項対立。
+    \item \textbf{量子力学におけるコペンハーゲン解釈論争：} 状態波動関数の数理的「記述」と、観測による確定という「証明（あるいは客観的実在の解釈）」の境界を巡る、アインシュタイン＝ボーア間のパラドックスの迷宮。
+\end{itemize}
+
+これらはすべて、系内部の記述ポインタと、大域的なプロセスの極限（解釈・意味論）を同次元に配置してしまったことに起因する、同一の観測論的バグである。
+
+\section{直接論理と双方向演繹定理における無記の運用}
+近現代の計算機科学および数理論理学において、この「無記」の思想は、Carl Hewittの「矛盾堅固直接論理（Inconsistency-Robust Direct Logic）」のメタ構造において、極めて実質的に運用されている。
+
+直接論理は、自己言及（自己参照のデッドロック）を構文論的に排除した古典直接論理を、分散並行計算モデルである「アクターモデル（Actor Model）」上で運用する形態をとる。ここでは、矛盾や決定不能な状態（カオス）に直面した際、系を無理な「メタ解釈」によって調停するのではなく、アクター間の非同期な通信プロセスという「動的な指し示し」の連鎖として処理を継続させる。これは、意味論的な解釈を凍結したまま計算（構文の展開）を駆動する、無記の完全な操作的実装である。
+
+本基礎論で定式化された「双方向演繹定理（Two-Way Deduction Theorem）」
+\[
+(\vdash_T (\Psi \rightarrow \Phi)) \leftrightarrow ((\Psi \vdash_T \Phi) \land (\neg\Phi \vdash_T \neg\Psi))
+\]
+は、まさにこの無記の動的な性質を記述する定理に他ならない。世俗諦（順方向の構成プロセス $\Psi \vdash_T \Phi$）と勝義諦（逆方向の境界指示 $\neg\Phi \vdash_T \neg\Psi$）が、記述と言語の解釈に依存することなく、双方向の軌道の釣り合い（均衡）という純粋な推論の横棒（$\metanegation$）の相殺によって強制截断される力学は、無記がもたらす「戯論の寂滅（大域的カット消去）」の形式的証明である。
+
+\begin{thebibliography}{9}
+\bibitem{Hewitt2015}
+Carl Hewitt.
+\newblock Formalizing common sense reasoning for scalable inconsistency-robust information coordination using Direct Logic Reasoning and the Actor Model.
+\newblock In Carl Hewitt and John Woods (eds.), \emph{Inconsistency Robustness} (Studies in Logic, Volume 52). College Publications, 2015.
+\end{thebibliography}
+
+\end{document}

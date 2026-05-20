@@ -21,8 +21,8 @@ SOURCES = icat-perception.tex \
           boundary-theory-core.tex \
           aletheic-proof-theory.tex \
           boundary-category.tex \
-	  emb-twdt.tex
-
+	  emb-twdt.tex \
+	  icat-calibration.tex
 
 # 中間生成物および最終的なPDFのリスト
 PDFS = $(SOURCES:.tex=.pdf)
