@@ -6,22 +6,27 @@ LATEX_FLAGS = -interaction=nonstopmode
 # ソースファイルのリスト（指定された順番を維持）
 SOURCES = icat-perception.tex \
           icat-leges-fractales.tex \
-          icat-twdt.tex \
-          icat-truth-preservation.tex \
-          icat-principles.tex \
+          fractal-id.tex \
+	\
+	  boundary-theory-core.tex \
           icat-dfix0.tex \
+          icat-truth-preservation.tex \
           titotp.tex \
           titotp-mebius.tex \
-          fractal-id.tex \
+	\
+          icat-principles.tex \
           icat-cl.tex \
           icat-catuskoti-skandha.tex \
-          icat-sunyata-theory.tex \
-          icat-lk.tex \
           icat-ymwcomb.tex \
-          boundary-theory-core.tex \
-          aletheic-proof-theory.tex \
+	\
+	  icat-sunyata-theory.tex \
+          icat-lk.tex \
+	  aletheic-proof-theory.tex \
+	\
           boundary-category.tex \
+          icat-twdt.tex \
 	  emb-twdt.tex \
+	\
 	  icat-calibration.tex
 
 # 中間生成物および最終的なPDFのリスト
