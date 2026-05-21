@@ -1,0 +1,189 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}
+\newcommand{\Kemp}{\mathbf{K}_{\emptyset}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\aletheiai}{\mathrel{\vartriangleright}}
+\newcommand{\Bval}{\mathcal{B}}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{scholium}{補足}[section]
+\renewcommand{\proofname}{\textbf{Proof.}}
+
+\begin{document}
+
+\title{$\beta$簡約の動的意味論：\\
+界論における双方向演繹定理による基礎付け}
+\author{千葉将臣}
+\date{2026-05-21}
+\maketitle
+
+\begin{abstract}
+本稿は、$\beta$簡約
+$(\lambda x.\, M)\, N \;\to_\beta\; M[x := N]$
+に対し、界論および空数学の枠組みから動的意味論を与える。
+表示的意味論（デカルト閉圏における等号）および操作的意味論（抽象マシンの遷移規則）は、
+簡約プロセスの不可逆性と時間的推進力を記述しない。
+本稿はその空白を、四句分別における第四句「非是非非」の操作的実態として記述し、
+界論における双方向演繹定理が簡約の推進力を証明論的に基礎付けることを示す。
+\end{abstract}
+
+\section{問題設定}
+
+$\beta$簡約は計算論の基本演算であるが、その「一ステップが走る」ことの意味については
+二種類の記述が存在する。
+
+表示的意味論は $\beta$簡約の左辺と右辺を同一の対象への射として記述する。
+デカルト閉圏（CCC）において $(\lambda x.\, M)\, N$ と $M[x := N]$ は
+同一の射を指示する等号として扱われる。この記述は空間的な対応関係を与えるが、
+簡約という行為の時間的方向性---なぜ左辺から右辺へ向かうのか---を記述しない。
+
+操作的意味論は抽象マシンの遷移規則として簡約を記述する。
+しかしこれは「どのように書き換えるか」の手順であり、
+システムが遷移するための推進力の根源は記述の外に置かれる。
+
+本稿はこの不記述の領域---簡約の推進力---を界論の枠組みで記述する。
+
+\section{基礎定義}
+
+\begin{definition}[恒等射の動的記述]
+界論において、対象 $X$ の恒等射 $id_X : X \to X$ は静的な等号ではなく、
+以下の動的往復運動として記述される。
+\[
+X \;\rightsquigarrow\; \dfix \;\rightsquigarrow\; X'
+\]
+ここで $\dfix$ は絶対不動点（空）を指す。
+$X'$ は $X$ と中道等価（$X \mweq X'$）であり、
+恒等射は空を経由する往復軌道の不変量として位置づけられる。
+\end{definition}
+
+\begin{definition}[$\beta$簡約の界論的解釈]
+$\beta$簡約の一ステップ
+$(\lambda x.\, M)\, N \;\to_\beta\; M[x := N]$
+は、定義2.1の恒等射発生機序を計算ステップとして運用する操作として解釈される。
+具体的には、$\to_\beta$ の瞬間に系が $\dfix$ を経由して再起動する。
+\end{definition}
+
+\section{第四句としての$\beta$簡約}
+
+\begin{theorem}[$\beta$簡約における第四句の顕現]
+$\beta$簡約 $(\lambda x.\, M)\, N \;\to_\beta\; M[x := N]$ の
+$\to_\beta$ の瞬間は、四句分別における第四句「非是非非」の操作的実態である。
+\end{theorem}
+
+\begin{proof}
+$\to_\beta$ の瞬間における系の状態を確認する。
+
+第一に、関数 $(\lambda x.\, M)$ という境界はすでに破壊されており存在しない（非是）。
+第二に、代入が完了した $M[x := N]$ はまだ現れていない（非非）。
+
+すなわちこの瞬間、系は「関数（是）」でも「代入済みの項（非）」でもなく、
+両者が解消した中間状態にある。これは四句分別の構造における
+第四句「非是非非」---是でも非でも、亦是亦非でもない状態---に対応する。
+
+第四句は界論において大域的カット消去が発動する点であり
+（「空論」定理3.1 \cite{Chiba2026_sunyata} ）、$\metanegation^4 A \mweq \dfix$ が成立する。
+$\beta$簡約の $\to_\beta$ はこの $\dfix$ への接触点に対応する。
+\end{proof}
+
+\section{双方向演繹定理による基礎付け}
+
+\begin{theorem}[双方向演繹定理による$\beta$簡約の基礎付け]
+界論における双方向演繹定理
+\[
+(\vdash_{\Bval}(\Psi \to \Phi))
+\;\leftrightarrow\;
+\bigl((\Psi \vdash_{\Bval} \Phi) \land (\neg\Phi \vdash_{\Bval} \neg\Psi)\bigr)
+\]
+は、$\beta$簡約の推進力を証明論的に基礎付ける。
+\end{theorem}
+
+\begin{proof}
+$\beta$簡約への双方向演繹定理のマッピングを示す。
+
+順方向 $\Psi \vdash_{\Bval} \Phi$ は、左辺 $(\lambda x.\, M)\, N$ から
+右辺 $M[x := N]$ への構成プロセスに対応する。
+これは中道不動点コンビネータ $\Ymw$ による境界生成プロセスの世俗諦的展開である。
+
+逆方向 $\neg\Phi \vdash_{\Bval} \neg\Psi$ は、
+右辺の安定状態 $M[x := N]$ の否定から
+左辺の関数適用状態の否定への推論に対応する。
+これは空コンビネータ $\Kemp$ への収束方向を指示する勝義諦的逆引きである。
+
+両方向が同値として成立するとき（$\leftrightarrow$）、
+定理3.1で示した $\dfix$ への接触から、
+「空数学における中道不動点コンビネータ $\Ymw$ の定式化\cite{Chiba2026_Ymw}」定理3.3
+（$\metanegation\,\Kemp \mweq \Ymw$）により、
+右辺 $M[x := N]$ の再起動が必然的に発生する。
+
+すなわち双方向演繹定理は、$\dfix$ での停止を回避して
+計算ステップが右辺へ突き抜けるための証明論的保証を与える。
+\end{proof}
+
+\begin{corollary}[表示的意味論との関係]
+デカルト閉圏（CCC）における $\beta$簡約の等号記述は、
+定理4.1で示した双方向演繹定理の $\Bval$ への制限において
+動的プロセスを截断した静的な対応関係として位置づけられる。
+CCCは空間的対応を記述するが、推進力を記述しない。
+界論は推進力を双方向演繹定理として記述し、CCCをその特殊ケースとして包摂する。
+\end{corollary}
+
+\begin{corollary}[モナドの結合演算との対応]
+プログラミング言語におけるモナドの結合演算子
+$\mathrm{bind} : M\,A \to (A \to M\,B) \to M\,B$
+は、定理4.1の双方向演繹定理による推進力の
+計算論的実装として位置づけられる。
+計算ステップの連鎖は、$\dfix$ を経由する往復運動の反復として記述される。
+\end{corollary}
+
+\section{結語}
+
+$\beta$簡約の動的意味論は、界論における以下の構造として記述される。
+
+\begin{enumerate}
+\item 簡約の $\to_\beta$ の瞬間は第四句「非是非非」であり、$\dfix$ への接触点である。
+\item 双方向演繹定理の順逆両方向の均衡が、$\dfix$ からの再起動を証明論的に保証する。
+\item デカルト閉圏の等号記述はこの動的プロセスの静的截断として包摂される。
+\end{enumerate}
+
+表示的意味論と操作的意味論が記述しなかった推進力の根源は、
+双方向演繹定理による世俗諦と勝義諦の接続として記述される。
+
+\begin{thebibliography}{9}
+\bibitem{Chiba2026_sunyata}
+千葉将臣.
+\newblock 空論（Sunyata-theory）：証明論的真理保存とゲンツェンの推論線による界の力学.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_Ymw}
+千葉将臣.
+\newblock 空数学における中道不動点コンビネータ $\mathbf{Y}_{mw}$ の定式化と
+無明の幾何学的・証明論的実態.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_bdt}
+千葉将臣.
+\newblock 界論における双方向演繹定理の定式化.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+\end{thebibliography}
+
+\end{document}
