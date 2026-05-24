@@ -26,6 +26,7 @@ SOURCES = icat-perception.tex \
           boundary-category.tex \
           icat-twdt.tex \
 	  emb-twdt.tex \
+	  bau-cat-em-kl.tex \
 	\
 	  icat-calibration.tex
 

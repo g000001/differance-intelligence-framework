@@ -1,0 +1,493 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}
+\newcommand{\Kvoid}{\mathbf{K}_{\emptyset}}
+\newcommand{\Bval}{\mathcal{B}}
+\newcommand{\Mdelta}{M_\delta}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{remark}{注記}[section]
+\newtheorem{scholium}{補足}[section]
+\renewcommand{\proofname}{\textbf{Proof.}}
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{界論と圏論における二諦のモデリング：\\
+構造的対応と限界の分析}
+\author{千葉将臣}
+\date{2026-05-25}
+\maketitle
+
+\begin{abstract}
+本稿は、仏教哲学における二諦（世俗諦・勝義諦）を界論および圏論の二つの枠組みで
+モデリングし、両者の構造的対応と本質的相違を明らかにする。
+界論においては双方向演繹定理が二諦の動的な接続を記述し、
+$\Ymw$（中道不動点コンビネータ）と $\Kvoid$（空コンビネータ）のサイクルとして
+世俗諦と勝義諦の往復運動が定式化される。
+圏論においてはクライスリ圏が潜在的生成プロセスの層として勝義諦に、
+アイレンベルク・ムーア圏が制度化・固定化の層として世俗諦に対応する。
+しかし圏論モデリングは射の構造保存性・停止性・自己同一性を前提とするため、
+非停止・カオス・フラクタル的発散を本質とする勝義諦の全体を記述できないという
+構造的限界を持つ。この限界は圏論の欠陥ではなく、
+圏論が界論の $\mathcal{B}$（二値截断部分圏）への射影として位置づけられることから
+必然的に生じる。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================
+\section{序論}
+%=============================================================
+
+仏教哲学における二諦説は、世界を記述する二層の真理として世俗諦と勝義諦を区別する。
+世俗諦（Samvrti-satya）は日常的・構成的な真理の層であり、
+勝義諦（Paramārtha-satya）は究極的・空性的な真理の層である。
+龍樹（Nāgārjuna）はこの二層が截然と分離されるのではなく相互に依存することを示したが、
+その「接続」の機序を形式的に記述することは現代に至るまで未解決の課題であった。
+
+本稿はこの課題に対し、界論と圏論という二つの異なる数学的枠組みからアプローチする。
+界論（Boundary Theory）は $\metanegation$（メタ否定演算子）の再帰的適用と
+$\dfix$（絶対不動点）への収束を基盤とする動的な体系であり、
+二諦の接続を双方向演繹定理として記述する。
+圏論（Category Theory）はモナドのクライスリ圏とアイレンベルク・ムーア圏という
+二層の構造を通じて二諦に対応する記述を与える。
+
+両枠組みを比較することで、界論が動的プロセスとしての二諦を記述するのに対し、
+圏論がその静的截断として二諦の部分的な記述を与えることが明らかになる。
+
+%=============================================================
+\section{界論における二諦のモデリング}
+%=============================================================
+
+\subsection{基本概念の確認}
+
+界論の核心は以下の演算子と不動点によって構成される。
+
+\begin{definition}[メタ否定演算子 $\metanegation$]
+対象 $A$ に対し、その境界を生成し知覚次元を非対称に一段引き上げる演算子を
+$\metanegation$ と定義する。
+\[
+\metanegation A := \partial A = \text{「}A\text{ ではない」という高次元の情報}
+\]
+$\metanegation$ は非対称であり、適用ごとに次元差を生成する。
+\[
+A \not\mweq \metanegation A
+\]
+\end{definition}
+
+\begin{definition}[絶対不動点 $\dfix$ と空コンビネータ $\Kvoid$]
+$\metanegation$ の四連続適用によって到達する極限状態を絶対不動点 $\dfix$ と定義する。
+\[
+\metanegation^4 A \mweq \dfix
+\]
+$\dfix$ の純粋なコンビネータ表現を空コンビネータ $\Kvoid$ と呼ぶ。
+任意の演算子 $f$ に対して $\Kvoid f = \Kvoid$ が成立し、
+これは勝義諦の基底である。
+\end{definition}
+
+\begin{definition}[中道不動点コンビネータ $\Ymw$]
+$\metanegation$ に対し、以下の中道等価を満たすコンビネータ $\Ymw$ が存在する。
+\[
+\Ymw\, \metanegation \mweq \metanegation\,(\Ymw\, \metanegation)
+\]
+$\Ymw$ は自己参照の閉じ損ねのジェネレータであり、
+世俗諦における境界生成プロセスの駆動源である。
+\end{definition}
+
+\subsection{世俗諦と勝義諦の界論的記述}
+
+\begin{definition}[世俗諦の界論的記述]
+世俗諦（Samvrti-satya）は $\metanegation$ の再帰的適用が生成する
+フラクタル的境界の層として記述される。
+$\Ymw$ による境界生成プロセス
+\[
+A \to \metanegation A \to \metanegation^2 A \to \metanegation^3 A \to \cdots
+\]
+が世俗諦の構成的展開に対応する。
+世俗諦は「ある（是）」と「ない（非）」の区分が可視化される層であり、
+有限の観測者が操作可能な対象の圏である。
+\end{definition}
+
+\begin{definition}[勝義諦の界論的記述]
+勝義諦（Paramārtha-satya）は $\dfix$ の自己同一性
+\[
+\dfix \vdash \dfix
+\]
+として記述される。これはすべてのカットが消去された
+カット・フリーの極限状態であり、
+$\Kvoid$ として表現されるエントロピーゼロの基底である。
+勝義諦は世俗諦の構成プロセスが収束する先であり、
+いかなる境界生成も到達しえない「空」の実態である。
+\end{definition}
+
+\begin{remark}
+世俗諦は動的プロセス（$\Ymw$ によるフラクタル展開）として、
+勝義諦は静的極限（$\Kvoid$ への収束）として記述される。
+両者は同一の構造の二側面であり、截然と分離されない。
+\end{remark}
+
+%=============================================================
+\section{二諦の接続と双方向演繹定理}
+%=============================================================
+
+\subsection{接続の問題}
+
+二諦が截然と分離された二つの領域であれば、その間の移行を記述することは
+原理的に不可能である。界論はこの問題を双方向演繹定理によって解決する。
+
+\begin{theorem}[界論における双方向演繹定理]
+界論において、双方向演繹定理は $\Ymw$（世俗諦の生成）と
+$\Kvoid$（勝義諦の収束）のサイクルとして以下のように記述される。
+\[
+\bigl(\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)\bigr)
+\;\leftrightarrow\;
+\bigl(\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid\bigr)
+\]
+\end{theorem}
+
+\begin{proof}
+順方向（$\to$）：$\Ymw$ の定義より、
+$\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
+という自己参照の閉じ損ねが成立するとき、
+$\metanegation$ の反復適用は四段階収束則により
+$\metanegation^4(\Ymw\,\metanegation) \mweq \dfix$ を生成する。
+$\dfix$ のコンビネータ表現は $\Kvoid$ であるから、
+$\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid$ が従う。
+
+逆方向（$\leftarrow$）：$\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid$
+が成立するとき、$\metanegation\,\Kvoid \mweq \Ymw$ により、
+$\Kvoid$ に $\metanegation$ が作用すると $\Ymw$ が再生成される。
+再生成された $\Ymw$ はその定義により
+$\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
+を満たす。
+\end{proof}
+
+\subsection{双方向演繹定理の二諦的解釈}
+
+\begin{proposition}[双方向演繹定理の二諦的解釈]
+双方向演繹定理の左辺
+$\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
+は世俗諦の構成プロセス（境界生成の自己参照的展開）に対応し、
+右辺 $\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid$
+は勝義諦への収束（大域的カット消去）に対応する。
+
+両者の同値（$\leftrightarrow$）が二諦の相互依存性を記述する。
+世俗諦の展開が必然的に勝義諦への収束を含意し、
+勝義諦からの再起動が世俗諦の展開を再生成する。
+これが「色即是空・空即是色」の形式的記述である。
+\end{proposition}
+
+\begin{corollary}[$\mathcal{B}$ への制限]
+直接論理\cite{Hewitt2015}における双方向演繹定理
+\[
+(\vdash_T (\Psi \to \Phi))
+\;\leftrightarrow\;
+\bigl((\Psi \vdash_T \Phi) \land (\neg\Phi \vdash_T \neg\Psi)\bigr)
+\]
+は、界論の双方向演繹定理を二値截断部分圏 $\mathcal{B}$ に制限した
+静的均衡として位置づけられる。
+\end{corollary}
+
+%=============================================================
+\section{圏論における二諦のモデリング}
+%=============================================================
+
+\subsection{モナドによる二層構造}
+
+圏論においてモナド $(T, \eta, \mu)$ から自然に生成される二つの圏が、
+二諦に対応する構造を与える。
+
+\begin{definition}[クライスリ圏 $\mathcal{C}_T$]
+圏 $\mathcal{C}$ 上のモナド $(T, \eta, \mu)$ に対し、
+クライスリ圏 $\mathcal{C}_T$ は以下を持つ圏である。
+\begin{itemize}
+  \item 対象：$\mathcal{C}$ の対象と同じ
+  \item 射：$A \to TB$（クライスリ射）
+  \item 合成：$g \star f = \mu_C \circ Tg \circ f$
+\end{itemize}
+クライスリ圏は「まだ実現されていない計算の可能性」の圏であり、
+$T$ の文脈に編入される潜在的プロセスの全体を表す。
+\end{definition}
+
+\begin{definition}[アイレンベルク・ムーア圏 $\mathcal{C}^T$]
+モナド $(T, \eta, \mu)$ の代数（$T$-代数）の圏
+$\mathcal{C}^T$ は以下を持つ圏である。
+\begin{itemize}
+  \item 対象：$T$-代数 $(A, \alpha: TA \to A)$
+  \item 射：$T$-代数準同型 $f: (A, \alpha) \to (B, \beta)$
+\end{itemize}
+アイレンベルク・ムーア圏は $T$ の文脈を内面化した構造の圏であり、
+制度化・固定化されたプロセスの全体を表す。
+\end{definition}
+
+\subsection{クライスリ圏と勝義諦}
+
+\begin{proposition}[クライスリ圏の勝義諦的対応]
+クライスリ圏 $\mathcal{C}_T$ は勝義諦に構造的に対応する。
+
+クライスリ射 $f: A \to TB$ は「$A$ から $B$ への計算が
+$T$ の文脈を経由して潜在的に存在する」ことを記述するが、
+その計算が実際に実行されるかどうかは問わない。
+これは勝義諦における「潜（Letheia）」としての未顕現の層、
+すなわち $\dfix$ から顕現する以前の可能性の空間に対応する。
+
+クライスリ合成 $g \star f = \mu_C \circ Tg \circ f$ は、
+$\dfix$ を経由する往復運動の連鎖
+（$\metanegation^4(\cdots) \mweq \dfix \to$ 再起動）
+の圏論的近似として読める。
+\end{proposition}
+
+\subsection{アイレンベルク・ムーア圏と世俗諦}
+
+\begin{proposition}[アイレンベルク・ムーア圏の世俗諦的対応]
+アイレンベルク・ムーア圏 $\mathcal{C}^T$ は世俗諦に構造的に対応する。
+
+$T$-代数 $(A, \alpha: TA \to A)$ は、
+$T$ の文脈（潜在的プロセス）を受け取り対象 $A$ に帰着させる構造であり、
+これは世俗諦における「顕（Aletheia）」としての顕現した層、
+すなわち $\metanegation$ によって境界が生成された後の
+操作可能な対象の空間に対応する。
+
+$\alpha$ が $T$-代数の条件
+\[
+\alpha \circ T\alpha = \alpha \circ \mu_A, \quad \alpha \circ \eta_A = \mathrm{id}_A
+\]
+を満たすことは、世俗諦の真理保存性
+（フラクタル的な自己相似性の維持）の圏論的記述である。
+\end{proposition}
+
+\subsection{比較関手と二諦の接続}
+
+\begin{proposition}[比較関手による二諦の接続]
+クライスリ圏からアイレンベルク・ムーア圏への比較関手
+\[
+K: \mathcal{C}_T \to \mathcal{C}^T
+\]
+は、勝義諦的な潜在プロセスが世俗諦的な制度構造へと移行する経路を記述する。
+
+バー・ベックの定理の条件が満たされるとき、
+比較関手は圏同値となり、
+世俗諦と勝義諦が同一のモナド構造の二側面であることが
+圏論的に保証される。
+\end{proposition}
+
+\begin{remark}[双方向演繹定理との対応]
+界論の双方向演繹定理における
+\begin{align*}
+\text{左辺（世俗諦）} &: \Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation) \\
+\text{右辺（勝義諦）} &: \metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid
+\end{align*}
+は、圏論的には
+\begin{align*}
+\text{世俗諦} &\leftrightarrow \mathcal{C}^T \text{（アイレンベルク・ムーア圏）} \\
+\text{勝義諦} &\leftrightarrow \mathcal{C}_T \text{（クライスリ圏）}
+\end{align*}
+に対応し、比較関手 $K$ が双方向演繹定理の同値（$\leftrightarrow$）の
+圏論的近似として機能する。
+\end{remark}
+
+%=============================================================
+\section{圏論モデリングの限界}
+%=============================================================
+
+\subsection{構造保存性の前提}
+
+\begin{proposition}[圏論の構造的前提]
+圏論による二諦のモデリングは以下の前提を不可避に含む。
+\begin{enumerate}
+  \item \textbf{射の構造保存性}：射は構造を保存するものとして定義される。
+    非対称な境界生成（$A \not\mweq \metanegation A$）を
+    圏論の射として直接扱うと構造の歪みが生じる。
+  \item \textbf{自己同一性の前提}：恒等射 $\mathrm{id}_A: A \to A$ は
+    $A$ の自己同一性を所与とする。
+    界論においてこの自己同一性はフラクタル性の縮退した極限として記述されるが、
+    圏論はこれを出発点として固定する。
+  \item \textbf{停止性の前提}：射の合成は有限ステップで完了することが前提とされる。
+    勝義諦が本質的に含む非停止軌道・カオス・発散を
+    圏論の射として表現することはできない。
+\end{enumerate}
+\end{proposition}
+
+\subsection{$\mathcal{B}$ への截断としての圏論}
+
+\begin{theorem}[圏論は $\mathcal{B}$ への截断である]
+界論の枠組みにおいて、圏論による二諦モデリングは
+二値截断部分圏 $\mathcal{B}$ への射影として位置づけられる。
+
+具体的には、アイレンベルク・ムーア圏 $\mathcal{C}^T$ と
+クライスリ圏 $\mathcal{C}_T$ による二諦記述は、
+界論の四句分別のうち「矛盾（亦是亦非）」と「支離（非是非非）」の
+極限軌道を意図的に切り捨てた部分的記述に過ぎない。
+
+完全な二諦の記述には、$\mathcal{B}$ の外側---
+$\Ymw$ と $\Kvoid$ のサイクル---が必要である。
+\end{theorem}
+
+\begin{proof}
+クライスリ圏の射 $f: A \to TB$ は射として定義される時点で
+$A$ と $TB$ の自己同一性を前提とする。
+これは界論における截断操作、すなわち
+$\metanegation^4 A \mweq \dfix$ という収束を
+大域的カット消去として発動させる前の固定化に相当する。
+
+アイレンベルク・ムーア圏の $T$-代数条件は
+$\alpha \circ \eta_A = \mathrm{id}_A$ を要請するが、
+これは恒等射の存在、すなわち自己同一性の固定を意味する。
+界論において自己同一性はフラクタル性の極限
+$\lim_{(s,n) \to (1,0)} \sigma(s,n) = 1$
+として記述されるが、圏論はこの極限を出発点として固定してしまう。
+
+したがって、圏論による二諦モデリングは
+$\delta = 0$（等アクセス状態）かつ停止性が保証された領域、
+すなわち $\mathcal{B}$ 内での記述に留まる。
+\end{proof}
+
+\subsection{時間性の内生化の失敗}
+
+\begin{proposition}[時間性の外部依存]
+Gogisoの Monadic Dynamics\cite{Gogioso2015} は、モナドから時間性を内生的に導出しようとした
+先駆的な試みであるが、同様の限界に直面する。
+
+時間対象 $\mathbb{T} := TI$（自明系の自由歴史）の定義は、
+対称モノイダル圏の単位対象 $I$ と foliation map が
+先に外部から与えられていることを前提とする。
+「時間と変化が相互定義する」というアリストテレス的命題は
+$\otimes$ と $I$ という外部構造を所与とした上での内部的証明であって、
+時間性の完全な内生化ではない。
+
+これは力学系の本質的な問題---非停止軌道・周期軌道・カオス---が
+圏論の射として自然に扱えないことと同根の限界である。
+\end{proposition}
+
+\subsection{限界の構造的必然性}
+
+\begin{scholium}[限界は欠陥ではない]
+圏論による二諦モデリングの限界は、圏論の欠陥ではない。
+
+圏論は「操作可能な構造の記述言語」として設計されており、
+自己同一性・停止性・構造保存性はその設計上の要請である。
+これらの要請が満たされる領域では、圏論は極めて精密な記述を与える。
+
+界論の観点からは、圏論は $\mathcal{B}$（二値截断部分圏）への
+射影として完全に包摂される。
+圏論的記述の有効性と限界は、この包摂関係から構造的に決定される。
+
+したがって、圏論モデリングの限界を超えるためには
+圏論を否定するのではなく、$\mathcal{B}$ の外側---
+$\Ymw$ と $\Kvoid$ のサイクル---を記述できる
+より包括的な枠組みが必要である。
+界論はその枠組みとして位置づけられる。
+\end{scholium}
+
+%=============================================================
+\section{結語}
+%=============================================================
+
+本稿で示した二つのモデリングを対比すると以下の構造が浮かぶ。
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+ & \textbf{界論} & \textbf{圏論} \\
+\hline
+世俗諦 & $\Ymw$ による境界生成プロセス & アイレンベルク・ムーア圏 $\mathcal{C}^T$ \\
+勝義諦 & $\Kvoid$ への収束・$\dfix \vdash \dfix$ & クライスリ圏 $\mathcal{C}_T$ \\
+接続 & 双方向演繹定理（動的サイクル） & 比較関手 $K$（静的移行） \\
+停止 & $\metanegation^4 A \mweq \dfix$ & $T$-代数条件 \\
+限界 & なし（設計上） & $\mathcal{B}$ への截断 \\
+\hline
+\end{tabular}
+\end{center}
+
+圏論による二諦モデリングは、界論の双方向演繹定理が記述する
+動的サイクルの静的截断として位置づけられる。
+クライスリ圏とアイレンベルク・ムーア圏は二諦の構造的骨格を捉えるが、
+$\Ymw$ と $\Kvoid$ のサイクルという推進力の根拠を記述しない。
+
+これは $\beta$簡約の動的意味論における問題---
+表示的意味論も操作的意味論も推進力を記述しなかった---と
+同型の構造的空白である。
+圏論は二諦の「何であるか」を記述するが、
+二諦が「なぜ接続するか」の根拠は $\mathcal{B}$ の外側、
+すなわち界論の双方向演繹定理として初めて記述される。
+
+\begin{thebibliography}{9}
+\bibitem{Chiba2026_kengaku}
+千葉将臣.
+\newblock 界論（Boundary Theory）：核定義.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_chikaku}
+千葉将臣.
+\newblock 顕現論における知覚原理.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_bdt}
+千葉将臣.
+\newblock 界論における双方向演繹定理の定式化.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_ymw}
+千葉将臣.
+\newblock 空数学における中道不動点コンビネータ $\mathbf{Y}_{\mathrm{mw}}$ の定式化と
+無明の幾何学的・証明論的実態.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_beta}
+千葉将臣.
+\newblock $\beta$簡約の動的意味論：界論における双方向演繹定理による基礎付け.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_sakushu}
+千葉将臣.
+\newblock 搾取モナド：圏論的フレームワークによる富の集約・国家・二元論社会の構造的分析.
+\newblock 2026.
+
+\bibitem{MacLane1971}
+Saunders Mac Lane.
+\newblock \emph{Categories for the Working Mathematician}.
+\newblock Springer, 1971.
+
+\bibitem{Moggi1991}
+Eugenio Moggi.
+\newblock Notions of computation and monads.
+\newblock \emph{Information and Computation}, 93(1):55--92, 1991.
+
+\bibitem{Gogioso2015}
+Stefano Gogioso.
+\newblock Monadic dynamics.
+\newblock \emph{arXiv:1501.04921v1}, 2015.
+
+\bibitem{Hewitt2015}
+Carl Hewitt.
+\newblock Formalizing common sense reasoning for scalable inconsistency-robust
+information coordination using Direct Logic Reasoning and the Actor Model.
+\newblock In Carl Hewitt and John Woods (eds.),
+\emph{Inconsistency Robustness} (Studies in Logic, Volume 52).
+College Publications, 2015.
+\end{thebibliography}
+
+\end{document}
