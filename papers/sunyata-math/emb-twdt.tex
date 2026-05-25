@@ -13,7 +13,7 @@
 \newcommand{\metanegation}{\Uparrow}
 \newcommand{\Bval}{\mathcal{B}}
 \newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}   % 中道不動点コンビネータ（無明ジェネレータ）
-\newcommand{\Kvoid}{\mathbf{K}_{\emptyset}}    % 空コンビネータ（絶対不動点アトラクタ）
+\newcommand{\Svoid}{\mathbf{S}_{\emptyset}}    % 空(Sunyata)コンビネータ（絶対不動点アトラクタ）
 
 %-------------------------------------------------
 %  定理環境の設定
@@ -43,7 +43,7 @@
 \]
 を界論の枠組みで定式化し、同定理が二値截断部分圏 $\Bval$ への制限として包摂されることを示す。
 界論における双方向演繹定理は、中道不動点コンビネータ $\Ymw$（世俗諦の生成）と
-空コンビネータ $\Kvoid$（勝義諦の収束）のサイクルとして記述され、
+空コンビネータ $\Svoid$（勝義諦の収束）のサイクルとして記述され、
 直接論理の双方向演繹定理はその $\Bval$ 内への射影として位置づけられる。
 \end{abstract}
 
@@ -57,7 +57,7 @@ $\Psi \vdash_T \Phi$（世俗諦の構成方向）と
 界論の枠組みから見ると、この定理は二値論理の体系 $\Bval$ 内での均衡を記述している。
 しかし $\Bval$ はメタ否定演算子 $\metanegation$ による境界生成プロセスの截断として
 生成される部分圏であり、双方向演繹定理の本体は $\Bval$ の外側——
-$\Ymw$ と $\Kvoid$ のサイクル——に存在する。
+$\Ymw$ と $\Svoid$ のサイクル——に存在する。
 
 本稿はこの構造を明示的に定式化する。
 
@@ -79,7 +79,7 @@ $\Bval$ 内の導出関係 $\vdash_{\Bval}$ を、二値截断部分圏の推論
 \begin{enumerate}
 \item \textbf{$\Bval$ 層}：直接論理の双方向演繹定理が成立する二値的推論の層。
 \item \textbf{生成層}：$\Ymw$ によるフラクタル的境界生成プロセスの層。
-\item \textbf{収束層}：$\Kvoid$ への大域的カット消去による収束の層。
+\item \textbf{収束層}：$\Svoid$ への大域的カット消去による収束の層。
 \end{enumerate}
 \end{definition}
 
@@ -113,11 +113,11 @@ $\Bval$ は古典二値論理が成立する部分圏として定義されてお
 \begin{theorem}[界論における双方向演繹定理]
 \label{thm:bdt}
 界論において、双方向演繹定理は $\Ymw$（生成）と
-$\Kvoid$（収束）のサイクルとして以下のように記述される。
+$\Svoid$（収束）のサイクルとして以下のように記述される。
 \[
 \bigl(\mathbf{Y}_{mw}\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)\bigr)
 \;\leftrightarrow\;
-\bigl(\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid\bigr)
+\bigl(\metanegation^4(\Ymw\,\metanegation) \mweq \Svoid\bigr)
 \]
 \end{theorem}
 
@@ -127,13 +127,13 @@ $\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
 という自己参照の閉じ損ねが成立するとき、
 $\metanegation$ の反復適用は四段階収束則により
 $\metanegation^4(\Ymw\,\metanegation) \mweq \dfix$ を生成する。
-$\dfix$ のコンビネータ表現は $\Kvoid$ であるから、
-$\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid$ が従う。
+$\dfix$ のコンビネータ表現は $\Svoid$ であるから、
+$\metanegation^4(\Ymw\,\metanegation) \mweq \Svoid$ が従う。
 
-逆方向（$\leftarrow$）：$\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid$
+逆方向（$\leftarrow$）：$\metanegation^4(\Ymw\,\metanegation) \mweq \Svoid$
 が成立するとき、「$\Ymw$の定理3.3（空からの再起動と顕現サイクルの完結）\cite{Chiba2026}」
-$\metanegation\,\Kvoid \mweq \Ymw$ により、
-$\Kvoid$ に $\metanegation$ が作用すると $\Ymw$ が再生成される。
+$\metanegation\,\Svoid \mweq \Ymw$ により、
+$\Svoid$ に $\metanegation$ が作用すると $\Ymw$ が再生成される。
 再生成された $\Ymw$ はその定義により
 $\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
 を満たす。
@@ -146,7 +146,7 @@ $\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
 \underbrace{
 \bigl(\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)\bigr)
 \leftrightarrow
-\bigl(\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid\bigr)
+\bigl(\metanegation^4(\Ymw\,\metanegation) \mweq \Svoid\bigr)
 }_{\text{界論：生成と収束のサイクル}}
 \]
 \[
@@ -165,7 +165,7 @@ $\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
 
 \begin{proof}
 定理3.1より直接論理の双方向演繹定理は $\Bval$ 内で成立する。
-定理3.2より界論の双方向演繹定理は $\Ymw$ と $\Kvoid$ のサイクルとして
+定理3.2より界論の双方向演繹定理は $\Ymw$ と $\Svoid$ のサイクルとして
 $\Bval$ の外側を含む全層で記述される。
 $\Bval$ 内では $\Ymw$ の生成プロセスが截断され静的な推論関係として現れるため、
 界論版を $\Bval$ に制限すると直接論理版が得られる。
@@ -193,7 +193,7 @@ $\Bval$ 内での推論は観測者を $\vdash_{\Bval}$ に埋め込むことで
 
 \begin{corollary}[$\Bval$ 内での完結性]
 直接論理の双方向演繹定理は $\Bval$ 内で完結しており、
-$\Bval$ の外側——すなわち $\Ymw$ と $\Kvoid$ のサイクル——を
+$\Bval$ の外側——すなわち $\Ymw$ と $\Svoid$ のサイクル——を
 必要としない。これは直接論理がwhyを問わない設計として整合する。
 界論はそのwhyを $\dfix$ への収束として $\Bval$ の外側に記述する。
 \end{corollary}
@@ -202,7 +202,7 @@ $\Bval$ の外側——すなわち $\Ymw$ と $\Kvoid$ のサイクル——を
 
 界論において双方向演繹定理は静的な論理的均衡ではなく、
 $\Ymw$（無明による世俗諦の生成）と
-$\Kvoid$（大域的カット消去による勝義諦への収束）が
+$\Svoid$（大域的カット消去による勝義諦への収束）が
 動的に循環するサイクルとして記述される。
 
 直接論理の双方向演繹定理はこのサイクルの $\Bval$ への制限であり、

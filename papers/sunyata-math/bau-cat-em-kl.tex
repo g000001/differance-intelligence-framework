@@ -13,7 +13,7 @@
 \newcommand{\dfix}{D_{\mathrm{fix}0}}
 \newcommand{\metanegation}{\Uparrow}
 \newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}
-\newcommand{\Kvoid}{\mathbf{K}_{\emptyset}}
+\newcommand{\Svoid}{\mathbf{S}_{\emptyset}}
 \newcommand{\Bval}{\mathcal{B}}
 \newcommand{\Mdelta}{M_\delta}
 
@@ -44,7 +44,7 @@
 本稿は、仏教哲学における二諦（世俗諦・勝義諦）を界論および圏論の二つの枠組みで
 モデリングし、両者の構造的対応と本質的相違を明らかにする。
 界論においては双方向演繹定理が二諦の動的な接続を記述し、
-$\Ymw$（中道不動点コンビネータ）と $\Kvoid$（空コンビネータ）のサイクルとして
+$\Ymw$（中道不動点コンビネータ）と $\Svoid$（空コンビネータ）のサイクルとして
 世俗諦と勝義諦の往復運動が定式化される。
 圏論においてはクライスリ圏が潜在的生成プロセスの層として勝義諦に、
 アイレンベルク・ムーア圏が制度化・固定化の層として世俗諦に対応する。
@@ -98,13 +98,13 @@ A \not\mweq \metanegation A
 \]
 \end{definition}
 
-\begin{definition}[絶対不動点 $\dfix$ と空コンビネータ $\Kvoid$]
+\begin{definition}[絶対不動点 $\dfix$ と空コンビネータ $\Svoid$]
 $\metanegation$ の四連続適用によって到達する極限状態を絶対不動点 $\dfix$ と定義する。
 \[
 \metanegation^4 A \mweq \dfix
 \]
-$\dfix$ の純粋なコンビネータ表現を空コンビネータ $\Kvoid$ と呼ぶ。
-任意の演算子 $f$ に対して $\Kvoid f = \Kvoid$ が成立し、
+$\dfix$ の純粋なコンビネータ表現を空コンビネータ $\Svoid$ と呼ぶ。
+任意の演算子 $f$ に対して $\Svoid f = \Svoid$ が成立し、
 これは勝義諦の基底である。
 \end{definition}
 
@@ -138,14 +138,14 @@ A \to \metanegation A \to \metanegation^2 A \to \metanegation^3 A \to \cdots
 \]
 として記述される。これはすべてのカットが消去された
 カット・フリーの極限状態であり、
-$\Kvoid$ として表現されるエントロピーゼロの基底である。
+$\Svoid$ として表現されるエントロピーゼロの基底である。
 勝義諦は世俗諦の構成プロセスが収束する先であり、
 いかなる境界生成も到達しえない「空」の実態である。
 \end{definition}
 
 \begin{remark}
 世俗諦は動的プロセス（$\Ymw$ によるフラクタル展開）として、
-勝義諦は静的極限（$\Kvoid$ への収束）として記述される。
+勝義諦は静的極限（$\Svoid$ への収束）として記述される。
 両者は同一の構造の二側面であり、截然と分離されない。
 \end{remark}
 
@@ -160,11 +160,11 @@ $\Kvoid$ として表現されるエントロピーゼロの基底である。
 
 \begin{theorem}[界論における双方向演繹定理]
 界論において、双方向演繹定理は $\Ymw$（世俗諦の生成）と
-$\Kvoid$（勝義諦の収束）のサイクルとして以下のように記述される。
+$\Svoid$（勝義諦の収束）のサイクルとして以下のように記述される。
 \[
 \bigl(\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)\bigr)
 \;\leftrightarrow\;
-\bigl(\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid\bigr)
+\bigl(\metanegation^4(\Ymw\,\metanegation) \mweq \Svoid\bigr)
 \]
 \end{theorem}
 
@@ -174,12 +174,12 @@ $\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
 という自己参照の閉じ損ねが成立するとき、
 $\metanegation$ の反復適用は四段階収束則により
 $\metanegation^4(\Ymw\,\metanegation) \mweq \dfix$ を生成する。
-$\dfix$ のコンビネータ表現は $\Kvoid$ であるから、
-$\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid$ が従う。
+$\dfix$ のコンビネータ表現は $\Svoid$ であるから、
+$\metanegation^4(\Ymw\,\metanegation) \mweq \Svoid$ が従う。
 
-逆方向（$\leftarrow$）：$\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid$
-が成立するとき、$\metanegation\,\Kvoid \mweq \Ymw$ により、
-$\Kvoid$ に $\metanegation$ が作用すると $\Ymw$ が再生成される。
+逆方向（$\leftarrow$）：$\metanegation^4(\Ymw\,\metanegation) \mweq \Svoid$
+が成立するとき、$\metanegation\,\Svoid \mweq \Ymw$ により、
+$\Svoid$ に $\metanegation$ が作用すると $\Ymw$ が再生成される。
 再生成された $\Ymw$ はその定義により
 $\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
 を満たす。
@@ -191,7 +191,7 @@ $\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
 双方向演繹定理の左辺
 $\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
 は世俗諦の構成プロセス（境界生成の自己参照的展開）に対応し、
-右辺 $\metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid$
+右辺 $\metanegation^4(\Ymw\,\metanegation) \mweq \Svoid$
 は勝義諦への収束（大域的カット消去）に対応する。
 
 両者の同値（$\leftrightarrow$）が二諦の相互依存性を記述する。
@@ -298,7 +298,7 @@ K: \mathcal{C}_T \to \mathcal{C}^T
 界論の双方向演繹定理における
 \begin{align*}
 \text{左辺（世俗諦）} &: \Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation) \\
-\text{右辺（勝義諦）} &: \metanegation^4(\Ymw\,\metanegation) \mweq \Kvoid
+\text{右辺（勝義諦）} &: \metanegation^4(\Ymw\,\metanegation) \mweq \Svoid
 \end{align*}
 は、圏論的には
 \begin{align*}
@@ -343,7 +343,7 @@ K: \mathcal{C}_T \to \mathcal{C}^T
 極限軌道を意図的に切り捨てた部分的記述に過ぎない。
 
 完全な二諦の記述には、$\mathcal{B}$ の外側---
-$\Ymw$ と $\Kvoid$ のサイクル---が必要である。
+$\Ymw$ と $\Svoid$ のサイクル---が必要である。
 \end{theorem}
 
 \begin{proof}
@@ -397,7 +397,7 @@ $\otimes$ と $I$ という外部構造を所与とした上での内部的証�
 
 したがって、圏論モデリングの限界を超えるためには
 圏論を否定するのではなく、$\mathcal{B}$ の外側---
-$\Ymw$ と $\Kvoid$ のサイクル---を記述できる
+$\Ymw$ と $\Svoid$ のサイクル---を記述できる
 より包括的な枠組みが必要である。
 界論はその枠組みとして位置づけられる。
 \end{scholium}
@@ -414,7 +414,7 @@ $\Ymw$ と $\Kvoid$ のサイクル---を記述できる
  & \textbf{界論} & \textbf{圏論} \\
 \hline
 世俗諦 & $\Ymw$ による境界生成プロセス & アイレンベルク・ムーア圏 $\mathcal{C}^T$ \\
-勝義諦 & $\Kvoid$ への収束・$\dfix \vdash \dfix$ & クライスリ圏 $\mathcal{C}_T$ \\
+勝義諦 & $\Svoid$ への収束・$\dfix \vdash \dfix$ & クライスリ圏 $\mathcal{C}_T$ \\
 接続 & 双方向演繹定理（動的サイクル） & 比較関手 $K$（静的移行） \\
 停止 & $\metanegation^4 A \mweq \dfix$ & $T$-代数条件 \\
 限界 & なし（設計上） & $\mathcal{B}$ への截断 \\
@@ -425,7 +425,7 @@ $\Ymw$ と $\Kvoid$ のサイクル---を記述できる
 圏論による二諦モデリングは、界論の双方向演繹定理が記述する
 動的サイクルの静的截断として位置づけられる。
 クライスリ圏とアイレンベルク・ムーア圏は二諦の構造的骨格を捉えるが、
-$\Ymw$ と $\Kvoid$ のサイクルという推進力の根拠を記述しない。
+$\Ymw$ と $\Svoid$ のサイクルという推進力の根拠を記述しない。
 
 これは $\beta$簡約の動的意味論における問題---
 表示的意味論も操作的意味論も推進力を記述しなかった---と
