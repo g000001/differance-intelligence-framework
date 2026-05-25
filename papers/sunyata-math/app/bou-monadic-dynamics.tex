@@ -1,0 +1,614 @@
+% !TEX program = lualatex
+\RequirePackage{fix-cm}
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+
+%-------------------------------------------------------------------
+% 独自コマンド・設定（界論・顕現論マクロ群）
+%-------------------------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}
+\newcommand{\Svoid}{\mathbf{S}_{\emptyset}}
+\newcommand{\Bval}{\mathcal{B}}
+\newcommand{\Mdelta}{M_\delta}
+
+%-------------------------------------------------------------------
+% 定理環境
+%-------------------------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{remark}{注記}[section]
+\newtheorem{example}{事例}[section]
+\newtheorem{scholium}{補足}[section]
+\renewcommand{\proofname}{\textbf{Proof.}}
+
+%-------------------------------------------------------------------
+\begin{document}
+
+\title{二諦モデルの圏表現からみた Monadic Dynamics：\\
+時間表現の構造的限界}
+\author{千葉将臣}
+\date{2026-05-25}
+\maketitle
+
+\begin{abstract}
+本稿は、前稿「界論と圏論における二諦のモデリング」で確立した
+二諦の圏表現（クライスリ圏＝勝義諦・アイレンベルク・ムーア圏＝世俗諦）を
+分析の枠組みとして用い、Gogioso（2015）の Monadic Dynamics における
+時間表現の構造的限界を記述する。
+Monadic Dynamics は時間性をモナドから内生的に導出しようとした
+先駆的な試みであるが、
+（i）時間対象が対称モノイダル圏の外部構造への依存を解消できない極限的表現に留まること、
+（ii）時間逆行（時間の群構造）が物理的な時間の不可逆性と矛盾する不自然さを内包すること、
+という二つの構造的限界を持つ。
+これらの限界は Monadic Dynamics の欠陥ではなく、
+圏論が $\Bval$（二値截断部分圏）への射影として機能する必然的帰結として
+界論の枠組みから位置づけられる。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================
+\section{序論}
+%=============================================================
+
+Gogioso（2015）の Monadic Dynamics\cite{Gogioso2015} は、
+アリストテレスの「時間と変化は相互に定義し合う」という命題を
+圏論的に形式化することを主眼とした研究である。
+力学系をアイレンベルグ・ムーア代数として、
+Cauchy 面をクライスリ圏の自己同型として記述し、
+モナド $(T, \eta, \mu)$ から時間の概念を内生的に導出しようとした。
+
+前稿\cite{Chiba2026_nitatai}において、この試みに対して以下の位置づけを与えた。
+クライスリ圏は勝義諦（潜在的プロセスの層）に、
+アイレンベルク・ムーア圏は世俗諦（制度化された構造の層）に対応し、
+比較関手 $K$ が両者の接続を記述する。
+しかし圏論による二諦モデリング全体が $\Bval$（二値截断部分圏）への射影であり、
+界論の双方向演繹定理が記述する動的サイクルを完全には捉えられない。
+
+本稿はこの立場から Monadic Dynamics の時間表現を精査し、
+以下の二つの構造的限界を具体的に記述する。
+
+ただし本稿の評価は、Monadic Dynamics が数学的に誤っているという主張ではない。
+同論文の構成は、対称強モナドと対称モノイダル構造を明示的に仮定した上で、
+その内部で「変化から時間」を抽出する精密な形式化である。
+本稿が問題にするのは、顕現論・界論の意味での時間性---すなわち
+「ない」が「ある」より高次元であることから生じる非対称な境界生成過程---を、
+その圏論的形式化がどこまで内生化できるかという点である。
+
+\begin{enumerate}
+\item \textbf{極限的表現の限界}：
+  時間対象 $\mathbb{T} := TI$ は対称モノイダル圏という外部構造への
+  依存を解消できない。時間性の体系内部から導出は実際には外部構造内での極限構成であり、
+  真の意味で体系内部からの導出には到達していない。
+
+\item \textbf{$0$ から進めて逆行して元に戻る不自然さ}：
+  時間逆行（時間の群構造）を追加した場合、
+  形式上は「進行と逆行の相殺」が可能になる。
+  これは力学方程式の可逆性を記述するには有効である一方、
+  観測・測定・截断を経て生成される物理的・計算論的不可逆性を
+  時間対象そのものの内部構造としては表現しにくい。
+\end{enumerate}
+
+%=============================================================
+\section{Monadic Dynamics における時間表現の概要}
+%=============================================================
+
+\subsection{時間対象の定義}
+
+Monadic Dynamics において時間は以下のように定義される。
+
+\begin{definition}[時間対象（Gogioso 2015, Section 3.1.2）]
+対称強モナド $T$ が作用する対称モノイダル圏 $(\mathcal{C}, \otimes, I)$ において、
+\emph{時間対象}（time object）$\mathbb{T}$ を自明系 $I$ の自由歴史として定義する。
+\[
+\mathbb{T} \;\overset{\mathrm{def}}{=}\; T I
+\]
+foliation map
+\[
+\mathrm{foliate}_A \;\overset{\mathrm{def}}{=}\;
+T[\mathrm{rightUnitor}_A] \cdot t_{A,I} : A \otimes \mathbb{T} \longrightarrow TA
+\]
+によって、$\mathbb{T}$ は $TA$ の等時間葉の添字付けとして機能する。
+\end{definition}
+
+\begin{definition}[時間の可換モノイド構造]
+正準発展 $\mu_A: TTA \to TA$ と foliation map から、
+時間上の自己作用
+\[
+\nu := \mu_I \cdot \mathrm{foliate}_{\mathbb{T}} : \mathbb{T} \otimes \mathbb{T} \longrightarrow \mathbb{T}
+\]
+が定義され、$(\mathbb{T}, \nu, \eta_I)$ は可換モノイドをなす。
+これが Monadic Dynamics における時間並進の代数的実装である。
+\end{definition}
+
+\begin{definition}[時間逆行]
+Monadic Dynamics（Section 6.2.1）において、
+時間逆行とは
+\[
+i = i^{-1} : \mathbb{T} \to \mathbb{T}
+\]
+なる対合であって、余モノイド $(\mathbb{T}, \epsilon, \delta)$ に対して
+Hopf 則を満たすものとして定義される。
+この時間逆行が存在するとき、$(\mathbb{T}, \nu, \eta_I, i)$ は群をなす。
+\end{definition}
+
+\subsection{二諦圏表現との対応}
+
+Monadic Dynamics の二層構造は、二諦の圏表現と以下のように対応する。
+
+\begin{proposition}[Monadic Dynamics の二諦的読解]
+Monadic Dynamics において：
+\begin{align}
+\text{クライスリ圏 } \mathcal{C}_T &: \text{ 自由歴史（free histories）の層}
+  = \text{潜在的動力学} \leftrightarrow \text{勝義諦} \\
+\text{EM 圏 } \mathcal{C}^T &: \text{ 力学系（dynamical systems）の層}
+  = \text{具体的動力学} \leftrightarrow \text{世俗諦}
+\end{align}
+Cauchy 面がクライスリ圏の自己同型として記述されることは（Proposition 2.3.3）、
+勝義諦の「未顕現の可能性」からの顕現（初期値問題の設定）として読める。
+\end{proposition}
+
+%=============================================================
+\section{限界 I：極限的表現}
+%=============================================================
+
+\subsection{外部構造への依存}
+
+\begin{proposition}[時間対象の外部依存性]
+Monadic Dynamics の時間対象 $\mathbb{T} = TI$ は、
+時間性を完全に体系内部から導出はしていない。
+以下の二段階の外部構造が前提とされている。
+
+\begin{enumerate}
+\item \textbf{対称モノイダル圏の外部付与}：
+  $\mathbb{T} = TI$ が意味を持つためには、
+  単位対象 $I$ と積 $\otimes$ を持つ対称モノイダル圏 $(\mathcal{C}, \otimes, I)$
+  が先に与えられていなければならない。
+  この構造はモナド $(T, \eta, \mu)$ の定義より外側にあり、外部から課される。
+
+\item \textbf{foliation map の外部要請}：
+  $\mathrm{foliate}_A: A \otimes \mathbb{T} \to TA$ は自然変換として
+  その存在と性質（covering, 全射性）が外部から要請される。
+  モナド則から foliation map の存在は導出できない。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+モナド $(T, \eta, \mu)$ の公理はモナド則のみ：
+\[
+\mu \circ T\mu = \mu \circ \mu_T, \quad
+\mu \circ T\eta = \mu \circ \eta_T = \mathrm{id}_T
+\]
+これらの等式は $\otimes$, $I$, $\mathrm{foliate}$ を含まない。
+したがって $\mathbb{T} := TI$ という定義は、
+モナド則から論理的に導出されるものではなく、
+対称モノイダル構造という追加公理を要する構成である。
+\end{proof}
+
+\subsection{二諦圏表現における位置づけ}
+
+\begin{proposition}[極限的表現は $\Bval$ の境界に位置する]
+前稿の結果（定理 4.1）において、圏論による二諦モデリングは
+$\Bval$（二値截断部分圏）への射影として位置づけられた。
+
+Monadic Dynamics の時間対象 $\mathbb{T} = TI$ は
+この射影の「極限」に位置する。
+自明系 $I$ は $\Bval$ における最小の対象---
+区分可能な情報を持たない基点---であり、
+その自由歴史 $TI = \mathbb{T}$ は
+「$\Bval$ の外側から $\Bval$ の内部を記述しようとする極限的試み」として読める。
+
+しかし $\Bval$ の外側である $\dfix$（絶対不動点）へのアクセスには、
+$\metanegation^4 A \mweq \dfix$ という四段階収束が必要であり、
+$TI$ の構成はこのプロセスを経由しない。
+\end{proposition}
+
+\begin{scholium}
+Monadic Dynamics の Sec.\,3.1（「Time from Change」）において
+Gogioso が示した命題---
+「合成的構造を尊重するダイナミクスは標準的な時間概念を定義する」---は
+圏論的に正しい。
+しかしこれは $(\mathcal{C}, \otimes, I)$ という外部構造を所与としたとき、
+その内部で時間が標準的に定まるという主張であって、
+時間性の源泉が $\otimes$ と $I$ にあることを変えない。
+
+界論の視点では、$\otimes$ と $I$ という構造自体が
+世俗諦的な截断---すなわち合成可能な対象の同定---を前提としており、
+勝義諦（$\dfix$・$\Svoid$ の層）はその截断の前に位置する。
+\end{scholium}
+
+%=============================================================
+\section{限界 II：$0$ から進めて逆行して元に戻る不自然さ}
+%=============================================================
+
+\subsection{時間の群構造が要請する可逆性}
+
+\begin{proposition}[時間逆行の要請と物理的不可逆性の矛盾]
+Monadic Dynamics において時間逆行 $i: \mathbb{T} \to \mathbb{T}$
+（Hopf 則を満たす対合）が存在するとき、
+時間対象 $\mathbb{T}$ は群をなす。
+これは観測・測定・散逸を含む物理的時間の不可逆性と、
+以下の意味で緊張関係に立つ。
+
+群の公理より、任意の時間状態 $t: \mathbb{T}$ に対して
+\[
+\nu \cdot (t \otimes i(t)) = \eta_I
+\]
+が成立する。すなわち「$t$ だけ進んで $t$ だけ逆行すれば
+必ず初期時刻 $\eta_I$ に戻る」ことがモナドの構造として保証される。
+
+しかし熱力学的時間の矢・量子測定の非可逆性・計算ステップの不可逆性は、
+時間パラメータの反転だけでは消去できない履歴差分を生成する。
+したがって問題は、$\mathbb{T}$ 上の形式的な逆元の存在そのものではなく、
+その逆元が観測・截断後の情報回復まで含意するかのように読まれる点にある。
+界論の用語でいえば、時間逆行は $\Bval$ 内の可逆射としては表現できても、
+$\metanegation$ によって生成された境界差分を消去する演算ではない。
+\end{proposition}
+
+\subsection{量子力学の事例における顕在化}
+
+\begin{example}[量子力学における時間の周期性]
+Monadic Dynamics（Section 6.1.2）の量子力学への適用例では、
+時間対象を有限巡回群
+\[
+\mathbb{T} = \mathbb{Z}_N \quad (N \text{ : 時間の長さ})
+\]
+として構成する。
+時間状態の基底 $(|t_n\rangle)_{n:\mathbb{Z}_N}$ に対し、
+群構造
+\[
+\nu : |t_n\rangle \otimes |t_m\rangle \mapsto |t_{n+m}\rangle
+\]
+が与えられる。
+
+この構成では $n + N \equiv n \pmod{N}$ であるから、
+$N$ ステップ後に時間は必ず初期時刻に戻る。
+これは量子力学における時間発展の周期的構造を捉えているが、
+同時に以下の問題を内包する。
+
+\begin{enumerate}
+\item \textbf{測定の不可逆性が消える}：
+  量子測定（波動関数の収縮）は不可逆な操作であり、
+  測定後の状態から測定前の状態は一般に復元できない。
+  しかし $\mathbb{T} = \mathbb{Z}_N$ の群構造だけでは、
+  測定によって生じる截断差分を時間対象の内部に記録できない。
+
+\item \textbf{デコヒーレンスが扱えない}：
+  デコヒーレンス（量子重ね合わせの古典的截断）は不可逆過程であり、
+  環境との相互作用によって系の情報が環境に拡散する。
+  時間逆行 $i: |t_n\rangle \mapsto |t_{-n}\rangle$ は時間添字の反転を与えるが、
+  環境へ拡散した情報を再集約する操作までは与えない。
+  したがって不可逆性は、時間対象ではなく開放系・測定・截断の側に押し出される。
+\end{enumerate}
+\end{example}
+
+\subsection{力学系の事例における顕在化}
+
+\begin{example}[カオス力学系における時間の不可逆性]
+Monadic Dynamics（Section 6.1.1）の数学的力学系への適用では、
+$\mathbb{T} = \mathbb{R}$（または $\mathbb{N}$, $\mathbb{Z}$）として構成する。
+
+$\mathbb{T} = \mathbb{Z}$（整数全体）の場合、
+時間逆行 $i: t \mapsto -t$ が自然に存在し、
+任意の力学系 $\alpha: A \otimes \mathbb{Z} \to A$ に対して
+\[
+\mathrm{evolve}_{-t}[\mathrm{evolve}_t[a_0]] = a_0
+\]
+が保証される。
+
+しかし以下の力学系では、時間パラメータの可逆性と
+観測可能な履歴の可逆性が分離する。
+
+\begin{enumerate}
+\item \textbf{ストレンジアトラクタ}：
+  カオス力学系はリャプノフ指数が正であり、
+  初期条件の微小な差異が指数関数的に拡大する。
+  逆時間方向への発展は極端な精度での初期条件の再構成を要する。
+  形式方程式が可逆であっても、観測・計算可能な記述としては
+  截断誤差が境界差分として蓄積する。
+
+\item \textbf{散逸系}：
+  エネルギーを失いながらアトラクタへ収束する系は、
+  アトラクタ上の状態から収束前の状態を再現できない。
+  位相空間の体積が縮小する（リウヴィルの定理の破れ）ため、
+  時間逆行は体積拡大の操作を要するが、
+  これは物理的な散逸を時間対象の群構造だけでは表現できないことを示す。
+\end{enumerate}
+
+Monadic Dynamics はこれらの系を $\mathbb{T} = \mathbb{R}$ に乗せることができるが、
+その場合に表現されるのは時間添字の連続性であって、
+散逸・粗視化・観測によって生じる非対称な履歴差分そのものではない。
+この差分を扱うには、foliation map の被覆性だけでなく、
+被覆から漏れる截断の発生を別途記述しなければならない。
+\end{example}
+
+\subsection{計算論の事例における顕在化}
+
+\begin{example}[計算ステップの不可逆性]
+Monadic Dynamics（Section 6.1.5）の計算への適用において、
+「対話的入力のための時間」がエヴェレット的な枝分かれ時間として
+記述されうると指摘されている。
+
+これは Monadic Dynamics 自身が認識している限界の事例である。
+計算論における時間の本質は枝分かれ（非決定性）であり、
+可換モノイド $(\mathbb{T}, \nu, \eta_I)$ の線型構造だけでは
+この枝分かれを体系内部から導出できない。
+
+$\beta$簡約の動的意味論の観点から見ると、
+計算ステップの推進力は双方向演繹定理による $\dfix$ からの再起動であり、
+この再起動は一方向的（$\Ymw$ による境界生成から $\Svoid$ への収束）である。
+逆行すなわち「代入済みの項 $M[x:=N]$ から元の関数適用 $(\lambda x.\, M)\, N$ を復元する」
+ことは、追加の履歴情報なしには一意に定まらない。
+ここでも問題は、時間添字の逆行ではなく、截断された生成履歴の復元不能性である。
+\end{example}
+
+%=============================================================
+\section{Monadic Dynamics における時間表現の限界の事例考察}
+%=============================================================
+
+\subsection{折り返し点の問題}
+
+前節の三事例を統一的に記述する概念として、
+\emph{折り返し点の問題}を定義する。
+
+\begin{definition}[折り返し点の問題]
+Monadic Dynamics において、
+時間対象 $(\mathbb{T}, \nu, \eta_I)$ に時間逆行 $i$ が付加されると、
+任意の時間 $t$ に対して「折り返し点」
+\[
+P_t := \nu \cdot (t \otimes i(t)) = \eta_I
+\]
+が必ず存在する。すなわちどこまで進んでも必ず $\eta_I$ への折り返しが可能となる。
+
+\emph{折り返し点の問題}とは、この構造が物理的・計算論的な時間の不可逆性と
+矛盾することによって生じる記述の破綻である。
+\end{definition}
+
+\begin{theorem}[折り返し点の問題の発生条件]
+Monadic Dynamics において以下の条件を採用すると、
+折り返し点の問題が発生する。
+
+\begin{enumerate}
+\item 時間対象 $\mathbb{T}$ が群をなす（時間逆行 $i$ が存在する）。
+\item 時間対象 $\mathbb{T}$ が有限群をなす（$\mathbb{Z}_N$ 型の周期的時間）。
+\item Foliation map の全射性（epically strong monad）を、
+  観測・截断後の履歴差分まで被覆する条件として読む。
+\end{enumerate}
+
+逆に、これらの条件をすべて棄却すると、
+定理 3.1（時間と変化の相互定義）の証明に使用した構造が崩壊し、
+Monadic Dynamics が意図した意味での標準的時間対象の導出は弱まる。
+\end{theorem}
+
+\begin{proof}
+(1) 時間逆行が存在するとき、定義により $\nu \cdot (t \otimes i(t)) = \eta_I$。
+折り返し点の問題は直接成立する。
+
+(2) $\mathbb{T} = \mathbb{Z}_N$ とするとき、$N \cdot 1_{\mathbb{T}} = 0_{\mathbb{T}} = \eta_I$。
+$N$ ステップ後の折り返しが構造的に保証される。
+
+(3) Epically strong monad の条件
+$\forall A.\ \mathrm{foliate}_A: A \otimes \mathbb{T} \twoheadrightarrow TA$
+は自由歴史全体が時間葉で被覆されることを要請する。
+この被覆性を、単なる自由歴史の添字付けではなく、
+散逸・観測・粗視化によって生じた履歴差分の完全な回収可能性として読むならば、
+不可逆過程ではその読解が破綻する。
+したがって問題は foliation map の形式的全射性ではなく、
+それを顕現論的な履歴回復と同一視する解釈にある。
+一方、この条件を弱めると、Section 3.2.2（力学系としての時間の作用）の
+主要命題（$\mathrm{foliate}: (\_ \otimes \mathbb{T}, \bar\eta, \bar\mu) \to (T, \eta, \mu)$
+がモナドの射であること）による標準的時間作用の強さも同時に弱まる。
+\end{proof}
+
+\subsection{界論による位置づけ}
+
+\begin{proposition}[折り返し点の問題の界論的解釈]
+折り返し点の問題は、圏論が $\Bval$（二値截断部分圏）への射影であることから
+必然的に生じる。
+
+界論において時間は「差分・新規性の不可逆的な増大」として定義される。
+この定義は $\metanegation$（メタ否定演算子）の非対称性
+\[
+A \not\mweq \metanegation A
+\]
+から直接導かれる。$\metanegation$ の適用は非可逆であり、
+$\metanegation A$ から $A$ を復元する逆操作は
+界論の公理系に存在しない。
+
+これに対し、圏論の射 $f: A \to B$ は構造保存写像であり、
+可逆射（同型）の概念を自然に持つ。
+時間対象 $\mathbb{T}$ を圏論の対象として定義した時点で、
+逆射（時間逆行）の存在が数学的に排除されない。
+排除するためには追加の公理が必要となるが、
+その追加は折り返し点の問題（定理 4.2 の(1)）の解消を意味する。
+
+すなわち、Monadic Dynamics が時間逆行を「追加構造」として
+オプション扱いにしている（Section 6.2.1）ことは、
+圏論の枠組み内での最善の対処であるが、
+根本的な問題---$\Bval$ への射影から生じる可逆性バイアス---を
+解消するものではない。
+\end{proposition}
+
+\begin{proposition}[$\dfix$ の視点からの時間表現]
+界論において、時間は $\metanegation$ の反復適用の軌跡として内生的に定義される。
+
+初期対象 $A$ から出発して、
+\[
+A \to \metanegation A \to \metanegation^2 A \to \metanegation^3 A
+\to \metanegation^4 A \mweq \dfix
+\]
+という経路は「一方向の行程」であり、
+$\dfix$ への到達は不可逆である（折り返し点を持たない）。
+
+Monadic Dynamics の時間対象 $\mathbb{T} = TI$ は
+この経路の $\Bval$ 内への投影として読める。
+$TI$ は「$\metanegation$ の反復を $T$ というモナドで近似した対象」であり、
+近似の過程で $\metanegation$ の非対称性が $\otimes$ の対称性に置き換えられる。
+この置き換えが折り返し点の問題の起源である。
+\end{proposition}
+
+%=============================================================
+\section{限界の総括と展望}
+%=============================================================
+
+\subsection{二つの限界の統一的記述}
+
+\begin{theorem}[Monadic Dynamics の時間表現の構造的限界]
+Monadic Dynamics における時間表現の二つの限界---
+（I）極限的表現と（II）折り返し点の問題---は、
+同一の構造的根拠から生じる。
+
+その根拠は「圏論は $\Bval$（二値截断部分圏）への射影として機能する」
+という事実であり、これは圏論の欠陥ではなく設計上の特性である。
+
+具体的には：
+\begin{align*}
+\text{限界 I} &: 
+  \begin{array}[t]{l}
+  \Bval\text{ の外側（$\metanegation$ の非対称性）を}\\
+  \Bval\text{ 内の構造（$\otimes$, $I$）で代替した結果}
+  \end{array} \\
+\text{限界 II} &: 
+  \begin{array}[t]{l}
+  \Bval\text{ の外側（$\dfix$ への不可逆収束）を}\\
+  \Bval\text{ 内の構造（可逆射・群構造）で代替した結果}
+  \end{array}
+\end{align*}
+\end{theorem}
+
+\subsection{Monadic Dynamics の達成の正当な評価}
+
+\begin{scholium}[批判的評価の留保]
+本稿の分析は Monadic Dynamics を否定するものではない。
+
+Gogioso の達成は以下の二点で正当に評価される。
+
+\begin{enumerate}
+\item \textbf{アイレンベルグ・ムーア圏と力学系の同定}：
+  力学系を $T$-代数として、Cauchy 面をクライスリ圏の自己同型として
+  記述したことは、圏論的物理学における独自の貢献である。
+  この対応は時間表現の問題とは独立に成立する。
+
+\item \textbf{外部依存の明示的な同定}：
+  Monadic Dynamics は外部構造（$\otimes$, $I$, foliation map）への
+  依存を回避しようとしたのではなく、それらを明示的に組み込んだ上で
+  「どこまで構造内部で定められるか」を精密に記述した。
+  これは正直な形式化の態度である。
+\end{enumerate}
+
+Monadic Dynamics が頂いている限界は、
+圏論という記述言語を選んだ時点で構造的に確定する限界であり、
+個別の論文の限界ではない。
+界論はその限界の外側を記述しようとする試みとして
+Monadic Dynamics の後継に位置づけられる。
+\end{scholium}
+
+\subsection{界論における時間表現の方向}
+
+\begin{proposition}[界論的時間表現の特性]
+界論において時間は以下の特性を持つ内生的概念として記述される。
+
+\begin{enumerate}
+\item \textbf{不可逆性}：
+  $\metanegation$ は非対称演算子であり（$A \not\mweq \metanegation A$）、
+  時間は $\metanegation$ の反復軌道の単調増大として定義される。
+  逆操作（時間逆行）は公理系に含まれない。
+
+\item \textbf{内生性}：
+  時間は $\metanegation$ の反復から内生的に生成され、
+  $\mathbb{T} = TI$ のような外部構造への依存を持たない。
+  $\dfix$ への収束経路が時間の構造を決定する。
+
+\item \textbf{双方向性の意味の変換}：
+  双方向演繹定理における「逆方向」
+  （$\neg\Phi \vdash_{\Bval} \neg\Psi$）は
+  時間逆行ではなく勝義諦的逆引き---
+  $\Svoid$ から $\Ymw$ の再起動---として解釈される。
+  これは逆行ではなく再生成である。
+\end{enumerate}
+\end{proposition}
+
+%=============================================================
+\section{結語}
+%=============================================================
+
+本稿は Monadic Dynamics を二諦の圏表現という視点から分析し、
+その時間表現における二つの構造的限界を記述した。
+
+限界 I（極限的表現）は、時間対象 $\mathbb{T} = TI$ が
+対称モノイダル圏という外部構造への依存を解消できないことから生じ、
+時間性の体系内部から導出は実際には $\Bval$ 内での極限構成に留まることを示す。
+
+限界 II（折り返し点の問題）は、時間の群構造（時間逆行）が
+物理的・計算論的な時間の不可逆性と矛盾することから生じ、
+量子力学・カオス力学系・計算ステップの三つの事例において顕在化する。
+
+両限界は同一の根拠---圏論が $\Bval$ への射影として機能する---から
+必然的に導かれる。これは Monadic Dynamics の欠陥ではなく、
+圏論という記述言語の設計上の特性である。
+
+界論はこの限界の外側に位置し、
+$\metanegation$ の非対称性から不可逆な時間を内生的に生成し、
+双方向演繹定理による $\Ymw$—$\Svoid$ のサイクルとして
+時間の推進力を記述する。
+Monadic Dynamics の達成を包摂しながら、
+その記述が届かなかった層を記述することが界論の課題である。
+
+\begin{thebibliography}{9}
+\bibitem{Gogioso2015}
+Stefano Gogioso.
+\newblock Monadic dynamics.
+\newblock \emph{arXiv:1501.04921v1 [physics.hist-ph]}, 2015.
+
+\bibitem{Chiba2026_nitatai}
+千葉将臣.
+\newblock 界論と圏論における二諦のモデリング：構造的対応と限界の分析.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_beta}
+千葉将臣.
+\newblock $\beta$簡約の動的意味論：
+界論における双方向演繹定理による基礎付け.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_bdt}
+千葉将臣.
+\newblock 界論における双方向演繹定理の定式化.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_ymw}
+千葉将臣.
+\newblock 空数学における中道不動点コンビネータ
+$\mathbf{Y}_{\mathrm{mw}}$ の定式化と無明の幾何学的・証明論的実態.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{MacLane1971}
+Saunders Mac Lane.
+\newblock \emph{Categories for the Working Mathematician}.
+\newblock Springer, 1971.
+
+\bibitem{Kock1972}
+Anders Kock.
+\newblock Strong functors and monoidal monads.
+\newblock \emph{Archiv der Mathematik}, 23:113--120, 1972.
+
+\bibitem{Moggi1991}
+Eugenio Moggi.
+\newblock Notions of computation and monads.
+\newblock \emph{Information and Computation}, 93(1):55--92, 1991.
+\end{thebibliography}
+
+\end{document}
