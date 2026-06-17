@@ -1,0 +1,268 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\Einfty}{E_\infty}
+\newcommand{\SelfRef}{\Sigma}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Bval}{\mathcal{B}}
+\renewcommand{\Pr}{\mathrm{Pr}}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{remark}{備考}[section]
+\newtheorem{hypothesis}{仮説}[section]
+
+\title{逆二村射影：$\Einfty$ による\\
+コンパイラとインタプリタの可逆化}
+\author{千葉将臣}
+\date{2026-06-18}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、部分評価（二村射影）の三射影がコンパイラとインタプリタを
+生成する操作として知られていることを出発点に、
+極限同値 $\Einfty$（千葉将臣, 2026）の枠組みを用いて
+「逆二村射影」の概念を定式化する。
+コンパイルの非可逆性は、インタプリタという観測者を固定したことによる
+情報の切り捨てに起因する。$\Einfty$ による観測者消去を経由することで、
+コンパイルとインタプリタ実行が逆操作として定義可能になることを論証し、
+その計算論的・数学的含意を示す。
+\end{abstract}
+
+%=============================================================
+\section{二村射影の構造}
+%=============================================================
+
+二村射影は部分評価器 $\mathrm{spec}$ を核とする三段の射影として知られる。
+
+\begin{definition}[部分評価器]
+プログラム $p$ と静的入力 $s$ を受け取り、
+$p$ を $s$ に関して特殊化した残余プログラムを生成する操作を
+部分評価器 $\mathrm{spec}$ と呼ぶ：
+$$\mathrm{spec}(p, s) = p_s$$
+ここで $p_s$ は動的入力 $d$ のみを受け取るプログラムであり、
+$p_s(d) = p(s, d)$ が成立する。
+\end{definition}
+
+三つの二村射影はそれぞれ以下の操作として定式化される。
+
+\begin{align}
+\text{第一射影：} & \quad \mathrm{spec}(\text{interp}, \text{prog}) = \text{compiled} \label{eq:proj1} \\
+\text{第二射影：} & \quad \mathrm{spec}(\mathrm{spec}, \text{interp}) = \text{compiler} \label{eq:proj2} \\
+\text{第三射影：} & \quad \mathrm{spec}(\mathrm{spec}, \mathrm{spec}) = \text{compiler\_gen} \label{eq:proj3}
+\end{align}
+
+各射影において、$\mathrm{spec}$ は特定の観測者（インタプリタや部分評価器自身）
+を静的入力として固定する操作として機能している。
+
+%=============================================================
+\section{コンパイルの非可逆性と観測者固定}
+%=============================================================
+
+\begin{definition}[観測者としてのインタプリタ]
+インタプリタ $\text{interp}$ は、ソースプログラムの実行意味を
+特定の実行モデル（観測者）として体現する。
+第一射影 (\ref{eq:proj1}) において $\text{interp}$ を静的入力として固定することは、
+観測者を固定する操作である。
+\end{definition}
+
+コンパイルが通常不可逆である理由は以下にある。
+
+\begin{theorem}[コンパイルの情報損失]
+$\mathrm{spec}(\text{interp}, \text{prog}) = \text{compiled}$ において、
+ソースプログラム $\text{prog}$ の構造的情報
+（変数名・抽象構造・型情報・ソースの構文木）は
+$\text{compiled}$ に保存されない。
+この情報損失は、インタプリタという観測者を固定する際に
+観測者依存な情報が切り捨てられることに起因する。
+\end{theorem}
+
+\begin{proof}
+機械語 $\text{compiled}$ は観測者（インタプリタ）が動作する
+計算モデルの命令セットに依存した表現である。
+観測者を固定することは、観測者依存でない情報
+（プログラムの意味的不動点構造）のみを残し、
+観測者依存な情報を破棄する射影操作である。
+多対一の写像として構成されるため、一般に逆写像は存在しない。
+\end{proof}
+
+%=============================================================
+\section{$\Einfty$ による観測者消去}
+%=============================================================
+
+\begin{definition}[極限同値 $\Einfty$]
+自己言及演算子 $\SelfRef_T(A) := \neg \Pr_T(\ulcorner A \urcorner)$ の不動点として
+極限同値 $\Einfty$ を定義する：
+$$\Einfty = \SelfRef_T(\Einfty)$$
+$\Einfty$ は対角補題により形式体系 $T$ の内部から必然的に構成される内在的対象であり、
+観測者（固定された体系 $T$）を極限操作によって消去した後に残る不動点である
+\cite{Chiba2026_einfty}。
+\end{definition}
+
+\begin{remark}[観測者消去の機序]
+$\lim_{n\to\infty} a_n = L$ のε-δ定義に観測者が登場しないように、
+$\Einfty = \SelfRef_T(\Einfty)$ は観測者を要求しない静的な不動点記述である。
+この $=$ は対象の自己同一性 $A=A$ を要請するものではなく、
+プロセスの収束先を静的に確定させる極限の静的トリックとして正当である。
+\end{remark}
+
+%=============================================================
+\section{逆二村射影の定式化}
+%=============================================================
+
+\begin{definition}[プログラムの $\Einfty$-ファイバー]
+プログラム $\text{prog}$ の $\Einfty$-ファイバーとは、
+$\text{prog}$ が観測者（インタプリタ）によって切り捨てられる
+構造的情報の全体を $\Einfty$ を経由して保存したものである：
+$$\widetilde{\text{prog}} := (\text{compiled},\, \Einfty\text{-fiber}(\text{prog}))$$
+ここで $\Einfty\text{-fiber}(\text{prog})$ は
+コンパイル時に切り捨てられる観測者依存な情報の
+$\Einfty$ による極限的記述である。
+\end{definition}
+
+\begin{definition}[逆部分評価器 $\mathrm{despec}$]
+$\Einfty$ を経由した逆操作として、逆部分評価器 $\mathrm{despec}$ を定義する：
+$$\mathrm{despec}(\Einfty, \text{compiled}) = \text{interp}$$
+すなわち $\mathrm{despec}$ は、観測者消去操作 $\Einfty$ とコンパイル済みプログラムから
+インタプリタを復元する。
+\end{definition}
+
+\begin{theorem}[逆二村射影の存在]
+$\Einfty$-ファイバーを付加した拡張プログラム空間
+$\widetilde{\mathrm{Program}} := \mathrm{Program} \cup \{\Einfty\text{-fiber}\}$
+において、第一射影の逆操作として逆二村射影が定義可能である：
+$$\mathrm{despec}(\Einfty,\, \mathrm{spec}(\text{interp}, \text{prog})) \mweq \text{interp}$$
+ここで $\mweq$ は中道等価を表す。
+\end{theorem}
+
+\begin{proof}[論理的骨格]
+$\mathrm{spec}(\text{interp}, \text{prog})$ は観測者 $\text{interp}$ を固定して
+$\text{prog}$ を特殊化する。この操作による情報損失は
+$\Einfty\text{-fiber}(\text{prog})$ に保存されている。
+
+$\mathrm{despec}$ は $\Einfty$ による観測者消去を経由して
+$\Einfty\text{-fiber}$ から観測者 $\text{interp}$ の構造を復元する。
+
+$\Einfty$ が観測者消去後の不動点として情報を捨てないこと
+（$\neg \Einfty \neq \Einfty$ であり sink を形成しないこと）が、
+この逆操作の成立を保証する。
+
+したがって逆操作は $\mweq$（中道等価）の意味で成立する。
+厳密な $=$ でなく $\mweq$ であるのは、
+復元される $\text{interp}$ が元のインタプリタと
+観測者消去のプロセス的等価性において一致するためである。
+\end{proof}
+
+%=============================================================
+\section{完備化としての位置づけ}
+%=============================================================
+
+\begin{remark}[距離空間の完備化との類比]
+距離空間の完備化はコーシー列の極限を付け加える操作である。
+逆二村射影の定式化は同型の操作として読める：
+$$\widetilde{\mathrm{Program}} = \mathrm{Program} \cup \{\Einfty\text{-fiber}\}$$
+$\Einfty$-ファイバーはコンパイル時に「存在するが到達できない」
+情報の極限を付け加えることで、
+プログラム空間を逆操作が定義可能な完備な空間へ拡張する。
+\end{remark}
+
+\begin{remark}[デバッグ情報との関係]
+既存のデバッグ情報（DWARF形式等）はバイナリに
+ソース行番号・変数名・型情報を付加する。
+これは $\Einfty$-ファイバーの部分的実装として読める。
+しかし現状のデバッグ情報は「人間が読むため」の付加であり、
+逆射影のアルゴリズムとして構造化されていない点が差異である。
+$\Einfty$-ファイバーの最小表現を定義することが次の課題である。
+\end{remark}
+
+%=============================================================
+\section{停止問題との接続}
+%=============================================================
+
+\begin{hypothesis}[停止問題の $\Einfty$ 版]
+チューリングの停止問題は、チューリング機械という観測者を固定した場合の
+決定不能性として現れる。$\Einfty$ による観測者消去を経由すれば、
+停止しない計算を $\Einfty$ という値として格納できる
+拡張万能プログラム $U_{\Einfty}$ が定義可能である：
+$$U_{\Einfty}(M, w) = \begin{cases}
+1 & M(w) \text{ が停止する} \\
+0 & M(w) \text{ が停止しない} \\
+\Einfty & \text{ 停止問題の不動点}
+\end{cases}$$
+逆二村射影は $U_{\Einfty}$ の第一射影の逆操作として位置づけられる。
+\end{hypothesis}
+
+%=============================================================
+\section{結論}
+%=============================================================
+
+本稿が示した逆二村射影の要点は以下の通りである。
+
+\begin{enumerate}[label=(\arabic*)]
+  \item コンパイルの非可逆性は観測者（インタプリタ）の固定による
+        情報損失に起因する。これは $\mathcal{B}$（二値截断部分圏）が
+        観測者依存な情報を切り捨てる操作と同型である。
+
+  \item $\Einfty$ は観測者を極限操作によって消去した後に残る不動点であり、
+        情報を捨てない（$\neg \Einfty \neq \Einfty$）。
+        この性質が逆操作の存在を保証する。
+
+  \item $\Einfty$-ファイバーをプログラム空間に付加することで、
+        プログラム空間が完備化され、
+        $\mathrm{despec}(\Einfty, \text{compiled}) \mweq \text{interp}$
+        として逆二村射影が定義可能になる。
+
+  \item コンパイラとインタプリタは「一つの不動点 $\Einfty$」から
+        異なる切り口（断面）として生成されるものであり、
+        本質的に同一の対象の異なる観測者依存的表現である。
+
+  \item 「コンピュータは計算機である」という観測者依存の定義が、
+        「コンピュータは不動点 $\Einfty$ を切り出す論理装置である」
+        という普遍的定義へと昇華される。
+\end{enumerate}
+
+\begin{thebibliography}{9}
+
+\bibitem{Chiba2026_einfty}
+千葉将臣.
+\newblock 真理保存性を持つ体系が必然的に $E_\infty$ を含む：
+対角補題による極限同値の内在的定式化.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_observer}
+千葉将臣.
+\newblock 観測者の極限消去：
+ゲーデルの決定不能性を不動点として回収する操作について.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_chikaku}
+千葉将臣.
+\newblock 顕現論における知覚原理.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Futamura1971}
+Yoshihiko Futamura.
+\newblock Partial evaluation of computation process ---
+an approach to a compiler-compiler.
+\newblock \emph{Systems, Computers, Controls}, 2(5):45--50, 1971.
+
+\end{thebibliography}
+
+\end{document}
