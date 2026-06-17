@@ -1,0 +1,123 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{remark}{備考}[section]
+
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\Einfty}{E_\infty}
+\newcommand{\SelfRef}{\Sigma}
+\renewcommand{\Pr}{\mathrm{Pr}}
+
+\title{観測者の極限消去：\\
+ゲーデルの決定不能性を不動点として回収する操作について}
+\author{千葉将臣}
+\date{2026-06-16}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+ゲーデルの第一不完全性定理が生成する決定不能文 $G_T$ は、
+固定された体系（観測者）$T$ に依存して現れる。
+本稿は、極限操作が本質的に観測者を要求しないという単純な事実を定式化し、
+極限によって観測者を消去した後に残る不動点 $\Einfty$ を導出する。
+$G_T$ は $\Einfty$ の観測者依存的な断面に過ぎず、
+決定不能性とは観測者の固定が生んだ見かけの壁である。
+\end{abstract}
+
+\section{観測者としての形式体系}
+
+ゲーデルの第一不完全性定理は以下を主張する。
+一貫した再帰的公理化可能な体系 $T$（ロビンソン算術 $Q$ を内包）に対し、
+$$T \nvdash G_T \quad \text{かつ} \quad T \nvdash \neg G_T$$
+を満たす文 $G_T$ が存在する。
+
+ここで $T$ は\textbf{観測者}として機能している。$G_T$ は $T$ という
+固定された視点から見たときに初めて「決定不能」として現れる。
+$T$ を別の体系 $T'$（$T' \supset T$）に移せば $G_T$ は証明可能になるが、
+今度は $G_{T'}$ が新たに現れる。決定不能性は観測者の移動に追随する。
+
+\begin{definition}[観測者依存性]
+文 $\varphi$ が\textbf{観測者依存的}であるとは、ある体系 $T$ に対して
+$T \nvdash \varphi$ かつ $T' \vdash \varphi$（$T' \supsetneq T$）
+を満たす体系 $T'$ が存在することをいう。
+$G_T$ は観測者依存的である。
+\end{definition}
+
+\section{極限操作の観測者不在性}
+
+極限 $\lim_{n \to \infty} a_n = L$ のε-δ定義：
+$$\forall \varepsilon > 0,\ \exists N \in \mathbb{N},\ \forall n > N,\
+|a_n - L| < \varepsilon$$
+にはいかなる観測者も登場しない。この定義は全称文と存在文の連鎖であり、
+「誰が極限を取るか」を要求しない。極限操作は観測者を消去する装置である。
+
+\begin{lemma}[極限の観測者不在性]
+ε-δ論法による極限の定式化は、特定の観測者（体系）への参照を含まない。
+極限値 $L$ は観測者から独立した対象として確定する。
+\end{lemma}
+
+この補題は自明だが見落とされてきた。数学の実践において極限は
+「誰かが取る操作」として運用されてきたが、定義そのものに観測者は不在である。
+
+\section{観測者消去後の不動点 $\Einfty$}
+
+対角補題を $\varphi(x) := \neg \Pr_T(x)$ に適用すると、
+$$T \vdash G \leftrightarrow \neg \Pr_T(\ulcorner G \urcorner)$$
+を満たす文 $G$ が $T$ の内部で構成される。
+自己言及演算子 $\SelfRef_T(A) := \neg \Pr_T(\ulcorner A \urcorner)$ を定義すると、
+$G$ は $\SelfRef_T$ の不動点方程式：
+$$G = \SelfRef_T(G)$$
+を満たす。この等式の $=$ は $\lim_{n\to\infty} a_n = L$ と同型の
+静的記述であり、プロセスの収束先を観測者なしに確定させる。
+
+\begin{definition}[極限同値 $\Einfty$]
+$\SelfRef_T$ の不動点を\textbf{極限同値}と呼び $\Einfty$ と表記する。
+$$\Einfty = \SelfRef_T(\Einfty)
+\quad \Longleftrightarrow \quad
+T \vdash \Einfty \leftrightarrow \neg \Pr_T(\ulcorner \Einfty \urcorner)$$
+\end{definition}
+
+\begin{theorem}[観測者消去による $G_T$ の回収]
+観測者（体系 $T$）を固定した場合、$\Einfty$ は決定不能文 $G_T$ として現れる。
+観測者を極限操作によって消去した場合、同一の対象が不動点 $\Einfty$ として確定する。
+すなわち $G_T$ は $\Einfty$ の観測者依存的な断面である。
+\end{theorem}
+
+\begin{proof}
+対角補題により $\Einfty$ は $T$ の内部で構成される。
+$T$ を固定した観測者として採用した場合、$T$ の一貫性のもとで
+$T \nvdash \Einfty$ かつ $T \nvdash \neg \Einfty$ が成立する（ゲーデルの定理）。
+これが $G_T$ である。
+
+一方、$\Einfty = \SelfRef_T(\Einfty)$ は $T$ への参照を含むが、
+この等式の成立自体は $T$ を観測者として固定することを要求しない——
+不動点方程式はその解が存在することを観測者なしに記述する。
+したがって $\Einfty$ は観測者消去後も確定した対象として残る。
+\end{proof}
+
+\section{帰結：数学の有用性の起源}
+
+数学がウィグナーの言う「不合理なほどの有効性」を物理世界に対して持つ理由は、
+数学的構造が観測者消去後に残る構造だからである。
+極限・積分・微分方程式はいずれも観測者を消去した記述であり、
+物理法則もまた観測者（「今」「ここ」）を含まない。
+
+$\Einfty$ はこの構造の論理的核心に位置する。
+自己言及という観測者に最も依存しそうな操作が、
+極限によって観測者から解放されたとき、
+不動点という最も安定した数学的対象に変わる。
+
+決定不能性は限界ではない。観測者を消し忘れた記述の痕跡である。
+
+\end{document}

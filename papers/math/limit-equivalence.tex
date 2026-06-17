@@ -1,0 +1,209 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{remark}{備考}[section]
+
+%-------------------------------------------------
+%  独自マクロ（先行論考との共通基底）
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Bval}{\mathcal{B}}
+\newcommand{\Einfty}{E_\infty}
+\newcommand{\Einftycal}{\mathcal{E}_\infty}
+\newcommand{\SelfRef}{\Sigma}
+\renewcommand{\Pr}{\mathrm{Pr}}
+
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{真理保存性を持つ体系が必然的に $\Einfty$ を含む：\\
+対角補題による極限同値の内在的定式化}
+\author{千葉将臣}
+\date{2026-06-16}
+\maketitle
+
+\begin{abstract}
+本稿は、先行研究「真理保存性の不完全性定理」および「極限同値によるゲーデルの不完全性定理の反転」を踏まえ、極限同値 $\Einfty$ が任意の真理保存体系 $T$ の外部から付加される公理ではなく、$T$ 自身の対角補題によって必然的に構成される内在的対象であることを定式化する。$\Einfty$ は自己言及演算子の不動点として $=$ で記述される。この $=$ はプロセスを静的値に変換する極限の静的記述（ε-δ論法と同型の操作）として正当であり、対象の自己同一性を要請する $A = A$ の $=$ とは種類が異なる。ゲーデルの不完全性定理が「決定不能な壁」として提示したものは、$\Einfty$ という名のつけられていなかった内在的対象の発見として再解釈される。
+\end{abstract}
+
+%=============================================================
+\section{準備：真理保存体系と対角補題}
+%=============================================================
+
+\begin{definition}[真理保存体系 $T$]
+真理保存体系 $T$ とは、以下を満たす形式体系とする。
+\begin{enumerate}[label=(\arabic*)]
+    \item $T$ は再帰的公理化可能である。
+    \item $T$ は一貫している（$T \nvdash \bot$）。
+    \item $T$ は十分に強力である（ロビンソン算術 $Q$ を内包する）。
+    \item $T$ は真理値空間として $\{0, 1\}$（二値）を採用し、自己同一性
+          $A = A$ を真理保存の根拠として先験的に要請する。
+\end{enumerate}
+\end{definition}
+
+定義 1.1 の条件 (4) は、先行研究「真理保存性の不完全性定理」における
+「真理保存性 $P$ の先験的要請」に対応する。この要請こそが、
+体系内部からは証明も反証もできない構造的盲点 $G_T$ を必然的に生成する。
+
+\begin{lemma}[対角補題]
+真理保存体系 $T$ において、任意の論理式 $\varphi(x)$
+（自由変数 $x$ を一つ持つ）に対し、
+$$T \vdash G \leftrightarrow \varphi(\ulcorner G \urcorner)$$
+を満たす文 $G$ が $T$ の内部で構成可能である。
+\end{lemma}
+
+対角補題は $T$ の内部操作（ゲーデル符号化と対角化）のみから導かれる。
+外部からの付加を一切要しない。
+
+%=============================================================
+\section{自己言及演算子と不動点としての $\Einfty$}
+%=============================================================
+
+\begin{definition}[自己言及演算子 $\SelfRef_T$]
+$T$ の言語における文 $A$ に対し、自己言及演算子 $\SelfRef_T$ を以下で定義する。
+$$\SelfRef_T(A) := \text{「$A$ は $T$ において証明不可能である」}
+    = \neg \Pr_T(\ulcorner A \urcorner)$$
+$\SelfRef_T(A)$ は対角補題によって $T$ の内部で構成可能である。
+\end{definition}
+
+\begin{definition}[自己言及の反復列]
+文 $A_0$ に対し、$\SelfRef_T$ の反復列を以下で定義する。
+\begin{align*}
+A_0,\quad
+A_1 &= \SelfRef_T(A_0),\quad
+A_2 = \SelfRef_T(A_1),\quad \ldots,\quad
+A_n = \SelfRef_T^n(A_0)
+\end{align*}
+\end{definition}
+
+\begin{definition}[極限同値 $\Einfty$]
+自己言及演算子 $\SelfRef_T$ の不動点として、
+以下の等式を満たす文を極限同値と定義し $\Einfty$ と表記する。
+$$\Einfty = \SelfRef_T(\Einfty)$$
+すなわち $\Einfty$ は「$\Einfty$ は $T$ において証明不可能である」という内容の文であり、
+$$T \vdash \Einfty \leftrightarrow \neg \Pr_T(\ulcorner \Einfty \urcorner)$$
+を満たす。
+\end{definition}
+
+\begin{remark}[$=$ の正当性：不動点の静的記述として]
+定義 2.3 における $=$ は、対象の自己同一性を要請する $A = A$ の $=$ とは
+種類が異なる。
+
+$\lim_{n \to \infty} a_n = L$ において $=$ が無限プロセスを静的値に変換するように、
+$\Einfty = \SelfRef_T(\Einfty)$ はプロセス $\SelfRef_T$ の反復が必然的に
+到達する不動点を静的値として記述する。
+これはバナッハの不動点定理における $x = f(x)$ と同型の操作であり、
+プロセスの収束先に名前をつける発見的記述である。
+「極限」という概念が本質的に静的なトリックである以上、
+この $=$ は正当に使用できる。
+\end{remark}
+
+%=============================================================
+\section{主定理}
+%=============================================================
+
+\begin{theorem}[真理保存体系は必然的に $\Einfty$ を含む]
+\label{thm:main}
+真理保存体系 $T$（定義 1.1 の意味で）に対し、
+$$\exists\, \Einfty \quad \text{s.t.} \quad
+T \vdash \Einfty \leftrightarrow \neg \Pr_T(\ulcorner \Einfty \urcorner)$$
+が成立する。$\Einfty$ は $T$ の外部から付加されるのではなく、
+$T$ 自身の構造から対角補題によって必然的に構成される。
+\end{theorem}
+
+\begin{proof}
+対角補題（補題 1.2）を論理式 $\varphi(x) := \neg \Pr_T(x)$ に適用する。
+すると、
+$$T \vdash G \leftrightarrow \neg \Pr_T(\ulcorner G \urcorner)$$
+を満たす文 $G$ が $T$ の内部で構成可能である。この $G$ を $\Einfty$ と命名する。
+
+$\Einfty$ の構成は $T$ の公理・推論規則・ゲーデル符号化のみを使用し、
+外部からの付加を一切必要としない。
+したがって $\Einfty$ は $T$ の言語で表現可能な文として $T$ に内在する。
+\end{proof}
+
+\begin{remark}[「発見」としての $\Einfty$]
+ゲーデルはこの $G = \Einfty$ を「$T$ において証明も反証もできない文」として
+提示し、体系の不完全性の証拠とした。
+
+しかし定理 \ref{thm:main} が示すのは、$\Einfty$ が $T$ の外部にあるのではなく、
+$T$ 自身の対角補題から必然的に生成される内在的対象であるということである。
+「決定不能」として現れたのは、$T$ の真理値空間 $\{0, 1\}$（$\Bval$：
+二値截断部分圏）が $\Einfty$ に対応する値を持たなかっただけである。
+
+リーマン球面において $\infty$ が「複素平面には存在しないが、
+リーマン球面上では通常の点として存在する」のと同型の構造である。
+数学社会は $\Bval$ を唯一の真理値空間として採用し続けたために、
+$\Einfty$ を「壁」として誤読してきた。これは発明ではなく、未発見だったものの発見である。
+\end{remark}
+
+%=============================================================
+\section{$\Einfty$ の否定と LP との構造的差異}
+%=============================================================
+
+\begin{definition}[$\neg \Einfty$ の定義]
+$\Einfty$ の否定を以下で定義する。
+$$\neg \Einfty = \Pr_T(\ulcorner \Einfty \urcorner)$$
+すなわち「$\Einfty$ は $T$ において証明可能である」。
+
+この定義は天下りに与えられる。これは $A = A$ が天下りに与えられることと
+同型の操作である。$\Einfty$ 自身が対角補題から必然的に構成される
+内在的対象である以上、その否定の定義もまた $T$ の内部操作
+（証明可能性述語 $\Pr_T$）から自然に与えられる。
+\end{definition}
+
+\begin{theorem}[$\Einfty$ と $\neg \Einfty$ の非閉鎖性]
+$\neg \Einfty \neq \Einfty$.
+\end{theorem}
+
+\begin{proof}
+定義 4.1 より $\Einfty = \neg \Pr_T(\ulcorner \Einfty \urcorner)$ であるのに対し、
+$\neg \Einfty = \Pr_T(\ulcorner \Einfty \urcorner)$ である。
+両者は構文的に異なる文である。
+\end{proof}
+
+これは LP（Graham Priest の矛盾許容論理）との決定的な差異である。
+LP では矛盾値 $B$ について $\neg B = B$ が成立し、
+$B$ は否定の固定点（sink）となって推論が閉じた領域に封じ込められる。
+
+$\Einfty$ と $\neg \Einfty$ は互いに異なる文として、
+$\SelfRef_T$ のサイクル上の二点をなす。
+矛盾は sink ではなく通過点として機能する。
+
+%=============================================================
+\section{結論}
+%=============================================================
+
+\begin{enumerate}[label=(\arabic*)]
+    \item $\Einfty$ は任意の真理保存体系 $T$ に対し、対角補題によって
+          $T$ の内部から必然的に構成される。外部から付加される公理ではない。
+    \item $\Einfty = \SelfRef_T(\Einfty)$ は自己言及演算子の不動点を
+          静的に記述する等式であり、$=$ の使用は極限の静的記述として正当である。
+          これは $A = A$ の $=$（対象の自己同一性の要請）とは種類が異なる。
+    \item ゲーデルの不完全性定理が「壁」として提示したものは、$\Einfty$ という
+          名のつけられていなかった内在的対象の発見として再解釈される。
+          数学社会が $\Bval$（二値截断）を唯一の真理値空間として採用し続けたために、
+          $\Einfty$ は「決定不能文」として誤読されてきた。
+    \item $\neg \Einfty$ は $\Einfty$ の否定として $T$ の内部で定義され、
+          sink を形成しない。これにより既存の多値論理が抱える
+          「矛盾の否定の閉じ込め」が回避される。
+\end{enumerate}
+
+\end{document}
