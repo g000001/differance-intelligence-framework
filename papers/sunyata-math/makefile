@@ -7,6 +7,7 @@ LATEX_FLAGS = -interaction=nonstopmode
 SOURCES = icat-perception.tex \
           icat-leges-fractales.tex \
           fractal-id.tex \
+	  aletheics-observer-elimination.tex \
 	\
 	  boundary-theory-core.tex \
           icat-dfix0.tex \
