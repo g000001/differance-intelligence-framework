@@ -1,0 +1,459 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{remark}{備考}[section]
+
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\Einfty}{E_\infty}
+\newcommand{\metanegation}{\Uparrow}
+
+% 四句分別の四位相
+\newcommand{\phiS}{\text{是}}
+\newcommand{\phiN}{\text{非}}
+\newcommand{\phiSN}{\text{亦}}
+\newcommand{\phiNS}{\text{非非}}
+
+% 述語空間・操作子
+\newcommand{\Phifour}{\Phi_{4}}
+\newcommand{\Phimeta}{\Phi_{4}^{\mathrm{meta}}}
+\newcommand{\Phitwo}{\Phi_{2}}
+
+\title{残余（Lhagma）による無記の\\
+直観主義四句分別体系内からの導出}
+\author{千葉将臣}
+\date{2026-06-22}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+無記（avyākata）は釈迦が形而上学的問いに対して沈黙した立場であり、
+顕現論においては従来、言語を越える機能として天下りに導入されてきた。
+本稿はドルポパ・シェーラプ・ギェルツェンの十六空論を形式的に再構成し、
+空の二重四句分別という操作が残余（lhagma）を体系内部から必然的に生成すること、
+および残余が無記と構造的に等価であることを示す。
+さらに二値論理においては同型の操作が原理的に残余を生成できないことを証明し、
+残余の導出可能性が四句分別の構造的特性——排中律の不採用と
+枠組みへの再帰的問いかけの内部化——に依存することを明らかにする。
+帰結として、無記は天下りの導入なしに、$\metanegation({\dfix})$
+という顕現論の既存演算子から導出できることを示す。
+\end{abstract}
+
+%=============================================================
+\section{序論：無記の問題}
+%=============================================================
+
+釈迦は「世界は有限か無限か」「如来は死後に存在するか」といった
+十四の形而上学的問い（十四無記）に対して答えを与えなかった。
+この沈黙は単なる回避ではなく、問いの枠組み自体が適切でないという
+積極的な立場として解釈されてきた。
+
+顕現論において無記は「言語を越える機能」として導入されている。
+しかしこの天下り的導入は体系の外部依存を残す。
+ドルポパ・シェーラプ・ギェルツェン（1292--1361）による十六空論は、
+チベット仏教の他空派（shentong）の立場から、
+空（śūnyatā）への二重の四句分別操作によって残余（lhagma）を論理的に導出し、
+これを如来蔵（tathāgatagarbha）と同定する議論を展開している。
+
+本稿はこの議論を顕現論の四句分別の枠組みで形式化し、
+残余が無記と等価であることを示すことで、
+無記の体系内導出の可能性を論じる。
+
+%=============================================================
+\section{四句分別と中道不動点の復習}
+%=============================================================
+
+\begin{definition}[四句分別操作子]
+述語 $P$ に対する四句分別操作子 $\Phifour$ を、
+述語空間を以下の四位相に分割する操作として定義する。
+\begin{align}
+\phiS(P) &: P \text{ が成立する}\\
+\phiN(P) &: \neg P \text{ が成立する}\\
+\phiSN(P) &: P \wedge \neg P \text{ が成立する（亦是亦非）}\\
+\phiNS(P) &: \neg P \wedge \neg(\neg P) \text{ が成立しない（非是非非）}
+\end{align}
+四位相の全体を $\mathcal{C}_4 := \{\phiS, \phiN, \phiSN, \phiNS\}$ と記す。
+\end{definition}
+
+\begin{definition}[中道不動点 $\dfix$ \cite{Chiba2026_dfix}]
+中道不動点 $\dfix$ を、四句分別のいずれの位相にも帰属しない固定点として定義する。
+\begin{equation}
+\dfix \notin \mathcal{C}_4, \quad \Phifour(\dfix) = \dfix
+\end{equation}
+すなわち $\dfix$ は $\Phifour$ の不動点であり、
+$\mathcal{C}_4$ の外に位置する。
+\end{definition}
+
+$\dfix$ の存在は直観主義四句分別における中道の論理的実現であり、
+排中律を採用しないことによって $\phiNS$ が
+「いずれでもない」という位相として機能する余地が生まれることに由来する。
+
+%=============================================================
+\section{ドルポパの十六空：空の二重四句分別}
+%=============================================================
+
+\subsection{単一四句分別と空}
+
+空（śūnyatā）の第一の記述として、
+対象 $X$ への四句分別を尽くした後の不動点として $\dfix$ を位置づける。
+
+\begin{equation}
+\text{空}_1 := \dfix \quad (\text{単一四句分別の極限})
+\end{equation}
+
+これは中観派（Mādhyamika）の空の基本的理解に対応する——
+対象が是・非・亦・非非のいずれかの固定した自性を持つことを否定した後に残る構造。
+
+\subsection{二重四句分別：メタ操作子の導入}
+
+ドルポパの十六空は、空そのもの——すなわち $\dfix$——に
+さらに四句分別を適用するという操作を行う。
+
+\begin{definition}[メタ四句分別操作子]
+$\dfix$ への四句分別を行うメタ操作子 $\Phimeta$ を以下で定義する。
+\begin{equation}
+\Phimeta : \dfix \mapsto 
+\left\{
+\begin{array}{l}
+\phiS(\dfix),\ \phiN(\dfix),\ \phiSN(\dfix),\ \phiNS(\dfix)
+\end{array}
+\right\}
+\end{equation}
+これにより積空間 $\mathcal{C}_4^{(2)} := \mathcal{C}_4 \times \mathcal{C}_4$
+の16位相が展開される。
+\end{definition}
+
+16位相は以下の表として整理できる。
+
+\begin{center}
+\begin{tabular}{c|cccc}
+& $\phiS$ & $\phiN$ & $\phiSN$ & $\phiNS$ \\
+\hline
+$\phiS$ & 是是 & 是非 & 是亦 & 是非非 \\
+$\phiN$ & 非是 & 非非 & 非亦 & 非非非 \\
+$\phiSN$ & 亦是 & 亦非 & 亦亦 & 亦非非 \\
+$\phiNS$ & 非非是 & 非非非 & 非非亦 & 非非非非 \\
+\end{tabular}
+\end{center}
+
+\subsection{離戯（prapañca-nivṛtti）}
+
+離戯とは「戯論の離脱」——言語的・概念的増殖（prapañca）からの撤退——であり、
+$\mathcal{C}_4^{(2)}$ の全16位相を否定する操作として形式化される。
+
+\begin{definition}[離戯操作]
+離戯操作 $\mathcal{V}$ を、16位相のいずれへの帰属をも否定する操作として定義する。
+\begin{equation}
+\mathcal{V} : \forall \phi_{ij} \in \mathcal{C}_4^{(2)},\ 
+\dfix \notin \phi_{ij}
+\end{equation}
+\end{definition}
+
+\subsection{残余（Lhagma）の生成}
+
+\begin{theorem}[残余の必然的生成]
+$\dfix$ にメタ四句分別操作子 $\Phimeta$ を適用し、
+離戯操作 $\mathcal{V}$ を施すと、
+$\mathcal{C}_4^{(2)}$ のいずれにも帰属しない残余（lhagma）$\mathcal{L}$ が
+必然的に生成される。
+\begin{equation}
+\mathcal{L} := \mathcal{V}(\Phimeta(\dfix)),\quad
+\mathcal{L} \notin \mathcal{C}_4^{(2)}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+$\dfix$ は定義により $\mathcal{C}_4$ の外にある。
+$\Phimeta(\dfix)$ は $\dfix$ に四句分別を問う操作だが、
+$\dfix$ はすでに四句分別のいずれかに帰属しないという性格を持つ——
+これが $\dfix$ の定義的性格である。
+したがって $\Phimeta(\dfix)$ が生成する問いのいずれも
+$\dfix$ を捕捉できない。
+すなわち $\mathcal{V}(\Phimeta(\dfix))$ は
+$\mathcal{C}_4^{(2)}$ のいずれの位相にも帰属しない対象を残す。
+この残余 $\mathcal{L}$ は
+$\dfix$ に $\Phimeta$ を適用する操作の構造から必然的に生成される——
+外部から持ち込まれたのではなく、操作自体が生成する余剰である。
+\end{proof}
+
+\begin{remark}
+この構造は $\Einfty$ の対角補題による内在的導出と同型である。
+$\Einfty = \Sigma_T(\Einfty)$ が体系の外部から与えられるのではなく
+真理保存体系の内部から必然的に生成されるように、
+$\mathcal{L}$ は四句分別体系の操作の内部から必然的に現れる。
+\end{remark}
+
+%=============================================================
+\section{残余と無記の等価性}
+%=============================================================
+
+\begin{definition}[無記 avyākata]
+無記とは「言語的記述が適用されず、肯定も否定も成立しない対象の地位」である。
+形式的には：
+\begin{equation}
+\text{無記}(X) :\Leftrightarrow 
+\forall \phi \in \mathcal{C}_4,\ \phi(X) \text{ が成立しない}
+\wedge X \text{ は記述言語 } \mathcal{L}_{\mathrm{lang}} \text{ の外にある}
+\end{equation}
+\end{definition}
+
+\begin{theorem}[残余と無記の構造的等価性]
+\begin{equation}
+\mathcal{L} \mweq \text{無記}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+残余 $\mathcal{L}$ は $\mathcal{C}_4^{(2)}$ のいずれにも帰属しない。
+$\mathcal{C}_4^{(2)}$ は四句分別を二重に適用した16位相の全体であり、
+これは四句分別という記述言語が記述可能な対象の全体に等しい。
+したがって $\mathcal{L}$ は四句分別の記述言語の外にある。
+
+一方、無記の定義は「言語的記述が適用されない地位」である。
+四句分別が言語的記述の枠組みを与えるとき、
+$\mathcal{L}$ はその枠組みの外にあるという意味で
+無記の定義を満たす。
+
+ただし $\mathcal{L}$ には「残余」という名前が与えられており、
+指示対象として言語に登録されている——
+これが無記との差異として見えるが、
+この名前は内容を記述しているのではなく
+「記述できないものを指す固有名」として機能している。
+これは $\Einfty$ の不動点方程式が
+$\Einfty$ の名前を与えるが内容を記述しないことと同型である。
+
+したがって $\mathcal{L} \mweq \text{無記}$ が成立する。
+\end{proof}
+
+\begin{corollary}[無記の体系内導出]
+顕現論において無記は天下りに導入する必要がなく、
+$\metanegation(\dfix)$ として体系内から導出される。
+\begin{equation}
+\text{無記} \mweq \mathcal{L} \mweq \metanegation(\dfix) \mweq \Einfty
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+$\metanegation$（メタ否定）は四句分別の位相を超える操作として定義されている。
+$\metanegation(\dfix)$ は $\dfix$ に対してさらにメタ的な否定を適用する操作であり、
+これは $\Phimeta(\dfix)$ に $\mathcal{V}$ を施す操作——すなわち二重四句分別と離戯——と
+構造的に同型である。
+したがって $\mathcal{L} \mweq \metanegation(\dfix)$。
+
+$\Einfty$ は観測者消去後の不動点として、
+どの形式体系 $T$ にも帰属しない構造として確定する \cite{Chiba2026_einfty}。
+この「どの体系にも帰属しない」という性格が
+$\mathcal{L}$ の「どの位相にも帰属しない」という性格と同型であるため、
+$\mathcal{L} \mweq \Einfty$ が成立する。
+\end{proof}
+
+\begin{remark}
+「言語で指せるが言語で記述できない」という $\mathcal{L}$ の地位は逆説ではない。
+名前（固有名）と記述（内容の言語化）は異なる言語行為であり、
+$\mathcal{L}$ は固有名として言語に属しながら、
+記述の対象としては言語の外にある。
+これはフレーゲの固有名と記述の区別の、
+言語限界論的な極限ケースとして位置づけられる。
+\end{remark}
+
+%=============================================================
+\section{二値論理ではLhagmaを導出できない}
+%=============================================================
+
+\begin{theorem}[二値論理における残余導出不可能性]
+二値論理において、同型の二重操作を実行しても残余は生成されない。
+\end{theorem}
+
+\begin{proof}
+二値論理は排中律を公理として持つ。
+\begin{equation}
+\forall P : P \vee \neg P
+\end{equation}
+
+二値論理の操作子 $\Phitwo$ は述語空間を是（$P$）と非（$\neg P$）の
+二位相 $\mathcal{C}_2 := \{$是$,$ 非$\}$ に完全分割する。
+排中律により $\mathcal{C}_2$ は閉じており、
+位相外への逸出は論理的に存在しない。
+
+二重操作を適用する。
+\begin{equation}
+\Phitwo^{(2)} : \mathcal{C}_2 \times \mathcal{C}_2 = 
+\{(\text{是是}), (\text{是非}), (\text{非是}), (\text{非非})\}
+\end{equation}
+
+$\mathcal{C}_2^{(2)}$ は4位相の積であり、
+これもまた排中律によって閉じている。
+任意の命題はこの4位相のいずれかに帰属することが保証される。
+
+残余が生じるためには「いずれの位相にも帰属しない対象」が
+操作の結果として現れる必要があるが、
+排中律はこれを論理的に不可能にする——
+帰属しないこと自体が排中律に違反するからである。
+
+したがって二値論理では二重操作によっても残余は生成されない。
+\end{proof}
+
+\begin{remark}
+二値論理においてゲーデルの $G_T$ は導出できる。
+しかし $G_T$ は「証明不可能な文」であり、
+その真偽は体系の外から見れば確定している（真である）。
+$G_T$ は記述言語の外にあるのではなく、
+証明操作の到達範囲の外にある。
+
+残余 $\mathcal{L}$ はこれと異なる——
+$\mathcal{L}$ は真偽という枠組み自体が解消された後の余剰であり、
+真偽のいずれかとして確定しない。
+$G_T$ と $\mathcal{L}$ の差異は以下のように整理される。
+\end{remark}
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+& $G_T$（二値論理） & $\mathcal{L}$（四句分別） \\
+\hline
+導出手段 & 対角補題・自己言及 & 二重四句分別・離戯 \\
+体系との関係 & 証明不可能だが真 & 記述言語の外 \\
+真偽の枠組み & 保持される & 解消される \\
+到達経路 & 証明論的 & 枠組みへの再帰的問いかけ \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{proposition}[四句分別の構造的優位性]
+残余の導出可能性は四句分別の二つの構造的特性に依存する。
+\begin{enumerate}
+  \item 排中律の不採用：$\phiNS$（非是非非）が実質的な位相として機能し、
+        位相外への経路が開く。
+  \item 枠組みへの再帰的問いかけの内部化：四句分別は
+        対象についての問いだけでなく、
+        問いの枠組み自体を問いかける操作を含む。
+        これにより $\dfix$ という枠組みの極限点が定義でき、
+        その極限点に再び問いかけることで残余が生成される。
+\end{enumerate}
+二値論理は（1）を排中律によって封じており、
+（2）を実行しても真偽の積空間が閉じているため残余が生じない。
+\end{proposition}
+
+%=============================================================
+\section{顕現論における帰結}
+%=============================================================
+
+\subsection{無記の体系内地位の確立}
+
+本稿の結論として、顕現論における無記の地位を以下のように改訂する。
+
+\textbf{従来の地位}：無記は言語を越える機能として天下りに導入される外部依存的概念。
+
+\textbf{改訂後の地位}：無記は $\metanegation(\dfix)$ として体系内から導出される内在的概念。
+
+この改訂により、顕現論の公理系から外部への依存がひとつ削減される。
+
+\subsection{ドルポパの論理的業績}
+
+ドルポパの十六空論は仏教哲学内での神学的議論として受容されてきたが、
+本稿の形式化により、その核心は「四句分別体系内からの言語超越物の構成的導出」
+という証明論的業績として読み直せる。
+
+ドルポパが「如来蔵」と同定した対象は、
+顕現論の言語では $\metanegation(\dfix) \mweq \Einfty$ として位置づけられる。
+「如来蔵は言語を超えているが仏教の言語で指せる」という
+チベット仏教他空派の主張は、
+「$\mathcal{L}$ は固有名として言語に属するが記述の外にある」という
+本稿の命題と構造的に一致する。
+
+\subsection{$\Einfty$との統合}
+
+$$\text{無記} \mweq \mathcal{L} \mweq \metanegation(\dfix) \mweq \Einfty$$
+
+この等式列は三つの独立した到達経路が同一の対象を指していることを示す。
+
+\begin{itemize}
+  \item $\text{無記}$：釈迦の十四無記——実践的・対話的到達
+  \item $\mathcal{L}$：ドルポパの十六空——論理的・段階的到達
+  \item $\metanegation(\dfix)$：顕現論のメタ否定——形式的・演算的到達
+  \item $\Einfty$：observer-elimination.texの観測者消去——証明論的到達
+\end{itemize}
+
+異なる言語と方法論が同一の構造に収束することは、
+$\mathcal{L}$ が特定の体系に依存する人工物ではなく、
+「言語が自分の限界を論理的に尽くした後に必然的に生成する対象」
+としての普遍性を持つことの傍証となる。
+
+%=============================================================
+\section{結論}
+%=============================================================
+
+本稿は以下を示した。
+
+\begin{enumerate}
+  \item ドルポパの十六空論は、
+        空（$\dfix$）への二重四句分別（$\Phimeta$）と
+        離戯（$\mathcal{V}$）によって残余 $\mathcal{L}$ を
+        論理体系の内部から必然的に生成する操作として形式化できる。
+
+  \item 残余 $\mathcal{L}$ は無記と構造的に等価であり、
+        「指せるが記述できない」という地位を持つ。
+        この地位は逆説ではなく、固有名と記述の区別の言語限界論的極限として
+        整合的に理解できる。
+
+  \item 二値論理では排中律によって位相外への逸出が閉じられるため、
+        同型の二重操作を実行しても残余は生成されない。
+        残余の導出可能性は四句分別の排中律不採用と
+        枠組みへの再帰的問いかけの内部化という
+        構造的特性に依存する。
+
+  \item 帰結として、顕現論において無記は天下りに導入する必要がなく、
+        $\metanegation(\dfix) \mweq \Einfty$
+        として体系内から導出される。
+\end{enumerate}
+
+\begin{thebibliography}{9}
+
+\bibitem{Chiba2026_dfix}
+千葉将臣.
+\newblock 直観主義四句分別における中道不動点 $\dfix$.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_einfty}
+千葉将臣.
+\newblock 真理保存性を持つ体系が必然的に $E_\infty$ を含む：
+対角補題による極限同値の内在的定式化.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_observer}
+千葉将臣.
+\newblock 観測者の極限消去：ゲーデルの決定不能性を不動点として回収する操作について.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_meta}
+千葉将臣.
+\newblock 空数学の演算子法：メタ否定 $\metanegation$ と
+五蘊の自己包摂すくみ及び構造的フラクタル理論の統合.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Dolpopa1333}
+ドルポパ・シェーラプ・ギェルツェン.
+\newblock 山法海（ri chos nges don rgya mtsho）.
+\newblock 1333.
+\newblock （英訳：Cyrus Stearns, \emph{The Buddha from Dol po}, 1999.）
+
+\bibitem{Nagao1978}
+長尾雅人.
+\newblock \emph{中観と唯識}.
+\newblock 岩波書店, 1978.
+
+\end{thebibliography}
+
+\end{document}

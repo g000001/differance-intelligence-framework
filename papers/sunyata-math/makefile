@@ -10,6 +10,7 @@ SOURCES = icat-perception.tex \
 	  aletheics-observer-elimination.tex \
 	\
 	  boundary-theory-core.tex \
+	  lhagma-avyakata-dfix0.tex \
           icat-dfix0.tex \
           icat-truth-preservation.tex \
           titotp.tex \
