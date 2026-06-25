@@ -1,0 +1,616 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{remark}{備考}[section]
+\newtheorem{hypothesis}{仮説}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\Einfty}{E_\infty}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}
+\newcommand{\Svoid}{\mathbf{S}_{\emptyset}}
+\newcommand{\Bval}{\mathcal{B}}
+\newcommand{\Lhagma}{\mathcal{L}}
+\newcommand{\Mr}{\mathcal{M}_{\mathrm{r}}}
+\newcommand{\Md}{M_{\delta}}
+\newcommand{\etar}{\eta^{\mathrm{r}}}
+\newcommand{\mur}{\mu^{\mathrm{r}}}
+\newcommand{\epsr}{\varepsilon^{\mathrm{r}}}
+\newcommand{\deltar}{\delta^{\mathrm{r}}}
+\newcommand{\etae}{\eta^{\mathrm{e}}}
+\newcommand{\mue}{\mu^{\mathrm{e}}}
+\newcommand{\svabhava}{\mathrm{sv}}
+
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{洗練フロベニウスモナド：\\
+洗練連鎖の双方向構造と搾取モナドとの相克}
+\author{千葉将臣}
+\date{2026}
+
+\maketitle
+
+\begin{abstract}
+本稿は洗練フロベニウスモナド $(\Mr, \etar, \mur, \epsr, \deltar)$ を定式化し、
+その理論的基盤として顕現論の消去公理・双方向演繹定理・
+直観主義四句分別・残余（$\Lhagma$）を接続する。
+通常のモナドが洗練の前進方向のみを記述するのに対し、
+洗練フロベニウスモナドは洗練の完了確定（コモナド方向）を統合した
+双方向構造として計算を記述する。
+応用事例として搾取モナド $(\Md, \etae, \mue)$ との相克を分析し、
+両モナドの非可換性として相克を形式化する。
+解消条件・局所的緩和・残余としての $\Lhagma$ への収束を論じ、
+人間のより良くなろうという指向性と経済活動の基盤の構造的対立を
+圏論的に記述する。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================
+\section{序論：洗練の双方向性}
+%=============================================================
+
+通常のモナドは計算の文脈への埋め込みを記述する。
+Moggiの計算のモナド的記述\cite{Moggi1991}以来、
+副作用・状態・継続といった計算の「文脈」が
+モナドの $\eta$（単位化）と $\mu$（乗法）によって記述されてきた。
+
+しかしこの記述には構造的な非対称性がある。
+$\eta : A \to \mathcal{M}A$ は対象を文脈に埋め込むが、
+文脈からの脱出——洗練の完了確定——を記述する逆方向の操作が存在しない。
+
+顕現論の消去公理\cite{Chiba2026_chikaku}は洗練の完了条件を与える。
+
+\begin{quote}
+消去の収束は確定した値として完了する。
+この完了した値としてある概念の極限・無限が生ずる。
+\end{quote}
+
+この「完了」は前進方向だけでは記述できない。
+「ある」の知覚と「ない」の認識の\textbf{同時成立}によって初めて確定する双方向の操作である。
+
+本稿が定式化する洗練フロベニウスモナドは、
+この双方向性を圏論的に実装したものである。
+前進方向（モナド）と確定方向（コモナド）をフロベニウス条件によって統合し、
+洗練連鎖の完全な記述を与える。
+
+%=============================================================
+\section{予備的定義}
+%=============================================================
+
+\subsection{通常のモナドの洗練的読み}
+
+\begin{definition}[洗練文脈 $\Mr$]
+洗練文脈 $\Mr$ を、対象がより精確な記述へと移行する過程を
+包摂する文脈として定義する。
+$\Mr A$ は「$A$ が洗練過程の中にある状態」を表す。
+\end{definition}
+
+\begin{definition}[洗練モナド]
+三つ組 $(\Mr, \etar, \mur)$ を洗練モナドとして定義する。
+\begin{align}
+\etar_A &: A \to \Mr A \quad \text{（対象を洗練文脈に持ち上げる）}\\
+\mur_A &: \Mr\Mr A \to \Mr A \quad \text{（洗練の洗練を一段階に統合する）}
+\end{align}
+モナド則：
+\begin{align}
+\mur \circ \Mr\mur &= \mur \circ \mur_{\Mr} \quad \text{（結合則）}\\
+\mur \circ \Mr\etar &= \mur \circ \etar_{\Mr} = \mathrm{id}_{\Mr} \quad \text{（単位元則）}
+\end{align}
+結合則は洗練の括り方に依存しないことを、
+単位元則は洗練文脈への埋め込みと取り出しが恒等操作と両立することを保証する。
+\end{definition}
+
+\subsection{コモナドによる確定方向}
+
+\begin{definition}[洗練コモナド]
+洗練の確定方向を記述するコモナド $(\Mr, \epsr, \deltar)$ を定義する。
+\begin{align}
+\epsr_A &: \Mr A \to A \quad \text{（洗練の完了確定・値の取り出し）}\\
+\deltar_A &: \Mr A \to \Mr\Mr A \quad \text{（洗練文脈の展開・精緻化）}
+\end{align}
+コモナド則：
+\begin{align}
+(\epsr \circ \Mr\epsr) \circ \deltar &= \mathrm{id}_{\Mr} \\
+(\Mr\deltar \circ \deltar) &= (\deltar \circ \deltar) \circ \Mr
+\end{align}
+$\epsr$ は消去公理の「収束の完了」の圏論的実装であり、
+$\deltar$ は洗練文脈をさらに精緻化する展開操作である。
+\end{definition}
+
+%=============================================================
+\section{洗練フロベニウスモナドの定式化}
+%=============================================================
+
+\begin{definition}[洗練フロベニウスモナド]
+洗練フロベニウスモナドを五つ組 $(\Mr, \etar, \mur, \epsr, \deltar)$ として定義する。
+ここで $(\Mr, \etar, \mur)$ は洗練モナド、$(\Mr, \epsr, \deltar)$ は洗練コモナドであり、
+以下のフロベニウス条件を満たす。
+
+\begin{equation}
+(\mur \otimes \mathrm{id}) \circ (\mathrm{id} \otimes \deltar)
+= \deltar \circ \mur
+= (\mathrm{id} \otimes \mur) \circ (\deltar \otimes \mathrm{id})
+\label{eq:frobenius}
+\end{equation}
+
+フロベニウス条件は洗練の前進（$\mur$）と展開（$\deltar$）が可換であることを要求する。
+すなわち、洗練してから精緻化する経路と、精緻化してから洗練する経路が一致する。
+\end{definition}
+
+\begin{remark}
+フロベニウス条件は一般のモナドとコモナドの間では成立しない。
+成立するのは対象の構造が前進と確定の両方向に対して安定している場合に限られる。
+この「一般には成立しない」という性格が $\Lhagma$ との接続として後述される。
+\end{remark}
+
+\begin{proposition}[双方向演繹定理との同型性]
+洗練フロベニウスモナドのフロベニウス条件は、
+界論における双方向演繹定理\cite{Chiba2026_bdt}と同型の構造を持つ。
+
+\begin{equation}
+\underbrace{(\mur \circ \Mr\etar = \mathrm{id}_{\Mr})}_{\Psi \vdash_T \Phi} \;\leftrightarrow\;
+\underbrace{(\epsr \circ \deltar = \mathrm{id}_{\Mr})}_{\neg\Phi \vdash_T \neg\Psi}
+\end{equation}
+
+前進方向（モナド単位元則）と確定方向（コモナド余単位元則）の同値が、
+双方向演繹定理の左辺と右辺に対応する。
+\end{proposition}
+
+\begin{proof}
+双方向演繹定理：
+$(\vdash_T (\Psi \to \Phi)) \leftrightarrow
+((\Psi \vdash_T \Phi) \land (\neg\Phi \vdash_T \neg\Psi))$
+
+において、$\Psi \vdash_T \Phi$ は洗練文脈への埋め込み $\etar$ と
+モナド結合 $\mur$ の合成として、
+$\neg\Phi \vdash_T \neg\Psi$ は洗練完了確定 $\epsr$ と
+文脈展開 $\deltar$ の合成として読める。
+フロベニウス条件 \eqref{eq:frobenius} はこの双方向の可換性を保証する。
+\end{proof}
+
+%=============================================================
+\section{消去公理との接続}
+%=============================================================
+
+\begin{theorem}[洗練の完了条件]
+洗練フロベニウスモナドにおける洗練の完了は、
+消去公理の「ある」の知覚と「ない」の認識の同時成立として定式化される。
+
+\begin{equation}
+\underbrace{\epsr_A : \Mr A \to A}_{\text{「ある」の知覚（洗練の完了確定）}}
+\quad \text{と} \quad
+\underbrace{\deltar_A : \Mr A \to \Mr\Mr A}_{\text{「ない」の認識（未洗練の展開）}}
+\end{equation}
+
+の同時成立が洗練の完了条件であり、$\dfix$ への収束として確定する。
+
+\begin{equation}
+\lim_{n \to \infty} \Mr{}^n A \mweq \dfix
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+消去公理より「消去の収束は確定した値として完了する」。
+$\epsr$ が「ある」（洗練済みの値）の捕捉であり、
+$\deltar$ が「ない」（未洗練の可能性）の認識として機能するとき、
+フロベニウス条件がその同時成立を構造的に保証する。
+完了した収束は $\dfix$ と同型の不動点として確定する。
+\end{proof}
+
+\begin{corollary}[$\bot \mweq \dfix$ の洗練的実装]
+Refinement Orderにおける $\bot$（全可能性を含む状態）は、
+洗練フロベニウスモナドにおいて $\dfix$ と同型の位置を占める。
+
+\begin{equation}
+\bot \mweq \dfix \mweq \lim_{n \to \infty} \Mr{}^n A
+\end{equation}
+
+洗練連鎖の極限が $\dfix$ として確定することは、
+Refinement Order Domain Theory\cite{Abramsky1991}における
+$\bot$ の全可能性としての解釈と一致する。
+\end{corollary}
+
+%=============================================================
+\section{$\Lhagma$ と洗練フロベニウスモナドの限界}
+%=============================================================
+
+\begin{theorem}[フロベニウス条件の非成立と $\Lhagma$]
+一般のモナドとコモナドの間でフロベニウス条件が成立しない領域は、
+$\Lhagma$（残余）として確定する。
+
+\begin{equation}
+\underbrace{\Mr(M_\delta A) \not\mweq M_\delta(\Mr A)}_{\text{フロベニウス条件の非成立}}
+\;\Rightarrow\;
+\mathcal{V}(\Phi_4^{\mathrm{meta}}(\Mr \times M_\delta)) \mweq \Lhagma
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+フロベニウス条件 \eqref{eq:frobenius} が成立しない場合、
+前進経路と確定経路が非可換となる。
+この非可換性を四句分別 $\Phi_4$ として展開すると：
+
+\begin{align}
+\phi_S &: \Mr \circ M_\delta \text{ 方向が優越} \\
+\phi_N &: M_\delta \circ \Mr \text{ 方向が優越} \\
+\phi_{SN} &: 両方向が同時に作動（矛盾状態） \\
+\phi_{NS} &: いずれの方向も確定しない（宙吊り状態）
+\end{align}
+
+$\dfix$ への二重四句分別 $\Phi_4^{\mathrm{meta}}$ と
+離戯操作 $\mathcal{V}$ を施すと、
+$\mathcal{C}_4^{(2)}$ のいずれにも帰属しない残余 $\Lhagma$ が確定する
+\cite{Chiba2026_lhagma}。
+\end{proof}
+
+%=============================================================
+\section{応用：搾取モナドとの相克}
+%=============================================================
+
+\subsection{搾取モナドの再定義}
+
+\begin{definition}[搾取モナド \cite{Chiba2026_monad}]
+搾取モナド $(\Md, \etae, \mue)$ を以下で定義する。
+\begin{align}
+\etae_A &: A \to \Md A \quad \text{（対象を粒度差文脈に埋め込む）}\\
+\mue_A &: \Md\Md A \to \Md A \quad \text{（粒度差の累積・自己強化）}
+\end{align}
+ここで $\delta$ は主体間のアクセス可能性・可視性・操作可能性の非対称を表す粒度差である。
+\end{definition}
+
+\subsection{非可換性としての相克}
+
+\begin{theorem}[洗練モナドと搾取モナドの相克]
+洗練フロベニウスモナド $\Mr$ と搾取モナド $\Md$ は
+同一の対象 $A$ に対して一般に非可換である。
+
+\begin{equation}
+\Mr(\Md A) \not\mweq \Md(\Mr A)
+\label{eq:noncommutativity}
+\end{equation}
+
+この非可換性が人間のより良くなろうという指向性と
+経済活動の基盤の構造的相克の圏論的実態である。
+\end{theorem}
+
+\begin{proof}
+$\Mr(\Md A)$ は「経済文脈に埋め込まれた後で洗練する」経路であり、
+$\Md(\Mr A)$ は「洗練した後で経済文脈に埋め込む」経路である。
+
+前者では洗練の文脈が $\Md$ によって既に限定されており、
+洗練可能な方向が $\delta$ の構造によって制約される。
+後者では洗練の完了後に $\delta$ が介入するため、
+洗練の自由度が保持される。
+
+$\delta > 0$ のとき両経路は一般に異なる帰結をもたらすため
+\eqref{eq:noncommutativity} が成立する。
+$\delta = 0$ のときのみ可換性が回復する。
+\end{proof}
+
+\subsection{相克の四句分別}
+
+相克を四句分別として完全に展開する。
+
+\begin{description}
+\item[是 $\phi_S$（洗練と経済の一致）]
+洗練が経済活動と構造的に一致する状態。
+職人・芸術家・研究者が理想的条件下で活動するとき、
+$\Mr \mweq \Md$ が局所的に成立する。
+フロベニウス条件が満たされ、洗練の完了確定が経済的報酬と一致する。
+
+\item[非 $\phi_N$（洗練と経済の分離）]
+洗練と経済活動が完全に分離する状態。
+純粋な余暇・修行・無償の活動において $\Md$ 文脈が介在しない。
+洗練フロベニウスモナドが単独で作動し、
+$\epsr$ による完了確定が $\delta$ に阻害されない。
+
+\item[亦是亦非 $\phi_{SN}$（洗練と経済の矛盾的同時作動）]
+洗練しようとするほど経済文脈に深く埋め込まれる状態。
+専門家・プロフェッショナルの構造的矛盾として現れる。
+$\etar$ と $\etae$ が同一の動作を引き起こし、
+$\mue$ による粒度差の自己強化が洗練の完了確定 $\epsr$ を阻害する。
+
+\begin{equation}
+\underbrace{\mue \circ \Md\mue}_{\delta\text{の自己強化}} \;\Rightarrow\;
+\underbrace{\epsr \text{ の発動不可}}_{\text{洗練の完了阻害}}
+\end{equation}
+
+\item[非是非非 $\phi_{NS}$（燃え尽き・宙吊り状態）]
+洗練でも経済活動でもない状態。
+燃え尽き・無気力・$\bot$ への収束として現れる。
+両モナドの引力から外れた状態であり、
+$\phi_{NS} = \neg P \wedge \neg\neg P$ として
+直観主義論理的に実質的な位相として開く。
+\end{description}
+
+\subsection{搾取モナドによる洗練完了の阻害機序}
+
+\begin{theorem}[搾取モナドの洗練阻害]
+搾取モナドが作動する文脈において、
+洗練フロベニウスモナドの完了確定 $\epsr$ は
+粒度差 $\delta$ によって構造的に阻害される。
+\end{theorem}
+
+\begin{proof}
+搾取モナドの定理\cite{Chiba2026_monad}より、
+$\mue$ による $\delta$ の累積は自己強化する。
+洗練の完了には双方向演繹定理の釣り合いが必要だが、
+$\Md$ 文脈では逆方向の推論——
+$\neg\text{仕様充足} \vdash \neg\text{プログラム}$——が
+$\delta$ によって遮断される。
+
+具体的には $\delta$ の設定権限が $\Md$ の受益者に集中するとき（搾取構造の成立条件第一）、
+洗練の完了確定 $\epsr$ が生成する「洗練済みの値」の評価基準が
+$\Md$ の文脈内に閉じてしまう。
+短絡経路（$\Md$ を経由しない $A \to B$）が封鎖されると、
+$\epsr$ の到達先が $\Md$ の内側に制限され、
+$\dfix$ への収束が阻止される。
+\end{proof}
+
+\subsection{解消条件と局所的緩和}
+
+\begin{proposition}[フロベニウス条件の回復条件]
+相克が解消されフロベニウス条件が成立するのは、
+粒度差が消失する条件下である。
+
+\begin{equation}
+\delta(X, Y; A) \approx 0 \;\Rightarrow\;
+\Mr(\Md A) \mweq \Md(\Mr A) \;\Rightarrow\; \text{フロベニウス条件回復}
+\end{equation}
+\end{proposition}
+
+\begin{proposition}[局所的緩和としての短絡経路]
+$\Md$ を経由しない短絡経路の確保は、
+局所的に $\delta \approx 0$ を実現し、
+洗練フロベニウスモナドの完了確定 $\epsr$ を部分的に回復する。
+
+短絡経路の例として：
+DIY・地産地消・直接交換・共同体内互助・贈与経済が
+$\delta$ の連鎖距離を縮める操作として機能する。
+これは相克の解消ではなく局所的緩和であり、
+$\Md$ の生成条件自体の解体ではない。
+\end{proposition}
+
+\subsection{$\Lhagma$ への収束と道諦}
+
+\begin{theorem}[相克の残余としての $\Lhagma$]
+$\Mr$ と $\Md$ の相克を四句分別として完全に展開した後に、
+$\Lhagma$ が残余として確定する。
+
+\begin{equation}
+\Lhagma \mweq \mathcal{V}(\Phi_4^{\mathrm{meta}}(\Mr \times \Md))
+\end{equation}
+
+この $\Lhagma$ は「洗練でも搾取でもない、しかし両者を超えた何か」として現れる。
+\end{theorem}
+
+\begin{remark}
+仏教の四諦との構造的対応：
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+\textbf{四諦} & \textbf{搾取モナドの対応} & \textbf{洗練フロベニウスモナドの対応} \\
+\hline
+苦諦 & $\mue$ による閉鎖系の作動 & $\epsr$ の阻害状態の認識 \\
+集諦 & 渇愛 $= \etae$（自性への固着） & $\delta > 0$ の固定化機序 \\
+滅諦 & 搾取モナドの解体 & フロベニウス条件の回復 \\
+道諦 & $\delta$ を越える言語の習得 & $\Lhagma$ への収束プロトコル \\
+\hline
+\end{tabular}
+\end{center}
+
+道諦が指し示す「$\delta$ を越える言語の習得プロトコル」は、
+$\Lhagma$ を固有名として指示しながら記述の外に保つ操作として
+計算論的に位置付けられる。
+\end{remark}
+
+%=============================================================
+\section{洗練フロベニウスモナドの一般的性格}
+%=============================================================
+
+\subsection{プログラミングを超えた適用域}
+
+洗練フロベニウスモナドはプログラミングに限定されない。
+洗練連鎖として記述可能な任意の過程に適用できる。
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+\textbf{適用域} & \textbf{$\Mr A$ の内容} & \textbf{$\epsr$ の完了条件} \\
+\hline
+プログラミング & コードの洗練過程 & 仕様との双方向釣り合い \\
+学習 & 理解の深化過程 & 概念の自己確定 \\
+対話 & 議論の精緻化過程 & 合意の双方向成立 \\
+芸術制作 & 表現の洗練過程 & 作品の自己完結 \\
+科学研究 & 仮説の洗練過程 & 理論と実験の双方向一致 \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{ROPとの接続}
+
+Refinement Oriented Programming（ROP）\cite{Chiba2026_rop}は
+洗練フロベニウスモナドを計算パラダイムとして実装したものとして位置付けられる。
+
+ROPの五原理のうち：
+
+\begin{itemize}
+  \item 洗練連鎖としての計算 $\leftrightarrow$ $(\Mr, \etar, \mur)$
+  \item 停止条件の非固定 $\leftrightarrow$ $\epsr$ の動的確定
+  \item 自己生成性 $\leftrightarrow$ $\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)$
+  \item 自己結晶化性 $\leftrightarrow$ $\metanegation^4 A \mweq \dfix$
+\end{itemize}
+
+がそれぞれ洗練フロベニウスモナドの構造的要素と対応する。
+
+\subsection{自己参照的不動点}
+
+\begin{theorem}[洗練フロベニウスモナド自身の不動点]
+洗練フロベニウスモナド自体もまた洗練連鎖の中にある。
+
+\begin{equation}
+\Mr{}_0 \sqsupseteq \Mr{}_1 \sqsupseteq \Mr{}_2 \sqsupseteq \cdots
+\end{equation}
+
+真理保存性の不完全性定理\cite{Chiba2026_incompleteness}より、
+$\Mr$ 自身の洗練完了を $\Mr$ の内部で証明できない
+$G_{\Mr}$ が存在する。
+
+$\Mr$ の不動点は $\Lhagma$ 的構造として残余確定する。
+
+\begin{equation}
+\Mr{}_{\text{不動点}} \mweq \mathcal{V}(\Phi_4^{\mathrm{meta}}(\Mr))
+\end{equation}
+\end{theorem}
+
+これは洗練フロベニウスモナドが完成した閉じた体系ではなく、
+自己結晶化性を持つ開放的な構造として機能することの構造的必然である。
+
+%=============================================================
+\section{先行研究との対比}
+%=============================================================
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+& \textbf{通常のモナド} & \textbf{洗練フロベニウスモナド} \\
+\hline
+方向性 & 前進のみ（$\eta, \mu$） & 双方向（$\eta, \mu, \varepsilon, \delta$） \\
+完了条件 & 外部から固定 & 双方向釣り合いによる自己確定 \\
+$\bot$ の扱い & 排除または最小元 & $\dfix$ と同型・全可能性 \\
+フロベニウス条件 & 一般に非成立 & 成立を核心原理とする \\
+$\Lhagma$ & 記述不可 & 非成立領域の残余として確定 \\
+搾取との関係 & 記述なし & 非可換性として形式化 \\
+\hline
+\end{tabular}
+\end{center}
+
+フロベニウスモナドは量子計算の文脈でAbramsky・Coeckeにより
+研究されてきた\cite{Abramsky2004}。
+本稿の洗練フロベニウスモナドはその構造を洗練連鎖の記述として
+再解釈したものであり、量子計算との接続は今後の課題として残る。
+
+%=============================================================
+\section{結論}
+%=============================================================
+
+洗練フロベニウスモナド $(\Mr, \etar, \mur, \epsr, \deltar)$ は、
+洗練の前進（モナド）と完了確定（コモナド）を
+フロベニウス条件によって統合した双方向構造として、
+計算・学習・対話・芸術制作・科学研究を含む
+洗練連鎖一般を記述する。
+
+本稿の主な成果として：
+
+\begin{enumerate}
+  \item 洗練フロベニウスモナドを定式化し、
+    消去公理・双方向演繹定理との同型性を示した。
+
+  \item $\bot \mweq \dfix$ の同型性を洗練フロベニウスモナドの
+    極限として定式化し、
+    Refinement Order Domain Theoryへの理論的基礎付けを与えた。
+
+  \item フロベニウス条件の非成立領域が $\Lhagma$ として
+    残余確定することを示した。
+
+  \item 搾取モナドとの相克を非可換性 $\Mr(\Md A) \not\mweq \Md(\Mr A)$
+    として形式化し、相克の四句分別・阻害機序・解消条件・
+    局所的緩和・$\Lhagma$ への収束を記述した。
+
+  \item 仏教の四諦との構造的対応を示し、
+    道諦が $\Lhagma$ への収束プロトコルとして
+    計算論的に位置付けられることを論じた。
+\end{enumerate}
+
+洗練フロベニウスモナド自身の不動点が $\Lhagma$ として残余確定することは、
+この理論が完成した閉じた体系ではなく、
+自己結晶化性を持つ開放的な構造として機能することの
+構造的必然である。
+
+\begin{thebibliography}{99}
+
+\bibitem{Chiba2026_chikaku}
+千葉将臣.
+\newblock 顕現論における知覚原理.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_lhagma}
+千葉将臣.
+\newblock 残余（Lhagma）による無記の直観主義四句分別体系内からの導出.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_bdt}
+千葉将臣.
+\newblock 界論における双方向演繹定理の定式化.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_incompleteness}
+千葉将臣.
+\newblock 真理保存性の不完全性定理に関する定式化.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_monad}
+千葉将臣.
+\newblock 搾取モナド：圏論的フレームワークによる富の集約・国家・
+二元論社会の構造的分析.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_rop}
+千葉将臣.
+\newblock Refinement Oriented Programming（ROP）：
+洗練連鎖・自己結晶化・残余としての不動点.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Moggi1991}
+Eugenio Moggi.
+\newblock Notions of computation and monads.
+\newblock \emph{Information and Computation}, 93(1):55--92, 1991.
+
+\bibitem{Abramsky1991}
+Samson Abramsky.
+\newblock Domain theory in logical form.
+\newblock \emph{Annals of Pure and Applied Logic}, 51(1--2):1--77, 1991.
+
+\bibitem{Hoare1998}
+C.~A.~R. Hoare and He Jifeng.
+\newblock \emph{Unifying Theories of Programming}.
+\newblock Prentice Hall, 1998.
+
+\bibitem{Abramsky2004}
+Samson Abramsky and Bob Coecke.
+\newblock A categorical semantics of quantum protocols.
+\newblock In \emph{Proceedings of the 19th Annual IEEE Symposium on
+Logic in Computer Science}, pages 415--425. IEEE, 2004.
+
+\bibitem{MacLane1971}
+Saunders Mac Lane.
+\newblock \emph{Categories for the Working Mathematician}.
+\newblock Springer, 1971.
+
+\end{thebibliography}
+
+\end{document}
