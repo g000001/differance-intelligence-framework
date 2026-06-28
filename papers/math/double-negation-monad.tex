@@ -1,0 +1,570 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{remark}{注記}[section]
+\newtheorem{example}{例}[section]
+
+\renewcommand{\proofname}{\textbf{証明.}}
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+%  マクロ
+%-------------------------------------------------
+\newcommand{\Sh}{\mathrm{Sh}_{\neg\neg}}
+\newcommand{\topos}{\mathcal{E}}
+\newcommand{\Sub}{\mathrm{Sub}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\op}{\mathrm{op}}
+\newcommand{\Hom}{\mathrm{Hom}}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{二重否定モナド：\\
+直観主義論理から古典論理への閉包作用素としての定式化}
+\author{Masaomi Chiba}
+\date{2026-06-28}
+\maketitle
+
+\begin{abstract}
+本稿は、トポス理論における二重否定 $\neg\neg$ をモナドとして定式化し、
+その歴史的動機・圏論的構成・論理的意義を記述する。
+二重否定モナドは継続モナドの特殊ケースとして圏論的に包摂されるが、
+その動機は計算意味論ではなく、
+直観主義論理の体系内部から古典論理が成立する部分トポスを
+構成的に生成するという論理学的問題に由来する。
+ローヴェア＝ティアニー位相（局所作用素）との対応を通じ、
+二重否定モナドが直観主義論理圏における冪等閉包作用素として機能し、
+古典論理が成立する反射的部分圏を内部から生成することを示す。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================
+\section{歴史的動機}
+%=============================================================
+
+\subsection{古典論理の自明性の動揺}
+
+20世紀前半まで、数学の基礎として古典論理が自明の前提とされていた。
+ゲーデルの不完全性定理（1931年）は、古典論理に基づく公理体系が
+自己の無矛盾性を内部で証明できないことを示し、
+古典論理の自己完結性への信頼に構造的な疑義をもたらした。
+
+一方、ブラウワーに始まる直観主義数学は、
+数学的対象の実在を構成的証明の存在に基づかせることを要求し、
+排中律 $P \lor \neg P$ の普遍的妥当性を否定した。
+ハイティング（1930年）はこれを形式化し、
+直観主義命題論理を与えた。
+
+\subsection{直観主義論理と古典論理の関係の問い}
+
+1960年代から1970年代にかけて、以下の問いが数学基礎論の中心的課題となった。
+
+\begin{quote}
+直観主義論理の体系の内部に、古典論理はどのようにして埋め込まれるか。
+\end{quote}
+
+ゲーデル＝ゲンツェン翻訳（1933年）は、
+古典命題論理が直観主義命題論理に
+二重否定翻訳によって保存的に埋め込まれることを示した。
+すなわち、古典論理の定理 $\varphi$ に対し、
+その二重否定翻訳 $\varphi^{\neg\neg}$ が直観主義論理で証明可能となる。
+
+この翻訳の圏論的・位相幾何学的定式化が、
+1970年代のローヴェアとティアニーによって与えられた。
+
+\subsection{継続モナドとの関係と本稿の立場}
+
+継続モナドは計算意味論において、
+計算の「残り」（継続）を対象化する汎用的な構成として知られる。
+型理論的には、継続モナドは
+
+\begin{equation}
+T_R A = (A \to R) \to R
+\end{equation}
+
+として与えられ、$R$ を任意の型とする。
+
+二重否定モナドは $R = \bot$（矛盾・偽）とした特殊ケースである。
+
+\begin{equation}
+\neg\neg A = (A \to \bot) \to \bot
+\end{equation}
+
+本稿は、この特殊化が単なる形式的制限ではなく、
+直観主義論理から古典論理への橋渡しという
+固有の論理学的問題に動機づけられていることを示す。
+計算意味論的動機による継続モナドとは独立に、
+論理学的動機から二重否定モナドを定式化することが本稿の立場である。
+
+%=============================================================
+\section{予備的概念}
+%=============================================================
+
+\subsection{トポスと内部論理}
+
+\begin{definition}[エレメンタリートポス]
+圏 $\topos$ がエレメンタリートポスであるとは、以下を満たすことをいう。
+\begin{enumerate}
+\item 有限極限を持つ。
+\item 冪対象を持つ。すなわち任意の対象 $B, C$ に対し、
+  $\Hom(A \times B, C) \cong \Hom(A, C^B)$ を自然に満たす対象 $C^B$ が存在する。
+\item 部分対象分類子を持つ。すなわち対象 $\Omega$ と射
+  $\mathrm{true}: 1 \to \Omega$ が存在し、
+  任意のモノ射 $m: S \hookrightarrow A$ に対して
+  一意な射 $\chi_m: A \to \Omega$（特性射）が存在して
+  以下のプルバック図式が可換となる。
+  \[
+  \begin{array}{ccc}
+  S & \to & 1 \\
+  \downarrow & & \downarrow \mathrm{true} \\
+  A & \xrightarrow{\chi_m} & \Omega
+  \end{array}
+  \]
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+部分対象分類子 $\Omega$ はトポスの内部論理における真理値対象であり、
+集合論における $\{0,1\}$ の一般化である。
+トポスが集合圏 $\mathbf{Set}$ の場合、$\Omega = \{0,1\}$ となり
+古典論理が成立する。
+一般のトポスでは $\Omega$ が豊かな内部構造を持ち、
+直観主義論理が成立する。
+\end{remark}
+
+\subsection{$\Omega$ 上の演算と直観主義論理}
+
+トポス $\topos$ において、$\Omega$ 上には以下の射が定義される。
+
+\begin{definition}[$\Omega$ 上の論理演算]
+\begin{align}
+\top &: 1 \to \Omega \quad \text{（真）} \\
+\bot &: 1 \to \Omega \quad \text{（偽）} \\
+\land &: \Omega \times \Omega \to \Omega \quad \text{（連言）} \\
+\lor &: \Omega \times \Omega \to \Omega \quad \text{（選言）} \\
+\Rightarrow &: \Omega \times \Omega \to \Omega \quad \text{（含意）} \\
+\neg &: \Omega \to \Omega \quad \text{（否定）}
+\end{align}
+
+ここで否定射 $\neg: \Omega \to \Omega$ は
+$\neg = (\Rightarrow) \circ \langle \id_\Omega, \bot \circ ! \rangle$
+として定義される（$!: \Omega \to 1$ は終対象への一意射）。
+\end{definition}
+
+\begin{proposition}[直観主義論理の内部性]
+トポス $\topos$ の内部論理は直観主義論理を満たす。
+特に排中律 $\top \leq p \lor \neg p$ は一般には成立せず、
+二重否定除去 $\neg\neg p \leq p$ も一般には成立しない。
+\end{proposition}
+
+%=============================================================
+\section{ローヴェア＝ティアニー位相と局所作用素}
+%=============================================================
+
+\subsection{局所作用素の定義}
+
+\begin{definition}[ローヴェア＝ティアニー位相 / 局所作用素]
+トポス $\topos$ における局所作用素（ローヴェア＝ティアニー位相）とは、
+射 $j: \Omega \to \Omega$ であって以下の三条件を満たすものをいう。
+
+\begin{enumerate}
+\item \textbf{真の保存}：$j \circ \top = \top$
+  \[
+  j(\top) = \top
+  \]
+
+\item \textbf{冪等性}：$j \circ j = j$
+  \[
+  j(j(p)) = j(p)
+  \]
+
+\item \textbf{連言の保存}：$j \circ \land = \land \circ (j \times j)$
+  \[
+  j(p \land q) = j(p) \land j(q)
+  \]
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[二重否定の局所作用素性]
+$j = \neg\neg: \Omega \to \Omega$ は局所作用素である。
+\end{proposition}
+
+\begin{proof}
+三条件を順に確認する。
+
+\textbf{（1）真の保存}：
+$\neg\neg\top = \neg(\top \Rightarrow \bot) = \neg\bot = \top$。
+
+\textbf{（2）冪等性}：
+直観主義論理において
+$p \leq \neg\neg p$（二重否定への埋め込み）と
+$\neg\neg\neg\neg p \leq \neg\neg p$（$\neg$ の単調性から）が成立するため、
+$\neg\neg\neg\neg p = \neg\neg p$ となる。
+
+\textbf{（3）連言の保存}：
+直観主義論理において
+$\neg\neg(p \land q) \dashv\vdash \neg\neg p \land \neg\neg q$
+が成立する。
+\end{proof}
+
+\subsection{$j$-閉包と $j$-層}
+
+\begin{definition}[$j$-閉包]
+局所作用素 $j$ に対し、部分対象 $S \hookrightarrow A$ の
+$j$-閉包 $\overline{S}^j \hookrightarrow A$ を
+特性射 $\chi_S: A \to \Omega$ の $j$ による合成
+$j \circ \chi_S: A \to \Omega$ が分類する部分対象として定義する。
+\end{definition}
+
+\begin{definition}[$j$-層]
+対象 $F \in \topos$ が $j$-層（$j$-sheaf）であるとは、
+$F$ の任意の部分対象が $j$-閉包と一致することをいう。
+すなわち、$F$ 上の任意のモノ射 $S \hookrightarrow F$ に対して
+$\overline{S}^j = S$ が成立する。
+\end{definition}
+
+\begin{theorem}[$j$-層の圏の構成]
+局所作用素 $j$ に対し、$j$-層の全体は
+トポス $\topos$ の部分トポス $\mathrm{Sh}_j(\topos)$ をなす。
+さらに、層化関手（随伴）
+\[
+a_j : \topos \rightleftharpoons \mathrm{Sh}_j(\topos) : i_j
+\]
+が存在し、$i_j$ は完全忠実な包含関手、
+$a_j$ は $i_j$ の左随伴（層化関手）である。
+\end{theorem}
+
+%=============================================================
+\section{二重否定モナドの定式化}
+%=============================================================
+
+\subsection{随伴からモナドへ}
+
+\begin{definition}[二重否定モナド]
+$j = \neg\neg$ に対応する局所作用素から生成される層化随伴
+
+\[
+a : \topos \rightleftharpoons \Sh(\topos) : i, \quad a \dashv i
+\]
+
+に対し、二重否定モナドを以下の三つ組として定義する。
+
+\begin{align}
+T &= i \circ a : \topos \to \topos \\
+\eta &: \id_{\topos} \Rightarrow T \quad \text{（単位自然変換）} \\
+\mu &: T \circ T \Rightarrow T \quad \text{（乗法自然変換）}
+\end{align}
+
+ここで $\eta$ は随伴の単位 $\eta: \id \Rightarrow ia$、
+$\mu$ は $iTa \circ \eta_{iT} = i\varepsilon a$ から構成される
+（$\varepsilon: ai \Rightarrow \id_{\Sh(\topos)}$ は随伴の余単位）。
+\end{definition}
+
+\begin{proposition}[モナド則の成立]
+上記の三つ組 $(T, \eta, \mu)$ はモナド則を満たす。
+
+\begin{align}
+\mu \circ T\mu &= \mu \circ \mu_T \quad \text{（結合則）}\\
+\mu \circ T\eta &= \mu \circ \eta_T = \id_T \quad \text{（単位元則）}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+随伴 $a \dashv i$ から生成されるモナドは一般にモナド則を満たす
+（Mac Lane \cite{MacLane1971}、VI章定理1）。
+三角恒等式 $\varepsilon_a \circ a\eta = \id_a$ および
+$i\varepsilon \circ \eta_i = \id_i$ から、
+結合則と単位元則が導かれる。
+\end{proof}
+
+\subsection{冪等性}
+
+\begin{theorem}[二重否定モナドの冪等性]
+二重否定モナド $(T, \eta, \mu)$ において、$\mu$ は同型射である。
+すなわち、
+\[
+\mu_A : T(TA) \xrightarrow{\;\cong\;} TA
+\]
+が成立し、モナドが冪等（idempotent）である。
+\end{theorem}
+
+\begin{proof}
+層化関手 $a$ が冪等であることから従う。
+$\Sh(\topos)$ の対象はすでに $\neg\neg$-層であるため、
+$a(iF) \cong F$ が成立する（$\varepsilon: ai \cong \id$ が同型）。
+したがって $T \circ T = i \circ a \circ i \circ a \cong i \circ a = T$
+となり、$\mu$ が同型射となる。
+\end{proof}
+
+\begin{remark}
+冪等性は $j \circ j = j$（局所作用素の定義条件2）の
+モナド的表現である。
+二重否定モナドの適用を何度繰り返しても、
+一度適用した後と同一の対象が得られる。
+これは「古典論理への截断」が一回で完了することを意味する。
+\end{remark}
+
+\subsection{$\Omega$ 上の作用との対応}
+
+\begin{proposition}[$\Omega$ 上の作用との整合性]
+対象 $A \in \topos$ および部分対象分類子 $\Omega$ に対し、
+射 $p: A \to \Omega$ について
+
+\[
+T(p) = \neg\neg \circ p : A \to \Omega
+\]
+
+が成立する。すなわち、モナド $T$ の $\Omega$ 上への作用は
+局所作用素 $\neg\neg: \Omega \to \Omega$ の合成として実現される。
+\end{proposition}
+
+%=============================================================
+\section{論理的意義：直観主義論理と古典論理の関係}
+%=============================================================
+
+\subsection{二重否定層の古典性}
+
+\begin{theorem}[$\Sh(\topos)$ における排中律の成立]
+$\Sh(\topos)$ において排中律が成立する。
+すなわち、任意の $F \in \Sh(\topos)$ および部分対象 $S \hookrightarrow F$ に対して、
+
+\[
+S \cup \neg S = F
+\]
+
+が成立する（$\neg S$ は $S$ の補部分対象）。
+\end{theorem}
+
+\begin{proof}
+$\Sh(\topos)$ の内部論理において $\neg\neg p = p$ が成立することから
+排中律が導かれる。
+これは $\Sh(\topos)$ の部分対象分類子が
+$\Omega_j = \{p \in \Omega \mid \neg\neg p = p\}$
+として与えられ、$\{0,1\}$ と同型なブール代数をなすことによる。
+\end{proof}
+
+\subsection{反射的部分圏としての位置づけ}
+
+\begin{theorem}[反射的部分圏]
+包含関手 $i: \Sh(\topos) \hookrightarrow \topos$ は
+左随伴 $a$ を持つ完全忠実関手であり、
+$\Sh(\topos)$ は $\topos$ の反射的部分圏をなす。
+\end{theorem}
+
+\begin{corollary}[古典論理の内部生成]
+直観主義論理が成立するトポス $\topos$ の内部に、
+外部から古典論理を持ち込むことなく、
+$\neg\neg$ という内部の演算のみから
+古典論理が成立する部分トポス $\Sh(\topos)$ が生成される。
+\end{corollary}
+
+\begin{remark}
+この系は、1970年代の論理学的問いへの回答を与える。
+直観主義論理と古典論理は対立する体系ではなく、
+トポス内部の $\neg\neg$ という閉包作用素によって、
+前者の内部に後者が部分圏として埋め込まれる関係にある。
+ゲーデル＝ゲンツェン翻訳の圏論的実現として、
+この構成を位置づけることができる。
+\end{remark}
+
+\subsection{単位射の論理的意味}
+
+\begin{proposition}[単位射の論理的意味]
+モナドの単位自然変換 $\eta_A: A \to TA$ は、
+直観主義論理における二重否定への埋め込み
+
+\[
+p \vdash \neg\neg p
+\]
+
+の圏論的実現である。
+この射は一般に同型ではなく、情報の一方向的な移送を表す。
+\end{proposition}
+
+\begin{proposition}[移送で失われるもの]
+$\eta_A: A \to TA$ が同型でないとき、
+$TA$ において $A$ と識別できなくなる情報が存在する。
+この識別不能化された情報の全体を $\mathcal{L}(A)$ と書くと、
+
+\[
+\mathcal{L}(A) = \ker(\eta_A) \quad \text{（適切な意味で）}
+\]
+
+として特徴づけられる。
+直観主義論理において $\neg\neg p \vdash p$ が一般に成立しないことは、
+$\mathcal{L}(A)$ が空でないことの論理的表現である。
+\end{proposition}
+
+%=============================================================
+\section{継続モナドとの関係}
+%=============================================================
+
+\begin{definition}[継続モナド]
+任意の対象 $R$ に対し、継続モナドを
+
+\begin{align}
+T_R A &= (A \to R) \to R \\
+\eta^R_A(a) &= \lambda k.\, k(a) \\
+\mu^R_A(m) &= \lambda k.\, m(\lambda n.\, n(k))
+\end{align}
+
+として定義する。
+\end{definition}
+
+\begin{theorem}[包摂関係]
+$R = \bot$ と置いたとき、継続モナド $T_\bot$ は
+二重否定モナド $T = \neg\neg$ と一致する。
+
+\[
+T_\bot A = (A \to \bot) \to \bot = \neg\neg A
+\]
+\end{theorem}
+
+\begin{remark}[動機の差異]
+継続モナドは $R$ が任意であり、計算の残りを汎用的に扱う道具である。
+二重否定モナドは $R = \bot$ への特殊化により、
+計算意味論的動機から切り離され、
+直観主義論理と古典論理の関係という固有の論理学的問題を扱う。
+特殊化は技術的な制限ではなく、対象とする問いの限定である。
+\end{remark}
+
+%=============================================================
+\section{注意点と限界}
+%=============================================================
+
+\begin{remark}[構成の一般性について]
+本稿の構成は任意のエレメンタリートポスに対して成立する。
+集合圏 $\mathbf{Set}$ では $\Omega = \{0,1\}$ であり
+$\neg\neg = \id_\Omega$ となるため、
+二重否定モナドは自明（恒等関手）となる。
+非自明な構造は直観主義論理が成立するトポス
+（前層圏、層圏、有効トポスなど）において現れる。
+\end{remark}
+
+\begin{remark}[移送される情報について]
+$\eta_A: A \to TA$ によって移送される情報 $\mathcal{L}(A)$ の
+正確な記述は、本稿の範囲を超える。
+$\mathcal{L}(A)$ を正の数学的対象として理論化することは
+未解決の課題として残る。
+\end{remark}
+
+\begin{remark}[直観主義論理の完全な回復について]
+$\Sh(\topos) \hookrightarrow \topos$ は完全忠実であるが、
+$a: \topos \to \Sh(\topos)$ は一般に忠実でない。
+すなわち、$\Sh(\topos)$ から $\topos$ への逆方向の操作は
+$\eta_A: A \to TA$ の逆を持たない。
+この一方向性が二重否定モナドの本質的な非対称性を表す。
+\end{remark}
+
+%=============================================================
+\section{結論}
+%=============================================================
+
+本稿は二重否定モナドを以下の観点から定式化した。
+
+\begin{enumerate}
+\item \textbf{歴史的動機}：
+  ゲーデルの不完全性定理以降の古典論理の自明性の動揺と、
+  直観主義論理の体系内部から古典論理を生成するという
+  1970年代の問いを動機として位置づけた。
+
+\item \textbf{圏論的構成}：
+  ローヴェア＝ティアニー局所作用素 $j = \neg\neg$ から
+  層化随伴 $a \dashv i$ を通じてモナド $(T, \eta, \mu)$ を構成し、
+  冪等性を示した。
+
+\item \textbf{論理的意義}：
+  $\Sh(\topos)$ において排中律が成立し、
+  直観主義論理トポス内部から古典論理が反射的部分圏として
+  内部生成されることを示した。
+
+\item \textbf{継続モナドとの関係}：
+  $R = \bot$ への特殊化として二重否定モナドが
+  継続モナドに包摂されることを確認しつつ、
+  動機の独立性を明示した。
+\end{enumerate}
+
+二重否定モナドは、直観主義論理と古典論理を
+対立する体系としてではなく、
+$\neg\neg$ という一つの閉包作用素によって繋がれた
+包含関係として理解する視点を与える。
+
+\begin{thebibliography}{99}
+
+\bibitem{MacLane1971}
+Saunders Mac Lane.
+\newblock \emph{Categories for the Working Mathematician}.
+\newblock Springer, 1971.
+
+\bibitem{MacLaneMoerdijk1992}
+Saunders Mac Lane and Ieke Moerdijk.
+\newblock \emph{Sheaves in Geometry and Logic: A First Introduction to Topos Theory}.
+\newblock Springer, 1992.
+
+\bibitem{Lawvere1970}
+F.\ William Lawvere.
+\newblock Quantifiers and sheaves.
+\newblock In \emph{Actes du Congr\`{e}s International des Math\'{e}maticiens},
+  vol.\ 1, pages 329--334. Gauthier-Villars, 1970.
+
+\bibitem{Tierney1972}
+Myles Tierney.
+\newblock Sheaf theory and the continuum hypothesis.
+\newblock In F.\ W.\ Lawvere (ed.),
+  \emph{Toposes, Algebraic Geometry and Logic},
+  Lecture Notes in Mathematics 274, pages 13--42.
+  Springer, 1972.
+
+\bibitem{Johnstone2002}
+Peter T.\ Johnstone.
+\newblock \emph{Sketches of an Elephant: A Topos Theory Compendium}, vol.\ 1--2.
+\newblock Oxford University Press, 2002.
+
+\bibitem{GodementhHKR1958}
+Roger Godement.
+\newblock \emph{Topologie Alg\'{e}brique et Th\'{e}orie des Faisceaux}.
+\newblock Hermann, 1958.
+
+\bibitem{Godel1933}
+Kurt G\"{o}del.
+\newblock Eine Interpretation des intuitionistischen Aussagenkalk\"{u}ls.
+\newblock \emph{Ergebnisse eines mathematischen Kolloquiums}, 4:39--40, 1933.
+
+\bibitem{Gentzen1935}
+Gerhard Gentzen.
+\newblock Untersuchungen \"{u}ber das logische Schlie\ss{}en.
+\newblock \emph{Mathematische Zeitschrift}, 39:176--210, 405--431, 1935.
+
+\bibitem{Heyting1930}
+Arend Heyting.
+\newblock Die formalen Regeln der intuitionistischen Logik.
+\newblock \emph{Sitzungsberichte der Preussischen Akademie der Wissenschaften},
+  pages 42--56, 1930.
+
+\bibitem{Moggi1991}
+Eugenio Moggi.
+\newblock Notions of computation and monads.
+\newblock \emph{Information and Computation}, 93(1):55--92, 1991.
+
+\end{thebibliography}
+
+\end{document}
