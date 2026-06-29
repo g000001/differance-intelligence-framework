@@ -17,7 +17,7 @@ SOURCES = icat-perception.tex \
           titotp-mebius.tex \
 	  math-limit-equivalence.tex \
 	\
-          icat-principles.tex \
+	  pov-proof.tex \
           icat-cl.tex \
           icat-catuskoti-skandha.tex \
           icat-ymwcomb.tex \
@@ -30,6 +30,7 @@ SOURCES = icat-perception.tex \
           icat-twdt.tex \
 	  emb-twdt.tex \
 	  bau-cat-em-kl.tex \
+	  lhagma-semantics.tex \
 	\
 	  icat-calibration.tex
 
