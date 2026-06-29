@@ -1,28 +1,21 @@
 % !TEX program = lualatex
 \documentclass[11pt,a4paper]{article}
-\usepackage{luatexja}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{icat-common}
 \usepackage{bm}
-\usepackage{geometry}
-\geometry{margin=1in}
-\usepackage{enumitem}
 
 %-------------------------------------------------
 %  独自マクロ
 %-------------------------------------------------
-\newcommand{\dfix}{D_{\mathrm{fix}0}}
-\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
 \newcommand{\Dukkha}{\mathrm{Dukkha}}
 \newcommand{\Rep}{\mathcal{R}}
 
 % セクション名を幾何学的論証形式に
-\renewcommand{\abstractname}{Abstract}
 
 %-------------------------------------------------
 \begin{document}
 
 \title{直観主義四句分別における中道不動点 $\dfix$}
-\author{Masaomi Chiba}
+\author{千葉将臣}
 \date{2026-04-20}
 \maketitle
 
@@ -45,7 +38,11 @@
 
 \begin{description}[style=multiline, leftmargin=4.5cm]
   \item[公理 6.1] 世俗諦（$\Rep$）におけるいかなる構成プロセスも、双方向演繹定理を通じた勝義諦においては単一の不動点 $\dfix$ へと収束する。
-  \item[公理 6.2] $\dfix$ への到達は中道等価 $\mweq$ によってのみ記述される。（$\lim_{t \to \infty} \Dukkha(t) \mweq 0$）。$\dfix$ を静的な点として固定（実体化）することは、直観主義における構成的本質を破壊する。
+  \item[公理 6.2] $\dfix$ への到達は中道等価 $\mweq$ によってのみ記述される。すなわち、
+  \[
+  \lim_{t \to \infty} \Dukkha(t) \mweq 0
+  \]
+  と表される。$\dfix$ を静的な点として固定（実体化）することは、直観主義における構成的本質を破壊する。
 \end{description}
 
 \section{定理}

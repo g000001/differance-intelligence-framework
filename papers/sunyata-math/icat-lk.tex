@@ -1,18 +1,11 @@
 % !TEX program = lualatex
 \documentclass[11pt,a4paper]{article}
-\usepackage{luatexja}
-\usepackage{amsmath,amssymb,amsthm,amsfonts}
-\usepackage{enumitem}
-\usepackage{geometry}
-\geometry{margin=1in}
+\usepackage{icat-common}
 \usepackage{hyperref}
 
 %-------------------------------------------------
 %  独自マクロ定義
 %-------------------------------------------------
-\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\dfix}{D_{\mathrm{fix}0}}
-\newcommand{\metanegation}{\Uparrow} % メタ否定演算子（ゲンツェンの推論横棒）
 \newcommand{\shiki}{A} % 色（対象）
 
 %-------------------------------------------------
@@ -27,7 +20,7 @@
 \begin{document}
 
 \title{空論（Sunyata-theory）：証明論的真理保存とゲンツェンの推論線による界の力学}
-\author{Masaomi Chiba}
+\author{千葉将臣}
 \date{2026-04-20}
 \maketitle
 

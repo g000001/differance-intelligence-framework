@@ -1,9 +1,6 @@
 % !TEX program = lualatex
 \documentclass[11pt,a4paper]{article}
-\usepackage{luatexja}
-\usepackage{amsmath,amssymb,amsthm,amsfonts}
-\usepackage{geometry}
-\geometry{margin=1in}
+\usepackage{icat-common}
 
 \theoremstyle{definition}
 \newtheorem{definition}{定義}[section]
@@ -14,11 +11,8 @@
 \newtheorem{hypothesis}{仮説}[section]
 \newtheorem{remark}{備考}[section]
 
-\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\dfix}{D_{\mathrm{fix}0}}
 \newcommand{\Einfty}{E_\infty}
 \newcommand{\SelfRef}{\Sigma}
-\newcommand{\metanegation}{\Uparrow}
 \renewcommand{\Pr}{\mathrm{Pr}}
 
 \title{観測者の極限消去：\\

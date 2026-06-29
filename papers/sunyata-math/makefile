@@ -51,7 +51,7 @@ $(TARGET): $(PDFS)
 
 bigtex: $(SOURCES)
 	@rm -f icat.txt
-	for f in $(SOURCES); do \
+	for f in icat-common.sty $(SOURCES); do \
 		cat $$f >> icat.txt; \
 		echo '' >> icat.txt; \
 	done

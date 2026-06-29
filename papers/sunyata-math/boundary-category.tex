@@ -1,10 +1,7 @@
 % !TEX program = lualatex
 \documentclass[11pt,a4paper]{article}
-\usepackage{luatexja}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{icat-common}
 \usepackage{bm}
-\usepackage{geometry}
-\geometry{margin=1in}
 
 %-------------------------------------------------
 %  定理環境の定義
@@ -18,19 +15,15 @@
 %-------------------------------------------------
 %  独自マクロ
 %------------------------------------------------- 
-\newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
-\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\metanegation}{\Uparrow}     % メタ観測・推論の横棒
 \newcommand{\susp}[1]{#1^{\ast}} % 保留演算子（Suspension）
 \newcommand{\Cat}{\mathbf{C}_{\mathrm{cat}}}  % 圏論的空間
 \newcommand{\Bou}{\mathbf{B}_{\mathrm{bou}}}  % 界論的空間
 
-\renewcommand{\abstractname}{Abstract}
 
 \begin{document}
 
 \title{圏論の界論への証明論的埋め込み：\\ゲーデル＝ゲンツェン翻訳の四句分別のトポロジーへの拡張}
-\author{Masaomi Chiba}
+\author{千葉将臣}
 \date{2026-04-24}
 \maketitle
 

@@ -1,9 +1,6 @@
 % !TEX program = lualatex
 \documentclass[11pt,a4paper]{article}
-\usepackage{luatexja}
-\usepackage{amsmath,amssymb,amsthm,amsfonts}
-\usepackage{geometry}
-\geometry{margin=1in}
+\usepackage{icat-common}
 
 % 定理環境の設定
 \theoremstyle{definition}
@@ -63,7 +60,7 @@
 本定理により、歴史的に知られる不完全性定理は、真理保存性 $T$ の具体的なインスタンスとして位置づけられる。
 
 \begin{corollary}[Gödelの第一不完全性定理の包摂]
-$T_{Gödel}$ を「論理的無矛盾性（偽が導出されないこと）」を真理保存性とする形式的算術体系とする。このとき、$T_{Gödel}$ の論理的真理保存性の限界を問う自己言及命題 $G_{Gödel}$ は証明不可能である。
+$T_{\text{Gödel}}$ を「論理的無矛盾性（偽が導出されないこと）」を真理保存性とする形式的算術体系とする。このとき、$T_{\text{Gödel}}$ の論理的真理保存性の限界を問う自己言及命題 $G_{\text{Gödel}}$ は証明不可能である。
 \end{corollary}
 
 \begin{corollary}[Chaitinの不完全性定理の包摂]

@@ -1,10 +1,7 @@
 % !TEX program = lualatex
 \documentclass[11pt,a4paper]{article}
-\usepackage{luatexja}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{icat-common}
 \usepackage{bm}
-\usepackage{geometry}
-\geometry{margin=1in}
 
 %-------------------------------------------------
 %  定理環境の定義（論証形式の標準化）
@@ -18,20 +15,16 @@
 %-------------------------------------------------
 %  独自マクロ
 %-------------------------------------------------
-\newcommand{\dfix}{D_{\mathrm{fix}0}} % 0次元不動点（空）
 \newcommand{\Rep}{\mathcal{R}}   % 静的対象空間（世俗諦）
 \newcommand{\Prf}{\mathcal{P}}   % 証明対象空間（勝義諦への過程）
-\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\metanegation}{\Uparrow}     % メタ観測・推論の横棒
 \newcommand{\ideal}[1]{\mathrm{Ideal}(#1)}
 
 % セクション名を幾何学的論証形式に
-\renewcommand{\abstractname}{Abstract}
 
 \begin{document}
 
 \title{直観主義四句分別における抽象原理の定式化と\\証明・正当性プロセスの界論的記述}
-\author{Masaomi Chiba}
+\author{千葉将臣}
 \date{2026-04-22}
 \maketitle
 

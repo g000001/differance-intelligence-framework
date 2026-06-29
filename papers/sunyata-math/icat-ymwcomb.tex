@@ -1,7 +1,6 @@
 % !TEX program = lualatex
-\documentclass[paper=a4,fontsize=11pt]{ltjsarticle}
-\usepackage{luatexja}
-\usepackage{amsmath, amssymb, amsthm}
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{icat-common}
 
 % 定理環境の定義
 \newtheorem{theorem}{定理}[section]
@@ -10,15 +9,10 @@
 \newtheorem{corollary}{系}[section]
 
 % 独自マクロ
-\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\dfix}{D_{\mathrm{fix}0}}
-\newcommand{\metanegation}{\Uparrow}
 \renewcommand{\proofname}{\textbf{Proof.}}
-\newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}   % 中道不動点コンビネータ（無明ジェネレータ）
-\newcommand{\Svoid}{\mathbf{S}_{\emptyset}}    % 空(Sunyata)コンビネータ（絶対不動点アトラクタ）
 
 \title{空数学における中道不動点コンビネータ $\Ymw$ の定式化と\\無明の幾何学的・証明論的実態}
-\author{Masaomi Chiba}
+\author{千葉将臣}
 \date{2026-04-22}
 
 \begin{document}
