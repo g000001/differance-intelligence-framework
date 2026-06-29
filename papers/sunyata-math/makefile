@@ -15,6 +15,7 @@ SOURCES = icat-perception.tex \
           icat-truth-preservation.tex \
           titotp.tex \
           titotp-mebius.tex \
+	  math-limit-equivalence.tex \
 	\
           icat-principles.tex \
           icat-cl.tex \

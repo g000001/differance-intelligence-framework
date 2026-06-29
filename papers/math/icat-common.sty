@@ -1,0 +1,32 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{icat-common}[2026/06/29 Common settings for ICAT papers]
+
+\RequirePackage{fix-cm}
+\RequirePackage{luatexja}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{amsfonts}
+\RequirePackage{geometry}
+\RequirePackage{enumitem}
+
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  共通マクロ
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}
+\newcommand{\Svoid}{\mathbf{S}_{\emptyset}}
+\newcommand{\Bval}{\mathcal{B}}
+
+%-------------------------------------------------
+%  共通表示設定
+%-------------------------------------------------
+\renewcommand{\abstractname}{Abstract}
+\renewcommand{\refname}{参考文献}
+\providecommand{\bibname}{参考文献}
+\renewcommand{\bibname}{参考文献}
+\setlist[description]{style=multiline, leftmargin=3cm}

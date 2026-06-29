@@ -1,10 +1,6 @@
 % !TEX program = lualatex
 \documentclass[11pt,a4paper]{article}
-\usepackage{luatexja}
-\usepackage{amsmath,amssymb,amsthm,amsfonts}
-\usepackage{geometry}
-\geometry{margin=1in}
-\usepackage{enumitem}
+\usepackage{icat-common}
 
 %-------------------------------------------------
 %  定理環境
@@ -17,18 +13,12 @@
 \newtheorem{remark}{備考}[section]
 
 %-------------------------------------------------
-%  独自マクロ（先行論考との共通基底）
+%  独自マクロ
 %-------------------------------------------------
-\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\dfix}{D_{\mathrm{fix}0}}
-\newcommand{\metanegation}{\Uparrow}
-\newcommand{\Bval}{\mathcal{B}}
 \newcommand{\Einfty}{E_\infty}
 \newcommand{\Einftycal}{\mathcal{E}_\infty}
 \newcommand{\SelfRef}{\Sigma}
 \renewcommand{\Pr}{\mathrm{Pr}}
-
-\renewcommand{\abstractname}{Abstract}
 
 %-------------------------------------------------
 \begin{document}
@@ -155,7 +145,7 @@ $\Einfty$ を「壁」として誤読してきた。これは発明ではなく�
 \end{remark}
 
 %=============================================================
-\section{$\Einfty$ の否定と LP との構造的差異}
+\section{$\Einfty$ の否定と矛盾許容論理との構造的差異}
 %=============================================================
 
 \begin{definition}[$\neg \Einfty$ の定義]
@@ -179,13 +169,13 @@ $\neg \Einfty = \Pr_T(\ulcorner \Einfty \urcorner)$ である。
 両者は構文的に異なる文である。
 \end{proof}
 
-これは LP（Graham Priest の矛盾許容論理）との決定的な差異である。
-LP では矛盾値 $B$ について $\neg B = B$ が成立し、
-$B$ は否定の固定点（sink）となって推論が閉じた領域に封じ込められる。
+これは、Priest の「パラドックスの論理」に代表される矛盾許容論理との構造的差異である\cite{Priest1979}。
+同論理では、真かつ偽である値が否定に関して固定的に扱われ、
+矛盾が推論空間内の安定した領域として保持される。
 
-$\Einfty$ と $\neg \Einfty$ は互いに異なる文として、
+これに対して、$\Einfty$ と $\neg \Einfty$ は互いに異なる文として、
 $\SelfRef_T$ のサイクル上の二点をなす。
-矛盾は sink ではなく通過点として機能する。
+したがって本体系において、矛盾は閉じた終端ではなく通過点として機能する。
 
 %=============================================================
 \section{結論}
@@ -205,5 +195,15 @@ $\SelfRef_T$ のサイクル上の二点をなす。
           sink を形成しない。これにより既存の多値論理が抱える
           「矛盾の否定の閉じ込め」が回避される。
 \end{enumerate}
+
+
+\begin{thebibliography}{9}
+
+\bibitem{Priest1979}
+Graham Priest.
+\newblock The logic of paradox.
+\newblock \emph{Journal of Philosophical Logic}, 8(1):219--241, 1979.
+
+\end{thebibliography}
 
 \end{document}
