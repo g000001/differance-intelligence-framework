@@ -151,11 +151,11 @@ T_R A = (A \to R) \to R
 直観主義論理が成立する。
 \end{remark}
 
-\subsection{$\Omega$ 上の演算と直観主義論理}
+\subsection{\texorpdfstring{$\Omega$}{Omega} 上の演算と直観主義論理}
 
 トポス $\topos$ において、$\Omega$ 上には以下の射が定義される。
 
-\begin{definition}[$\Omega$ 上の論理演算]
+\begin{definition}[\texorpdfstring{$\Omega$}{Omega} 上の論理演算]
 \begin{align}
 \top &: 1 \to \Omega \quad \text{（真）} \\
 \bot &: 1 \to \Omega \quad \text{（偽）} \\
@@ -226,23 +226,23 @@ $\neg\neg(p \land q) \dashv\vdash \neg\neg p \land \neg\neg q$
 が成立する。
 \end{proof}
 
-\subsection{$j$-閉包と $j$-層}
+\subsection{\texorpdfstring{$j$}{j}-閉包と \texorpdfstring{$j$}{j}-層}
 
-\begin{definition}[$j$-閉包]
+\begin{definition}[\texorpdfstring{$j$}{j}-閉包]
 局所作用素 $j$ に対し、部分対象 $S \hookrightarrow A$ の
 $j$-閉包 $\overline{S}^j \hookrightarrow A$ を
 特性射 $\chi_S: A \to \Omega$ の $j$ による合成
 $j \circ \chi_S: A \to \Omega$ が分類する部分対象として定義する。
 \end{definition}
 
-\begin{definition}[$j$-層]
+\begin{definition}[\texorpdfstring{$j$}{j}-層]
 対象 $F \in \topos$ が $j$-層（$j$-sheaf）であるとは、
 $F$ の任意の部分対象が $j$-閉包と一致することをいう。
 すなわち、$F$ 上の任意のモノ射 $S \hookrightarrow F$ に対して
 $\overline{S}^j = S$ が成立する。
 \end{definition}
 
-\begin{theorem}[$j$-層の圏の構成]
+\begin{theorem}[\texorpdfstring{$j$}{j}-層の圏の構成]
 局所作用素 $j$ に対し、$j$-層の全体は
 トポス $\topos$ の部分トポス $\mathrm{Sh}_j(\topos)$ をなす。
 さらに、層化関手（随伴）
@@ -274,18 +274,39 @@ T &= i \circ a : \topos \to \topos \\
 \mu &: T \circ T \Rightarrow T \quad \text{（乗法自然変換）}
 \end{align}
 
-ここで $\eta$ は随伴の単位 $\eta: \id \Rightarrow ia$、
-$\mu$ は $iTa \circ \eta_{iT} = i\varepsilon a$ から構成される
-（$\varepsilon: ai \Rightarrow \id_{\Sh(\topos)}$ は随伴の余単位）。
+ここで $\eta$ は随伴の単位 $\eta: \id_{\topos} \Rightarrow ia$ である。
+随伴の余単位を
+$\varepsilon: ai \Rightarrow \id_{\Sh(\topos)}$ とすると、
+乗法自然変換は
+\begin{equation}
+\mu = i\varepsilon a : iaia \Rightarrow ia
+\label{eq:dn_mu}
+\end{equation}
+として定義される。
+すなわち任意の対象 $A \in \topos$ に対して
+\begin{equation}
+\mu_A = i(\varepsilon_{aA}): i a i a A \to i a A
+\end{equation}
+である。
 \end{definition}
 
 \begin{proposition}[モナド則の成立]
 上記の三つ組 $(T, \eta, \mu)$ はモナド則を満たす。
 
 \begin{align}
-\mu \circ T\mu &= \mu \circ \mu_T \quad \text{（結合則）}\\
-\mu \circ T\eta &= \mu \circ \eta_T = \id_T \quad \text{（単位元則）}
+\mu \circ T\mu &= \mu \circ \mu T \quad \text{（結合則）}\\
+\mu \circ T\eta &= \mu \circ \eta T = \id_T \quad \text{（単位元則）}
 \end{align}
+
+成分表示では、任意の対象 $A$ に対して、
+\begin{align}
+\mu_A \circ T(\mu_A)
+  &= \mu_A \circ \mu_{T A},\\
+\mu_A \circ T(\eta_A)
+  &= \mu_A \circ \eta_{T A}
+  = \id_{T A}
+\end{align}
+である。
 \end{proposition}
 
 \begin{proof}
@@ -323,9 +344,9 @@ $a(iF) \cong F$ が成立する（$\varepsilon: ai \cong \id$ が同型）。
 これは「古典論理への截断」が一回で完了することを意味する。
 \end{remark}
 
-\subsection{$\Omega$ 上の作用との対応}
+\subsection{\texorpdfstring{$\Omega$}{Omega} 上の作用との対応}
 
-\begin{proposition}[$\Omega$ 上の作用との整合性]
+\begin{proposition}[\texorpdfstring{$\Omega$}{Omega} 上の作用との整合性]
 対象 $A \in \topos$ および部分対象分類子 $\Omega$ に対し、
 射 $p: A \to \Omega$ について
 
@@ -343,7 +364,7 @@ T(p) = \neg\neg \circ p : A \to \Omega
 
 \subsection{二重否定層の古典性}
 
-\begin{theorem}[$\Sh(\topos)$ における排中律の成立]
+\begin{theorem}[\texorpdfstring{$\Sh(\topos)$}{Sh(E)} における排中律の成立]
 $\Sh(\topos)$ において排中律が成立する。
 すなわち、任意の $F \in \Sh(\topos)$ および部分対象 $S \hookrightarrow F$ に対して、
 

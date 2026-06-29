@@ -34,6 +34,7 @@
 \newcommand{\id}{\mathrm{id}}
 \newcommand{\Hom}{\mathrm{Hom}}
 \newcommand{\op}{\mathrm{op}}
+\newcommand{\End}{\mathbf{End}}
 \DeclareMathOperator*{\bigsqcap}{\sqcap}
 \providecommand{\Ref}{\mathbf{Ref}}
 \newcommand{\Dom}{\mathbf{Dom}}
@@ -191,6 +192,20 @@ $a \sqsupseteq b$ は「$a$ は $b$ より未確定（より多くの可能性�
 \end{equation}
 \end{definition}
 
+\begin{remark}[自己関手圏における記法]
+以下では基底圏 $\mathcal{C}$ の自己関手圏
+$\End(\mathcal{C}) = [\mathcal{C},
+\mathcal{C}]$ を、関手合成をモノイダル積、恒等関手を単位対象とする
+モノイダル圏として用いる。
+したがって、洗練モナドに現れるフロベニウス条件は、
+基底圏 $\mathcal{C}$ のテンソル積 $\otimes$ に関する条件ではなく、
+自己関手の合成と自然変換のウィスカー結合に関する条件である。
+自然変換 $\alpha: F \Rightarrow G$ と自己関手 $H$ に対し、
+$H\alpha$ および $\alpha H$ はそれぞれ左・右ウィスカー結合を表す。
+成分表示では $(H\alpha)_A = H(\alpha_A)$、
+$(\alpha H)_A = \alpha_{H A}$ と書く。
+\end{remark}
+
 %=============================================================
 \section{洗練モナドと洗練コモナドの定式化}
 %=============================================================
@@ -204,6 +219,9 @@ $\Mr A$ は「$A$ が洗練過程の中にある状態」を表す。
 \end{definition}
 
 \begin{definition}[洗練モナド]
+圏 $\mathcal{C}$ 上の自己関手 $\Mr: \mathcal{C} \to \mathcal{C}$ と
+自然変換 $\etar: \id_{\mathcal{C}} \Rightarrow \Mr$、
+$\mur: \Mr\Mr \Rightarrow \Mr$ からなる
 三つ組 $(\Mr, \etar, \mur)$ を洗練モナドとして定義する。
 
 \begin{align}
@@ -214,9 +232,21 @@ $\Mr A$ は「$A$ が洗練過程の中にある状態」を表す。
 モナド則：
 
 \begin{align}
-\mur \circ \Mr\mur &= \mur \circ \mur_{\Mr} \quad \text{（結合則）}\\
-\mur \circ \Mr\etar &= \mur \circ \etar_{\Mr} = \id_{\Mr} \quad \text{（単位元則）}
+\mur \circ \Mr\mur &= \mur \circ \mur\Mr
+  \quad \text{（結合則）}\\
+\mur \circ \Mr\etar &= \mur \circ \etar\Mr = \id_{\Mr}
+  \quad \text{（単位元則）}
 \end{align}
+
+すなわち任意の対象 $A$ に対して、
+\begin{align}
+\mur_A \circ \Mr(\mur_A)
+  &= \mur_A \circ \mur_{\Mr A},\\
+\mur_A \circ \Mr(\etar_A)
+  &= \mur_A \circ \etar_{\Mr A}
+  = \id_{\Mr A}
+\end{align}
+が成立する。
 \end{definition}
 
 \begin{proposition}[洗練順序との整合性]
@@ -236,6 +266,8 @@ $\Mr$ の適用は洗練過程を一段持ち上げた文脈を生成する。
 
 \begin{definition}[洗練コモナド]
 洗練の確定方向を記述するコモナド $(\Mr, \epsr, \deltar)$ を定義する。
+ここで $\epsr: \Mr \Rightarrow \id_{\mathcal{C}}$、
+$\deltar: \Mr \Rightarrow \Mr\Mr$ は自然変換である。
 
 \begin{align}
 \epsr_A &: \Mr A \to A \quad \text{（洗練の完了確定・値の取り出し）}\\
@@ -245,9 +277,23 @@ $\Mr$ の適用は洗練過程を一段持ち上げた文脈を生成する。
 コモナド則：
 
 \begin{align}
-\epsr \circ \Mr\epsr \circ \deltar &= \id_{\Mr} \label{eq:comonad1}\\
-\Mr\deltar \circ \deltar &= \deltar_{\Mr} \circ \deltar \label{eq:comonad2}
+\epsr\Mr \circ \deltar &= \id_{\Mr},
+\qquad
+\Mr\epsr \circ \deltar = \id_{\Mr}
+\label{eq:comonad1}\\
+\Mr\deltar \circ \deltar &= \deltar\Mr \circ \deltar
+\label{eq:comonad2}
 \end{align}
+
+成分表示では、任意の対象 $A$ に対して、
+\begin{align}
+\epsr_{\Mr A} \circ \deltar_A
+  &= \Mr(\epsr_A) \circ \deltar_A
+  = \id_{\Mr A},\\
+\Mr(\deltar_A) \circ \deltar_A
+  &= \deltar_{\Mr A} \circ \deltar_A
+\end{align}
+が成立する。
 \end{definition}
 
 \begin{remark}
@@ -273,41 +319,63 @@ $(\Mr, \etar, \mur, \epsr, \deltar)$
 として定義する。
 ここで $(\Mr, \etar, \mur)$ は洗練モナド、
 $(\Mr, \epsr, \deltar)$ は洗練コモナドであり、
+自己関手圏 $\End(\mathcal{C})$ における関手合成を用いて、
 以下のフロベニウス条件を満たす。
 
 \begin{equation}
-(\mur \otimes \id) \circ (\id \otimes \deltar)
+(\mur\Mr) \circ (\Mr\deltar)
 = \deltar \circ \mur
-= (\id \otimes \mur) \circ (\deltar \otimes \id)
+= (\Mr\mur) \circ (\deltar\Mr)
 \label{eq:frobenius}
 \end{equation}
 
-フロベニウス条件は洗練の前進（$\mur$）と展開（$\deltar$）が
+成分表示では、任意の対象 $A$ に対して、
+\begin{equation}
+\mur_{\Mr A} \circ \Mr(\deltar_A)
+= \deltar_A \circ \mur_A
+= \Mr(\mur_A) \circ \deltar_{\Mr A}
+\label{eq:frobenius_component}
+\end{equation}
+である。
+
+さらに本稿では、洗練の埋め込みと完了確定が互いに正規化されることを
+表す整合条件
+\begin{equation}
+\epsr_A \circ \etar_A = \id_A
+\label{eq:normalization}
+\end{equation}
+を仮定する。
+
+フロベニウス条件は洗練の前進（$\mur$）と展開（$\deltar$）が、
+自己関手の合成に関して
 可換であることを要求する。
 すなわち、洗練してから精緻化する経路と、
 精緻化してから洗練する経路が一致する。
 \end{definition}
 
-\begin{theorem}[モナド則とコモナド則の両立]
-フロベニウス条件 \eqref{eq:frobenius} のもとで、
+\begin{theorem}[モナド則とコモナド則の整合性]
+フロベニウス条件 \eqref{eq:frobenius} と正規化条件
+\eqref{eq:normalization} のもとで、
 洗練モナドのモナド則とコモナドのコモナド則は両立する。
 
 具体的には、以下の図式が可換となる。
 
 \begin{align}
-\epsr \circ \etar &= \id_A \label{eq:both1}\\
-\deltar \circ \epsr &= (\id \otimes \epsr) \circ \deltar \label{eq:both2}
+\epsr_A \circ \etar_A &= \id_A \label{eq:both1}\\
+\epsr_{\Mr A} \circ \deltar_A
+&= \Mr(\epsr_A) \circ \deltar_A
+= \id_{\Mr A}
+\label{eq:both2}
 \end{align}
 \end{theorem}
 
 \begin{proof}
-\eqref{eq:both1} はコモナドの余単位元則 \eqref{eq:comonad1} と
-モナドの単位元則から従う。
-$\epsr \circ \etar = \epsr \circ \etar = \id_A$ は
-$\Mr$ が自然変換の整合条件を満たすことから得られる。
-
-\eqref{eq:both2} はフロベニウス条件 \eqref{eq:frobenius} の
-$\mur = \id$ とした特殊ケースとして導出される。
+\eqref{eq:both1} は正規化条件 \eqref{eq:normalization} そのものである。
+\eqref{eq:both2} はコモナドの余単位元則 \eqref{eq:comonad1} の
+成分表示である。
+フロベニウス条件 \eqref{eq:frobenius_component} は、
+これらの余単位元則がモナド乗法 $\mur$ による前進方向の合成と
+矛盾しないことを保証する。
 \end{proof}
 
 \begin{remark}
@@ -339,9 +407,9 @@ $\mur = \id$ とした特殊ケースとして導出される。
 双方向演繹定理 \eqref{eq:bdt} と同型の構造を持つ。
 
 \begin{equation}
-\underbrace{(\mur \circ \Mr\etar = \id_{\Mr})}_{\Psi \vdash_T \Phi}
+\underbrace{(\mur_A \circ \Mr(\etar_A) = \id_{\Mr A})}_{\Psi \vdash_T \Phi}
 \;\leftrightarrow\;
-\underbrace{(\epsr \circ \deltar = \id_{\Mr})}_{\neg\Phi \vdash_T \neg\Psi}
+\underbrace{(\epsr_{\Mr A} \circ \deltar_A = \id_{\Mr A})}_{\neg\Phi \vdash_T \neg\Psi}
 \label{eq:iso}
 \end{equation}
 \end{proposition}
@@ -353,12 +421,12 @@ $\mur = \id$ とした特殊ケースとして導出される。
 \item $\Psi \vdash_T \Phi$ は洗練文脈への埋め込み $\etar$ と
   モナド結合 $\mur$ の合成、すなわち
   洗練の前進方向として読める。
-  単位元則 $\mur \circ \Mr\etar = \id_{\Mr}$ がこれに対応する。
+  単位元則 $\mur_A \circ \Mr(\etar_A) = \id_{\Mr A}$ がこれに対応する。
 
 \item $\neg\Phi \vdash_T \neg\Psi$ は洗練完了確定 $\epsr$ と
   文脈展開 $\deltar$ の合成、すなわち
   洗練の確定方向として読める。
-  余単位元則 $\epsr \circ \deltar = \id_{\Mr}$ がこれに対応する。
+  余単位元則 $\epsr_{\Mr A} \circ \deltar_A = \id_{\Mr A}$ がこれに対応する。
 \end{itemize}
 
 フロベニウス条件 \eqref{eq:frobenius} はこの双方向の可換性を保証し、
@@ -413,7 +481,7 @@ $\epsr_{A^*}: \Mr A^* \to A^*$ が同型となる。
 \end{equation}
 
 Refinement Order Domain Theory における $\bot$ の全可能性としての解釈
-（Hoare・He \cite{Hoare1998}\ ）が、
+（Hoare・He \cite{Hoare1998}）が、
 洗練連鎖の極限としての不動点収束と一致する。
 \end{corollary}
 
