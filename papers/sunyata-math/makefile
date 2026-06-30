@@ -5,6 +5,7 @@ LATEX_FLAGS = -interaction=nonstopmode
 
 # ソースファイルのリスト（指定された順番を維持）
 SOURCES = icat-perception.tex \
+	  avyakata.tex \
           icat-leges-fractales.tex \
           fractal-id.tex \
 	  aletheics-observer-elimination.tex \
