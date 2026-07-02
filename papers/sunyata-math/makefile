@@ -19,6 +19,11 @@ SOURCES = icat-perception.tex \
 	  math-limit-equivalence.tex \
 	\
 	  pov-proof.tex \
+	  exploitation-monad.tex \
+	  double-negation-monad.tex \
+	  refinement-monad.tex \
+	  cut-elimination-monad.tex \
+	  5skandha.tex \
           icat-cl.tex \
           icat-catuskoti-skandha.tex \
           icat-ymwcomb.tex \
