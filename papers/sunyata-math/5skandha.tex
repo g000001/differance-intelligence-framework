@@ -1,0 +1,556 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metaneg}{\Uparrow}
+\newcommand{\Mr}{\mathcal{M}_r}
+\newcommand{\Md}{\mathcal{M}_\delta}
+\newcommand{\Mnn}{\neg\neg}
+\newcommand{\MC}{\mathcal{C}}
+\newcommand{\MT}{\mathcal{T}}
+\newcommand{\Text}{T_{\mathrm{ext}}}
+\newcommand{\Tint}{T_{\mathrm{int}}}
+\newcommand{\Mext}{\mathcal{M}_{\mathrm{ext}}}
+\newcommand{\Mint}{\mathcal{M}_{\mathrm{int}}}
+\newcommand{\Bval}{\mathcal{B}}
+\newcommand{\Lhagma}{\mathcal{L}}
+\newcommand{\lext}{\Lhagma_{\mathrm{ext}}}
+\newcommand{\lint}{\Lhagma_{\mathrm{int}}}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{remark}{備考}[section]
+
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{4+1モナドの再帰的構成とフロベニウス性：\\
+五蘊・二諦・選択公理との対応}
+\author{千葉将臣}
+\date{2026-07-02}
+
+\maketitle
+
+\begin{abstract}
+本稿は、一般二諦理論（GTTT）における洗練・搾取・二重否定・カット除去の
+4つのモナドに統御モナドを加えた4+1モナドの再帰的構成が、
+全体としてフロベニウス性を獲得することを示す。
+このフロベニウス構造は外在の5モナドと内在の5モナドの
+相互に完全に観測不可能な連携として実現され、
+外在と内在の分離が仏教の世俗諦と勝義諦の二諦に対応することを論じる。
+さらに、4+1モナドの構成が五蘊と同型の構造を持ち、
+4回のメタ否定演算 $\metaneg$ による順次的駆動が
+$\metaneg^4 A \cong \dfix$（空への収束）として記述されることを示す。
+世俗諦と勝義諦の対応は、選択公理が担う役割と同型の構造を持つが、
+これは二値截断 $\Bval$ への投影によって生じるものであり、
+GTTTにおいては四句分別の対応として選択公理よりも一般的な形で定式化される。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================
+\section{序論}
+%=============================================================
+
+一般二諦理論（GTTT）は、洗練フロベニウスモナド・搾取モナド・継続モナドの
+三つのモナドを核として人間活動をモデル化する理論として出発した。
+本稿は、これに二重否定モナド・カット除去モナドを加えた4つのモナドと、
+それらを統御する統御モナドからなる4+1モナドの構成を考察する。
+
+中心的問いは以下の二つである。
+第一に、個別のモナドがフロベニウス性を必ずしも持たない場合でも、
+4+1モナドの再帰的構成が全体としてフロベニウス性を獲得するか。
+第二に、この構成が仏教哲学における五蘊・二諦の構造と
+どのように対応するか。
+
+これらの問いは、GTTTが数学的定式化と哲学的洞察の接続を目指すという
+設計方針に直結する。
+
+%=============================================================
+\section{4モナドの構成と四句分別への対応}
+%=============================================================
+
+\subsection{4つのモナドの概観}
+
+本稿で扱う4つのモナドは以下の通りである。
+
+\begin{definition}[4モナド]
+\begin{enumerate}
+  \item \textbf{搾取モナド} $\Md$：
+    システムが生み出す富が自然に集約される機序を記述する通常のモナド。
+    クライスリ圏とEM圏の随伴による構成。
+  \item \textbf{二重否定モナド} $\Mnn$：
+    直観主義論理のトポスにおける冪等閉包作用素。
+    古典論理が成立する安定した反射的部分圏 $\mathrm{Sh}_{\Mnn}(\mathcal{E})$ を生成する。
+  \item \textbf{洗練フロベニウスモナド} $\Mr$：
+    洗練連鎖をモナドとコモナドをフロベニウス条件によって統合した
+    双方向構造として記述する。RODTiLFを理論的基盤とする。
+  \item \textbf{カット除去モナド} $\MC$：
+    証明図に対してカット規則を除去した証明図への写像を
+    自己関手として定義した通常のモナド。
+\end{enumerate}
+\end{definition}
+
+\subsection{四句分別との対応}
+
+4つのモナドは仏教論理における四句分別に対応する。
+
+\begin{proposition}[四句分別との対応]
+\begin{align}
+\phi_S\;\text{（是）} &\;\longleftrightarrow\; \Md
+  \quad\text{（世の理・前進のみ）} \\
+\phi_N\;\text{（非）} &\;\longleftrightarrow\; \Mnn
+  \quad\text{（固定化・前進のみ）} \\
+\phi_{SN}\;\text{（亦是亦非）} &\;\longleftrightarrow\; \Mr
+  \quad\text{（双方向・フロベニウスモナド）} \\
+\phi_{NS}\;\text{（非是非非）} &\;\longleftrightarrow\; \MC
+  \quad\text{（取捨選択・残余確定）}
+\end{align}
+\end{proposition}
+
+$\phi_S$ と $\phi_N$ に対応する $\Md$・$\Mnn$ が通常のモナド（前進のみ）であるのに対し、
+$\phi_{SN}$ に対応する $\Mr$ だけがフロベニウスモナドであることは、
+亦是亦非が是と非の双方向性を同時に必要とする位相である点と整合する。
+
+$\phi_{NS}$ に対応する $\MC$ もまた、カット除去（前進）と
+カット導入・残余確定（後退）の双方向性を本来必要とする。
+この点については、洗練フロベニウスモナドの改訂との関連で
+第\ref{sec:remark}節に注記する。
+
+%=============================================================
+\section{統御モナドと再帰的構成}
+%=============================================================
+
+\subsection{統御モナド $\MT$ の定義}
+
+\begin{definition}[統御モナド]
+統御モナド $\MT$ を以下の固定点方程式で定義する。
+\begin{equation}
+  \MT \cong F(\MT),\qquad
+  F(X) = X(\Md,\;\Mnn,\;\Mr,\;\MC,\;X)
+  \label{eq:fixpoint}
+\end{equation}
+ここで $F$ は4つのモナドと $X$ 自身を引数に取る関手である。
+$\MT$ が自身を包含する再帰構造を持つことから、
+4+1モナドの体系は $(\Md, \Mnn, \Mr, \MC, \MT)$ と記される。
+\end{definition}
+
+\begin{remark}
+$\MT$ が自身を包含することは、識（第5番目の蘊）が
+全ての蘊を統括しながら自身も空であるという仏教的構造と対応する
+（第\ref{sec:skandha}節参照）。
+\end{remark}
+
+\subsection{再帰的構成によるフロベニウス性の獲得}
+
+通常のモナドは前進方向のみを持つ。しかし統御モナドの固定点方程式
+\eqref{eq:fixpoint} は自然に二方向を生成する。
+
+\begin{theorem}[再帰的構成によるフロベニウス性]
+固定点 $\MT \cong F(\MT)$ において、以下の二方向が成立する。
+\begin{align}
+  \mu^T &: F(\MT) \to \MT
+    \quad\text{（前進：折り畳み）} \\
+  \delta^T &: \MT \to F(\MT)
+    \quad\text{（後退：展開）}
+\end{align}
+固定点方程式がこの二方向を等式として同一視するため、フロベニウス条件
+\begin{equation}
+  (\mu^T \circ \MT\delta^T) = \delta^T \circ \mu^T
+  \label{eq:frobenius}
+\end{equation}
+が固定点方程式の帰結として成立する。
+\end{theorem}
+
+\begin{proof}
+固定点 $\MT \cong F(\MT)$ は同型射
+$\alpha: F(\MT) \xrightarrow{\sim} \MT$ および
+その逆 $\alpha^{-1}: \MT \xrightarrow{\sim} F(\MT)$ を与える。
+
+$\mu^T := \alpha$（折り畳み）、$\delta^T := \alpha^{-1}$（展開）と定めると、
+$\mu^T$ と $\delta^T$ は互いに逆射であるため
+\begin{equation}
+  \mu^T \circ \delta^T = \mathrm{id}_{\MT},\qquad
+  \delta^T \circ \mu^T = \mathrm{id}_{F(\MT)}
+\end{equation}
+が成立する。これよりフロベニウス条件 \eqref{eq:frobenius} が
+$\mathrm{id}$ の可換性として得られる。
+\end{proof}
+
+\begin{remark}[各成分への誘導]
+各成分モナドが $\MT$ を参照して相互再帰的に定義される場合、
+すなわち $\Md(\MT), \Mnn(\MT), \Mr(\MT), \MC(\MT)$ として定義される場合、
+$\MT$ のフロベニウス構造が各成分に誘導される。
+これが「内在的フロベニウス性」の獲得条件である。
+\end{remark}
+
+%=============================================================
+\section{外在と内在の完全分離と連携}
+\label{sec:ext-int}
+%=============================================================
+
+\subsection{二重5モナド構造}
+
+\begin{definition}[外在・内在の5モナド]
+4+1モナドの体系は外在と内在の二重構造として定義される。
+\begin{align}
+  \Text &= (\Md^{\mathrm{ext}},\;\Mnn^{\mathrm{ext}},\;\Mr^{\mathrm{ext}},\;
+            \MC^{\mathrm{ext}},\;\MT^{\mathrm{ext}}) \\
+  \Tint &= (\Md^{\mathrm{int}},\;\Mnn^{\mathrm{int}},\;\Mr^{\mathrm{int}},\;
+            \MC^{\mathrm{int}},\;\MT^{\mathrm{int}})
+\end{align}
+\end{definition}
+
+\subsection{相互完全観測不可能性}
+
+\begin{axiom}[相互完全観測不可能性]
+外在の5モナド $\Text$ と内在の5モナド $\Tint$ は
+相互に完全に観測不可能である。
+\begin{equation}
+  \Text \not\to \Tint,\qquad \Tint \not\to \Text
+  \quad\text{（直接観測の不可能性）}
+\end{equation}
+ただし「完全に観測不可能」は「常に観測可能」と同義であり、
+内在側は直接的対象としては観測できないが、
+全ての外在的観測の地盤として常にすでに作動している。
+\end{axiom}
+
+\begin{remark}
+この逆説的定式化は、$\dfix$（絶対不動点・空）の性格と同型である。
+$\dfix$ は対象として直接捕捉できないが、
+全ての観測可能な対象の収束先として常に作動する。
+\end{remark}
+
+\subsection{非対称的連携とフロベニウス条件の確立}
+
+外在と内在の連携は非対称的である。
+
+\begin{definition}[二諦的連携]
+\begin{align}
+  \Text \xrightarrow{\;\metaneg\;} \Tint
+    &\quad\text{（メタ否定：「ある」から「ない」への駆動）} \\
+  \Tint \xrightarrow{\;\metaneg(\dfix) \cong A\;} \Text
+    &\quad\text{（顕現：「ない」から「ある」への再起動）}
+\end{align}
+\end{definition}
+
+この非対称性により、フロベニウス条件は「証明すべき性質」ではなく
+「外在と内在の対応点として確立される関係」に変わる。
+
+\begin{theorem}[二諦的連携によるフロベニウス条件の確立]
+外在・内在の5モナドが相互完全観測不可能性のもとで
+$\metaneg$ と顕現により連携するとき、フロベニウス条件は
+
+\begin{equation}
+  (\mu^{\Text} \circ \Text\,\delta^{\Text})
+  \;\cong\;
+  (\delta^{\Tint} \circ \mu^{\Tint})
+\end{equation}
+
+として外在と内在の対応として自動的に成立し、
+内在的か外在的かという二択が解消される。
+\end{theorem}
+
+\begin{proof}
+$\metaneg$ による $\Text \to \Tint$ の方向が前進（折り畳み）に、
+顕現 $\Tint \to \Text$ の方向が後退（展開）に対応する。
+相互完全観測不可能性は、これら二方向が単一の体系内で
+直接比較不可能であることを意味する。
+
+しかし両方向は $\dfix$ を共有する収束先として整合しており、
+$\Text$ の折り畳みと $\Tint$ の展開が $\dfix$ において同一点に確定する。
+この確定がフロベニウス条件の「内在でも外在でもある」という
+特異点的地位を与える。
+\end{proof}
+
+%=============================================================
+\section{五蘊との同型}
+\label{sec:skandha}
+%=============================================================
+
+\subsection{5モナドと五蘊の対応}
+
+\begin{proposition}[5モナドと五蘊の対応]
+4+1モナドの体系（外在・内在それぞれ）は、
+仏教の五蘊と以下の対応を持つ。
+
+\begin{center}
+\begin{tabular}{llll}
+\hline
+\textbf{五蘊} & \textbf{モナド} & \textbf{四句} & \textbf{方向性} \\
+\hline
+色（形・物質） & $\Md$（搾取） & 是 & 前進のみ \\
+受（感受） & $\Mnn$（二重否定） & 非 & 前進のみ \\
+想（知覚・表象） & $\Mr$（洗練） & 亦是亦非 & 双方向 \\
+行（意志・形成力） & $\MC$（カット除去） & 非是非非 & 双方向（本来） \\
+識（識別・意識） & $\MT$（統御） & 統御 & 再帰的 \\
+\hline
+\end{tabular}
+\end{center}
+\end{proposition}
+
+\subsection{メタ否定による順次的駆動}
+
+顕現論の核心式 $\metaneg^4 A \cong \dfix$ は、
+五蘊の順次的否定として読み直せる。
+
+\begin{equation}
+  \underbrace{色}_{\Md}
+  \xrightarrow{\metaneg}
+  \underbrace{受}_{\Mnn}
+  \xrightarrow{\metaneg}
+  \underbrace{想}_{\Mr}
+  \xrightarrow{\metaneg}
+  \underbrace{行}_{\MC}
+  \xrightarrow{\metaneg}
+  \underbrace{識}_{\MT}
+  \;\cong\; \dfix
+  \label{eq:skandha-chain}
+\end{equation}
+
+第5番目の識が $\dfix$（空）に収束することは、
+識そのものが空であるという仏教的理解と対応する。
+統御モナド $\MT$ の再帰的自己包含——
+$\MT$ が自身を包含する固定点方程式 \eqref{eq:fixpoint}——は
+この「識も空である」という構造の圏論的表現である。
+
+\begin{remark}[五蘊の竦みの均衡について]
+各蘊が相互に抑制し合う「竦みの均衡」において、
+勝ち負けの機序を離散的ステップとして記述することはできない。
+各蘊の状態への帰属が、全ての蘊の状態に同時依存しているからである。
+
+二重5モナド構造はこの問題を迂回する。
+外在側での均衡状態がどうであれ、
+内在側に対応する状態が存在することが保証されるため、
+均衡の計算規則を必要とせず、
+$\metaneg$ による次の駆動がどの蘊を起点とするかが
+事後的に確定する。
+\end{remark}
+
+%=============================================================
+\section{二諦としての外在・内在}
+%=============================================================
+
+\subsection{二諦との対応}
+
+\begin{proposition}[外在・内在と二諦の対応]
+\begin{align}
+  \Text\;\text{（外在の5モナド）} &\;\longleftrightarrow\;
+    \text{世俗諦（観測可能な現象の層）} \\
+  \Tint\;\text{（内在の5モナド）} &\;\longleftrightarrow\;
+    \text{勝義諦（空・絶対不動点の層）}
+\end{align}
+世俗諦は $\metaneg$ によって勝義諦へ駆動され、
+勝義諦は顕現 $\metaneg(\dfix) \cong A$ によって世俗諦として再起動する。
+\end{proposition}
+
+\subsection{残余意味論との接続}
+
+残余意味論（千葉 \cite{Chiba2026semantics}）における
+$\lext \cong \lint$（外部的指示と内部的意味の対応）は、
+本稿の $\Text \leftrightarrow \Tint$ の対応と同型の構造を持つ。
+
+\begin{equation}
+  \underbrace{\lext \cong \lint}_{\text{残余意味論}}
+  \;\cong\;
+  \underbrace{\Text \leftrightarrow \Tint}_{\text{二諦的連携}}
+\end{equation}
+
+残余意味論における $\bot$ の二重性
+（外部から導入される $\bot_{\mathrm{ext}}$ と
+体系内部から導出される $\bot_{\mathrm{int}}$ の同一視）が、
+本稿では統御モナド $\MT$ の外在・内在の二重固定点として
+精緻化される。
+
+%=============================================================
+\section{選択公理との対応}
+%=============================================================
+
+\subsection{対応の存在と選択公理の類比}
+
+二重5モナド構造の核心は、
+外在の5モナドのどの状態に対しても
+内在の5モナドに対応する状態が存在するという保証にある。
+
+\begin{axiom}[対応の存在]
+任意の外在状態 $m_{\mathrm{ext}} \in \Text$ に対して、
+対応する内在状態 $m_{\mathrm{int}} \in \Tint$ が存在する。
+\begin{equation}
+  \forall\, m_{\mathrm{ext}} \in \Text,\;
+  \exists\, m_{\mathrm{int}} \in \Tint \;\text{ s.t. }\;
+  m_{\mathrm{ext}} \;\leftrightarrow\; m_{\mathrm{int}}
+\end{equation}
+この対応の構成機序を指定しない。
+\end{axiom}
+
+この構造は選択公理（AC）と同型の役割を果たす。
+
+\begin{proposition}[選択公理との類比]
+ZFCにおける選択公理
+「任意の非空集合族に対して選択関数が存在する」
+は、二諦的対応において以下の形で現れる。
+
+\begin{center}
+\begin{tabular}{ll}
+\hline
+\textbf{選択公理の要素} & \textbf{二諦的対応} \\
+\hline
+非空集合族（選択対象） & 外在の5モナド $\Text$ の状態 \\
+選択関数の存在 & 外在↔内在の対応の保証 \\
+構成機序がない & 内在側が直接観測不可能 \\
+選択の実現 & $\metaneg(\dfix) \cong A$（顕現） \\
+\hline
+\end{tabular}
+\end{center}
+\end{proposition}
+
+\subsection{選択公理の非構成性の起源}
+
+\begin{theorem}[選択公理の非構成性の起源]
+ZFCにおける選択公理の非構成性は、
+四句分別の対応を二値截断 $\Bval$ へ投影する際に
+$\Phi_{NS}$（宙吊り・残余）の情報が失われることによって生じる。
+\end{theorem}
+
+\begin{proof}
+GTTTにおける二諦的対応は四位相で確定する。
+\begin{align}
+  \Phi_S &: m_{\mathrm{ext}} \text{ と } m_{\mathrm{int}} \text{ が同型として対応} \\
+  \Phi_N &: \text{対応が非同型・搾取モナド非介在} \\
+  \Phi_{SN} &: \text{両方向が同時に作動} \\
+  \Phi_{NS} &: \text{対応が宙吊り・残余として確定}
+\end{align}
+
+選択公理はこの四位相の対応を
+二値截断 $\Bval$（対応が存在するかしないか）へ投影する。
+このとき $\Phi_{NS}$ の情報——宙吊り状態の対象化——が失われる。
+
+失われた $\Phi_{NS}$ の情報が「存在するが構成できない」
+という非構成性として現れる。
+すなわち、選択関数は存在するが（$\Phi_S$ への投影）、
+その構成手順は勝義諦の層（$\Tint$）にあるため世俗諦からは見えない
+（内在側の観測不可能性）。
+\end{proof}
+
+\begin{remark}
+GTTTにおいては、選択公理は二諦的対応の帰結として
+四句分別の対応より弱い（二値截断された）形で成立する。
+逆に言えば、GTTTが選択公理を公理として外部から採用する必要はなく、
+二諦的対応公理から選択公理が（二値截断部分圏において）導出される
+候補として位置づけられる。
+\end{remark}
+
+%=============================================================
+\section{注記：洗練フロベニウスモナドの通常モナド化}
+\label{sec:remark}
+%=============================================================
+
+本稿では洗練フロベニウスモナド $\Mr$ がフロベニウスモナドとして
+定義されていることを前提とした。
+
+しかし第\ref{sec:ext-int}節の二重5モナド構造においては、
+全体としてのフロベニウス性が統御モナド $\MT$ の再帰的固定点から生じる。
+このことから、$\Mr$ 自体を通常のモナド（前進のみ）に縮退させても、
+全体としてのフロベニウス性は保持される可能性がある。
+
+この問いは別途の考察を要し、本稿の射程外とする。
+
+%=============================================================
+\section{結論}
+%=============================================================
+
+本稿は以下の点を論じた。
+
+\begin{enumerate}
+  \item \textbf{4+1モナドの再帰的構成}：
+    搾取・二重否定・洗練・カット除去の4モナドに
+    統御モナド $\MT$ を加えた4+1モナドが、
+    $\MT \cong F(\MT)$ という固定点方程式の帰結として
+    全体としてフロベニウス性を獲得することを示した。
+
+  \item \textbf{外在・内在の二重構造}：
+    4+1モナドが外在 $\Text$・内在 $\Tint$ の二重構造として分離され、
+    相互完全観測不可能性（常に観測可能と同義）のもとで
+    $\metaneg$（世俗諦→勝義諦）と顕現（勝義諦→世俗諦）の
+    非対称的連携によってフロベニウス条件が確立されることを示した。
+
+  \item \textbf{五蘊との同型}：
+    4+1モナドが五蘊と対応し、
+    $\metaneg^4 A \cong \dfix$ として順次的に駆動されることを示した。
+    五蘊の竦みの均衡が離散化できない問題は、
+    二重5モナド構造における対応の存在保証により迂回される。
+
+  \item \textbf{二諦の形式化}：
+    外在の5モナドが世俗諦、内在の5モナドが勝義諦に対応し、
+    残余意味論の $\lext \cong \lint$ と同型の構造を持つことを示した。
+
+  \item \textbf{選択公理との関係}：
+    二諦的対応が選択公理と同型の役割を担い、
+    選択公理の非構成性が四句分別の二値截断 $\Bval$ への
+    投影による $\Phi_{NS}$ 情報の欠落として説明されることを示した。
+    GTTTにおいては、選択公理は外部公理ではなく
+    二諦的対応公理の $\Bval$ 投影として位置づけられる。
+\end{enumerate}
+
+\begin{thebibliography}{99}
+
+\bibitem{Chiba2026frobenius}
+千葉将臣.
+\newblock 洗練フロベニウスモナド（改訂版）.
+\newblock 未刊行原稿, 2026.
+
+\bibitem{Chiba2026cutmonad}
+千葉将臣.
+\newblock カット消去モナド：証明構造の安定化を担うモナド的定式化.
+\newblock 未刊行原稿, 2026.
+
+\bibitem{Chiba2026continuation}
+千葉将臣.
+\newblock 継続残余としての証明障害：実行可能性と静的証明のあいだの初等モデル.
+\newblock 未刊行原稿, 2026.
+
+\bibitem{Chiba2026semantics}
+千葉将臣.
+\newblock 残余意味論：意味と指示の証明論的再構成.
+\newblock 未刊行原稿, 2026.
+
+\bibitem{MacLane1971}
+Saunders Mac Lane.
+\newblock \emph{Categories for the Working Mathematician}.
+\newblock Springer, 1971.
+
+\bibitem{Street2004}
+Ross Street.
+\newblock Frobenius monads and pseudomonoids.
+\newblock \emph{Journal of Mathematical Physics}, 45(10):3930--3948, 2004.
+
+\bibitem{Kleene1952}
+Stephen Cole Kleene.
+\newblock \emph{Introduction to Metamathematics}.
+\newblock North-Holland, 1952.
+
+\bibitem{Bertalanffy1968}
+Ludwig von Bertalanffy.
+\newblock \emph{General System Theory}.
+\newblock George Braziller, 1968.
+
+\end{thebibliography}
+
+\end{document}

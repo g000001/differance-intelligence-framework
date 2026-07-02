@@ -1,0 +1,247 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{remark}{備考}[section]
+\newtheorem{hypothesis}{仮説}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\monad}{\mathcal{C}}
+\newcommand{\proofs}{\mathcal{P}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\cutelim}{\mathrm{CutElim}}
+\newcommand{\kleisli}{\mathrm{Kl}}
+
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{カット消去モナド：\\
+証明構造の安定化を担うモナド的定式化}
+\author{千葉将臣}
+\date{2026-07-02}
+
+\maketitle
+
+\begin{abstract}
+本稿は、証明論におけるカット消去をモナドとして定式化する枠組みを提案する。対象を証明図とし、カット消去を施した証明図への写像を自己関手として定義し、単位および乗法をカット規則の適用および多重カットの統合として定めることで、カット消去モナド $\monad$ を構成する。このモナドのクライスリ圏は、カット規則が本質的に除去された体系に対応し、二重否定モナドが直観主義論理の中に古典論理の安定した部分圏を構築するのと同様に、カット消去モナドは証明構造の安定化を担う。さらに、ZFC+U内での形式化および自動化への応用可能性について論じる。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================
+\section{序論：カット消去をモナドとして捉える動機}
+%=============================================================
+
+証明論において、カット消去定理（ゲンツェンの Hauptsatz）は、中間命題を除去することで証明図を正規形へ変換する核心的な手続きである。一方、圏論におけるモナドは、計算の文脈（副作用・状態・継続など）を抽象化し、自動化・正規化・安定化を実現するための強力な道具である。
+
+本稿の目的は、カット消去をモナドとして定式化し、証明構造の安定化を担う枠組みを構築することである。具体的には、証明図を対象とし、カット消去を施した証明図への写像を自己関手として定義し、単位および乗法をカット規則の適用および多重カットの統合として定めることで、カット消去モナド $\monad$ を構成する。このモナドのクライスリ圏は、カット規則が本質的に除去された体系に対応し、二重否定モナドが直観主義論理の中に古典論理の安定した部分圏を構築するのと同様に、カット消去モナドは証明構造の安定化を担う。
+
+%=============================================================
+\section{準備：証明図の圏とカット消去アルゴリズム}
+%=============================================================
+
+\subsection{証明図の圏 $\proofs$}
+
+証明図の圏 $\proofs$ を以下のように定義する。
+
+\begin{definition}[証明図の圏 $\proofs$]
+\begin{itemize}
+  \item 対象：証明図の集合。自然演繹やシーケント計算の証明図を集合としてコード化する。
+  \item 射：証明図の変換手続き。カット消去・縮約・置換など、証明図 $P$ から $Q$ への変換を関数としてコード化する。
+  \item 恒等射：何も変換しない手続き。
+  \item 合成：変換手続きの合成。
+\end{itemize}
+\end{definition}
+
+\subsection{カット消去アルゴリズム}
+
+カット消去アルゴリズム $\cutelim$ を、証明図 $P$ に対してカット規則を除去した証明図 $\cutelim(P)$ を返す関数として定義する。このアルゴリズムは、ゲンツェンの Hauptsatz に基づき、任意の証明図に対してカット規則を除去できるものとする。
+
+%=============================================================
+\section{カット消去モナド $\monad$ の定義}
+%=============================================================
+
+\subsection{自己関手 $\monad : \proofs \to \proofs$}
+
+\begin{definition}[自己関手 $\monad$]
+自己関手 $\monad : \proofs \to \proofs$ を以下のように定義する。
+\begin{itemize}
+  \item 対象 $P$ に対して、$\monad(P) = \cutelim(P)$（カット消去を施した証明図）。
+  \item 射 $f : P \to Q$ に対して、$\monad(f) : \monad(P) \to \monad(Q)$ は、$f$ をカット消去後の証明図に持ち上げた変換とする。
+\end{itemize}
+\end{definition}
+
+\subsection{単位 $\eta : \id \Rightarrow \monad$}
+
+\begin{definition}[単位 $\eta$]
+単位自然変換 $\eta : \id \Rightarrow \monad$ を、各対象 $P$ に対して
+\[
+\eta_P : P \to \monad(P)
+\]
+として定義する。ここで $\eta_P$ は、証明図 $P$ を「カット規則を適用しない（そのままの証明図）」としてカット消去済みの圏へ埋め込む射である。
+\end{definition}
+
+\subsection{乗法 $\mu : \monad \monad \Rightarrow \monad$}
+
+\begin{definition}[乗法 $\mu$]
+乗法自然変換 $\mu : \monad \monad \Rightarrow \monad$ を、各対象 $P$ に対して
+\[
+\mu_P : \monad(\monad(P)) \to \monad(P)
+\]
+として定義する。ここで $\mu_P$ は、多重カットを一段階に統合（カットのカットを消去）する射である。
+\end{definition}
+
+\subsection{モナド則}
+
+\begin{theorem}[モナド則]
+カット消去モナド $(\monad, \eta, \mu)$ は以下のモナド則を満たす。
+\begin{enumerate}
+  \item 左単位元則：$\mu_P \circ \monad(\eta_P) = \id_{\monad(P)}$
+  \item 右単位元則：$\mu_P \circ \eta_{\monad(P)} = \id_{\monad(P)}$
+  \item 結合則：$\mu_P \circ \mu_{\monad(P)} = \mu_P \circ \monad(\mu_P)$
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+各則は、カット消去アルゴリズムの正規化可能性に基づき成立する。具体的には、
+\begin{itemize}
+  \item 左単位元則：カット消去済みの証明図にさらにカット消去を適用しても変化しない。
+  \item 右単位元則：カット消去済みの証明図をさらにカット消去しても変化しない。
+  \item 結合則：カット消去の反復が結合的である。
+\end{itemize}
+\end{proof}
+
+%=============================================================
+\section{クライスリ圏とカット消去状態の維持}
+%=============================================================
+
+\subsection{クライスリ圏 $\kleisli(\monad)$}
+
+\begin{definition}[クライスリ圏 $\kleisli(\monad)$]
+カット消去モナド $\monad$ のクライスリ圏 $\kleisli(\monad)$ を以下のように定義する。
+\begin{itemize}
+  \item 対象：$\proofs$ の対象（証明図）と同じ。
+  \item 射 $P \to Q$：$\proofs$ における射 $P \to \monad(Q)$。
+  \item 恒等射：$\eta_P : P \to \monad(P)$。
+  \item 合成：$f : P \to \monad(Q)$, $g : Q \to \monad(R)$ に対して、$g \circ f = \mu_R \circ \monad(g) \circ f$。
+\end{itemize}
+\end{definition}
+
+\subsection{カット規則が本質的に除去された体系}
+
+\begin{theorem}
+クライスリ圏 $\kleisli(\monad)$ は、カット規則が本質的に除去された体系に対応する。
+\end{theorem}
+
+\begin{proof}
+クライスリ圏における射は、常にカット消去済みの証明図への変換として定義されるため、この圏ではカット規則が暗黙的に除去された状態が維持される。
+\end{proof}
+
+%=============================================================
+\section{二重否定モナドとの対応}
+%=============================================================
+
+\subsection{二重否定モナドの役割}
+
+直観主義論理のトポスにおいて、二重否定モナド $\neg\neg$ は冪等閉包作用素として機能し、不確定性（$\bot$）を閉宇宙の外へ放出することで、古典論理が成立する安定した反射的部分圏を生成する。
+
+\subsection{カット消去モナドとの類似性}
+
+カット消去モナド $\monad$ は、中間命題（カット規則）を外部に追い出すことで証明図を安定化し、カット規則が本質的に除去された体系を構築する点で、二重否定モナドと類似の役割を持つ。
+
+\begin{remark}
+二重否定モナドが真理値の安定化（古典論理の部分圏）を担うのに対し、カット消去モナドは証明構造の安定化（カット消去済みの部分圏）を担う。
+\end{remark}
+
+%=============================================================
+\section{ZFC+U内での形式化}
+%=============================================================
+
+\subsection{証明図のコード化}
+
+ZFC+U内で証明図を集合としてコード化する。具体的には、
+\begin{itemize}
+  \item 証明図を有限の木構造として表現。
+  \item 各ノードを論理式・推論規則・仮定などとしてコード化。
+\end{itemize}
+
+\subsection{カット消去アルゴリズムのコード化}
+
+カット消去アルゴリズム $\cutelim$ を、証明図の木構造に対する変換関数としてコード化する。この関数は、任意の証明図に対してカット規則を除去できることをZFC+U内で証明する。
+
+\subsection{モナドのコード化}
+
+自己関手 $\monad$、単位 $\eta$、乗法 $\mu$ を、集合と関数としてコード化し、モナド則を定理として証明する。
+
+%=============================================================
+\section{自動化への応用}
+%=============================================================
+
+\subsection{自動定理証明}
+
+カット消去モナド $\monad$ を用いることで、証明探索アルゴリズムにカット消去の自動化層を追加できる。クライスリ圏 $\kleisli(\monad)$ における射は常にカット消去済みの証明図への変換であるため、この圏上での証明探索は自動的にカット規則が除去された状態で行われる。
+
+\subsection{型検査・プログラム変換}
+
+Curry–Howard対応のもとでは、カット消去はプログラムの正規化（評価）に対応する。カット消去モナド $\monad$ を型検査器やコンパイラに組み込むことで、プログラムの正規化を自動化できる。
+
+\subsection{証明変換・メタ理論}
+
+ある証明体系から別の証明体系への翻訳において、カット消去アルゴリズムを自動的に適用する必要がある。カット消去モナド $\monad$ を自由モナドとして扱うことで、カット消去のパターンを自動生成できる。
+
+%=============================================================
+\section{結論}
+%=============================================================
+
+本稿は、カット消去をモナドとして定式化する枠組みを提案した。具体的には、証明図の圏 $\proofs$ 上にカット消去モナド $\monad$ を定義し、そのクライスリ圏がカット規則が本質的に除去された体系に対応することを示した。さらに、二重否定モナドとの対応、ZFC+U内での形式化、自動化への応用可能性について論じた。
+
+今後の課題としては、カット消去モナドを実際の自動定理証明器や型検査器に組み込むこと、およびフロベニウスモナドとの統合による双方向カット消去の定式化が挙げられる。
+
+\begin{thebibliography}{99}
+
+\bibitem{Gentzen1935}
+Gerhard Gentzen.
+\newblock Untersuchungen über das logische Schließen.
+\newblock \emph{Mathematische Zeitschrift}, 39:176--210, 405--431, 1935.
+
+\bibitem{Moggi1991}
+Eugenio Moggi.
+\newblock Notions of computation and monads.
+\newblock \emph{Information and Computation}, 93(1):55--92, 1991.
+
+\bibitem{Girard1987}
+Jean-Yves Girard.
+\newblock Linear logic.
+\newblock \emph{Theoretical Computer Science}, 50:1--102, 1987.
+
+\bibitem{Hyland2007}
+Martin Hyland.
+\newblock Game semantics.
+\newblock In \emph{Logic and Algebra}, pages 131--184. Cambridge University Press, 2007.
+
+\bibitem{MacLane1971}
+Saunders Mac Lane.
+\newblock \emph{Categories for the Working Mathematician}.
+\newblock Springer, 1971.
+
+\end{thebibliography}
+
+\end{document}
