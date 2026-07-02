@@ -1,0 +1,132 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{icat-common}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{definition}{定義}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{corollary}{系}[section]
+
+\begin{document}
+
+\title{エルブラン空間上の純粋関係代数における\\中道不動点コンビネータから空コンビネータへの相転移の代数的証明}
+\author{}
+\date{}
+\maketitle
+
+\begin{abstract}
+本稿は、一般二諦理論（GTTT）に基づく型なしの代数的一元論において、中道不動点コンビネータ $\Ymw$ から空コンビネータ $\Svoid$ への大域的カット消去プロセスを関係代数的に証明するものである。従来のDomain Theory in Logical Form (DTiLF) が要請した型理論的階層を棄却し、Scottの普遍領域と同型なエルブラン空間を基底として採用する。FreydのDivision Allegoryにおけるモジュラー則を適用することにより、非停止的な再帰的適用が商関係の残余を蓄積し、最終的に双方向の代数的均衡限界において観測同値で飽和された最大状態へと還元されるプロセスを形式的に導出する。
+\end{abstract}
+
+\section{序論}
+計算の構成的プロセスと静的証明の対応を記述する証明論において、型理論は自己言及的パラドックスを構文論的に排除するための基盤として機能してきた。しかし、AbramskyのDTiLF \cite{Abramsky1991} 等に見られる型の階層化は、計算可能性の空間を事前に分断するものであり、界論において要請される「対象が既存の記述枠組みを逸脱して新たな指示対象を確定する現象（創発および残余 $\mathcal{L}$ の回収）」を構造的に記述することができない。
+
+本稿では、型という境界線を引かず、単一の普遍的な基底空間において推論の収縮プロセスを記述する代数的一元論を構成する。具体的には、Dana Scottの普遍領域 \cite{Scott1976} に同型なエルブラン空間上に、H. B. Curryの型なしコンビネータ論理 \cite{Curry1958} とP. J. Freydの純粋関係代数（アレゴリー） \cite{Freyd1990} を統合する。この空間上で、再帰的境界生成を駆動する $\Ymw$ が、いかにして自明な極限対象である $\Svoid$ へと代数的に還元（大域的カット消去）されるかを証明する。
+
+\section{理論的基盤}
+
+\subsection{普遍領域としてのエルブラン空間}
+本体系の基底空間は、すべての記号と関数適用を型なしで包含するエルブラン空間 $\mathcal{P}(B)$ とする。これはScottの $P\omega$ \cite{Scott1976} と同様の普遍領域をなし、本体系における絶対不動点 $\dfix$ に対応する。この空間において、すべてのプロセスは連続的な関係の合成として表現される。
+
+\subsection{純粋関係代数とアレゴリー}
+推論および観測のプロセスを要素（点）に依存せずに記述するため、FreydとScedrovによるアレゴリー（Allegory）\cite{Freyd1990} を導入する。関係 $R, S$ に対して、合成 $RS$、交わり $R \cap S$、転置 $R^\circ$ が定義され、以下のモジュラー則（Modular Law）を満たす。
+\begin{equation}
+RS \cap T \subseteq (R \cap TS^\circ)S
+\end{equation}
+さらに、Division Allegoryにおける右商 $R/S$ を以下で定義する。
+\begin{equation}
+T \subseteq R/S \iff TS \subseteq R
+\end{equation}
+商関係の合成による包含関係のギャップ $(R/S)S \subseteq R$ は、動的プロセス $R$ を静的観測 $S$ で評価した際に生じる非還元性（継続残余 $\rho$）に対応する。
+
+\section{相転移の大域的カット消去の代数的証明}
+
+\subsection{$\Svoid$ の関係代数的な特徴付け}
+空コンビネータ $\Svoid$ は、「任意の関数を適用しても自己を返す」コンビネータであり、$\Svoid f = \Svoid$ を満たす。ただし、関係代数における最大元（全体関係）$\top$ は、それ自体で任意の関係合成に対する吸収元であるとは限らない。したがって本稿では、$\top$ を $\Svoid$ と直接同一視するのではなく、観測同値 $\mweq$ によって残余を識別不能化した後の飽和状態として用いる。
+\begin{definition}[観測飽和としての空コンビネータ]
+関係 $R$ の観測飽和を $\overline{R}$ と書く。すべての局所的差異および継続残余が観測同値 $\mweq$ のもとで識別不能化されるとき、$\overline{R}=\top$ と表す。この飽和状態を空コンビネータ $\Svoid$ の関係代数的表示とみなす。
+\begin{equation}
+\overline{R}=\top \quad \Longrightarrow \quad \overline{R \circ f}=\top \mweq \Svoid
+\end{equation}
+ここで不変性は生の関係合成 $\top \circ f=\top$ の主張ではなく、観測飽和後の同値として理解される。
+\end{definition}
+
+\subsection{$\Ymw$ の再帰的展開と残余の蓄積}
+中道不動点コンビネータ $\Ymw$ は、境界生成演算子 $\metanegation$ の再帰的適用として以下の関係等式を満たす。
+\begin{equation}
+\Ymw \circ \metanegation \mweq \metanegation \circ (\Ymw \circ \metanegation)
+\end{equation}
+この再帰関係を $n$ 段階展開した関係を $R_n = \metanegation^n \circ \Ymw$ とする。これを商関係によって局所的に静的評価しようと試みる場合、$(R_n/\metanegation) \circ \metanegation$ を構成するが、関係代数一般において $(R_n/\metanegation)\circ \metanegation = R_n$ は保証されない。
+\begin{lemma}
+\begin{equation}
+(R_n / \metanegation) \circ \metanegation \subsetneq R_n
+\end{equation}
+この包含関係の差分が継続残余 $\rho$ であり、これが消去されない限り、再帰的な合成プロセス $R_n$ は停止しない。
+\end{lemma}
+
+\subsection{モジュラー則と双方向演繹の均衡}
+再帰的展開がエルブラン空間におけるトポロジカルな散逸限界（公理上の四段階目 $\metanegation^4 A \mweq \dfix$）に達したとき、順方向の構成プロセスと逆方向の制約が衝突する。
+ここで、式(1)のモジュラー則 $RS \cap T \subseteq (R \cap TS^\circ)S$ において、$RS$ を $\Ymw$ による順方向の展開、$T$ を空間全体の境界条件と置く。
+散逸限界においては局所的な関係性が破綻し、順方向プロセス $RS$ と逆方向プロセス $S^\circ$ が代数的に完全に釣り合う。この均衡は、直観主義論理における双方向演繹定理の発火と同値である。
+
+\subsection{観測飽和状態への還元}
+\begin{theorem}
+モジュラー則に基づく双方向の均衡限界において、$\Ymw$ の再帰展開は観測飽和状態 $\overline{R}=\top$ へと還元される。
+\end{theorem}
+\begin{proof}
+順方向と逆方向の推論が等式としてロックされた瞬間、再帰プロセスの中間状態を区別する幾何学的情報（情報的足場）が相殺される。このとき、任意の対象を特定していた部分関係の連鎖 $R_n$ は、空間内のすべての部分関係を包摂する状態に遷移する。
+\begin{equation}
+\overline{\lim_{n \to \text{limit}} \metanegation^n \circ \Ymw}
+\quad \xrightarrow{\text{Modular Eq}} \quad \top
+\end{equation}
+定義3.1により、この $\top$ は生の全体関係ではなく、観測飽和後の最大状態を表す。したがって、蓄積された残余 $\rho$ は消滅するのではなく、観測同値 $\mweq$ のもとで識別不能な差異として飽和状態に吸収される。この意味で、系は任意の関係 $f$ の合成に対して
+\[
+\overline{R \circ f}=\top \mweq \Svoid
+\]
+を満たす定常状態に到達する。
+\end{proof}
+
+\section{結論}
+本稿は、型理論による構文論的制約を排した純粋関係代数の枠組みにおいて、中道不動点コンビネータ $\Ymw$ から空コンビネータ $\Svoid$ への相転移が、アレゴリー上のモジュラー則と商関係の還元プロセスとして記述可能であることを示した。ただし、その終端は生の全体関係 $\top$ そのものではなく、観測同値によって残余が識別不能化された飽和状態として理解される。これにより、証明木の大域的カット消去は外部的なメタ定理ではなく、関係代数内部の代数的な収束プロセスとして正当化される。
+
+\begin{thebibliography}{9}
+
+\bibitem{Scott1976}
+Dana S. Scott.
+\newblock Data Types as Lattices.
+\newblock \emph{SIAM Journal on Computing}, 5(3):522--587, 1976.
+
+\bibitem{Curry1958}
+Haskell B. Curry and Robert Feys.
+\newblock \emph{Combinatory Logic, Vol. I}.
+\newblock North-Holland, 1958.
+
+\bibitem{Freyd1990}
+Peter J. Freyd and Andre Scedrov.
+\newblock \emph{Categories, Allegories}.
+\newblock North-Holland Mathematical Library, Vol. 39. Elsevier, 1990.
+
+\bibitem{Abramsky1991}
+Samson Abramsky.
+\newblock Domain theory in logical form.
+\newblock \emph{Annals of Pure and Applied Logic}, 51(1-2):1--77, 1991.
+
+\bibitem{Hoare1998}
+C. A. R. Hoare and He Jifeng.
+\newblock \emph{Unifying Theories of Programming}.
+\newblock Prentice Hall, 1998.
+
+\bibitem{Chiba2026_Ymw}
+千葉将臣.
+\newblock 空数学における中道不動点コンビネータ $\Ymw$ の定式化と無明の幾何学的・証明論的実態.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_Boundary}
+千葉将臣.
+\newblock 界論（Boundary Theory）：核定義.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\end{thebibliography}
+
+\end{document}

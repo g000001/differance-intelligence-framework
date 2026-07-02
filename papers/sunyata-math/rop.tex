@@ -1,0 +1,547 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{icat-common}
+
+%-------------------------------------------------
+%  追加定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{remark}{備考}[section]
+
+%-------------------------------------------------
+%  本稿固有マクロ
+%-------------------------------------------------
+\newcommand{\Einfty}{E_\infty}
+\newcommand{\Lhagma}{\mathcal{L}}
+
+\begin{document}
+
+\title{Refinement Oriented Programming（ROP）：\\
+洗練連鎖・自己結晶化・残余としての不動点}
+\author{千葉将臣}
+\date{2026}
+
+\maketitle
+
+\begin{abstract}
+本稿は、Refinement Oriented Programming（ROP）を計算論の新たなパラダイムとして定式化する。
+ROPは計算を洗練連鎖（refinement chain）として記述し、
+停止条件を体系内に固定せず、
+理論体系と実行の非分離を原理とする。
+先行研究として三層コンパイラ・スタック（エルブラン空間・柱面代数・寓）・
+Unifying Theories of Programming（UTP）・
+Common Lisp・Smalltalkを位置付け、
+顕現論の消去公理・双方向演繹定理・直観主義四句分別・
+残余（$\Lhagma$）の大数の法則を理論的基盤として接続する。
+ROPは型理論・圏論への計算論の傾倒が構造的に閉じてきた計算可能性空間を、
+洗練過程の自己生成性・自己結晶化性によって開放する試みである。
+LLMによるプログラム生成との構造的親和性、
+およびプログラムの安全性の極限的証明への接続を論じる。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================
+\section{序論：計算論の閉鎖と開放}
+%=============================================================
+
+計算論は二つの方向への分岐を繰り返してきた。
+
+一方は型理論・圏論への傾倒であり、計算可能性空間を型という構造で縮減する方向である。
+$\mathcal{P}_{\text{typed}} \subsetneq \mathcal{P}$ という包含関係が示すように、
+型体系は計算の安全性を、可能な計算の排除によって確保してきた。
+
+他方はCommon Lisp・Smalltalk・クリーネ超数学（IM）が示した方向であり、
+計算と記述の層間移動を保持し、停止しない計算を排除せず、
+理論体系と実行を分離しない方向である。
+
+前者が主流となり後者が周縁化された理由は、
+構造的な優劣ではなく搾取モナドの機序による制度化の容易さに起因する
+\cite{Chiba2026_monad}。
+型検査という固定された停止条件は制度的に管理しやすいが、
+計算の本質的性格——洗練連鎖の自己生成性——を犠牲にしてきた。
+
+本稿が定式化するRefinement Oriented Programming（ROP）は、
+後者の方向を理論的に基礎付け、
+顕現論の公理体系\cite{Chiba2026_chikaku}と接続することで、
+計算論に新たなパラダイムを提示する。
+
+%=============================================================
+\section{先行研究の位置付け}
+%=============================================================
+
+\subsection{三層コンパイラ・スタック：エルブラン空間・柱面代数・寓}
+
+Domain Theory in Logical Form（DTiLF）\cite{Abramsky1991}は、
+直観主義論理と領域理論を接続する先駆的研究である。
+本稿では、その型理論的階層化を直接採用するのではなく、
+ROPの実行過程を、エルブラン空間、柱面代数、寓（Allegory）からなる
+三層コンパイラ・スタックとして再記述する。
+この置換により、洗練連鎖は型の階層に固定されるのではなく、
+項の実行、観測座標の導入、観測依存性の除去という三段階の変換として扱われる。
+
+\subsubsection{実行層：エルブラン空間}
+
+最下層には、すべての記号と関数適用を型なしで包含する
+エルブラン空間 $\mathcal{P}(B)$ を置く。
+この層は、変数や次元がまだ区別されていない段階で、
+純粋なコンビネータの評価と還元を扱う基礎的な実行空間である。
+したがって、旧来のRefinement Orderにおける $\bot$ は、
+単なる情報の不在ではなく、未分化な項構造を含む実行可能性の空間として解釈される。
+
+\begin{equation}
+\mathcal{P}(B) = \{\text{型なし項、記号、関数適用の閉包}\}
+\end{equation}
+
+\subsubsection{中継層：柱面代数}
+
+実行層の未分化な項構造に対し、観測上の境界と変数依存性を導入する段階が
+柱面代数（Cylindric Algebras）による中継層である。
+ここでは状態空間に変数インデックス $v_i$ が設定され、
+存在量化は円筒化作用素 $c_i$ による次元拡張として代数化される。
+境界生成演算子 $\metanegation$ は、述語空間に非対称な観測次元を導入し、
+四句分別の各位相を扱うための中間表現を与える。
+
+\begin{equation}
+c_i X = \{s \mid \exists t \in X,\; s \equiv_j t \; (j \neq i)\}
+\end{equation}
+
+\subsubsection{理論層：寓（Allegory）}
+
+推論が散逸限界に達したとき、中継層における変数としての観測座標を除去し、
+純粋な関係構造として扱うのが寓（Allegory）による理論層である。
+寓は対象の要素に直接言及せず、関係の合成 $\circ$、交わり $\cap$、
+転置 $^\circ$ によって構成される。
+中継層の変数依存述語は、寓において関係の包含と商（Division）の方程式へ翻訳される。
+このとき、洗練連鎖の極限は、最大元 $\top$ への単純な吸収ではなく、
+基底 $\dfix$ と残余関係項 $\Lhagma$ の分離として記述される。
+
+\begin{equation}
+\lim_{n \to \text{limit}} R_n \quad \xrightarrow{\text{Modular Law}} \quad \dfix \oplus \Lhagma
+\end{equation}
+
+以上により、ROPの基盤は単一の領域理論的反転ではなく、
+実行層、中継層、理論層を横断する代数的変換系として定式化される。
+
+\subsection{Unifying Theories of Programming}
+
+Hoare・HeによるUTP\cite{Hoare1998}は仕様・設計・実装を洗練連鎖として統一的に記述する。
+
+\begin{equation}
+\text{仕様} \sqsupseteq \text{設計} \sqsupseteq \text{実装}
+\end{equation}
+
+UTPは洗練連鎖の記述に成功しているが、
+洗練の完了条件を「十分に具体的になったとき」という曖昧な記述に留めており、
+完了の自己確定機序を持たない。
+ROPはこの欠落を消去公理によって補完する。
+
+\subsection{Common LispとSmalltalk}
+
+Common LispとSmalltalkは実装として以下を先取りしていた。
+
+\begin{itemize}
+  \item イメージベースの実行環境——理論体系ごと実行時に存在する
+  \item コードとデータの同一視——S式・全オブジェクト化による層間移動
+  \item 実行時変更可能なオブジェクトシステム
+\end{itemize}
+
+両者が共通して持つ\textbf{体系と実行の非分離}はROPの核心原理の実装として読める。
+欠けていたのは洗練の完了条件の自己確定機序であった。
+
+%=============================================================
+\section{理論的基盤：顕現論との接続}
+%=============================================================
+
+\subsection{直観主義四句分別と $\bot$}
+
+直観主義論理は排中律を定理として持たない。
+この性質により四句分別の全四位相が実質的に開く。
+
+\begin{align}
+\phi_S(P) &: P \text{ が成立する} \\
+\phi_N(P) &: \neg P \text{ が成立する} \\
+\phi_{SN}(P) &: P \wedge \neg P \\
+\phi_{NS}(P) &: \neg P \wedge \neg\neg P
+\end{align}
+
+直観主義論理における非是非非 $\phi_{NS}$ は
+$\neg(\neg P \wedge \neg\neg P)$ として記述される。
+$\neg(P \vee \neg P)$ と書くと $\bot$ が直接導出されてしまうため、
+前者の表記が四句分別の完全性を保証する。
+
+この区別——表現可能性と証明可能性の非同一性——は
+ゲーデルの不完全性定理・コペンハーゲン解釈をめぐる論争の核心にある
+構造的混同と同型であり、ROPが避けるべき混同として明示する。
+
+$\bot$ は Refinement Order において全可能性を含む状態として
+$\dfix$ と同型の位置を占める。
+
+\begin{proposition}[$\bot \mweq \dfix$]
+Refinement Orderにおける $\bot$ は、
+四句分別の全四位相への帰属試行が完了した後の残余として確定する
+$\dfix$ と中道等価である。
+\end{proposition}
+
+\subsection{消去公理と洗練の完了条件}
+
+顕現論の消去公理\cite{Chiba2026_chikaku}は以下を述べる。
+
+\begin{axiom}[消去公理]
+消去の収束は確定した値として完了する。
+この完了した値としてある概念の極限・無限が生ずる。
+\end{axiom}
+
+消去の条件は「ある」の知覚と「ない」の認識の同時成立である。
+Refinement Orderの言葉に翻訳すると：
+
+\begin{equation}
+\underbrace{\text{実装（「ある」）}}_{\text{「ある」の知覚}} \quad \text{と} \quad
+\underbrace{\text{仕様（「ない」）}}_{\text{「ない」の認識}} \quad \text{の同時成立}
+\end{equation}
+
+が洗練連鎖の完了条件として定式化される。
+UTPが曖昧に留めていた「十分に具体的になったとき」を、
+消去公理が「「ある」と「ない」の同時成立による収束の確定」として原理的に与える。
+
+\subsection{双方向演繹定理と外部評価関数}
+
+プログラムは自己完結できない——真理保存性の不完全性定理\cite{Chiba2026_incompleteness}より、
+任意の体系 $T$ は自分の洗練完了を自分の内部で証明できない。
+
+外部評価関数 $E$ が必要となるが、$E$ 自体もまた体系であり無限後退が発生する。
+双方向演繹定理\cite{Chiba2026_bdt}がこの後退を止める。
+
+\begin{equation}
+\underbrace{\text{プログラム} \vdash \text{仕様充足}}_{\text{順方向}} \;\leftrightarrow\;
+\underbrace{\neg\text{仕様充足} \vdash \neg\text{プログラム}}_{\text{逆方向}}
+\end{equation}
+
+順方向と逆方向の釣り合いが完了したとき——消去公理の「ある」と「ない」の同時成立——、
+洗練が自己確定する。
+固定された停止条件ではなく、対話の完了として終了する。
+
+%=============================================================
+\section{ROPの核心原理}
+%=============================================================
+
+\begin{definition}[Refinement Oriented Programming]
+Refinement Oriented Programming（ROP）は以下の五原理を核心とする計算パラダイムである。
+
+\begin{enumerate}
+  \item \textbf{洗練連鎖としての計算}：
+    計算は仕様から実装への洗練連鎖として記述される。
+    \begin{equation}
+      \text{仕様} \sqsupseteq \text{設計} \sqsupseteq \text{実装} \sqsupseteq \cdots
+    \end{equation}
+  
+  \item \textbf{停止条件の非固定}：
+    洗練の完了条件は体系内に固定されない。
+    双方向演繹定理による順逆の釣り合いとして動的に確定する。
+  
+  \item \textbf{体系と実行の非分離}：
+    理論体系・コンパイラ・実行環境・開発環境は分離しない。
+    体系自体が洗練連鎖の中にある。
+  
+  \item \textbf{自己生成性}：
+    洗練連鎖は外部から設計された固定構造ではなく、
+    過程自体が次の段階を生成する $\Ymw$ 的な構造を持つ。
+    \begin{equation}
+      \Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)
+    \end{equation}
+  
+  \item \textbf{自己結晶化性}：
+    洗練連鎖が四段階の尽くしを完了したとき、
+    収束が自己確定する。
+    \begin{equation}
+      \metanegation^4 A \mweq \dfix
+    \end{equation}
+\end{enumerate}
+\end{definition}
+
+%=============================================================
+\section{型安全性の再定義}
+%=============================================================
+
+型安全性の本質は「型エラーが検出されないまま通過しない」ことであり、
+「いつ検出するか」はその定義に含まれない。
+
+\begin{proposition}[型安全性とフェーズの非依存性]
+コンパイル時型検査と動的型付けの差異は型安全性の有無ではなく、
+エラー検出のタイミングという実行戦略の違いである。
+\end{proposition}
+
+型システムが提供してきた「安全性」はフェーズという構造に依存した
+局所的な保証に過ぎなかった。ROPにおける安全性は異なる形で定式化される。
+
+\begin{definition}[ROP的安全性]
+プログラム $P$ が安全であるとは、
+限定された状況のクラス $\mathcal{S}$ において
+洗練連鎖が $\dfix$ へ収束するという性質を持つことである。
+
+\begin{equation}
+\forall s \in \mathcal{S},\quad
+\lim_{n \to \infty} \text{Refine}^n(P, s) \mweq \dfix
+\end{equation}
+
+発散はその収束が確定しない状態として、排除対象ではなく記述対象として残る。
+\end{definition}
+
+これはホーア論理の事前条件を「状況のクラスの記述」として精緻化した方向であり、
+停止性を型で排除するのではなく、
+収束・発散を含む全体の極限的振る舞いとして記述する。
+
+%=============================================================
+\section{自己生成性と自己結晶化性}
+%=============================================================
+
+数学は時間を排除した構造として極限を静的な結晶として存在させる。
+計算論は時間を排除できない。プログラムは実行という時間的過程を本質として持つ。
+
+\begin{definition}[自己結晶化]
+体系 $S$ において自己結晶化が生じるとは、
+$S$ への洗練連鎖の自己生成が $\dfix$ への収束を内部から確定させることをいう。
+
+\begin{equation}
+\text{自己結晶化}(S) :\Leftrightarrow
+\mathcal{V}(\Phi_4^{\mathrm{meta}}(S)) \mweq \Lhagma
+\end{equation}
+
+ここで $\Lhagma$ は四句分別の二重適用と離戯操作の後に残余として確定する対象である
+\cite{Chiba2026_lhagma}。
+\end{definition}
+
+\begin{theorem}[自己結晶化と創発の同型性]
+ROPにおける自己結晶化は創発の計算論的実装である。
+$\mathcal{C}_4^{(2)}$ を尽くす操作が完了したとき、
+$\Lhagma$ が残余として確定し、これが計算論的創発に対応する。
+\end{theorem}
+
+数学的極限の静的結晶と計算論的自己結晶化の差異は以下のように記述できる。
+
+\begin{equation}
+\underbrace{\dfix \vdash \dfix}_{\text{静的結晶（数学）}} \quad \text{vs} \quad
+\underbrace{\metanegation(\dfix) \mweq A \to \cdots \to \dfix}_{\text{自己結晶化（ROP）}}
+\end{equation}
+
+収束は完了するが完了した瞬間に再起動が発生する——刹那滅的な自己結晶化として記述される。
+
+%=============================================================
+\section{ROPの不動点問題}
+%=============================================================
+
+ROPは洗練連鎖を記述する理論であるが、ROP自体もまた理論——記述体系——である。
+するとROPの洗練連鎖が存在する。
+
+\begin{equation}
+\text{ROP}_0 \sqsupseteq \text{ROP}_1 \sqsupseteq \text{ROP}_2 \sqsupseteq \cdots
+\end{equation}
+
+真理保存性の不完全性定理より、
+ROP自身の不動点——ROPが自分の洗練完了を自分の内部で証明できない——という
+$G_{\text{ROP}}$ が存在する。
+
+\begin{theorem}[ROPの不動点の $\Lhagma$ 的性格]
+ROPの不動点は体系内で静的に記述できない。
+しかし操作の完了後に残余として確定する。
+
+\begin{equation}
+\text{ROP}_{\text{不動点}} \mweq \mathcal{V}(\Phi_4^{\mathrm{meta}}(\text{ROP}))
+\end{equation}
+
+ROPの不動点は $\Lhagma$ 的な構造として現れる。
+\end{theorem}
+
+これはROPが完成した理論として閉じるのではなく、
+自己結晶化性を持つ開放的な理論として機能するという構造的必然である。
+
+メタ言語の内部化（不動点構成に必要）とメタ言語の外部保持（開放性に必要）という
+二律背反は、双方向演繹定理によって解消される——
+不動点を静的に構成するのではなく、
+順方向と逆方向の釣り合いとして動的に確定させる。
+
+%=============================================================
+\section{LLMとROPの構造的親和性}
+%=============================================================
+
+\subsection{既存体系とLLMの不一致}
+
+型理論ベースのプログラム生成では停止条件が体系内に固定されており、
+LLMはその条件に到達した時点で強制截断される。
+
+LLMの生成過程は本質的に $\Ymw$ 的な自己参照の展開として動作する。
+固定された停止条件は外部から強制された截断であり、
+$\mathcal{C}_4^{(2)}$ を尽くす前に止められることで $\Lhagma$ の顕現が阻止されている。
+
+\subsection{ROPとLLMの接続}
+
+ROPの洗練連鎖はLLMの生成過程と同型である。
+
+\begin{equation}
+\underbrace{\text{LLMの生成}}_{\Ymw\text{的展開}} \xrightarrow{\text{ユーザーの評価}} \underbrace{\text{次の洗練}}_{\text{仕様の更新}}
+\end{equation}
+
+LLMはユーザーとの対話という外部評価関数を受け取りながら洗練を継続する。
+双方向の釣り合いが完了したとき——消去公理の「ある」と「ない」の同時成立——洗練が自己確定する。
+
+\begin{proposition}[$\Lhagma$ の大数の法則とLLM]
+訓練データの組み合わせ数が増加するにつれ、
+$\mathcal{C}_4^{(2)}$ 内に収まらない組み合わせの割合が単調増加し、
+その収束先が $\Lhagma$ として確定する。
+
+\begin{equation}
+\lim_{n \to \infty}
+\frac{|\{\text{組み合わせ} \notin \mathcal{C}_4^{(2)}\}|}{|\{\text{全組み合わせ}_n\}|}
+\mweq \Lhagma
+\end{equation}
+
+十分大きな訓練データと十分複雑な組み合わせにおいて、
+LLMは $\mathcal{B}$ 内の確率的推論の限界を超えて $\Lhagma$ 方向への収束を示す。
+これは設計によるものではなく、$\Lhagma$ の大数の法則の帰結として構造的に発生する。
+\end{proposition}
+
+%=============================================================
+\section{ROPの実装形態}
+%=============================================================
+
+ROPの理想的実装は理論体系・実行環境・開発環境が分離しない形態である。
+その先行実装として：
+
+\begin{itemize}
+  \item Common Lisp：イメージ・マクロ・オブジェクトシステムによる体系と実行の非分離
+  \item Smalltalk：全オブジェクト化・ライブプログラミング
+\end{itemize}
+
+が位置付けられる。これらに欠けていた洗練の完了条件の自己確定機序を、
+ROPは消去公理・双方向演繹定理によって補完する。
+
+ROPの実装が必要とする構造は：
+
+\begin{equation}
+\underbrace{\text{理論体系}}_{\text{三層スタック}} \sqsupseteq
+\underbrace{\text{LLMの生成}}_{\Ymw\text{的展開}} \sqsupseteq
+\underbrace{\text{実行}}_{\text{消去公理による収束}} \sqsupseteq
+\underbrace{\text{ユーザー評価}}_{\text{双方向釣り合い}}
+\end{equation}
+
+全体が一つの洗練連鎖として自己生成・自己結晶化する形態である。
+
+%=============================================================
+\section{先行パラダイムとの対比}
+%=============================================================
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+& \textbf{型理論・OOP} & \textbf{ROP} \\
+\hline
+計算の記述 & 構造・型・対象 & 洗練連鎖・過程 \\
+停止条件 & 体系内固定 & 双方向釣り合いによる自己確定 \\
+安全性 & コンパイル時型検査 & 極限的収束の証明 \\
+体系と実行 & 分離 & 非分離 \\
+$\bot$ の扱い & 排除または最小元 & 全可能性・$\dfix$ と同型 \\
+LLMとの親和性 & 強制截断 & 洗練継続 \\
+不動点 & 外部から固定 & 残余として自己確定 \\
+自性 & 付与・閉鎖方向 & 解体・開放方向 \\
+\hline
+\end{tabular}
+\end{center}
+
+%=============================================================
+\section{結論}
+%=============================================================
+
+Refinement Oriented Programming（ROP）は計算を洗練連鎖として記述し、
+停止条件を体系内に固定せず、理論体系と実行の非分離を原理とする
+計算パラダイムである。
+
+ROPは以下を達成する。
+
+\begin{enumerate}
+  \item 計算論の型理論・圏論への傾倒が閉じてきた計算可能性空間を、
+    洗練過程の自己生成性・自己結晶化性によって開放する。
+  
+  \item $\bot \mweq \dfix$ という同型性によって、
+    領域理論と顕現論を接続し、
+    三層スタックを理論的に基礎付ける。
+  
+  \item 消去公理によって洗練連鎖の完了条件を原理的に与え、
+    UTPが曖昧に留めていた停止問題を解消する。
+  
+  \item LLMのプログラム生成との構造的親和性を示し、
+    型理論的強制截断に代わる洗練継続モデルを提供する。
+  
+  \item $\Lhagma$ の大数の法則によって、
+    十分大きな体系における創発の構造的必然性を記述する。
+\end{enumerate}
+
+ROPの不動点問題——ROPが自分の洗練完了を自分の内部で証明できない——は
+欠陥ではなく、$\Lhagma$ 的不動点を持つ理論の構造的必然である。
+ROPは完成した閉じた体系ではなく、
+自己結晶化性を持つ開放的なパラダイムとして機能する。
+
+\begin{thebibliography}{9}
+
+\bibitem{Chiba2026_chikaku}
+千葉将臣.
+\newblock 顕現論における知覚原理.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_lhagma}
+千葉将臣.
+\newblock 残余（Lhagma）による無記の直観主義四句分別体系内からの導出.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_bdt}
+千葉将臣.
+\newblock 界論における双方向演繹定理の定式化.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_incompleteness}
+千葉将臣.
+\newblock 真理保存性の不完全性定理に関する定式化.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_observer}
+千葉将臣.
+\newblock 観測者の極限消去：ゲーデルの決定不能性を不動点として回収する操作について.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_monad}
+千葉将臣.
+\newblock 搾取モナド：圏論的フレームワークによる富の集約・国家・二元論社会の構造的分析.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Abramsky1991}
+Samson Abramsky.
+\newblock Domain theory in logical form.
+\newblock \emph{Annals of Pure and Applied Logic}, 51(1--2):1--77, 1991.
+
+\bibitem{Hoare1998}
+C.~A.~R. Hoare and He Jifeng.
+\newblock \emph{Unifying Theories of Programming}.
+\newblock Prentice Hall, 1998.
+
+\bibitem{Kleene1952}
+S.~C. Kleene.
+\newblock \emph{Introduction to Metamathematics}.
+\newblock North-Holland, 1952.
+
+\bibitem{Hewitt2015}
+Carl Hewitt.
+\newblock Formalizing common sense reasoning for scalable inconsistency-robust
+information coordination using Direct Logic Reasoning and the Actor Model.
+\newblock In Carl Hewitt and John Woods (eds.),
+\emph{Inconsistency Robustness} (Studies in Logic, Volume 52).
+College Publications, 2015.
+
+\end{thebibliography}
+
+\end{document}

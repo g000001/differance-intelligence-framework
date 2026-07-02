@@ -3,9 +3,9 @@
 \usepackage{luatexja}
 \usepackage{amsmath,amssymb,amsthm,amsfonts}
 \usepackage{geometry}
-\geometry{margin=1in}
 \usepackage{enumitem}
 \usepackage{hyperref}
+\geometry{margin=1in}
 
 %-------------------------------------------------
 %  定理環境
@@ -29,11 +29,8 @@
 \newcommand{\Mr}{\mathcal{M}_{\mathrm{r}}}
 \newcommand{\etar}{\eta^{\mathrm{r}}}
 \newcommand{\mur}{\mu^{\mathrm{r}}}
-\newcommand{\epsr}{\varepsilon^{\mathrm{r}}}
-\newcommand{\deltar}{\delta^{\mathrm{r}}}
 \newcommand{\id}{\mathrm{id}}
 \newcommand{\Hom}{\mathrm{Hom}}
-\newcommand{\op}{\mathrm{op}}
 \newcommand{\End}{\mathbf{End}}
 \DeclareMathOperator*{\bigsqcap}{\sqcap}
 \providecommand{\Ref}{\mathbf{Ref}}
@@ -42,82 +39,66 @@
 %-------------------------------------------------
 \begin{document}
 
-\title{洗練フロベニウスモナド：\\
-洗練順序領域理論における双方向閉包作用素の定式化}
+\title{洗練モナド：\\
+洗練順序領域理論における前進閉包作用素の定式化}
 \author{千葉将臣}
-\date{2026-06-29}
+\date{2026-06-29（2026-07-02改訂）}
 \maketitle
 
 \begin{abstract}
-本稿は洗練フロベニウスモナド $(\Mr, \etar, \mur, \epsr, \deltar)$ を定式化する。
-通常のモナドが計算の文脈への前進方向の埋め込みを記述するのに対し、
-洗練フロベニウスモナドはモナドとコモナドをフロベニウス条件によって統合した
-双方向構造として洗練連鎖を記述する。
-理論的基盤として、Abramskyの領域理論の論理的形式化における
-情報順序を洗練順序へ反転する操作を採用し、
-$\bot$（最小元）を全可能性として扱う領域理論との
-整合性を示す。
-双方向演繹定理との同型性、フロベニウス条件の非成立領域の
-残余としての確定、および洗練連鎖の極限としての不動点収束を
-既存の圏論・領域理論・証明論の語彙によって記述する。
-
-さらに本稿では、フロベニウス条件そのものに四句分別を適用し、
-その成立・非成立を含む全位相を外部メタ理論なしに内部確定させる枠組みを与える。
-これにより、ゲンツェンのカット除去がフロベニウス条件成立（$\Phi_S$）の
-特殊ケースとして包摂されることを示すとともに、
-カット除去モナド $\mathcal{C}$（千葉 \cite{Chiba2026cutmonad}）が
-$\Phi_S$ 位相において洗練フロベニウスモナドと共存する独立構造として
-位置づけられることを明らかにする。
+本稿は洗練モナド $(\Mr, \etar, \mur)$ を定式化する。
+洗練モナドは、対象を洗練文脈へ持ち上げ、洗練の洗練を一段階へ統合する
+前進方向の閉包作用素である。
+従来稿では洗練コモナドおよびフロベニウス条件を洗練構造そのものに含めていたが、
+本稿ではそれらを基本定義から除外する。
+フロベニウス性は、搾取モナド、二重否定モナド、洗練モナド、カット除去モナドに
+統制モナドを加えた5モナド構成において、識軸スパイラルから誘導される性質として扱う。
+したがって、洗練モナド自体は通常のモナドであり、
+その役割は洗練連鎖の進行、文脈化、合成、極限収束を記述することに限定される。
 \end{abstract}
 
 \tableofcontents
 \newpage
 
 %=============================================================
-\section{序論：洗練の双方向性と既存理論の非対称性}
+\section{序論：洗練の前進構造}
 %=============================================================
 
-\subsection{通常のモナドの非対称性}
+\subsection{通常のモナドとしての洗練}
 
 Moggi \cite{Moggi1991} によるモナドを用いた計算の意味論以来、
 副作用・状態・継続といった計算の文脈はモナドの
-単位化 $\eta$ と乗法 $\mu$ によって記述されてきた。
+単位 $\eta$ と乗法 $\mu$ によって記述されてきた。
+本稿では、洗練連鎖も同様に通常のモナドとして定式化する。
 
-この記述には構造的な非対称性がある。
-$\eta: A \to \Mr A$ は対象を文脈に埋め込むが、
-文脈からの値の取り出し——洗練の完了確定——を記述する
-逆方向の操作が存在しない。
+洗練モナド $\Mr$ は、対象 $A$ を「洗練過程の中にある $A$」へ持ち上げる。
+単位 $\etar_A:A\to\Mr A$ は対象の文脈化を表し、
+乗法 $\mur_A:\Mr\Mr A\to\Mr A$ は洗練の洗練を一つの洗練過程へ統合する。
 
-継続モナド $T_R A = (A \to R) \to R$
-は結果 $R$ を外部から固定することで完了を定義するが、
-この固定自体が外部依存であり、内部からの自己確定ではない。
+この構成において、洗練モナドは完了確定の逆方向を基本構造として持たない。
+完了確定や後退方向は、別稿で扱う5モナド構成、すなわち統制モナドを識軸とする
+スパイラル構成から誘導される。
 
 \subsection{洗練順序領域理論の動機}
 
 Abramsky \cite{Abramsky1991} のDomain Theory in Logical Form は
 直観主義論理と領域理論を接続したが、
-情報順序 $\sqsubseteq$ における $\bot$（停止しない計算）を
-最小元として扱う。
+情報順序 $\sqsubseteq$ における $\bot$（停止しない計算）を最小元として扱う。
 
 \begin{equation}
 \bot \sqsubseteq a \sqsubseteq \top \quad \text{（情報順序）}
 \end{equation}
 
-しかし計算の現実においては、
-$\bot$ は「まだ何にでもなれる全可能性」として出発点に位置する。
-完了した計算が一つの値 $a$ に確定することは、
-全可能性 $\bot$ からの縮小として記述される方が自然である。
+これに対し、洗練順序では $\bot$ を未確定な全可能性として扱う。
+完了した記述 $a$ は、全可能性 $\bot$ から可能性を削減して得られる。
 
 \begin{equation}
 \bot \sqsupseteq a \sqsupseteq \top \quad \text{（洗練順序）}
 \end{equation}
 
-本稿は洗練順序を採用し、
-$\bot$ を全可能性（Refinement Order における最大元）として扱う。
-この反転により、洗練連鎖の双方向性を自然に定式化できる。
-
-Hoare と He \cite{Hoare1998} の
-Unifying Theories of Programming（UTP）における
+本稿は洗練順序を採用し、$\bot$ をRefinement Orderにおける最大元として扱う。
+この反転により、計算の進行は順序の降下として記述される。
+Hoare と He \cite{Hoare1998} のUnifying Theories of Programming（UTP）における
 洗練順序と情報順序の区別を本稿の出発点とする。
 
 \subsection{本稿の目的}
@@ -125,11 +106,11 @@ Unifying Theories of Programming（UTP）における
 本稿は以下を達成する。
 
 \begin{enumerate}
-\item 洗練フロベニウスモナドを圏論的に定式化する。
-\item フロベニウス条件と双方向演繹定理の同型性を示す。
-\item 洗練連鎖の極限としての不動点収束を
-  Refinement Order Domain Theory の枠組みで記述する。
-\item フロベニウス条件の非成立領域を残余として確定する。
+\item 洗練モナド $(\Mr,\etar,\mur)$ を圏論的に定式化する。
+\item 洗練順序領域における洗練連鎖とモナド構造の整合性を示す。
+\item 洗練連鎖の極限としての不動点収束を記述する。
+\item 他のモナドとの合成において生じる非可換性を洗練残余として定義する。
+\item フロベニウス性は洗練モナド単体の前提ではなく、5モナド構成で担保されることを明確化する。
 \end{enumerate}
 
 %=============================================================
@@ -144,81 +125,46 @@ Unifying Theories of Programming（UTP）における
 
 \begin{enumerate}
 \item $D$ は最大元 $\bot \in D$（全可能性）を持つ。
-\item $D$ は有向下集合の下限（$\sqsupseteq$ に関する有向上集合の上限）を持つ。
+\item $D$ は洗練連鎖の下限を持つ。
 \item 任意の有向集合 $S \subseteq D$ に対し、
-  $\bigsqcap S$（$\sqsupseteq$ での最小上界）が存在する。
+  $\bigsqcap S$ が存在する。
 \end{enumerate}
 
-$a \sqsupseteq b$ は「$a$ は $b$ より未確定（より多くの可能性を含む）」を意味する。
+$a \sqsupseteq b$ は「$a$ は $b$ より未確定であり、より多くの可能性を含む」ことを意味する。
 \end{definition}
 
 \begin{remark}
 情報順序では $\bot$ が最小元（情報なし）であるのに対し、
 洗練順序では $\bot$ が最大元（全可能性）である。
-この反転により、計算の進行（洗練）が順序の降下として記述される。
+この反転により、計算の進行は順序の降下として記述される。
 \end{remark}
 
 \begin{definition}[洗練連鎖]
 洗練順序領域 $(D, \sqsupseteq)$ における洗練連鎖とは、
 降下列
-
 \begin{equation}
 \bot = a_0 \sqsupseteq a_1 \sqsupseteq a_2 \sqsupseteq \cdots
 \end{equation}
-
-であって、その下限 $\bigsqcap_{n} a_n$ が存在するものをいう。
+であって、その下限 $\bigsqcap_n a_n$ が存在するものをいう。
 \end{definition}
 
-\subsection{圏論的準備}
+\subsection{自己関手圏}
 
-\begin{definition}[モノイダル圏]
-モノイダル圏 $(\mathcal{C}, \otimes, I)$ とは、
-テンソル積 $\otimes: \mathcal{C} \times \mathcal{C} \to \mathcal{C}$ と
-単位対象 $I$ を持つ圏であって、
-結合子・単位子の整合条件（マクレーンの五角形図式・三角形図式）を満たすものをいう。
-\end{definition}
-
-\begin{definition}[フロベニウス代数]
-モノイダル圏 $(\mathcal{C}, \otimes, I)$ におけるフロベニウス代数とは、
-対象 $A$ と四つの射
-
-\begin{align}
-\mu &: A \otimes A \to A \quad \text{（乗法）}\\
-\eta &: I \to A \quad \text{（単位）}\\
-\delta &: A \to A \otimes A \quad \text{（余乗法）}\\
-\varepsilon &: A \to I \quad \text{（余単位）}
-\end{align}
-
-の組であって、$(A, \mu, \eta)$ がモノイド、$(A, \delta, \varepsilon)$ が余モノイドをなし、
-かつ以下のフロベニウス条件を満たすものをいう。
-
+\begin{definition}[自己関手圏]
+圏 $\mathcal{C}$ の自己関手圏を
 \begin{equation}
-(\mu \otimes \id_A) \circ (\id_A \otimes \delta)
-= \delta \circ \mu
-= (\id_A \otimes \mu) \circ (\delta \otimes \id_A)
-\label{eq:frobenius_algebra}
+\End(\mathcal{C}) = [\mathcal{C},\mathcal{C}]
 \end{equation}
+と書く。
+対象は自己関手 $F:\mathcal{C}\to\mathcal{C}$、射は自然変換である。
+関手合成をモノイダル積、恒等関手を単位対象とみなす。
 \end{definition}
 
-\begin{remark}[自己関手圏における記法]
-以下では基底圏 $\mathcal{C}$ の自己関手圏
-$\End(\mathcal{C}) = [\mathcal{C},
-\mathcal{C}]$ を、関手合成をモノイダル積、恒等関手を単位対象とする
-モノイダル圏として用いる。
-したがって、洗練モナドに現れるフロベニウス条件は、
-基底圏 $\mathcal{C}$ のテンソル積 $\otimes$ に関する条件ではなく、
-自己関手の合成と自然変換のウィスカー結合に関する条件である。
-自然変換 $\alpha: F \Rightarrow G$ と自己関手 $H$ に対し、
-$H\alpha$ および $\alpha H$ はそれぞれ左・右ウィスカー結合を表す。
-成分表示では $(H\alpha)_A = H(\alpha_A)$、
-$(\alpha H)_A = \alpha_{H A}$ と書く。
-\end{remark}
-
 %=============================================================
-\section{洗練モナドと洗練コモナドの定式化}
+\section{洗練モナドの定式化}
 %=============================================================
 
-\subsection{洗練モナド}
+\subsection{洗練文脈}
 
 \begin{definition}[洗練文脈 $\Mr$]
 洗練文脈 $\Mr$ を、対象が洗練順序において
@@ -227,493 +173,194 @@ $\Mr A$ は「$A$ が洗練過程の中にある状態」を表す。
 \end{definition}
 
 \begin{definition}[洗練モナド]
-圏 $\mathcal{C}$ 上の自己関手 $\Mr: \mathcal{C} \to \mathcal{C}$ と
-自然変換 $\etar: \id_{\mathcal{C}} \Rightarrow \Mr$、
-$\mur: \Mr\Mr \Rightarrow \Mr$ からなる
-三つ組 $(\Mr, \etar, \mur)$ を洗練モナドとして定義する。
+圏 $\mathcal{C}$ 上の自己関手 $\Mr:\mathcal{C}\to\mathcal{C}$ と
+自然変換 $\etar:\id_{\mathcal{C}}\Rightarrow\Mr$、
+$\mur:\Mr\Mr\Rightarrow\Mr$ からなる三つ組
+\begin{equation}
+(\Mr,\etar,\mur)
+\end{equation}
+を洗練モナドとして定義する。
 
 \begin{align}
-\etar_A &: A \to \Mr A \quad \text{（対象を洗練文脈に持ち上げる）}\\
-\mur_A &: \Mr\Mr A \to \Mr A \quad \text{（洗練の洗練を一段階に統合する）}
+\etar_A &: A \to \Mr A
+  \quad \text{（対象を洗練文脈に持ち上げる）} \\
+\mur_A &: \Mr\Mr A \to \Mr A
+  \quad \text{（洗練の洗練を一段階に統合する）}
 \end{align}
 
-モナド則：
+モナド則は以下である。
 
 \begin{align}
 \mur \circ \Mr\mur &= \mur \circ \mur\Mr
-  \quad \text{（結合則）}\\
+  \quad \text{（結合則）} \\
 \mur \circ \Mr\etar &= \mur \circ \etar\Mr = \id_{\Mr}
   \quad \text{（単位元則）}
 \end{align}
-
-すなわち任意の対象 $A$ に対して、
-\begin{align}
-\mur_A \circ \Mr(\mur_A)
-  &= \mur_A \circ \mur_{\Mr A},\\
-\mur_A \circ \Mr(\etar_A)
-  &= \mur_A \circ \etar_{\Mr A}
-  = \id_{\Mr A}
-\end{align}
-が成立する。
 \end{definition}
 
 \begin{proposition}[洗練順序との整合性]
-洗練モナドにおいて、$\etar_A: A \to \Mr A$ は
-洗練順序の降下として定式化される。
+洗練モナドにおいて、$\etar_A:A\to\Mr A$ は
+対象を洗練過程へ導入する操作として定式化される。
+また、$\Mr$ は洗練順序に関して単調である。
 
 \begin{equation}
 a \sqsupseteq a' \Rightarrow \Mr a \sqsupseteq \Mr a'
-\quad \text{（$\Mr$ の単調性）}
 \end{equation}
 
 洗練連鎖 $\bot \sqsupseteq a_1 \sqsupseteq a_2 \sqsupseteq \cdots$ に対し、
 $\Mr$ の適用は洗練過程を一段持ち上げた文脈を生成する。
 \end{proposition}
 
-\subsection{洗練コモナド}
+\begin{proof}
+$\Mr$ は自己関手であるため、対象と射を保つ。
+洗練順序を圏 $\mathcal{C}$ の射として読むと、
+$a\sqsupseteq a'$ は $a$ から $a'$ への洗練射を与える。
+関手性により、この射は $\Mr a$ から $\Mr a'$ への射に写される。
+したがって $\Mr$ は洗練順序に関して単調である。
+\end{proof}
 
-\begin{definition}[洗練コモナド]
-洗練の確定方向を記述するコモナド $(\Mr, \epsr, \deltar)$ を定義する。
-ここで $\epsr: \Mr \Rightarrow \id_{\mathcal{C}}$、
-$\deltar: \Mr \Rightarrow \Mr\Mr$ は自然変換である。
+\subsection{洗練合成}
 
-\begin{align}
-\epsr_A &: \Mr A \to A \quad \text{（洗練の完了確定・値の取り出し）}\\
-\deltar_A &: \Mr A \to \Mr\Mr A \quad \text{（洗練文脈の展開・精緻化）}
-\end{align}
-
-コモナド則：
-
-\begin{align}
-\epsr\Mr \circ \deltar &= \id_{\Mr},
-\qquad
-\Mr\epsr \circ \deltar = \id_{\Mr}
-\label{eq:comonad1}\\
-\Mr\deltar \circ \deltar &= \deltar\Mr \circ \deltar
-\label{eq:comonad2}
-\end{align}
-
-成分表示では、任意の対象 $A$ に対して、
-\begin{align}
-\epsr_{\Mr A} \circ \deltar_A
-  &= \Mr(\epsr_A) \circ \deltar_A
-  = \id_{\Mr A},\\
-\Mr(\deltar_A) \circ \deltar_A
-  &= \deltar_{\Mr A} \circ \deltar_A
-\end{align}
-が成立する。
+\begin{definition}[洗練合成]
+$\mur_A:\Mr\Mr A\to\Mr A$ は、洗練された対象をさらに洗練する二段階過程を、
+一つの洗練過程へ圧縮する操作である。
+\begin{equation}
+\Mr(\Mr A) \xrightarrow{\mur_A} \Mr A
+\end{equation}
 \end{definition}
 
 \begin{remark}
-$\epsr_A: \Mr A \to A$ は洗練連鎖の確定値を取り出す操作であり、
-洗練順序における下限の存在
-
-\begin{equation}
-\bigsqcap_{n} a_n = a^* \in D
-\end{equation}
-
-の圏論的実装として位置づけられる。
-$\deltar_A: \Mr A \to \Mr\Mr A$ は洗練過程をさらに精緻化する展開操作であり、
-洗練連鎖を一段階延長する操作に対応する。
+洗練合成は、仕様から設計、設計から実装へ進むような多段階の洗練を、
+単一の洗練連鎖として扱うための構造である。
+これはUTPにおける仕様・設計・実装の洗練列と対応する。
 \end{remark}
 
 %=============================================================
-\section{洗練フロベニウスモナドの定式化}
+\section{不動点収束}
 %=============================================================
 
-\begin{definition}[洗練フロベニウスモナド]
-洗練フロベニウスモナドを五つ組
-$(\Mr, \etar, \mur, \epsr, \deltar)$
-として定義する。
-ここで $(\Mr, \etar, \mur)$ は洗練モナド、
-$(\Mr, \epsr, \deltar)$ は洗練コモナドであり、
-自己関手圏 $\End(\mathcal{C})$ における関手合成を用いて、
-以下のフロベニウス条件を満たす。
-
+\begin{definition}[洗練不動点]
+対象 $A$ に対し、洗練モナドの反復列
 \begin{equation}
-(\mur\Mr) \circ (\Mr\deltar)
-= \deltar \circ \mur
-= (\Mr\mur) \circ (\deltar\Mr)
-\label{eq:frobenius}
+A \xrightarrow{\etar_A} \Mr A \xrightarrow{\Mr\etar_A} \Mr^2 A
+\xrightarrow{\Mr^2\etar_A} \cdots
 \end{equation}
-
-成分表示では、任意の対象 $A$ に対して、
+が洗練順序上で極限を持つとき、その極限を洗練不動点 $A^*$ と呼ぶ。
 \begin{equation}
-\mur_{\Mr A} \circ \Mr(\deltar_A)
-= \deltar_A \circ \mur_A
-= \Mr(\mur_A) \circ \deltar_{\Mr A}
-\label{eq:frobenius_component}
-\end{equation}
-である。
-
-さらに本稿では、洗練の埋め込みと完了確定が互いに正規化されることを
-表す整合条件
-\begin{equation}
-\epsr_A \circ \etar_A = \id_A
-\label{eq:normalization}
-\end{equation}
-を仮定する。
-
-フロベニウス条件は洗練の前進（$\mur$）と展開（$\deltar$）が、
-自己関手の合成に関して
-可換であることを要求する。
-すなわち、洗練してから精緻化する経路と、
-精緻化してから洗練する経路が一致する。
-\end{definition}
-
-\begin{theorem}[モナド則とコモナド則の整合性]
-フロベニウス条件 \eqref{eq:frobenius} と正規化条件
-\eqref{eq:normalization} のもとで、
-洗練モナドのモナド則とコモナドのコモナド則は両立する。
-
-具体的には、以下の図式が可換となる。
-
-\begin{align}
-\epsr_A \circ \etar_A &= \id_A \label{eq:both1}\\
-\epsr_{\Mr A} \circ \deltar_A
-&= \Mr(\epsr_A) \circ \deltar_A
-= \id_{\Mr A}
-\label{eq:both2}
-\end{align}
-\end{theorem}
-
-\begin{proof}
-\eqref{eq:both1} は正規化条件 \eqref{eq:normalization} そのものである。
-\eqref{eq:both2} はコモナドの余単位元則 \eqref{eq:comonad1} の
-成分表示である。
-フロベニウス条件 \eqref{eq:frobenius_component} は、
-これらの余単位元則がモナド乗法 $\mur$ による前進方向の合成と
-矛盾しないことを保証する。
-\end{proof}
-
-\begin{remark}
-フロベニウス条件は一般のモナドとコモナドの間では成立しない。
-成立するのは対象の構造が前進（洗練）と確定（完了）の
-両方向に対して安定している場合に限られる。
-この「一般には成立しない」という性格が
-第\ref{sec:residue}節で記述される残余の発生条件となる。
-\end{remark}
-
-%=============================================================
-\section{双方向演繹定理との同型性}
-%=============================================================
-
-\begin{definition}[双方向演繹定理]
-形式体系 $T$ における双方向演繹定理とは、
-命題 $\Psi, \Phi$ に対して以下の同値が成立することをいう。
-
-\begin{equation}
-(\vdash_T (\Psi \to \Phi))
-\;\leftrightarrow\;
-\bigl((\Psi \vdash_T \Phi) \land (\neg\Phi \vdash_T \neg\Psi)\bigr)
-\label{eq:bdt}
+A^* = \bigsqcap_{n\geq 0}\Mr^n A
 \end{equation}
 \end{definition}
 
-\begin{proposition}[洗練フロベニウスモナドと双方向演繹定理の同型性]
-洗練フロベニウスモナドのフロベニウス条件は、
-双方向演繹定理 \eqref{eq:bdt} と同型の構造を持つ。
-
-\begin{equation}
-\underbrace{(\mur_A \circ \Mr(\etar_A) = \id_{\Mr A})}_{\Psi \vdash_T \Phi}
-\;\leftrightarrow\;
-\underbrace{(\epsr_{\Mr A} \circ \deltar_A = \id_{\Mr A})}_{\neg\Phi \vdash_T \neg\Psi}
-\label{eq:iso}
-\end{equation}
-\end{proposition}
-
-\begin{proof}
-双方向演繹定理 \eqref{eq:bdt} において、
-
-\begin{itemize}
-\item $\Psi \vdash_T \Phi$ は洗練文脈への埋め込み $\etar$ と
-  モナド結合 $\mur$ の合成、すなわち
-  洗練の前進方向として読める。
-  単位元則 $\mur_A \circ \Mr(\etar_A) = \id_{\Mr A}$ がこれに対応する。
-
-\item $\neg\Phi \vdash_T \neg\Psi$ は洗練完了確定 $\epsr$ と
-  文脈展開 $\deltar$ の合成、すなわち
-  洗練の確定方向として読める。
-  余単位元則 $\epsr_{\Mr A} \circ \deltar_A = \id_{\Mr A}$ がこれに対応する。
-\end{itemize}
-
-フロベニウス条件 \eqref{eq:frobenius} はこの双方向の可換性を保証し、
-\eqref{eq:iso} が成立する。
-\end{proof}
-
-\begin{corollary}[完了確定の自己確定性]
-洗練フロベニウスモナドにおける洗練の完了は、
-双方向演繹定理の釣り合いによる自己確定として記述される。
-外部から固定された停止条件を必要とせず、
-$\epsr$ と $\deltar$ の釣り合いが完了を内部から確定する。
-\end{corollary}
-
-%=============================================================
-\section{洗練連鎖の極限と不動点}
-%=============================================================
-
-\begin{theorem}[洗練連鎖の極限]
-洗練順序領域 $(D, \sqsupseteq)$ における洗練フロベニウスモナドの
-洗練連鎖
-
-\begin{equation}
-\Mr^0 A \sqsupseteq \Mr^1 A \sqsupseteq \Mr^2 A \sqsupseteq \cdots
-\end{equation}
-
-は、その下限として不動点 $A^*$ に収束する。
-
-\begin{equation}
-A^* = \bigsqcap_{n \geq 0} \Mr^n A
-\end{equation}
+\begin{theorem}[洗練連鎖の収束]
+洗練順序領域 $(D,\sqsupseteq)$ が洗練連鎖の下限を持ち、
+$\Mr$ が連続な自己関手であるならば、任意の対象 $A$ に対して
+洗練反復列 $\{\Mr^n A\}_{n\geq 0}$ は下限 $A^*$ を持つ。
 \end{theorem}
 
 \begin{proof}
-洗練順序領域の定義より、降下列の下限が存在する。
-フロベニウス条件 \eqref{eq:frobenius} が成立するとき、
-$\epsr_{A^*}: \Mr A^* \to A^*$ が同型となる。
-すなわち $A^*$ は $\Mr$ の不動点である。
-
-\begin{equation}
-\Mr A^* \cong A^*
-\end{equation}
-
-これはBanachの不動点定理の圏論的類似として位置づけられる。
+仮定より、$\{\Mr^n A\}_{n\geq 0}$ は洗練順序上の連鎖である。
+洗練順序領域は連鎖の下限を持つため、
+$\bigsqcap_{n\geq 0}\Mr^n A$ が存在する。
+これを $A^*$ と定義する。
+$\Mr$ の連続性により、$\Mr$ はこの下限を保存するため、
+$A^*$ は洗練反復に対する不動点として振る舞う。
 \end{proof}
 
 \begin{corollary}[$\bot$ との同型性]
 洗練順序における $\bot$（全可能性・最大元）は、
-洗練フロベニウスモナドの不動点 $A^*$ と同型の位置を占める。
+洗練連鎖の出発点であると同時に、不動点収束を記述するための基準点である。
 
 \begin{equation}
-\bot \cong A^* = \bigsqcap_{n \geq 0} \Mr^n A
+\bot \leadsto A^* = \bigsqcap_{n\geq 0}\Mr^n A
 \end{equation}
 
-Refinement Order Domain Theory における $\bot$ の全可能性としての解釈
-（Hoare・He \cite{Hoare1998}）が、
-洗練連鎖の極限としての不動点収束と一致する。
+情報順序における欠如としての $\bot$ ではなく、
+洗練順序における全可能性としての $\bot$ が、
+洗練過程の開始条件を与える。
 \end{corollary}
 
-\begin{remark}
-この系は情報順序の $\bot$（最小元・欠如）との対比を与える。
-情報順序では計算の「失敗」として記述される $\bot$ が、
-洗練順序では洗練連鎖の出発点かつ理論的な収束先として
-同型の位置を占める。
-\end{remark}
-
 %=============================================================
-\section{残余：フロベニウス条件の非成立領域}
+\section{洗練残余}
 \label{sec:residue}
 %=============================================================
 
 \begin{definition}[洗練残余]
-洗練フロベニウスモナド $\Mr$ と別のモナド $\mathcal{M}$ の間で
-フロベニウス条件が成立しない領域を
-洗練残余 $\mathcal{R}(\Mr, \mathcal{M})$ として定義する。
+洗練モナド $\Mr$ と別のモナド $\mathcal{M}$ の合成が可換でない領域を、
+洗練残余 $\mathcal{R}(\Mr,\mathcal{M})$ として定義する。
 
 \begin{equation}
-\Mr(\mathcal{M} A) \not\cong \mathcal{M}(\Mr A)
-\;\Rightarrow\;
-\mathcal{R}(\Mr, \mathcal{M}) \neq \emptyset
+\Mr(\mathcal{M}A) \not\cong \mathcal{M}(\Mr A)
+\quad\Rightarrow\quad
+\mathcal{R}(\Mr,\mathcal{M}) \neq \emptyset
 \end{equation}
 \end{definition}
 
 \begin{theorem}[残余の確定]
-フロベニウス条件 \eqref{eq:frobenius} が成立しない場合、
-前進経路と確定経路が非可換となる。
-
-この非可換性を四句分別として展開すると：
-
-\begin{align}
-\phi_1 &: \Mr \circ \mathcal{M} \text{ 方向が優越} \\
-\phi_2 &: \mathcal{M} \circ \Mr \text{ 方向が優越} \\
-\phi_3 &: \text{両方向が同時に作動（矛盾状態）} \\
-\phi_4 &: \text{いずれの方向も確定しない（宙吊り状態）}
-\end{align}
-
-$\phi_1, \phi_2, \phi_3, \phi_4$ のいずれにも帰属しない領域が
-洗練残余 $\mathcal{R}(\Mr, \mathcal{M})$ として確定する。
+$\Mr\circ\mathcal{M}$ と $\mathcal{M}\circ\Mr$ が同型でないとき、
+二つの洗練経路の差分は洗練残余として確定する。
 \end{theorem}
 
 \begin{proof}
-$\Mr \circ \mathcal{M}$ と $\mathcal{M} \circ \Mr$ が同型でないとき、
-二つの合成関手の差分を考える。
-
-自然変換 $\theta: \Mr\mathcal{M} \Rightarrow \mathcal{M}\Mr$ が
-同型でないとき、$\theta$ の核（kernel）と余核（cokernel）が
-非自明な対象として現れる。
-この核・余核が二つの方向のいずれにも属さない残余
-$\mathcal{R}(\Mr, \mathcal{M})$ を生成する。
-
-直観主義論理において
-$\neg\neg P \to P$ が一般に成立しないことと同型の構造であり、
-どちらの方向にも帰属しない第四句
-$\phi_4 = \neg P \wedge \neg\neg P$
-が実質的な位相として開くことで残余が確定する。
-\end{proof}
-
-\begin{corollary}[洗練フロベニウスモナド自身の残余]
-洗練フロベニウスモナド自体もまた洗練連鎖の中にある。
-
-\begin{equation}
-\mathcal{M}^{\mathrm{r}}_0 \sqsupseteq \mathcal{M}^{\mathrm{r}}_1 \sqsupseteq \mathcal{M}^{\mathrm{r}}_2 \sqsupseteq \cdots
-\end{equation}
-
-真理保存性の不完全性（ゲーデルの不完全性定理の類似）より、
-$\Mr$ 自身の洗練完了を $\Mr$ の内部で証明できない
-命題 $G_{\Mr}$ が存在する。
-
-$\Mr$ の不動点は洗練残余として確定する。
-
-\begin{equation}
-\mathcal{R}(\Mr) = \mathcal{R}(\Mr, \Mr)
-\end{equation}
-
-これは洗練フロベニウスモナドが完成した閉じた体系ではなく、
-自己参照的な開放構造として機能することの必然である。
-\end{corollary}
-
-%=============================================================
-\section{フロベニウス条件の四句分別と残余確定}
-\label{sec:frobenius_catuskoti}
-%=============================================================
-
-\subsection{動機：外部依存からの解放}
-
-ゲンツェンのカット除去定理は、対象体系の外部——メタ理論——において証明される。
-LKのカット除去には順序数 $\varepsilon_0$ までの超限帰納法を必要とし、
-対象体系の内部からは保証されない。
-
-この外部依存は、フロベニウス条件の扱いにも潜在する。
-第\ref{sec:residue}節の残余定理において、フロベニウス条件の成立・非成立を
-四句分別として展開したが、$\phi_4$（宙吊り状態）を正の対象として確定させるには
-「いずれの位相にも帰属しないこと」を体系内から保証する操作が必要である。
-
-本節は、フロベニウス条件そのものに四句分別を適用し、
-その成立・非成立を含む全位相を外部メタ理論なしに内部確定させる枠組みを与える。
-
-\subsection{フロベニウス条件への四句分別適用}
-
-\begin{definition}[フロベニウス四句分別]
-洗練フロベニウスモナド $\Mr$ とモナド $\mathcal{M}$ の間のフロベニウス条件に対して、
-四句分別を以下のように適用する。
-
-\begin{align}
-\Phi_S &: \Mr \circ \mathcal{M} \cong \mathcal{M} \circ \Mr
-  \quad\text{（是：フロベニウス条件成立）} \\
-\Phi_N &: \Mr \circ \mathcal{M} \not\cong \mathcal{M} \circ \Mr,\;
-  \mathcal{M}_\delta \text{ 非介在}
-  \quad\text{（非：純粋非可換）} \\
-\Phi_{SN} &: \text{両方向が同時に作動（搾取モナドの介入）}
-  \quad\text{（亦是亦非）} \\
-\Phi_{NS} &: \text{いずれの方向も確定しない}
-  \quad\text{（非是非非：宙吊り）}
-\end{align}
-\end{definition}
-
-\begin{theorem}[フロベニウス四句分別による残余の内部確定]
-$\Phi_S, \Phi_N, \Phi_{SN}, \Phi_{NS}$ への帰属試行の全失敗が、
-外部メタ理論を必要とせず、洗練残余 $\mathcal{R}(\Mr, \mathcal{M})$ を
-体系内部から正の対象として確定する。
-\end{theorem}
-
-\begin{proof}
-四句分別の帰属試行を順に実行する。
-
-\begin{enumerate}
-\item $\Phi_S$ の確認：自然変換 $\theta: \Mr\mathcal{M} \Rightarrow \mathcal{M}\Mr$ が
-  同型射であるかを検査する。同型であれば $\Phi_S$ に確定し、残余は空。
-
-\item $\Phi_N$ の確認：$\theta$ が非同型であり、かつ搾取モナド $\mathcal{M}_\delta$ が
-  介在していないかを検査する。介在しなければ $\Phi_N$ に確定。
-
-\item $\Phi_{SN}$ の確認：$\Mr\mathcal{M}$ と $\mathcal{M}\Mr$ の両方向が
-  同時に作動している（搾取モナドが洗練連鎖に介入している）かを検査する。
-
-\item $\Phi_{NS}$ の確認：$\Phi_S, \Phi_N, \Phi_{SN}$ のいずれにも帰属しない
-  宙吊り状態として確定する。
-\end{enumerate}
-
-$\Phi_S, \Phi_N, \Phi_{SN}$ への帰属が全て失敗した場合、
-$\Phi_{NS}$ は「いずれにも帰属しないことの確定」として正の対象に確定する。
-この確定は、直観主義論理における第四句
-$\phi_4 = \neg P \wedge \neg\neg P$
-が実質的な位相として開くことによる内部操作であり、
-超限帰納法・順序数などの外部メタ理論を必要としない。
-
-したがって、洗練残余 $\mathcal{R}(\Mr, \mathcal{M})$ が
-体系内部から確定する。
+自然変換 $\theta:\Mr\mathcal{M}\Rightarrow\mathcal{M}\Mr$ が
+同型でないとき、二つの合成関手は同一の洗練過程を表さない。
+この非同型性は、$\Mr$ による文脈化と $\mathcal{M}$ による文脈化の順序に依存する差分を生む。
+その差分を $\mathcal{R}(\Mr,\mathcal{M})$ と呼ぶ。
+直観主義論理において $\neg\neg P\to P$ が一般に成立しないことと同様に、
+合成順序の非可換性は単なる失敗ではなく、残余として正の対象化を受ける。
 \end{proof}
 
 \begin{remark}[継続残余との対応]
 継続残余 $\rho$（千葉 \cite{Chiba2026continuation}）の語彙では、
-本定理は以下のように読める。
-$\Phi_S$ への確定は $\rho = 0$（静的証明への完全圧縮）に対応し、
-$\Phi_N, \Phi_{SN}, \Phi_{NS}$ のいずれかへの確定は $\rho > 0$（残余の存在）に対応する。
-四句分別による帰属試行は、$\rho$ の値を直接計算することなく
-$\rho > 0$ を検出する内部操作として機能する。
+$\Mr\mathcal{M}\cong\mathcal{M}\Mr$ の場合は $\rho=0$ に対応し、
+非可換な場合は $\rho>0$ に対応する。
+洗練残余は、この $\rho>0$ を圏論的な合成順序の差分として記述する。
 \end{remark}
 
-\subsection{ゲンツェンのカット除去の包摂}
+\subsection{カット除去モナドとの関係}
 
-\begin{proposition}[カット除去の $\Phi_S$ への包摂]
-ゲンツェンのカット除去定理が成立する体系において、
-カット除去操作はフロベニウス四句分別の $\Phi_S$ 位相への確定として包摂される。
-
-カット除去定理が成立しない体系、または成立が未判定の状態は、
-それぞれ $\Phi_N, \Phi_{SN}, \Phi_{NS}$ のいずれかに確定し、
-その残余が $\mathcal{R}(\Mr, \mathcal{M})$ として内部対象化される。
-\end{proposition}
-
-\begin{proof}
-ゲンツェンのカット除去定理は、対象体系の全ての証明図に対して
-カット規則が除去できることをメタ理論から保証する。
-本枠組みでは、この保証が $\Phi_S$（フロベニウス条件成立）の確定に対応する。
-
-$\Phi_S$ が確定する場合、残余は空であり、
-カット除去はフロベニウス条件成立の証拠として機能する。
-
-$\Phi_S$ が確定しない場合（カット除去定理が成立しない体系、
-または成立が未判定の状態）、四句分別の残余確定定理により
-$\Phi_N, \Phi_{SN}, \Phi_{NS}$ のいずれかへの確定が内部から保証される。
-この確定はメタ理論を必要とせず、帰属試行の全失敗として達成される。
-
-したがって、ゲンツェンのカット除去は本枠組みの $\Phi_S$ 特殊ケースとして包摂される。
-\end{proof}
-
-\subsection{カット除去モナドとの共存関係}
-
-\begin{proposition}[カット除去モナドと $\Phi_S$ の対応]
+\begin{proposition}[カット除去モナドとの共存]
 カット除去モナド $\mathcal{C}$（千葉 \cite{Chiba2026cutmonad}）は、
-フロベニウス四句分別において $\Phi_S$ が成立している位相において
-洗練フロベニウスモナド $\Mr$ と可換に共存する。
+洗練モナド $\Mr$ の特殊ケースではなく、洗練連鎖と共存する独立した通常モナドである。
 
 \begin{equation}
-\Phi_S \text{ 成立} \;\Rightarrow\; \Mr \circ \mathcal{C} \cong \mathcal{C} \circ \Mr
+\Mr\circ\mathcal{C}\cong\mathcal{C}\circ\Mr
 \end{equation}
-
-$\Phi_S$ が成立しない場合、その非可換性の残余が
-$\mathcal{R}(\Mr, \mathcal{C})$ として内部確定する。
+が成立する場合、洗練の前進とカット除去の前進は可換に共存する。
+成立しない場合、その差分は $\mathcal{R}(\Mr,\mathcal{C})$ として確定する。
 \end{proposition}
 
 \begin{proof}
-カット除去モナド $\mathcal{C}$ は通常のモナドとして定式化されており、
-前進方向（カット除去による正規化）のみを持つ。
-
-$\Phi_S$ の成立は $\Mr \circ \mathcal{C} \cong \mathcal{C} \circ \Mr$ を意味するため、
-洗練の前進（$\etar, \mur$）とカット除去の前進が可換となる。
-この可換性のもとで $\mathcal{C}$ のクライスリ圏は $\Mr$ の洗練連鎖と整合する。
-
-$\Phi_S$ が成立しない場合、残余確定定理により
-$\mathcal{R}(\Mr, \mathcal{C})$ が内部確定する。
+カット除去モナド $\mathcal{C}$ は証明図を正規化する前進方向のモナドである。
+一方、洗練モナド $\Mr$ は対象を洗練文脈へ持ち上げる。
+両者は対象とする層が異なるため、一方が他方を包摂するのではなく、
+合成可能な独立構造として扱われる。
+合成が可換ならば両者は整合的に共存し、非可換ならばその差分が残余となる。
 \end{proof}
 
-\begin{remark}[包摂ではなく共存]
-カット除去モナド $\mathcal{C}$ は洗練フロベニウスモナド $\Mr$ の特殊ケースではなく、
-$\Mr$ の $\Phi_S$ 位相において共存する独立した構造である。
-両者は操作対象の層が異なる——$\mathcal{C}$ は証明木の構造を対象とし、
-$\Mr$ は洗練連鎖全般を対象とする。
-この層の違いにより、$\Phi_S$ 以外の位相においても $\mathcal{C}$ と $\Mr$ は
-独立して定義されるが、その非可換性は $\mathcal{R}(\Mr, \mathcal{C})$ として確定する。
+%=============================================================
+\section{5モナド構成との関係}
+%=============================================================
+
+\begin{proposition}[フロベニウス性の外部化]
+洗練モナド $\Mr$ は、それ自体の定義に洗練コモナドやフロベニウス条件を含まない。
+フロベニウス性は、搾取モナド、二重否定モナド、洗練モナド、カット除去モナド、
+統制モナドからなる5モナド構成において担保される。
+\end{proposition}
+
+\begin{proof}
+洗練モナドの基本データは $(\Mr,\etar,\mur)$ であり、
+これは通常のモナドのデータと一致する。
+したがって、洗練モナド単体からは余単位や余乗法は要求されない。
+後退方向やフロベニウス性は、統制モナドを識軸とするスパイラル構成によって、
+洗練モナドとカット除去モナドへ誘導される。
+ゆえにフロベニウス性は洗練モナドの定義ではなく、
+5モナド全体の構成的帰結である。
+\end{proof}
+
+\begin{remark}
+この整理により、洗練モナドは前進方向の洗練を担う単純な構造として保持される。
+洗練の完了確定、方向反転、双方向性は、統制モナドを含む上位構成で扱う。
+したがって、洗練モナドと5モナド構成の役割分担が明確になる。
 \end{remark}
 
 %=============================================================
@@ -725,89 +372,54 @@ $\Mr$ は洗練連鎖全般を対象とする。
 \begin{center}
 \begin{tabular}{lll}
 \hline
-& \textbf{通常のモナド} & \textbf{洗練フロベニウスモナド} \\
+& \textbf{通常のモナド} & \textbf{洗練モナド} \\
 \hline
-方向性 & 前進のみ（$\eta, \mu$） & 双方向（$\eta, \mu, \varepsilon, \delta$） \\
-完了条件 & 外部から固定 & 双方向釣り合いによる自己確定 \\
+方向性 & 前進のみ（$\eta,\mu$） & 前進のみ（$\etar,\mur$） \\
+文脈 & 副作用・状態・継続など & 洗練過程 \\
+完了条件 & 外部から固定される場合が多い & 5モナド構成で扱う \\
 $\bot$ の扱い & 最小元（情報順序） & 全可能性（洗練順序） \\
-フロベニウス条件 & 一般に非成立 & 成立を核心原理とする \\
-残余 & 記述不可 & 非成立領域の残余として確定 \\
+残余 & 通常は明示されない & 合成非可換性として記述 \\
 \hline
 \end{tabular}
 \end{center}
 
 \subsection{二重否定モナドとの対比}
 
-\begin{center}
-\begin{tabular}{lll}
-\hline
-& \textbf{二重否定モナド} & \textbf{洗練フロベニウスモナド} \\
-\hline
-方向性 & 一方向（$\neg\neg$） & 双方向（フロベニウス条件）\\
-$\bot$ の扱い & 閉宇宙から排除 & 全可能性として保持 \\
-残余の扱い & 閉宇宙外に放出 & 内部で正の対象として確定 \\
-冪等性 & 成立（$\neg\neg\neg\neg = \neg\neg$） & 不動点収束として記述 \\
-完了確定 & 外部固定（閉宇宙） & 双方向釣り合いによる内部確定 \\
-\hline
-\end{tabular}
-\end{center}
-
-\begin{remark}
-二重否定モナドは冪等閉包作用素として
-$\bot$（停止しない計算・全可能性）を閉宇宙の外に放出することで
-安定した古典論理の部分圏を生成する。
-
-洗練フロベニウスモナドはその逆の操作を試みる。
-$\bot$ を全可能性として保持しながら、
-双方向演繹定理の釣り合いによって完了確定を内部から生成する。
-この逆操作の困難さが、
-洗練フロベニウスモナドが二重否定モナドより複雑な構造を持つことの
-理論的根拠である。
-
-直観主義論理において $\neg\neg A \to A$ が一般に証明不可能であることが、
-この複雑さの論理的基盤を与えている。
-\end{remark}
-
-\subsection{量子計算のフロベニウスモナドとの対比}
-
-Abramsky と Coecke \cite{Abramsky2004} は量子計算の文脈で
-フロベニウスモナドを研究した。
-本稿の洗練フロベニウスモナドはその構造を
-洗練連鎖の記述として再解釈したものであり、
-以下の差分を持つ。
+二重否定モナド $\neg\neg$ は、直観主義論理を古典論理へ反射する閉包作用素である。
+一方、洗練モナドは古典化を目的としない。
+洗練モナドは $\bot$ を排除せず、全可能性として保持しながら、
+洗練連鎖の進行を記述する。
 
 \begin{center}
 \begin{tabular}{lll}
 \hline
-& \textbf{量子計算のFモナド} & \textbf{洗練フロベニウスモナド} \\
+& \textbf{二重否定モナド} & \textbf{洗練モナド} \\
 \hline
-対象領域 & 量子状態の空間 & 洗練順序領域 \\
-フロベニウス条件の意味 & 量子測定の可逆性 & 洗練と確定の可換性 \\
-$\bot$ の位置 & 真空状態 & 全可能性（最大元） \\
-残余の扱い & 測定後の状態崩壊 & 正の対象として確定 \\
+作用 & $A\mapsto\neg\neg A$ & $A\mapsto\Mr A$ \\
+目的 & 古典的安定化 & 洗練過程の文脈化 \\
+$\bot$ & 閉包外へ押し出す傾向 & 全可能性として保持 \\
+残余 & $\neg\neg A\to A$ の非成立 & 合成非可換性 \\
 \hline
 \end{tabular}
 \end{center}
-
-量子計算との深い接続は今後の課題として残る。
 
 %=============================================================
 \section{適用域}
 %=============================================================
 
-洗練フロベニウスモナドはプログラミングに限定されない。
+洗練モナドはプログラミングに限定されない。
 洗練連鎖として記述可能な任意の過程に適用できる。
 
 \begin{center}
-\begin{tabular}{lll}
+\begin{tabular}{ll}
 \hline
-\textbf{適用域} & \textbf{$\Mr A$ の内容} & \textbf{$\epsr$ の完了条件} \\
+\textbf{適用域} & \textbf{$\Mr A$ の内容} \\
 \hline
-プログラミング & コードの洗練過程 & 仕様との双方向釣り合い \\
-学習 & 理解の深化過程 & 概念の自己確定 \\
-対話 & 議論の精緻化過程 & 合意の双方向成立 \\
-芸術制作 & 表現の洗練過程 & 作品の自己完結 \\
-科学研究 & 仮説の洗練過程 & 理論と実験の双方向一致 \\
+プログラミング & コードの洗練過程 \\
+学習 & 理解の深化過程 \\
+対話 & 議論の精緻化過程 \\
+芸術制作 & 表現の洗練過程 \\
+科学研究 & 仮説の洗練過程 \\
 \hline
 \end{tabular}
 \end{center}
@@ -816,61 +428,31 @@ $\bot$ の位置 & 真空状態 & 全可能性（最大元） \\
 \section{結論}
 %=============================================================
 
-本稿は洗練フロベニウスモナド $(\Mr, \etar, \mur, \epsr, \deltar)$ を
-以下の観点から定式化した。
+本稿は洗練モナド $(\Mr,\etar,\mur)$ を以下の観点から定式化した。
 
 \begin{enumerate}
 \item \textbf{理論的基盤}：
   洗練順序領域理論において $\bot$ を全可能性として扱う
-  情報順序の反転を採用し、
-  UTP の洗練順序・情報順序の区別を出発点とした。
+  情報順序の反転を採用し、UTPの洗練順序・情報順序の区別を出発点とした。
 
 \item \textbf{圏論的構成}：
-  洗練モナド $(\Mr, \etar, \mur)$ と
-  洗練コモナド $(\Mr, \epsr, \deltar)$ を
-  フロベニウス条件によって統合した双方向構造として定式化した。
-
-\item \textbf{双方向演繹定理との同型性}：
-  フロベニウス条件がモナド単位元則と
-  コモナド余単位元則の双方向の可換性として
-  双方向演繹定理と同型であることを示した。
+  洗練モナド $(\Mr,\etar,\mur)$ を、対象を洗練文脈へ持ち上げ、
+  洗練の洗練を一段階へ統合する通常のモナドとして定義した。
 
 \item \textbf{不動点収束}：
-  洗練連鎖の極限として不動点 $A^*$ への収束を示し、
-  $\bot \cong A^*$ の同型性を Refinement Order Domain Theory
-  の枠組みで記述した。
+  洗練連鎖の極限として不動点 $A^*$ への収束を記述した。
 
 \item \textbf{残余の確定}：
-  フロベニウス条件の非成立領域が
-  直観主義論理の第四句（$\neg P \wedge \neg\neg P$）として
-  残余 $\mathcal{R}(\Mr, \mathcal{M})$ に確定することを示した。
+  他のモナドとの合成非可換性を、洗練残余 $\mathcal{R}(\Mr,\mathcal{M})$ として定義した。
 
-\item \textbf{フロベニウス四句分別と外部依存の解消}：
-  フロベニウス条件そのものに四句分別を適用し、
-  その成立・非成立を含む全位相（$\Phi_S, \Phi_N, \Phi_{SN}, \Phi_{NS}$）を
-  外部メタ理論なしに内部確定させる枠組みを与えた。
-  ゲンツェンのカット除去がメタ理論に依拠する点を対比として示し、
-  本枠組みの $\Phi_S$ 特殊ケースとして包摂されることを示した。
-
-\item \textbf{カット除去モナドとの共存}：
-  カット除去モナド $\mathcal{C}$（千葉 \cite{Chiba2026cutmonad}）が
-  洗練フロベニウスモナドの特殊ケースではなく、
-  $\Phi_S$ 位相において共存する独立構造であることを示した。
-  両者の非可換性は $\mathcal{R}(\Mr, \mathcal{C})$ として内部確定する。
-
-\item \textbf{二重否定モナドとの対比}：
-  二重否定モナドが $\bot$ を閉宇宙外に放出することで
-  古典論理の部分圏を生成するのに対し、
-  洗練フロベニウスモナドが $\bot$ を全可能性として保持しながら
-  双方向釣り合いによる内部確定を実現することを示した。
-  この逆操作の困難さが
-  $\neg\neg A \to A$ の直観主義的非成立に
-  論理的基盤を持つことを明らかにした。
+\item \textbf{5モナド構成との役割分担}：
+  フロベニウス性を洗練モナド単体の定義から外し、
+  統制モナドを含む5モナド構成によって担保される性質として位置づけた。
 \end{enumerate}
 
-洗練フロベニウスモナド自身の不動点が残余として確定することは、
-この理論が完成した閉じた体系ではなく、
-自己参照的な開放構造として機能することの構造的必然である。
+洗練モナドは完成した双方向構造ではなく、洗練の前進方向を担う基本モナドである。
+方向反転、完了確定、フロベニウス性は、統制モナドを識軸とする上位構成で扱われる。
+この分離により、洗練モナドの定義は簡潔になり、5モナド構成における役割も明確になる。
 
 \begin{thebibliography}{99}
 
@@ -878,12 +460,6 @@ $\bot$ の位置 & 真空状態 & 全可能性（最大元） \\
 Samson Abramsky.
 \newblock Domain theory in logical form.
 \newblock \emph{Annals of Pure and Applied Logic}, 51(1--2):1--77, 1991.
-
-\bibitem{Abramsky2004}
-Samson Abramsky and Bob Coecke.
-\newblock A categorical semantics of quantum protocols.
-\newblock In \emph{Proceedings of the 19th Annual IEEE Symposium on
-  Logic in Computer Science}, pages 415--425. IEEE, 2004.
 
 \bibitem{Hoare1998}
 C.~A.~R. Hoare and He Jifeng.
@@ -894,12 +470,6 @@ C.~A.~R. Hoare and He Jifeng.
 Saunders Mac Lane.
 \newblock \emph{Categories for the Working Mathematician}.
 \newblock Springer, 1971.
-
-\bibitem{MacLaneMoerdijk1992}
-Saunders Mac Lane and Ieke Moerdijk.
-\newblock \emph{Sheaves in Geometry and Logic:
-  A First Introduction to Topos Theory}.
-\newblock Springer, 1992.
 
 \bibitem{Moggi1991}
 Eugenio Moggi.
@@ -916,17 +486,6 @@ Dana Scott.
 \newblock Outline of a mathematical theory of computation.
 \newblock In \emph{Proceedings of the 4th Annual Princeton Conference
   on Information Sciences and Systems}, pages 169--176, 1970.
-
-\bibitem{Street2004}
-Ross Street.
-\newblock Frobenius monads and pseudomonoids.
-\newblock \emph{Journal of Mathematical Physics},
-  45(10):3930--3948, 2004.
-
-\bibitem{Kleene1952}
-Stephen Cole Kleene.
-\newblock \emph{Introduction to Metamathematics}.
-\newblock North-Holland, 1952.
 
 \bibitem{Chiba2026cutmonad}
 千葉将臣.
