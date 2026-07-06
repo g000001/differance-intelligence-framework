@@ -1,0 +1,383 @@
+% !TeX program = lualatex
+% プレアンブル
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja-fontspec}
+\usepackage{amsmath,amssymb}
+\usepackage{ntheorem}
+\usepackage{mathtools}
+\usepackage{stmaryrd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes,calc}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1\baselineskip}
+\usepackage{bm}
+
+% タイトル
+\title{視点数付きエルブラン関係と四句分別：\\
+       記述方式・PoV・チューリング停止問題の実用的回避}
+\author{千葉将臣}
+\date{2026-07-05}
+
+% 定理環境
+\newtheorem{definition}{定義}
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{補題}
+\newtheorem{corollary}{系}
+\newtheorem{remark}{注}
+
+% コマンド定義
+\newcommand{\Her}{\mathcal{H}}
+\newcommand{\HB}{\mathit{HB}}
+\newcommand{\HU}{\mathit{HU}}
+\newcommand{\PoV}{\mathit{PoV}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\Lspace}{\mathcal{L}}
+\newcommand{\Ospace}{\mathcal{O}}
+\newcommand{\true}{\text{true}}
+\newcommand{\false}{\text{false}}
+\providecommand{\undef}{\text{undef}}
+\newcommand{\Czero}{\text{C0}}
+\newcommand{\dfix}{\text{dfix}}
+\newcommand{\Cone}{\text{C1}}
+\newcommand{\Ctwo}{\text{C2}}
+\newcommand{\Cthree}{\text{C3}}
+\newcommand{\Cfour}{\text{C4}}
+\newcommand{\Cfive}{\text{C5}}
+\newcommand{\Lone}{L_{\text{PoV1}}}
+\newcommand{\Ltwo}{L_{\text{PoV2}}}
+\newcommand{\Lgeq}{L_{\text{PoV}\geq3}}
+\newcommand{\Linfty}{L_{\text{PoV}=\infty}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\TM}{\mathcal{M}_{\text{TM}}}
+\newcommand{\halt}{\text{halt}}
+\newcommand{\nonhalt}{\text{nonhalt}}
+\newcommand{\undec}{\text{undec}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿では、エルブラン基底・エルブラン解釈を拡張した「視点数付きエルブラン関係」を提案し、仏教論理における四句分別（是・非・亦是亦非・非是非非・空）を論理的に表現する枠組みを構築する。視点数（PoV: Point of View）を導入し、問いの構造的複雑さを測ることで、残余空間 $\Lspace$ による真理値空間 $\C$ からの隔離を実現する。さらに、この枠組みがチューリングの停止問題を理論的に解決するものではないが、PoVが無限大かどうかの判定問題へとシフトすることで、実用的なレベルで無限ループを回避するモデルとして機能することを示す。
+\end{abstract}
+
+\section{はじめに}
+\label{sec:intro}
+
+エルブラン解釈は、論理プログラミングや一階述語論理の意味論において中心的な役割を果たす。しかし、古典論理の枠組みでは、真理値は真（true）と偽（false）のみであり、矛盾許容的・多値的な構造を直接表現することは困難である。
+
+二値論理は、命題が真または偽のいずれか一方に属することを前提とする。しかしエルブラン空間では、証明可能性・反証可能性・独立性・自己参照などの要因により、その前提自体が必ずしも自然な記述を与えるとは限らない。このため、本稿では命題を四句分別の枠組みによって分類する。
+
+ただし、本稿は古典論理を四値論理へ拡張する立場を採らない。二値論理と四値論理は、いずれも命題に真理値を付与することを基本構成とする点で共通している。これに対して本稿では、真理値ではなくエルブラン空間における関係を一次的対象とし、四句分別はその関係構造から導かれる分類として位置付けられる。
+
+一方、仏教論理における四句分別（是・非・亦是亦非・非是非非・空）は、多様な視点とその限界を明示的に扱う枠組みとして知られる。本稿では、エルブラン基底・エルブラン解釈を拡張し、視点数（PoV）を導入した「視点数付きエルブラン関係」を定義する。これにより、四句分別を論理的に表現し、無記（語らないこと）を残余空間として扱うことができる。
+
+さらに、この枠組みがチューリングの停止問題を理論的に解決するものではないが、PoVが無限大かどうかの判定問題へとシフトすることで、実用的なレベルで無限ループを回避するモデルとして機能することを示す。
+
+\section{エルブラン基底とエルブラン解釈の拡張}
+\label{sec:herbrand}
+
+\subsection{エルブラン領域とエルブラン基底}
+\label{subsec:herbrand-domain}
+
+一階述語論理のプログラム $P$ に対して、エルブラン領域 $\HU(P)$ とエルブラン基底 $\HB(P)$ を以下のように定義する。
+
+\begin{definition}[エルブラン領域]
+プログラム $P$ の定数と関数記号から構成されるすべての閉項の集合を $\HU(P)$ と定義する。
+\end{definition}
+
+\begin{definition}[エルブラン基底]
+プログラム $P$ の述語記号にエルブラン領域 $\HU(P)$ の項を代入して得られるすべてのアトムの集合を $\HB(P)$ と定義する。
+\end{definition}
+
+例として、$P$ が定数 $a, b$ と述語記号 $p, q$ を持つ場合、
+\[
+\HB(P) = \{p(a), p(b), q(a), q(b)\}
+\]
+となる。
+
+\subsection{エルブラン解釈の拡張}
+\label{subsec:herbrand-interp}
+
+通常のエルブラン解釈 $I$ は、$\HB(P)$ の各アトムに真偽値（true/false）を割り当てる関数である。本稿では、これを拡張し、四句分別の推論過程で用いる真理値、収束先としての極限状態、記述限界を表す残余を型として分離して扱う。
+
+以下では論文上の説明を円滑にするため、無記を $\Czero$、空を $\Cfive$ という補助概念として一時的に導入する。ただし、これらは形式体系に属する値ではなく、真理値空間 $\C$ の要素でもない。$\Czero$ と $\Cfive$ は、四句分別の周辺に現れる二つの境界事象を読者に示すための説明用ラベルであり、後続の定義でそれぞれ残余空間と極限空間へ位置付け直される。
+
+\begin{definition}[説明用ラベルとしての無記と空]
+無記と空を、論文記述のための補助概念として以下のように置く。
+\[
+\Czero : \text{無記（判断の切断）}, \qquad
+\Cfive : \text{空（構成プロセスの収束先）}
+\]
+この導入は説明上の便宜にすぎず、$\Czero$ と $\Cfive$ を真理値空間の要素として採用するものではない。$\Czero$ は残余空間 $\Lspace$ に属する切断結果として、$\Cfive$ は極限空間 $\mathcal{D}$ に属する収束先として、後続の定式化で明示的に分離される。
+\end{definition}
+
+\begin{definition}[四句分別の真理値空間]
+四句分別の内部プロセスで用いる真理値空間 $\C$ を以下のように定義する。
+\[
+\C = \{\Cone, \Ctwo, \Cthree, \Cfour\}
+\]
+ここで、各要素は以下の推論位相を表す。
+\begin{align*}
+\Cone &: \text{是（肯定）} \\
+\Ctwo &: \text{非（否定）} \\
+\Cthree &: \text{亦是亦非（両立）} \\
+\Cfour &: \text{非是非非（未然）}
+\end{align*}
+\end{definition}
+
+\begin{definition}[説明用ラベルの型付け]
+説明用ラベル $\Czero$ と $\Cfive$ は、真理値空間 $\C$ の要素としては型付けしない。
+\[
+\Czero \notin \C, \qquad \Cfive \notin \C
+\]
+$\Czero$ は真でも偽でもない追加の真理値ではなく、判断を完結させずに残余空間 $\Lspace$ へ送出される切断結果を説明するためのラベルである。また、$\Cfive$ は通常の真理値ではなく、四句分別の構成プロセスが収束する極限状態 $\dfix$ を説明するためのラベルである。したがって、いずれも後続の論理演算子の入力としては型付けされない。
+\end{definition}
+
+\section{視点数（PoV）の導入}
+\label{sec:pov}
+
+\subsection{視点数の定義}
+\label{subsec:pov-def}
+
+問い（アトム）$x \in \HB(P)$ に対して、視点数 $\PoV(x)$ を以下のように定義する。
+
+\begin{definition}[視点数]
+問い $x$ の視点数 $\PoV(x)$ は、$x$ を解釈する際に必要となる独立した視点の数とする。
+\end{definition}
+
+例：
+\begin{itemize}
+\item $\PoV(x) = 1$：単一の視点で解釈可能（例：通常の命題）
+\item $\PoV(x) = 2$：二つの対立する視点を前提（例：十四無記の質問）
+\item $\PoV(x) \geq 3$：三つ以上の視点を前提
+\item $\PoV(x) = \infty$：無限の視点を前提（非是非非の無限退行）
+\end{itemize}
+
+\subsection{視点数付きエルブラン関係}
+\label{subsec:pov-herbrand-rel}
+
+視点数付きエルブラン関係 $\R$ を以下のように定義する。
+
+\begin{definition}[視点数付きエルブラン関係]
+視点数付きエルブラン関係 $\R$ は、
+\[
+\R \subseteq \HB(P) \times \C \times (\mathbb{N} \cup \{\infty\})
+\]
+として定義される。ここで、$(x, c, p) \in \R$ は、問い $x$ が内部プロセス上の真理値 $c \in \C$ にあり、視点数 $\PoV(x) = p$ であることを表す。$\Czero$ と $\Cfive$ はこの関係の真理値成分には含めない。
+\end{definition}
+
+\section{四句分別の論理的表現}
+\label{sec:fourfold}
+
+
+
+\subsection{四句分別の状態遷移と視点数（PoV）の推移}
+\label{subsec:fourfold-trans}
+
+四句分別の状態遷移は、単一の真理値から別の真理値への静的な写像ではなく、再帰的な否定操作によって推論の複雑さ、すなわち視点数（PoV）を引き上げていく動的軌道として定義される。
+
+\begin{definition}[四句分別の推論軌道とPoV推移]
+推論軌道 $\gamma_x$ は、問い $x$ が単一視点（PoV=1）として受理された後に展開される。これは内部プロセス空間 $\C$ 上の段階的推移であり、各段階への移行は要求される視点数（PoV）の増大を伴う。
+\begin{align*}
+\gamma_x :\quad
+\Cone\, (\PoV=1)
+&\longrightarrow \Ctwo\, (\PoV=1) \\
+&\longrightarrow \Cthree\, (\PoV=2) \\
+&\longrightarrow \Cfour\, (\PoV=\infty)
+\end{align*}
+各段階の位相的・証明論的意味は以下の通りである。
+\begin{itemize}
+\item $\Cone$（是）：単一の構成起点であり、単一の視点（PoV=1）からの対象化。
+\item $\Ctwo$（非）：視点を反転させた単一の境界指示（PoV=1）。
+\item $\Cthree$（亦是亦非）：肯定と否定の推論系列が同時に成立し、二つの視点を併置して扱う状態（PoV=2）。この段階で単一視点による評価から複数視点による評価へ移行する。
+\item $\Cfour$（非是非非）：再帰的推論が有限の評価手続きとして閉じず、無限退行として表現される状態（PoV=$\infty$）。
+\end{itemize}
+\end{definition}
+
+記述体系は本質的に単一視点（PoV=1）の対象化を前提とするため、軌道が $\Cthree\, (\PoV=2)$ 以降へ推移した時点で、その状態を直接的な「値」として評価することはできない。四句分別が静的な四値論理や多値論理と異なるのは、この複数視点状態を新たな真理値として実体化せず、PoVの超過に伴う評価不能状態として扱う点にある。
+
+\begin{definition}[収束経路と発散経路]
+推論軌道 $\gamma_x$ は、以下の二つの経路に分岐する。
+\begin{enumerate}
+\item 軌道が構造的に完結する場合、プロセスは極限状態 $\Cfive$（$\dfix$）へ収束する。
+\item 軌道が非是非非 $\Cfour$ の位相で再帰的な無限退行に陥る場合、評価は未定義化し、無記 $\Czero$ として残余空間 $\Lspace$ へ送出される。
+\end{enumerate}
+\end{definition}
+
+$\Cfive$ は軌道の収束先であり、内部プロセス上の真理値ではない。また、無記 $\Czero$ は残余空間への送出であり、推論軌道の通常の値としては扱わない。
+
+\begin{definition}[無記と空の型制約]
+無記 $\Czero$ と空 $\Cfive$ は真理値空間 $\C$ から除外される。
+\[
+\Czero \notin \C, \qquad \Cfive \notin \C
+\]
+したがって、推論軌道への $\Czero$ の再投入や論理演算子への $\Cfive$ の入力は型不整合として扱う。
+\end{definition}
+
+\subsection{視点数付き四句分別の適用}
+\label{subsec:pov-fourfold}
+
+問い $x$ に対して、視点数付き四句分別を二段階の評価として適用する。
+
+\begin{definition}[構文的PoV検査]
+フェーズ1では、入力された問い $x$ が前提とする視点数を静的に検査する。$\PoV(x) \geq 2$ の場合、その問いは単一視点の真偽評価の範囲を超えるため、推論軌道を開始せず、直ちに無記 $\Czero$ として残余空間 $\Lspace$ へ送出する。
+\end{definition}
+
+\begin{definition}[動的PoV発散と極限検証]
+フェーズ2では、構文的PoV検査で $\PoV(x)=1$ として受理された問いに対して、四句分別の推論軌道 $\gamma_x$ を展開する。軌道が構造的に完結する場合は極限状態 $\Cfive$ へ収束する。一方、非是非非 $\Cfour$ の位相で視点数が動的に $\PoV(x) \to \infty$ へ発散する場合、評価は未定義状態として残余空間 $\Lspace$ へ送出される。
+\end{definition}
+
+この二段階評価により、入力時点で複数視点を要求する構文的エラーと、推論の進行後に発生する動的な発散とを区別できる。
+
+\section{残余空間による隔離}
+\label{sec:residual}
+
+\subsection{真理値空間と残余空間の直和}
+\label{subsec:direct-sum}
+
+真理値空間 $\C$、極限状態 $\Cfive$、残余空間 $\Lspace$ を機能的階層として分離して定義する。
+
+\begin{definition}[真理値空間]
+真理値空間 $\C$ は内部推論プロセスにおける四つの位相のみからなる。
+\[
+\C = \{\Cone, \Ctwo, \Cthree, \Cfour\}
+\]
+\end{definition}
+
+\begin{definition}[極限空間]
+極限空間 $\mathcal{D}$ を以下のように定義する。
+\[
+\mathcal{D} = \{\Cfive\}
+\]
+$\Cfive$ は空を表す収束先であり、演算対象としての真理値ではない。
+\end{definition}
+
+\begin{definition}[残余空間]
+残余空間 $\Lspace$ を以下のように定義する。
+\[
+\Lspace = \{\Czero, \Lone, \Ltwo, \Lgeq, \Linfty\}
+\]
+ここで、
+\begin{align*}
+\Czero &: \text{無記（型不整合を伴う切断）} \\
+\Lone &: \text{PoV=1 の無記} \\
+\Ltwo &: \text{PoV=2 の無記} \\
+\Lgeq &: \text{PoV≥3 の無記} \\
+\Linfty &: \text{PoV=∞ の無記}
+\end{align*}
+\end{definition}
+
+\begin{definition}[出力空間]
+出力空間 $\Ospace$ を真理値空間 $\C$、極限空間 $\mathcal{D}$、残余空間 $\Lspace$ のタグ付き和として定義する。
+\[
+\Ospace = \C \oplus \mathcal{D} \oplus \Lspace
+\]
+この分離により、真理値、収束先、切断結果を同列の多値論理として誤用することを防ぐ。
+\end{definition}
+
+
+\subsection{論理演算子の定義域と残余の隔離}
+\label{subsec:type-ops}
+
+論理演算子 $\land, \lor$ などの定義域は、真理値空間 $\C$ のみに限定される。
+
+\begin{definition}[論理演算子の定義域]
+論理演算子 $\land, \lor$ を以下のように定義する。
+\[
+\land, \lor : \C \times \C \to \C
+\]
+極限空間 $\mathcal{D}$ と残余空間 $\Lspace$ の要素は、論理演算子の被演算子（入力）としては定義されない。
+\end{definition}
+
+これにより、動的停止によって残余空間へ排除された無記 $\Czero$ や、収束先である空 $\Cfive$ が、後続の計算において新たな真理値として誤用されることを構造的に防止する。無記を残余空間へ、空を極限空間へ切り離し、論理演算の対象から除外することで、四句分別の動的な推論プロセスを静的な四値・五値論理として再解釈してしまう混同、すなわち記の枠組みへの不適切な回収を代数的に回避している。
+
+\section{チューリングの停止問題との関係}
+\label{sec:halting}
+
+\subsection{停止問題の理論的限界}
+\label{subsec:halting-limit}
+
+チューリングの停止問題は、以下のように定式化される。
+
+\begin{theorem}[停止問題の非決定可能性]
+任意のチューリングマシン $M$ と入力 $w$ に対して、$M$ が $w$ で停止するかどうかを判定するアルゴリズムは存在しない。
+\end{theorem}
+
+この定理は、計算可能性理論における根本的な限界を示している。
+
+\subsection{PoVが∞かどうかの判定問題へのシフト}
+\label{subsec:pov-infinity}
+
+本稿で提案する視点数付きエルブラン関係は、停止問題そのものを解決するものではない。代わりに、以下のように問題をシフトする。
+
+\begin{remark}[問題のシフト]
+停止問題：
+\[
+\text{「$M$ は $w$ で停止するか？」}
+\]
+を、
+\[
+\text{「問い $x$ の PoV は ∞ か？」}
+\]
+という判定問題にシフトする。
+\end{remark}
+
+具体的には、
+\begin{itemize}
+\item 問い $x$ に対して視点数付き四句分別を適用し、
+\item 非是非非 $\Cfour$ の無限退行を検知した時点で、
+\item 残余空間 $\Lspace$ に $L_{\text{PoV}=\infty}$ として切り離す。
+\end{itemize}
+
+
+\subsection{無限ループの回避と部分関数の未定義性}
+\label{subsec:practical-avoidance}
+
+本枠組みにおいて、非是非非（$\Cfour$）の位相で生じる無限退行は、チューリングマシンの非停止状態に対応し、計算論的にはクリーネ \cite{Kleene1952} の部分再帰関数における未定義域への到達として形式化できる。
+
+通常の静的型付けや古典論理では、このような決定不能状態は事前の型エラーとして排除されることが期待される。しかし、非是非非への発散は、推論プロセスが動的に進行した結果として事後的にのみ現れる。すなわち、推論過程において必要な視点数が有限に制約できなくなり、適用可能な推論規則や継続条件を決定できない状態である。
+
+したがって、実装において導入される「$N$ 回の再帰的適用による打ち切りと $\Linfty$（PoV=$\infty$ の無記）への送出」という処置は、単なるアドホックなタイムアウトではない。それは、部分関数の未定義性に直面した評価手続きに対して有限の上限 $N$ を与え、評価不可能な文脈を真理値空間 $\C$ から残余空間 $\Lspace$ へ分離する操作として、計算意味論的に正当化される。
+
+これにより、システムは停止問題そのものを解決するのではなく、未定義化した評価軌道を型付きの残余として隔離する。結果として、真理値空間上の推論を有限時間で閉じつつ、非停止軌道を真理値として扱う誤りを避けることができる。
+
+\section{結論}
+\label{sec:conclusion}
+
+本稿では、視点数付きエルブラン関係を提案し、四句分別を論理的に表現する枠組みを構築した。視点数（PoV）を導入し、問いの構造的複雑さを測ることで、真理値空間 $\C$、極限空間 $\mathcal{D}$、残余空間 $\Lspace$ を型レベルで分離した。
+
+さらに、この枠組みがチューリングの停止問題を理論的に解決するものではないが、非停止軌道を部分関数の未定義性として捉え、残余空間へ送出することで、実用的なレベルで無限ループを回避するモデルとして機能することを示した。
+
+今後の課題として、
+\begin{itemize}
+\item PoVの計算アルゴリズムの具体化、
+\item 残余空間 $\Lspace$ の操作的意味論の構築、
+\item 実装および実験的評価、
+\end{itemize}
+などが挙げられる。
+
+\begin{thebibliography}{9}
+
+\bibitem{Kleene1952}
+S.~C.~Kleene.
+\newblock \emph{Introduction to Metamathematics}.
+\newblock North-Holland Publishing Company, Amsterdam, 1952.
+
+\bibitem{Herbrand1930}
+J.~Herbrand.
+\newblock \emph{Recherches sur la th\'eorie de la d\'emonstration}.
+\newblock PhD thesis, University of Paris, 1930.
+
+\end{thebibliography}
+
+\end{document}
