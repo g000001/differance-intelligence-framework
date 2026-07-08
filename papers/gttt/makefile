@@ -8,11 +8,12 @@ SOURCES = \
 	../sunyata-math/avyakata.tex \
 	../sunyata-math/pov-proof.tex \
 	pov-herbrand-space.tex \
-	pov-allegory.tex \
 	../sunyata-math/titotp.tex \
 	../sunyata-math/titotp-mebius.tex \
 	../math/math-observer-elimination.tex \
 	../sunyata-math/math-limit-equivalence.tex \
+	amphigory-0.tex \
+	amphigory.tex
 
 # 中間生成物および最終的なPDFのリスト
 PDFS = $(SOURCES:.tex=.pdf)
@@ -32,10 +33,10 @@ $(TARGET): $(PDFS)
 	# $(LATEX) $(LATEX_FLAGS) $<
 
 txt: $(SOURCES)
-	@rm -f icat.txt
+	@rm -f gttt.txt
 	for f in icat-common.sty $(SOURCES); do \
-		cat $$f >> icat.txt; \
-		echo '' >> gttt.txt; \
+		cat $$f >> gttt.txt; \
+		printf '\n\n' >> gttt.txt; \
 	done
 
 # 掃除用

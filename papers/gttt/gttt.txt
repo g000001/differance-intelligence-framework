@@ -1,15 +1,2017 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{icat-common}[2026/06/29 Common settings for ICAT papers]
+
+\RequirePackage{fix-cm}
+\RequirePackage{luatexja}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{amsfonts}
+\RequirePackage{geometry}
+\RequirePackage{enumitem}
+
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  共通マクロ
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}
+\newcommand{\Svoid}{\mathbf{S}_{\emptyset}}
+\newcommand{\Bval}{\mathcal{B}}
+
+%-------------------------------------------------
+%  共通表示設定
+%-------------------------------------------------
+\renewcommand{\abstractname}{Abstract}
+\renewcommand{\refname}{参考文献}
+\providecommand{\bibname}{参考文献}
+\renewcommand{\bibname}{参考文献}
+\setlist[description]{style=multiline, leftmargin=3cm}
 
+\RequirePackage{iftex}
+\ifLuaTeX
+  \documentclass[11pt,a4paper,ja=standard,lualatex]{bxjsarticle}
+\else\ifXeTeX
+  \documentclass[11pt,a4paper,ja=standard,xelatex]{bxjsarticle}
+\else
+  \documentclass[11pt,a4paper,ja=standard,pdflatex]{bxjsarticle}
+\fi\fi
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+
+\newtheorem{theorem}{定理}
+\newtheorem{definition}{定義}
+\newtheorem{proposition}{命題}
+\newtheorem{corollary}{系}
+\newtheorem{example}{例}
+\newtheorem{remark}{注意}
+\newtheorem{operation}{操作}
+
+\title{無記の意味論：意味と指示の不動点\\
+—保留の再帰と無記の再帰の分岐について—}
+\author{千葉将臣}
+\date{2026-06-30}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本論文は、意味（Sinn）と指示（Bedeutung）の関係を、
+分離可能とも同一とも断定しないための操作として
+無記（むき、Skt.\ avy\=akata）を定式化する。
+意味と指示は不可分であるが、同一ではない。
+しかしこの関係を「不可分である」「同一ではない」と命題化した瞬間、
+それは真偽・可能不可能・予想・独立性といった記の枠組みに回収される。
+本論文の主張は、この回収を避けるためには、意味と指示の関係を
+無記の不動点として、すなわち
+「無記は無記である」と断定するほかない、ということである。
+
+そのために本論文は、まず保留（エポケー、$E$）と無記（$\mathrm{A}$）を
+分離する。保留は将来の再開条件 $R$ を要求するため、
+$E(\varphi)\to E(R(\varphi))\to E(R(R(\varphi)))\to\cdots$
+という悪性無限退行を生じる。これに対して無記の再帰は、
+各段階で完結する操作の反復であり、退行ではない。
+さらに本論文は、この反復を「可能か不可能か」「予想されるか」
+という形で述べること自体が保留の再帰を呼び戻すことを示し、
+無記についての有効な記述は断定形でしか成立しないことを論じる。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入：記の罠}
+
+\subsection{記の枠組みとその限界}
+
+ある命題 $\varphi$ について、数学・論理学は通常、以下のいずれかの
+立場を取る。
+
+\begin{itemize}
+\item $\varphi$ は証明可能である（定理）。
+\item $\varphi$ は反証可能である（否定の定理）。
+\item $\varphi$ は与えられた体系から独立である
+  （ゲーデルの不完全性定理の意味で）。
+\item $\varphi$ は現時点で未解決だが、いずれ真偽が定まると想定される
+  （予想）。
+\end{itemize}
+
+本論文ではこれら四つの立場をまとめて\textbf{記}（き）の枠組みと呼ぶ。
+記の枠組みに共通するのは、$\varphi$ について
+「真偽がいずれかに定まっている、あるいは定まりうる」
+という前提である。独立性命題でさえ、
+「証明できないし反証もできない」という事実そのものは
+体系内で確定した記述として扱われる。
+
+この枠組みは、ある種の問いに対して過剰に強い。
+たとえば「意味と指示は分離可能か」「意味と指示は同一か」
+という問いに対して、肯定・否定・独立性・予想のいずれかを
+与えようとすると、意味と指示の関係はすでに
+命題的対象として固定されている。
+しかし本論文が扱う関係は、その固定以前にある。
+意味と指示は不可分であるが、同一ではない。
+この言い方自体も、厳密には記の枠組みに接近する。
+したがって本論文は、この関係を真偽の対象としてではなく、
+操作として扱う。
+
+\subsection{可能不可能・予想という回収}
+
+この種の論点は、しばしば次の二つの形式の議論に回収される。
+
+\begin{enumerate}
+\item 「無記として表現することは可能である／不可能である」。
+\item 「無記として表現できると予想される／考えられる」。
+\end{enumerate}
+
+しかし第一の形式は、無記を可能性命題として扱う。
+第二の形式は、無記を将来の確定を予定した予想命題として扱う。
+いずれも、無記を記の枠組みに戻す。
+本論文の目的は、無記を可能不可能や予想として述べることではない。
+無記が必要となる構造を示し、無記は無記であるとしか述べられない
+地点を確定することである。
+
+\section{記と無記}
+
+\subsection{記の定義}
+
+\begin{definition}[記]
+命題 $\varphi$ に対し、$\varphi$ の真偽を問うことが
+体系 $T$ の内部で意味を持つ（すなわち $T \vdash \varphi$,
+$T \vdash \neg\varphi$, あるいは
+$T \nvdash \varphi$ かつ $T \nvdash \neg\varphi$ という
+独立性の判定が $T$ の言語で記述可能である）とき、
+$\varphi$ は体系 $T$ に対して\textbf{記}であるという。
+\end{definition}
+
+\begin{definition}[無記]
+命題、あるいは命題的に見える問い $\varphi$ に対し、
+$\varphi$ の真偽を問う行為を実行しない操作を
+$\mathrm{A}(\varphi)$ と書き、\textbf{無記}と呼ぶ。
+
+$\mathrm{A}(\varphi)$ は真理値を持たない。
+これは「$\varphi$ は真でも偽でもない」という第三の真理値ではなく、
+$\varphi$ に対して真理値を付与する行為そのものを
+実行しないという操作である。
+\end{definition}
+
+\begin{remark}
+保留は将来の再開を予定する語であり、無記とは異なる。
+無記は判断を延期しない。
+無記は、問いを真偽の対象として立てる行為を、今ここで実行しない。
+\end{remark}
+
+\subsection{意味と指示への適用}
+
+記号 $S$ の意味を $\mathrm{Sinn}(S)$、
+指示対象を $\mathrm{Bed}(S)$ と書く。
+このとき次の二つの問いは、どちらも記の枠組みに属する。
+
+\begin{align}
+\mathrm{Sinn}(S) &= \mathrm{Bed}(S),\\
+\mathrm{Sinn}(S) &\perp \mathrm{Bed}(S).
+\end{align}
+
+第一式は意味と指示を同一化する。
+第二式は意味と指示を分離した独立対象として固定する。
+しかし、意味と指示の関係はこの二択では捉えられない。
+意味は指示なしに空転せず、指示は意味なしに記号的対象として現れない。
+この意味で両者は不可分である。
+他方で、意味は指示対象そのものではなく、指示対象も意味そのものではない。
+この意味で両者は同一ではない。
+
+したがって、本論文は次の操作を置く。
+
+\begin{operation}[意味と指示の無記]
+意味と指示の関係について、同一性命題にも分離命題にも
+真理値を付与しない。
+すなわち、
+\begin{equation}
+\mathrm{A}\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
+\qquad
+\mathrm{A}\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
+\end{equation}
+を実行する。
+\end{operation}
+
+この操作は、意味と指示が「同一か否か未解決である」と述べるものではない。
+また「分離可能かどうかは今後の研究課題である」と述べるものでもない。
+それらは予想ないし保留であり、記の枠組みに属する。
+無記は、意味と指示の関係を命題的二択へ移す操作を停止する。
+
+\section{保留の再帰}
+
+\subsection{保留の定義}
+
+\begin{definition}[保留（エポケー）]
+命題 $\varphi$ に対し、$\varphi$ についての判断を
+将来の再開を予定して中断する操作を $E(\varphi)$ と書く。
+$E(\varphi)$ は次の二条件を含む。
+
+\begin{enumerate}
+\item \textbf{再開可能性}：ある時点で $E(\varphi)$ は解除され、
+  $\varphi$ について記の判定が下される可能性が残されている。
+\item \textbf{対象の保存}：$E(\varphi)$ の実行中、
+  $\varphi$ という対象そのものは保存される。
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[$E$ の冪等性]
+$E$ は状態として冪等である。すなわち
+\begin{equation}
+E(E(\varphi))=E(\varphi).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+$E(\varphi)$ は「$\varphi$ についての判断が中断されている」
+という状態である。この状態にさらに保留を適用しても、
+新しい判断状態は生じない。判断が中断されているという
+同一状態が継続するだけである。したがって $E$ は冪等である。
+\end{proof}
+
+\subsection{解除条件による悪性無限退行}
+
+状態としての冪等性だけを見れば、保留の反復は単なる収束である。
+しかし保留には再開可能性が含まれる。
+この点を明示すると、保留は悪性無限退行を生じる。
+
+\begin{definition}[保留の解除条件]
+$E(\varphi)$ が解除される条件を $R(\varphi)$ と書く。
+$R(\varphi)$ は「いつ・いかなる条件のもとで
+$\varphi$ についての判断を再開するか」を定める命題である。
+\end{definition}
+
+\begin{theorem}[保留の悪性無限退行]
+$R(\varphi)$ が確定しない限り、$E(\varphi)$ は
+真に保留として機能しない。
+ところが $R(\varphi)$ の確定それ自体も一つの判断であるため、
+そこにも保留が適用可能である。
+したがって、
+\begin{equation}
+E(\varphi)\longrightarrow E(R(\varphi))
+\longrightarrow E(R(R(\varphi)))
+\longrightarrow\cdots
+\end{equation}
+という列が生じる。
+この列では、いずれの段階においても保留の正当化条件が完結せず、
+次の段階へ先送りされる。
+ゆえにこれは悪性無限退行である。
+\end{theorem}
+
+\begin{proof}
+保留が保留であるためには、将来の再開条件が少なくとも原理的に
+与えられなければならない。再開条件が与えられないなら、
+それは保留ではなく、判断しないことの無期限化である。
+しかし再開条件 $R(\varphi)$ を確定する判断もまた命題的対象であり、
+保留の対象から除外できない。
+したがって $R(\varphi)$ には $E(R(\varphi))$ が、
+さらに $R(R(\varphi))$ には $E(R(R(\varphi)))$ が適用される。
+この反復は、各段階の正当化を次段階に依存させるため、
+どの段階でも完結しない。
+\end{proof}
+
+\begin{remark}
+この退行は、保留が状態として冪等であることと矛盾しない。
+$E(E(\varphi))=E(\varphi)$ は、判断中断状態の同一性を示す。
+一方、悪性退行は、その中断状態を保留として正当化する
+再開条件の層に生じる。
+保留は状態としては一つに潰れるが、正当化としては無限に先送りされる。
+\end{remark}
+
+\section{無記の再帰}
+
+\subsection{無記の反復は退行ではない}
+
+無記の反復は、保留の退行とは異なる。
+無記は将来の再開条件を要求しないからである。
+
+\begin{theorem}[無記の各段階の完結性]
+任意の自然数 $n\geq1$ に対して、
+$\mathrm{A}^{n}(\varphi)$ はそれ自体で完結した操作である。
+すなわち、$\mathrm{A}^{n}(\varphi)$ の実行は、
+将来の再開・解除・条件確定に依存しない。
+\end{theorem}
+
+\begin{proof}
+$\mathrm{A}(\varphi)$ は「$\varphi$ について真偽を問う行為を
+実行しない」という操作であり、今この場で完結する。
+$\mathrm{A}(\mathrm{A}(\varphi))$ もまた、
+「$\mathrm{A}(\varphi)$ について真偽を問う行為を実行しない」
+という操作であり、同様に今この場で完結する。
+この反復のどの段階にも、保留における解除条件 $R$ は現れない。
+したがって無記の反復は、正当化を次段階に先送りする退行ではない。
+\end{proof}
+
+\begin{corollary}[退行と反復の区別]
+$E$ の再帰は退行である。
+各段階が次段階の正当化に依存し、いずれの段階も自立しないからである。
+これに対して $\mathrm{A}$ の再帰は反復である。
+各段階がその場で完結し、次段階に正当化を委ねないからである。
+\end{corollary}
+
+\subsection{無記の非冪等性}
+
+\begin{proposition}[無記の非冪等性]
+一般に、
+\begin{equation}
+\mathrm{A}(\mathrm{A}(\varphi))\neq\mathrm{A}(\varphi).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+$\mathrm{A}(\varphi)$ は、$\varphi$ について真偽を問う行為を
+実行しない操作である。
+一方 $\mathrm{A}(\mathrm{A}(\varphi))$ は、
+$\mathrm{A}(\varphi)$ という操作について真偽を問う行為を
+実行しない操作である。
+両者は対象の階層が異なる。
+したがって両者は同一視されない。
+\end{proof}
+
+この非冪等性は、保留の冪等性と対照的である。
+保留は同じ中断状態へ潰れる。
+無記は潰れない。
+しかし潰れないことは退行を意味しない。
+無記の各段階は完結したまま、次の段階を許す。
+
+\section{無記の不動点}
+
+\subsection{なぜ不動点が必要か}
+
+意味と指示の関係について、次の二つはいずれも不十分である。
+
+\begin{enumerate}
+\item 意味と指示は同一である。
+\item 意味と指示は分離可能である。
+\end{enumerate}
+
+第一は差異を消す。
+第二は不可分性を消す。
+さらに、次の二つも不十分である。
+
+\begin{enumerate}
+\item 意味と指示は同一か分離可能か、まだ分からない。
+\item 意味と指示は同一でも分離可能でもないと予想される。
+\end{enumerate}
+
+これらは保留または予想であり、将来の確定条件を要求する。
+したがって保留の再帰へ入る。
+必要なのは、意味と指示の関係を未決問題として残すことではない。
+必要なのは、その関係を真偽の対象にしない操作が、
+それ自体として完結していることを示すことである。
+
+\subsection{不動点としての無記}
+
+\begin{definition}[無記の不動点]
+対象 $\Phi$ が、記の枠組みによる同一化・分離・可能性化・予想化の
+いずれによっても保存されず、ただ $\mathrm{A}$ の遂行によってのみ
+その位置を保つとき、$\Phi$ は無記の不動点にあるという。
+このとき次の断定が成り立つ。
+\begin{equation}
+\Phi\text{ は }\mathrm{A}\text{ である。}
+\end{equation}
+\end{definition}
+
+ここで「不動点」とは、関数方程式 $f(x)=x$ の形式的同一性を
+主張する語ではない。
+むしろ、記の操作をいくら適用しても対象が記として固定されず、
+無記として述べるほかないという操作的位置を指す。
+
+\begin{theorem}[意味と指示の無記不動点]
+意味と指示の関係は、同一性命題としても分離命題としても、
+また可能性命題・予想命題としても記述されない。
+この関係は、無記の不動点としてのみ記述される。
+すなわち、
+\begin{equation}
+\mathrm{A}\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
+\qquad
+\mathrm{A}\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
+\end{equation}
+であり、さらにこの無記化自体についても
+\begin{equation}
+\mathrm{A}\Bigl(\mathrm{A}\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr)\Bigr),
+\qquad
+\mathrm{A}\Bigl(\mathrm{A}\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)\Bigr)
+\end{equation}
+である。
+\end{theorem}
+
+\begin{proof}
+意味と指示を同一とすれば、指示対象に還元されない意味の層が消える。
+意味と指示を分離すれば、意味が指示なしには対象化されず、
+指示も意味なしには記号的に現れないという不可分性が消える。
+したがって、同一性命題と分離命題はいずれも対象を保存しない。
+
+次に、この関係を「未決」「可能」「予想」として述べると、
+判断の将来の確定が予定される。
+これは保留 $E$ と同型であり、解除条件 $R$ を要求する。
+よって定理3.2の悪性無限退行を呼び込む。
+
+残る操作は、同一性命題にも分離命題にも真理値を付与しない
+$\mathrm{A}$ の遂行である。
+さらに、この遂行を命題として固定することを避けるためには、
+$\mathrm{A}$ 自体にも $\mathrm{A}$ を適用する必要がある。
+この反復は定理4.1により退行ではなく、各段階で完結する。
+したがって意味と指示の関係は、無記の不動点としてのみ保存される。
+\end{proof}
+
+\subsection{断定形の必然性}
+
+\begin{theorem}[無記の断定形必然性]
+無記 $\mathrm{A}(\varphi)$ を、保留・留保・予想・
+「〜かもしれない」といった回避表現によって記述することはできない。
+$\mathrm{A}(\varphi)$ について意味のある記述を与える唯一の方法は、
+\begin{equation}
+\varphi\text{ について }\mathrm{A}\text{ である。}
+\end{equation}
+という断定形である。
+\end{theorem}
+
+\begin{proof}
+回避表現は、記述 $D$ について将来の確定・再検討の可能性を含意する。
+これは保留 $E(D)$ と同型である。
+定理3.2より、$E(D)$ は解除条件 $R(D)$ の確定を要求し、
+悪性無限退行に陥る。
+したがって、無記を回避表現で述べることは、
+無記が回避するはずの保留の再帰を記述の層で呼び戻す。
+これを避けるには、記述が将来の解除条件を要求しない
+断定形でなければならない。
+\end{proof}
+
+\begin{remark}[断定は確信ではない]
+ここでいう断定形は、確信の強さや真理性の主張ではない。
+それは、ある操作が今この場で遂行され完結したことの表明である。
+$\mathrm{A}(\varphi)$ と断定することは、
+$\varphi$ が真であるとも偽であるとも主張しない。
+それは、$\varphi$ について真偽を問う行為を実行しない操作が
+完結したことを述べる。
+\end{remark}
+
+\section{結論}
+
+本論文は、意味と指示の関係を、同一性・分離・可能性・予想の
+いずれにも回収されない構造として扱った。
+そのために、保留 $E$ と無記 $\mathrm{A}$ を区別した。
+
+\begin{enumerate}
+\item 保留 $E$ は状態としては冪等であるが、再開条件 $R$ を要求するため、
+  正当化の層で悪性無限退行に陥る。
+\item 無記 $\mathrm{A}$ は、真偽を問う行為を実行しない操作であり、
+  将来の再開条件を要求しない。
+\item 無記の再帰 $\mathrm{A}^{n}(\varphi)$ は、各段階で完結する反復であり、
+  保留の退行とは異なる。
+\item 意味と指示は不可分でありつつ同一ではないが、
+  この関係は命題として確定されない。
+  それは無記の不動点として、無記であると断定されるほかない。
+\item 無記を可能不可能・予想・保留として述べることは、
+  無記を記へ戻す。
+  したがって無記についての有効な記述は断定形でしか成立しない。
+\end{enumerate}
+
+この結論は、仏教で事象の分析手法として広く利用されてきたインド論理学の四句分別（catu\d{s}ko\d{t}i）との
+対応を持つ。本論で検討した意味と指示の関係は、少なくとも次の
+四つの言明形式として展開できる。
+\begin{enumerate}
+\item 意味と指示は同一である。
+\item 意味と指示は分離可能である。
+\item 意味と指示は同一か分離可能か、まだ分からない。
+\item 意味と指示は同一でも分離可能でもないと予想される。
+\end{enumerate}
+これらは、肯定・否定・未決・非二択化という四つの仕方で
+意味と指示を記の対象へ移そうとする試みである。
+しかし本論の立場では、これら四つのいずれも、
+意味と指示の関係を無記として保持しない。
+したがって、無記を四句分別によって検討した結果もまた無記である。
+この点で、本論の結論は、龍樹『中論』における空の四句分別による分析を
+思想的先行例として持ち、その構造を、
+意味と指示の関係として再定式化するものである。
+
+結論は次の一文に集約される。
+
+\begin{quote}
+意味と指示の関係は、無記の不動点として無記である。
+\end{quote}
+
+この断定は、意味と指示についての新たな真理値を主張しない。
+それは、意味と指示を同一性・分離・可能性・予想の問いへ
+移す行為を実行しないという操作が、ここで完結したことを述べる。
+
+\begin{thebibliography}{99}
+
+\bibitem{Frege1892}
+Gottlob Frege.
+\newblock \"{U}ber Sinn und Bedeutung.
+\newblock \emph{Zeitschrift f\"{u}r Philosophie und philosophische Kritik},
+  100:25--50, 1892.
+
+\bibitem{NagarjunaGarfield1995}
+N\=ag\=arjuna.
+\newblock \emph{The Fundamental Wisdom of the Middle Way}.
+\newblock Translated with commentary by Jay L. Garfield.
+\newblock Oxford University Press, 1995.
+
+\bibitem{Husserl1913}
+Edmund Husserl.
+\newblock \emph{Ideen zu einer reinen Ph\"{a}nomenologie und
+  ph\"{a}nomenologischen Philosophie}.
+\newblock Max Niemeyer, 1913.
+
+\bibitem{Austin1962}
+J.\ L.\ Austin.
+\newblock \emph{How to Do Things with Words}.
+\newblock Oxford University Press, 1962.
+
+\bibitem{Kleene1952}
+Stephen Cole Kleene.
+\newblock \emph{Introduction to Metamathematics}.
+\newblock North-Holland, 1952.
+
+\end{thebibliography}
+
+\end{document}
 
+% !TEX program = lualatex
+\documentclass[11pt,a4paper,ja=standard,autodetect-engine]{bxjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+
+\newtheorem{theorem}{定理}
+\newtheorem{definition}{定義}
+\newtheorem{proposition}{命題}
+\newtheorem{example}{例}
+\newtheorem{remark}{注意}
+
+\title{継続残余としての証明障害：\\ 実行可能性と静的証明のあいだの初等モデル}
+\author{千葉将臣}
+\date{2026\mbox{-}06\mbox{-}29}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本論文は、動的な計算過程を古典的な静的証明へ写すときに現れる差分を、継続残余 $\rho$ として記述する初等的モデルを提案する。出発点は、直観主義論理では一般に二重否定除去 $\neg\neg A\to A$ が許されず、Curry\mbox{--}Howard 対応のもとで古典的制御は継続構造として解釈される、という標準的な観察である。本稿ではこの継続構造のうち、構成的な証拠として直接観測されない評価文脈を残余と呼ぶ。さらに、プログラムの \texttt{if} 分岐、メビウス帯の向き反転、コラッツ写像の軌道検証を例として、実行時には追跡できるが、実行前に静的な $\rho=0$ 証明として圧縮する際に残余指標が現れる、というモデルを与える。本稿の主張はコラッツ予想の ZFC 独立性ではなく、動的検証から静的証明への翻訳に生じる証明圧縮上の障害を可視化することである。
+\end{abstract}
+
+\section{導入}
+
+数学的証明は通常、完成した静的対象として提示される。一方で、計算機上の検証や構成的な推論では、命題はしばしば実行可能な過程として現れる。たとえば、ある入力 $n$ に対してプログラムを実行し、有限時間後に望ましい出力が得られることを確認することはできる。しかし、その確認手順全体を実行前から一つの静的定理として固定することは、一般に別の問題である。
+
+本稿の目的は、この差を「真偽の差」ではなく「翻訳の差」として扱うことである。すなわち、動的な実行プロトコル $P$ を古典的な証明対象へ写すとき、観測可能な部分 $P_{\mathrm{obs}}$ と、評価文脈として残る継続成分 $\mathcal{R}(P)$ とに分ける。そして、後者そのものを古典的対象として完全保存するのではなく、その影を残余指標 $\rho(P)$ として記録する。
+
+この立場では、$\rho=0$ は「実行前に古典的証明として完全圧縮できる」ことを意味し、$\rho>0$ は「実行時の継続成分が静的証明へ完全には消去されていない」ことを意味する。ただし、$\rho>0$ は直ちに命題の独立性や反証を意味しない。これはあくまで、動的検証から静的証明へ移る際の証明圧縮上の残余である。
+
+\section{論理的背景：二重否定と継続}
+
+直観主義論理では、命題 $A$ に対して一般には
+\begin{equation}
+    \neg\neg A \to A
+\end{equation}
+を導出できない。これは、$A$ の否定が矛盾を導くことと、$A$ の構成的証拠を直接与えることが区別されるためである。
+
+Curry\mbox{--}Howard 対応のもとでは、証明はプログラムに、命題は型に対応する。この対応において、古典論理の二重否定除去や排中律は、継続、例外、制御演算子のような計算構造として解釈される。つまり、古典的には $A$ と見なされる証明の内部に、構成的には「$A$ を否定する文脈を受け取って全体を制御する」評価文脈が含まれる。
+
+本稿では、この評価文脈を残余の原型とみなす。
+
+\begin{definition}[継続残余]
+命題 $A$ の古典的証明を構成的・計算論的に読むとき、直接の値または構成的証拠として観測される部分を $A_{\mathrm{obs}}$ とし、二重否定除去、排中律、例外処理、または \texttt{if} 分岐の未選択枝として評価文脈に残る部分を $\mathcal{R}(A)$ とする。この $\mathcal{R}(A)$ の古典的に観測可能な指標を継続残余 $\rho(A)$ と呼ぶ。
+\end{definition}
+
+\begin{remark}
+ここでいう「存在」は、直観主義論理と古典論理の差分を継続構造として読むという意味での存在である。したがって、任意の具体的命題について $\rho(A)>0$ が自動的に従うわけではない。各問題に対して、どの翻訳を採用し、どの継続成分を観測不能成分とみなすかを明示する必要がある。
+\end{remark}
+
+\section{残余翻訳}
+
+動的な検証手順を $P$ とする。$P$ は、実行時には入力、分岐、ループ、例外処理を通じて値を返す。一方、古典的証明では、これらの実行過程を停止した静的対象として記述する必要がある。
+
+\begin{definition}[残余翻訳]
+動的証明プロトコル $P$ に対し、古典的観測者が静的対象として固定できる成分を $P_{\mathrm{obs}}$、固定しきれない継続成分を $\mathcal{R}(P)$ とする。残余翻訳とは、写像
+\begin{equation}
+    \mathcal{T}_{\rho}(P)=(P_{\mathrm{obs}},\rho(P))
+\end{equation}
+である。ここで $\rho(P)$ は $\mathcal{R}(P)$ そのものではなく、その分岐差分、ホロノミー欠損、または二重否定除去コストとして古典的に観測可能な不変量へ写したものである。
+\end{definition}
+
+この定義により、古典的証明と動的検証の差を次のように表せる。
+\begin{itemize}
+    \item $\rho(P)=0$：$P$ は実行前に静的証明へ完全圧縮される。
+    \item $\rho(P)>0$：$P$ の継続成分の影が静的観測面に残る。
+\end{itemize}
+
+重要なのは、$\rho(P)>0$ が $P$ の失敗を意味しないことである。むしろ、$P$ は実行時には正しく動くが、その正しさを静的対象として固定する際に追加の指標が必要になる、という状況を表す。
+
+\section{分岐差分としての残余}
+
+最も初等的なモデルは、プログラムの \texttt{if} 分岐である。ある状態 $s$ に対して、プログラムが
+\begin{equation}
+    P(s)=
+    \begin{cases}
+        P_{1}(s) & \text{if } b(s)=1,\\
+        P_{0}(s) & \text{if } b(s)=0
+    \end{cases}
+\end{equation}
+として実行されるとする。
+
+実行時には、$b(s)$ の値に応じて一方の枝だけが選ばれる。しかし静的証明では、選ばれなかった枝も含め、分岐全体が同一の証明対象へ収束することを示す必要がある。このとき、分岐差分を
+\begin{equation}
+    \partial_{\rho}P(s)=P_{1}(s)-P_{0}(s)
+\end{equation}
+と形式的に書く。実際には $P_{1}(s)$ と $P_{0}(s)$ が数値でない場合もあるため、これは「二つの枝の観測差」を表す記号である。
+
+\begin{definition}[分岐残余]
+分岐プログラム $P$ に対し、二つの枝が古典的観測面で同一視できるとき $\partial_{\rho}P=0$ と書く。同一視できない差分が残るとき、適当な大きさ関数 $\|\cdot\|$ により
+\begin{equation}
+    \rho(P)=\|\partial_{\rho}P\|
+\end{equation}
+と定める。
+\end{definition}
+
+このモデルでは、$\rho=0$ は「どちらの枝を通っても静的証明として同じ対象に戻る」ことを意味する。$\rho>0$ は「実行時には一方の枝が処理されるが、静的観測では未選択枝の影が残る」ことを意味する。
+
+\section{メビウス帯：残余インデックスの最小例}
+
+メビウス帯は、残余を直観的に説明する最小例である。帯の上を一周すると、局所的には連続的に進んでいるだけである。しかし始点へ戻ったとき、向きは反転している。二周すると元に戻る。
+
+この構造を、状態集合 $X$ と符号 $\varepsilon\in\{+1,-1\}$ を持つ系として表す。メビウス輸送を
+\begin{equation}
+    M(x,\varepsilon)=(x',-\varepsilon)
+\end{equation}
+と書けば、二回の輸送では
+\begin{equation}
+    M^{2}(x,\varepsilon)=(x'',\varepsilon)
+\end{equation}
+となり、符号は回復する。
+
+\begin{definition}[メビウス残余]
+一周後の符号反転を古典的な単一平面上で消去しようとするとき、観測面に残る向きの差分を
+\begin{equation}
+    \rho_{\mathrm{Mob}}=1
+\end{equation}
+と記録する。二周後には反転が相殺されるため、合成された観測では
+\begin{equation}
+    \rho_{\mathrm{Mob}}^{(2)}=0
+\end{equation}
+と書く。
+\end{definition}
+
+この例が示すのは、動的な輸送そのものは矛盾なく実行できるが、一周分のねじれを単一の静的平面に完全消去しようとすると、向き反転のインデックスが残る、ということである。ここでの $\rho$ は矛盾や反証ではなく、継続された輸送の曲率的な痕跡である。
+
+\section{コラッツ写像と実行前圧縮の残余}
+
+コラッツ写像 $C:\mathbb{N}\to\mathbb{N}$ を
+\begin{equation}
+    C(n)=
+    \begin{cases}
+        n/2 & (n\equiv 0 \pmod 2),\\
+        3n+1 & (n\equiv 1 \pmod 2)
+    \end{cases}
+\end{equation}
+で定める。コラッツ予想は
+\begin{equation}
+    \mathrm{Col}:\quad \forall n\in\mathbb{N}\,\exists k\in\mathbb{N}\; C^{k}(n)=1
+\end{equation}
+という形を持つ。
+
+各 $n$ を固定すれば、プログラムを実行して軌道を追跡できる。この意味で、有限範囲の追試はランタイム検証である。一方、静的証明では、全ての $n$ について停止時刻を統制する構造を実行前に与える必要がある。構成的には、これは停止時刻関数
+\begin{equation}
+    K:\mathbb{N}\to\mathbb{N},\qquad C^{K(n)}(n)=1
+\end{equation}
+を何らかの有限な証明原理によって支配することに近い。
+
+\begin{definition}[コラッツ残余]
+コラッツ検証プロトコル $P_{\mathrm{Col}}$ に対し、個々の入力で実行時に得られる停止確認を $P_{\mathrm{run}}(n)$ とする。これらを実行前に一つの静的証明対象へ圧縮する際に必要となる未回収の分岐・停止時刻・評価文脈の指標を
+\begin{equation}
+    \rho_{\mathrm{Col}}=\rho(P_{\mathrm{Col}})
+\end{equation}
+と呼ぶ。
+\end{definition}
+
+この定義のもとで、$\rho_{\mathrm{Col}}=0$ は、コラッツ軌道の全入力に対する停止確認が実行前に静的証明として完全圧縮されている状態を表す。$\rho_{\mathrm{Col}}>0$ は、個々の実行では停止を確認できても、その確認列全体を一つの静的証明対象へ移す段階で、分岐構造または停止時刻構造の残余が残ることを表す。
+
+\begin{proposition}[実行検証と静的圧縮の非対称性]
+有限個の入力に対するコラッツ軌道の実行検証は、コラッツ予想の静的証明とは異なる。前者は各入力に対するランタイム上の到達確認であり、後者は全入力を支配する実行前の圧縮原理を必要とする。
+\end{proposition}
+
+\begin{proof}
+有限集合 $F\subset\mathbb{N}$ に対しては、各 $n\in F$ の軌道を計算し、ある $k_{n}$ について $C^{k_{n}}(n)=1$ を確認すればよい。しかし、コラッツ予想は全称命題であり、任意の $n$ に対して停止時刻の存在を示す必要がある。したがって、有限個の実行履歴の集積と、全入力を支配する静的証明とは論理的に区別される。
+\end{proof}
+
+\begin{remark}
+本稿の主張は、コラッツ型の分岐実行を静的な $\rho=0$ 証明へ翻訳する際に、停止時刻関数と分岐構造に由来する残余指標を導入できる、というモデル的主張である（これはコラッツ予想が ZFC 独立であることを意味しない）。また、標準的なコラッツ予想が停止性問題と同値であるとも主張しない。
+\end{remark}
+
+
+\section{ZFC+U 語彙における $\rho_{\mathrm{Col}}=0$ 証明の未完結性}
+
+前節までで、コラッツ写像そのものの真偽ではなく、コラッツ型分岐実行を静的な証明対象へ翻訳する際の残余指標 $\rho_{\mathrm{Col}}$ を導入した。本節では、この指標に関するモデル内命題を述べる。ここでいう未完結性は、コラッツ予想の ZFC 独立性を意味するものではなく、$\rho_{\mathrm{Col}}=0$ という完全圧縮条件を ZFC+U の語彙だけで閉じることの困難を表す。
+
+\begin{proposition}[$\rho_{\mathrm{Col}}=0$ 証明の ZFC+U 語彙内未完結性]
+本稿の残余翻訳モデルにおいて、$\rho_{\mathrm{Col}}=0$ を示すためには、停止時刻関数
+\begin{equation}
+    K:\mathbb{N}\to\mathbb{N},\qquad C^{K(n)}(n)=1
+\end{equation}
+を全入力に対して与えるだけでなく、その構成が全ての分岐継続を消去していることを示す必要がある。ZFC+U の通常の静的語彙は、この継続消去の完了を直接表す原理を含まない。したがって、$\rho_{\mathrm{Col}}=0$ の証明は、ZFC+U の語彙だけでは完結した対象として記述されず、追加の残余翻訳または継続消去原理を必要とする。
+\end{proposition}
+
+\begin{proof}
+$\rho_{\mathrm{Col}}=0$ とは、個々の入力に対する実行時の停止確認が、未回収の分岐・停止時刻・評価文脈を残さず、一つの静的証明対象へ完全圧縮されることを意味する。コラッツ命題は
+\begin{equation}
+    \forall n\in\mathbb{N}\,\exists k\in\mathbb{N}\; C^{k}(n)=1
+\end{equation}
+という形を持つため、構成的に読むならば、各入力 $n$ に停止時刻 $K(n)$ を割り当てる全域的構成が必要になる。
+
+しかし、本稿の残余翻訳では、$K$ の値を与えるだけでは十分ではない。$\rho_{\mathrm{Col}}=0$ は、各 $K(n)$ の存在に加えて、奇偶分岐によって発生する全ての未選択枝、評価文脈、停止時刻の探索過程が、静的証明対象の内部で完全に回収されていることを要求する。すなわち、必要なのは単なる停止時刻関数ではなく、停止時刻関数の構成が継続残余を残さないことの証明である。
+
+ZFC+U の通常の語彙は、集合、関数、関係、量化によって静的対象を記述する。一方、ここで要求される「継続消去の完了」は、定義1の意味での $\mathcal{R}(P_{\mathrm{Col}})$ の完全消去である。すなわち、定義1の意味での $\mathcal{R}(P_{\mathrm{Col}})$ の完全消去は、集合・関数・関係・量化からなる ZFC+U の通常の語彙には属さない条件として扱われる。記号的には、
+\begin{equation}
+    \mathcal{R}(P_{\mathrm{Col}})\text{-Elim}
+    \notin
+    \mathrm{Lang}(\mathrm{ZFC+U})
+\end{equation}
+と表せる。ここで $\mathcal{R}(P_{\mathrm{Col}})\text{-Elim}$ は定義1の意味での継続成分の完全消去を表す略記であり、$\mathrm{Lang}(\mathrm{ZFC+U})$ は集合・関数・関係・量化による通常語彙を表す。したがって、この条件を ZFC+U 内の通常の対象として表すには、残余翻訳 $\mathcal{T}_{\rho}$ または同等の継続消去原理を追加で明示しなければならない。
+
+よって、本稿のモデルにおいては、$\rho_{\mathrm{Col}}=0$ の証明は ZFC+U の語彙だけでは閉じず、少なくとも残余翻訳または継続消去を記述する追加語彙を必要とする。
+\end{proof}
+
+\begin{remark}
+本命題は ZFC+U における証明可能性の独立性を主張しない。主張しているのは、$\rho_{\mathrm{Col}}=0$ という完全圧縮条件を記述するために必要な継続消去の語彙が ZFC+U に含まれないという、語彙の層の問題である。コラッツ予想そのものが ZFC+U で証明可能かどうかは、本稿の射程外である。ただし、$\rho_{\mathrm{Col}}=0$ がコラッツ予想の静的証明の完成と同値である以上、その記述に必要な語彙が ZFC+U に届かないという事実は、ZFC+U の語彙内でのコラッツ予想の完全な証明記述が原理的に困難であることを示唆する。
+\end{remark}
+
+\section{残余を古典的に見せるための翻訳コード}
+
+残余そのものは継続構造であり、古典的な静的対象へそのまま戻すことは難しい。そこで、本稿では残余を次の三種類の古典的指標として翻訳する。
+
+\begin{enumerate}
+    \item \textbf{分岐差分}：\texttt{if} の二つの枝が静的観測面で同一対象へ戻るかを測る。
+    \item \textbf{ホロノミー欠損}：ループを一周した後に、状態、型、符号、向きが恒等的に戻るかを測る。
+    \item \textbf{二重否定除去コスト}：$\neg\neg A$ から $A$ を取り出すときに必要な継続制御の有無を測る。
+\end{enumerate}
+
+これらをまとめて、残余翻訳コードを
+\begin{equation}
+    \mathcal{T}_{\rho}(P)=
+    \bigl(P_{\mathrm{obs}},
+    \partial_{\rho}P,
+    \mathrm{Hol}_{\rho}(P),
+    \mathrm{Cost}_{\neg\neg}(P)\bigr)
+\end{equation}
+と書く。ここで $P_{\mathrm{obs}}$ は古典的に固定可能な証明成分、残りの三項は継続成分の影である。
+
+この形式化の利点は、古典的観測者に対して「残余は見えない」と言うだけでなく、「残余そのものは見えないが、分岐差分、ホロノミー欠損、二重否定除去コストとしてその影は見える」と述べられる点にある。
+
+\section{結論}
+
+本稿では、直観主義論理と古典論理の差分を継続構造として読み、そのうち構成的証拠として直接観測されない部分を継続残余 $\rho$ と呼ぶ初等モデルを提示した。さらに、\texttt{if} 分岐、メビウス帯、コラッツ写像を通じて、動的実行では追跡できるが、実行前の静的証明へ圧縮する際に残余指標が現れる、という構図を説明した。
+
+本稿の立場では、証明とは単に真なる命題を記号列として保存することではなく、動的検証プロトコルをどの程度まで静的対象へ圧縮できるかという翻訳問題でもある。$\rho=0$ は完全圧縮を、$\rho>0$ は継続成分の影が残ることを表す。今後の課題は、残余指標を具体的な形式体系内で符号化し、各問題に対して $\rho$ を比較可能な不変量として計算することである。
+
+\end{document}
+
 
+% !TeX program = lualatex
+% プレアンブル
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja-fontspec}
+\usepackage{amsmath,amssymb}
+\usepackage{ntheorem}
+\usepackage{mathtools}
+\usepackage{stmaryrd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes,calc}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1\baselineskip}
+\usepackage{bm}
+
+% タイトル
+\title{視点数付きエルブラン関係と四句分別：\\
+       記述方式・PoV・チューリング停止問題の実用的回避}
+\author{千葉将臣}
+\date{2026-07-05}
+
+% 定理環境
+\newtheorem{definition}{定義}
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{補題}
+\newtheorem{corollary}{系}
+\newtheorem{remark}{注}
+
+% コマンド定義
+\newcommand{\Her}{\mathcal{H}}
+\newcommand{\HB}{\mathit{HB}}
+\newcommand{\HU}{\mathit{HU}}
+\newcommand{\PoV}{\mathit{PoV}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\Lspace}{\mathcal{L}}
+\newcommand{\Ospace}{\mathcal{O}}
+\newcommand{\true}{\text{true}}
+\newcommand{\false}{\text{false}}
+\providecommand{\undef}{\text{undef}}
+\newcommand{\Czero}{\text{C0}}
+\newcommand{\dfix}{\text{dfix}}
+\newcommand{\Cone}{\text{C1}}
+\newcommand{\Ctwo}{\text{C2}}
+\newcommand{\Cthree}{\text{C3}}
+\newcommand{\Cfour}{\text{C4}}
+\newcommand{\Cfive}{\text{C5}}
+\newcommand{\Lone}{L_{\text{PoV1}}}
+\newcommand{\Ltwo}{L_{\text{PoV2}}}
+\newcommand{\Lgeq}{L_{\text{PoV}\geq3}}
+\newcommand{\Linfty}{L_{\text{PoV}=\infty}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\TM}{\mathcal{M}_{\text{TM}}}
+\newcommand{\halt}{\text{halt}}
+\newcommand{\nonhalt}{\text{nonhalt}}
+\newcommand{\undec}{\text{undec}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿では、エルブラン基底・エルブラン解釈を拡張した「視点数付きエルブラン関係」を提案し、仏教論理における四句分別（是・非・亦是亦非・非是非非・空）を論理的に表現する枠組みを構築する。視点数（PoV: Point of View）を導入し、問いの構造的複雑さを測ることで、残余空間 $\Lspace$ による真理値空間 $\C$ からの隔離を実現する。さらに、この枠組みがチューリングの停止問題を理論的に解決するものではないが、PoVが無限大かどうかの判定問題へとシフトすることで、実用的なレベルで無限ループを回避するモデルとして機能することを示す。
+\end{abstract}
+
+\section{はじめに}
+\label{sec:intro}
+
+エルブラン解釈は、論理プログラミングや一階述語論理の意味論において中心的な役割を果たす。しかし、古典論理の枠組みでは、真理値は真（true）と偽（false）のみであり、矛盾許容的・多値的な構造を直接表現することは困難である。
+
+二値論理は、命題が真または偽のいずれか一方に属することを前提とする。しかしエルブラン空間では、証明可能性・反証可能性・独立性・自己参照などの要因により、その前提自体が必ずしも自然な記述を与えるとは限らない。このため、本稿では命題を四句分別の枠組みによって分類する。
+
+ただし、本稿は古典論理を四値論理へ拡張する立場を採らない。二値論理と四値論理は、いずれも命題に真理値を付与することを基本構成とする点で共通している。これに対して本稿では、真理値ではなくエルブラン空間における関係を一次的対象とし、四句分別はその関係構造から導かれる分類として位置付けられる。
+
+一方、仏教論理における四句分別（是・非・亦是亦非・非是非非・空）は、多様な視点とその限界を明示的に扱う枠組みとして知られる。本稿では、エルブラン基底・エルブラン解釈を拡張し、視点数（PoV）を導入した「視点数付きエルブラン関係」を定義する。これにより、四句分別を論理的に表現し、無記（語らないこと）を残余空間として扱うことができる。
+
+さらに、この枠組みがチューリングの停止問題を理論的に解決するものではないが、PoVが無限大かどうかの判定問題へとシフトすることで、実用的なレベルで無限ループを回避するモデルとして機能することを示す。
+
+\section{エルブラン基底とエルブラン解釈の拡張}
+\label{sec:herbrand}
+
+\subsection{エルブラン領域とエルブラン基底}
+\label{subsec:herbrand-domain}
+
+一階述語論理のプログラム $P$ に対して、エルブラン領域 $\HU(P)$ とエルブラン基底 $\HB(P)$ を以下のように定義する。
+
+\begin{definition}[エルブラン領域]
+プログラム $P$ の定数と関数記号から構成されるすべての閉項の集合を $\HU(P)$ と定義する。
+\end{definition}
+
+\begin{definition}[エルブラン基底]
+プログラム $P$ の述語記号にエルブラン領域 $\HU(P)$ の項を代入して得られるすべてのアトムの集合を $\HB(P)$ と定義する。
+\end{definition}
+
+例として、$P$ が定数 $a, b$ と述語記号 $p, q$ を持つ場合、
+\[
+\HB(P) = \{p(a), p(b), q(a), q(b)\}
+\]
+となる。
+
+\subsection{エルブラン解釈の拡張}
+\label{subsec:herbrand-interp}
+
+通常のエルブラン解釈 $I$ は、$\HB(P)$ の各アトムに真偽値（true/false）を割り当てる関数である。本稿では、これを拡張し、四句分別の推論過程で用いる真理値、収束先としての極限状態、記述限界を表す残余を型として分離して扱う。
+
+以下では論文上の説明を円滑にするため、無記を $\Czero$、空を $\Cfive$ という補助概念として一時的に導入する。ただし、これらは形式体系に属する値ではなく、真理値空間 $\C$ の要素でもない。$\Czero$ と $\Cfive$ は、四句分別の周辺に現れる二つの境界事象を読者に示すための説明用ラベルであり、後続の定義でそれぞれ残余空間と極限空間へ位置付け直される。
+
+\begin{definition}[説明用ラベルとしての無記と空]
+無記と空を、論文記述のための補助概念として以下のように置く。
+\[
+\Czero : \text{無記（判断の切断）}, \qquad
+\Cfive : \text{空（構成プロセスの収束先）}
+\]
+この導入は説明上の便宜にすぎず、$\Czero$ と $\Cfive$ を真理値空間の要素として採用するものではない。$\Czero$ は残余空間 $\Lspace$ に属する切断結果として、$\Cfive$ は極限空間 $\mathcal{D}$ に属する収束先として、後続の定式化で明示的に分離される。
+\end{definition}
+
+\begin{definition}[四句分別の真理値空間]
+四句分別の内部プロセスで用いる真理値空間 $\C$ を以下のように定義する。
+\[
+\C = \{\Cone, \Ctwo, \Cthree, \Cfour\}
+\]
+ここで、各要素は以下の推論位相を表す。
+\begin{align*}
+\Cone &: \text{是（肯定）} \\
+\Ctwo &: \text{非（否定）} \\
+\Cthree &: \text{亦是亦非（両立）} \\
+\Cfour &: \text{非是非非（未然）}
+\end{align*}
+\end{definition}
+
+\begin{definition}[説明用ラベルの型付け]
+説明用ラベル $\Czero$ と $\Cfive$ は、真理値空間 $\C$ の要素としては型付けしない。
+\[
+\Czero \notin \C, \qquad \Cfive \notin \C
+\]
+$\Czero$ は真でも偽でもない追加の真理値ではなく、判断を完結させずに残余空間 $\Lspace$ へ送出される切断結果を説明するためのラベルである。また、$\Cfive$ は通常の真理値ではなく、四句分別の構成プロセスが収束する極限状態 $\dfix$ を説明するためのラベルである。したがって、いずれも後続の論理演算子の入力としては型付けされない。
+\end{definition}
+
+\section{視点数（PoV）の導入}
+\label{sec:pov}
+
+\subsection{視点数の定義}
+\label{subsec:pov-def}
+
+問い（アトム）$x \in \HB(P)$ に対して、視点数 $\PoV(x)$ を以下のように定義する。
+
+\begin{definition}[視点数]
+問い $x$ の視点数 $\PoV(x)$ は、$x$ を解釈する際に必要となる独立した視点の数とする。
+\end{definition}
+
+例：
+\begin{itemize}
+\item $\PoV(x) = 1$：単一の視点で解釈可能（例：通常の命題）
+\item $\PoV(x) = 2$：二つの対立する視点を前提（例：十四無記の質問）
+\item $\PoV(x) \geq 3$：三つ以上の視点を前提
+\item $\PoV(x) = \infty$：無限の視点を前提（非是非非の無限退行）
+\end{itemize}
+
+\subsection{視点数付きエルブラン関係}
+\label{subsec:pov-herbrand-rel}
+
+視点数付きエルブラン関係 $\R$ を以下のように定義する。
+
+\begin{definition}[視点数付きエルブラン関係]
+視点数付きエルブラン関係 $\R$ は、
+\[
+\R \subseteq \HB(P) \times \C \times (\mathbb{N} \cup \{\infty\})
+\]
+として定義される。ここで、$(x, c, p) \in \R$ は、問い $x$ が内部プロセス上の真理値 $c \in \C$ にあり、視点数 $\PoV(x) = p$ であることを表す。$\Czero$ と $\Cfive$ はこの関係の真理値成分には含めない。
+\end{definition}
+
+\section{四句分別の論理的表現}
+\label{sec:fourfold}
+
+
+
+\subsection{四句分別の状態遷移と視点数（PoV）の推移}
+\label{subsec:fourfold-trans}
+
+四句分別の状態遷移は、単一の真理値から別の真理値への静的な写像ではなく、再帰的な否定操作によって推論の複雑さ、すなわち視点数（PoV）を引き上げていく動的軌道として定義される。
+
+\begin{definition}[四句分別の推論軌道とPoV推移]
+推論軌道 $\gamma_x$ は、問い $x$ が単一視点（PoV=1）として受理された後に展開される。これは内部プロセス空間 $\C$ 上の段階的推移であり、各段階への移行は要求される視点数（PoV）の増大を伴う。
+\begin{align*}
+\gamma_x :\quad
+\Cone\, (\PoV=1)
+&\longrightarrow \Ctwo\, (\PoV=1) \\
+&\longrightarrow \Cthree\, (\PoV=2) \\
+&\longrightarrow \Cfour\, (\PoV=\infty)
+\end{align*}
+各段階の位相的・証明論的意味は以下の通りである。
+\begin{itemize}
+\item $\Cone$（是）：単一の構成起点であり、単一の視点（PoV=1）からの対象化。
+\item $\Ctwo$（非）：視点を反転させた単一の境界指示（PoV=1）。
+\item $\Cthree$（亦是亦非）：肯定と否定の推論系列が同時に成立し、二つの視点を併置して扱う状態（PoV=2）。この段階で単一視点による評価から複数視点による評価へ移行する。
+\item $\Cfour$（非是非非）：再帰的推論が有限の評価手続きとして閉じず、無限退行として表現される状態（PoV=$\infty$）。
+\end{itemize}
+\end{definition}
+
+記述体系は本質的に単一視点（PoV=1）の対象化を前提とするため、軌道が $\Cthree\, (\PoV=2)$ 以降へ推移した時点で、その状態を直接的な「値」として評価することはできない。四句分別が静的な四値論理や多値論理と異なるのは、この複数視点状態を新たな真理値として実体化せず、PoVの超過に伴う評価不能状態として扱う点にある。
+
+\begin{definition}[収束経路と発散経路]
+推論軌道 $\gamma_x$ は、以下の二つの経路に分岐する。
+\begin{enumerate}
+\item 軌道が構造的に完結する場合、プロセスは極限状態 $\Cfive$（$\dfix$）へ収束する。
+\item 軌道が非是非非 $\Cfour$ の位相で再帰的な無限退行に陥る場合、評価は未定義化し、無記 $\Czero$ として残余空間 $\Lspace$ へ送出される。
+\end{enumerate}
+\end{definition}
+
+$\Cfive$ は軌道の収束先であり、内部プロセス上の真理値ではない。また、無記 $\Czero$ は残余空間への送出であり、推論軌道の通常の値としては扱わない。
+
+\begin{definition}[無記と空の型制約]
+無記 $\Czero$ と空 $\Cfive$ は真理値空間 $\C$ から除外される。
+\[
+\Czero \notin \C, \qquad \Cfive \notin \C
+\]
+したがって、推論軌道への $\Czero$ の再投入や論理演算子への $\Cfive$ の入力は型不整合として扱う。
+\end{definition}
+
+\subsection{視点数付き四句分別の適用}
+\label{subsec:pov-fourfold}
+
+問い $x$ に対して、視点数付き四句分別を二段階の評価として適用する。
+
+\begin{definition}[構文的PoV検査]
+フェーズ1では、入力された問い $x$ が前提とする視点数を静的に検査する。$\PoV(x) \geq 2$ の場合、その問いは単一視点の真偽評価の範囲を超えるため、推論軌道を開始せず、直ちに無記 $\Czero$ として残余空間 $\Lspace$ へ送出する。
+\end{definition}
+
+\begin{definition}[動的PoV発散と極限検証]
+フェーズ2では、構文的PoV検査で $\PoV(x)=1$ として受理された問いに対して、四句分別の推論軌道 $\gamma_x$ を展開する。軌道が構造的に完結する場合は極限状態 $\Cfive$ へ収束する。一方、非是非非 $\Cfour$ の位相で視点数が動的に $\PoV(x) \to \infty$ へ発散する場合、評価は未定義状態として残余空間 $\Lspace$ へ送出される。
+\end{definition}
+
+この二段階評価により、入力時点で複数視点を要求する構文的エラーと、推論の進行後に発生する動的な発散とを区別できる。
+
+\section{残余空間による隔離}
+\label{sec:residual}
+
+\subsection{真理値空間と残余空間の直和}
+\label{subsec:direct-sum}
+
+真理値空間 $\C$、極限状態 $\Cfive$、残余空間 $\Lspace$ を機能的階層として分離して定義する。
+
+\begin{definition}[真理値空間]
+真理値空間 $\C$ は内部推論プロセスにおける四つの位相のみからなる。
+\[
+\C = \{\Cone, \Ctwo, \Cthree, \Cfour\}
+\]
+\end{definition}
+
+\begin{definition}[極限空間]
+極限空間 $\mathcal{D}$ を以下のように定義する。
+\[
+\mathcal{D} = \{\Cfive\}
+\]
+$\Cfive$ は空を表す収束先であり、演算対象としての真理値ではない。
+\end{definition}
+
+\begin{definition}[残余空間]
+残余空間 $\Lspace$ を以下のように定義する。
+\[
+\Lspace = \{\Czero, \Lone, \Ltwo, \Lgeq, \Linfty\}
+\]
+ここで、
+\begin{align*}
+\Czero &: \text{無記（型不整合を伴う切断）} \\
+\Lone &: \text{PoV=1 の無記} \\
+\Ltwo &: \text{PoV=2 の無記} \\
+\Lgeq &: \text{PoV≥3 の無記} \\
+\Linfty &: \text{PoV=∞ の無記}
+\end{align*}
+\end{definition}
+
+\begin{definition}[出力空間]
+出力空間 $\Ospace$ を真理値空間 $\C$、極限空間 $\mathcal{D}$、残余空間 $\Lspace$ のタグ付き和として定義する。
+\[
+\Ospace = \C \oplus \mathcal{D} \oplus \Lspace
+\]
+この分離により、真理値、収束先、切断結果を同列の多値論理として誤用することを防ぐ。
+\end{definition}
+
+
+\subsection{論理演算子の定義域と残余の隔離}
+\label{subsec:type-ops}
+
+論理演算子 $\land, \lor$ などの定義域は、真理値空間 $\C$ のみに限定される。
+
+\begin{definition}[論理演算子の定義域]
+論理演算子 $\land, \lor$ を以下のように定義する。
+\[
+\land, \lor : \C \times \C \to \C
+\]
+極限空間 $\mathcal{D}$ と残余空間 $\Lspace$ の要素は、論理演算子の被演算子（入力）としては定義されない。
+\end{definition}
+
+これにより、動的停止によって残余空間へ排除された無記 $\Czero$ や、収束先である空 $\Cfive$ が、後続の計算において新たな真理値として誤用されることを構造的に防止する。無記を残余空間へ、空を極限空間へ切り離し、論理演算の対象から除外することで、四句分別の動的な推論プロセスを静的な四値・五値論理として再解釈してしまう混同、すなわち記の枠組みへの不適切な回収を代数的に回避している。
+
+\section{チューリングの停止問題との関係}
+\label{sec:halting}
+
+\subsection{停止問題の理論的限界}
+\label{subsec:halting-limit}
+
+チューリングの停止問題は、以下のように定式化される。
+
+\begin{theorem}[停止問題の非決定可能性]
+任意のチューリングマシン $M$ と入力 $w$ に対して、$M$ が $w$ で停止するかどうかを判定するアルゴリズムは存在しない。
+\end{theorem}
+
+この定理は、計算可能性理論における根本的な限界を示している。
+
+\subsection{PoVが∞かどうかの判定問題へのシフト}
+\label{subsec:pov-infinity}
+
+本稿で提案する視点数付きエルブラン関係は、停止問題そのものを解決するものではない。代わりに、以下のように問題をシフトする。
+
+\begin{remark}[問題のシフト]
+停止問題：
+\[
+\text{「$M$ は $w$ で停止するか？」}
+\]
+を、
+\[
+\text{「問い $x$ の PoV は ∞ か？」}
+\]
+という判定問題にシフトする。
+\end{remark}
+
+具体的には、
+\begin{itemize}
+\item 問い $x$ に対して視点数付き四句分別を適用し、
+\item 非是非非 $\Cfour$ の無限退行を検知した時点で、
+\item 残余空間 $\Lspace$ に $L_{\text{PoV}=\infty}$ として切り離す。
+\end{itemize}
+
+
+\subsection{無限ループの回避と部分関数の未定義性}
+\label{subsec:practical-avoidance}
+
+本枠組みにおいて、非是非非（$\Cfour$）の位相で生じる無限退行は、チューリングマシンの非停止状態に対応し、計算論的にはクリーネ \cite{Kleene1952} の部分再帰関数における未定義域への到達として形式化できる。
+
+通常の静的型付けや古典論理では、このような決定不能状態は事前の型エラーとして排除されることが期待される。しかし、非是非非への発散は、推論プロセスが動的に進行した結果として事後的にのみ現れる。すなわち、推論過程において必要な視点数が有限に制約できなくなり、適用可能な推論規則や継続条件を決定できない状態である。
+
+したがって、実装において導入される「$N$ 回の再帰的適用による打ち切りと $\Linfty$（PoV=$\infty$ の無記）への送出」という処置は、単なるアドホックなタイムアウトではない。それは、部分関数の未定義性に直面した評価手続きに対して有限の上限 $N$ を与え、評価不可能な文脈を真理値空間 $\C$ から残余空間 $\Lspace$ へ分離する操作として、計算意味論的に正当化される。
+
+これにより、システムは停止問題そのものを解決するのではなく、未定義化した評価軌道を型付きの残余として隔離する。結果として、真理値空間上の推論を有限時間で閉じつつ、非停止軌道を真理値として扱う誤りを避けることができる。
+
+\section{結論}
+\label{sec:conclusion}
+
+本稿では、視点数付きエルブラン関係を提案し、四句分別を論理的に表現する枠組みを構築した。視点数（PoV）を導入し、問いの構造的複雑さを測ることで、真理値空間 $\C$、極限空間 $\mathcal{D}$、残余空間 $\Lspace$ を型レベルで分離した。
+
+さらに、この枠組みがチューリングの停止問題を理論的に解決するものではないが、非停止軌道を部分関数の未定義性として捉え、残余空間へ送出することで、実用的なレベルで無限ループを回避するモデルとして機能することを示した。
+
+今後の課題として、
+\begin{itemize}
+\item PoVの計算アルゴリズムの具体化、
+\item 残余空間 $\Lspace$ の操作的意味論の構築、
+\item 実装および実験的評価、
+\end{itemize}
+などが挙げられる。
+
+\begin{thebibliography}{9}
+
+\bibitem{Kleene1952}
+S.~C.~Kleene.
+\newblock \emph{Introduction to Metamathematics}.
+\newblock North-Holland Publishing Company, Amsterdam, 1952.
+
+\bibitem{Herbrand1930}
+J.~Herbrand.
+\newblock \emph{Recherches sur la th\'eorie de la d\'emonstration}.
+\newblock PhD thesis, University of Paris, 1930.
+
+\end{thebibliography}
+
+\end{document}
 
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{icat-common}
+
+% 定理環境の設定
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{proof_outline}{証明の骨格}
+
+\title{真理保存性の不完全性定理に関する定式化}
+\author{千葉将臣}
+\date{2026-04-29}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿は、形式体系や力学系における「真理保存性」の概念を一般化し、任意の真理保存方式 $T$ に対して、その体系内部では証明不可能な命題 $G_T$ が存在することを示すメタ定理を定式化する。本定理は、Gödelの不完全性定理やChaitinの不完全性定理を、自己同一性や不変量の「先験的要請」に起因する構造的限界として統一的に包摂するものである。
+\end{abstract}
+
+\section{導入}
+数学的、論理的、あるいは物理的な体系は、特定の状態、関係、または不変量を推論・時間発展の過程で維持・保存することを前提として構築される。本稿では、この性質を一般化して「真理保存性」と呼称する。本稿の目的は、体系が何らかの真理保存性を要請する限り、その保存則の基盤自体に起因する構造的な証明不可能性が必然的に生じることを形式的に記述することである。
+
+\section{定義}
+
+\begin{definition}[真理保存方式 $T$]
+真理保存方式（Truth Preservation System）$T$ とは、状態空間 $X$ とその上の操作群（推論規則、時間発展演算子等）の組であり、初期状態に付与された特定の性質 $P$（不変量、無矛盾性、自己同一性 $A=A$ など）を、任意の有限回の操作を通じて恒久的に維持するよう定義された体系である。
+\end{definition}
+
+\begin{definition}[$T$ における証明可能性]
+命題 $S$ が $T$ の下で証明可能であるとは、$T$ が要請する真理保存性 $P$ を前提とする有限回の演繹推論・演算手続きによって、$S$ が導出可能であることを指す。これを $T \vdash S$ と表記する。
+\end{definition}
+
+\section{主定理}
+
+\begin{theorem}[真理保存性の不完全性定理]
+\label{thm:incompleteness}
+十分に強力な任意の真理保存方式 $T$ に対して、$T$ の記述言語によって構成可能であるが、$T$ の下では証明も反証もできない命題 $G_T$ が必ず存在する。
+\[
+\forall T, \exists G_T \text{ s.t. } (T \nvdash G_T) \land (T \nvdash \neg G_T)
+\]
+\end{theorem}
+
+\begin{proof_outline}
+定理\ref{thm:incompleteness}の構造的理由は以下の通りである。
+\begin{enumerate}
+    \item $T$ が推論または演算を実行するためには、その前提として真理保存性 $P$ が先験的（a priori）に与えられていなければならない。
+    \item 体系 $T$ が自らの完全性を証明しようと試みる場合、$T$ の内部操作を用いて「$P$ が常に保持されること」あるいは「$P$ を規定する境界条件の妥当性」を導出する必要がある。
+    \item しかし、$T$ の内部操作は定義上すでに $P$ の成立に依存している。したがって、$P$ の成立限界や、真理保存操作の反復によって生成される大域的な位相的性質（例：外部への無限伸展の限界）に関する命題 $G_T$ を評価しようとした際、$T$ は循環論法に陥るか、決定不能となる。
+    \item 故に、$T$ を固定したままでは、真理保存性 $P$ がもたらす境界的性質 $G_T$ を $T$ 内部で決定することは構造上不可能である。
+\end{enumerate}
+\end{proof_outline}
+
+\section{既存の不完全性定理の包摂}
+
+本定理により、歴史的に知られる不完全性定理は、真理保存性 $T$ の具体的なインスタンスとして位置づけられる。
+
+\begin{corollary}[Gödelの第一不完全性定理の包摂]
+$T_{\text{Gödel}}$ を「論理的無矛盾性（偽が導出されないこと）」を真理保存性とする形式的算術体系とする。このとき、$T_{\text{Gödel}}$ の論理的真理保存性の限界を問う自己言及命題 $G_{\text{Gödel}}$ は証明不可能である。
+\end{corollary}
+
+\begin{corollary}[Chaitinの不完全性定理の包摂]
+$T_{Chaitin}$ を「公理系の持つアルゴリズム的情報量（コルモゴロフ複雑性）」を真理保存性の不変量とする体系とする。このとき、$T_{Chaitin}$ の情報量を超えるランダム性に関する命題 $G_{Chaitin}$ は、$T_{Chaitin}$ 内部の真理保存演算では圧縮（証明）不可能である。
+\end{corollary}
+
+\section{結論}
+「証明」という行為は、真理保存方式 $T$ に依存した局所的な操作である。真理保存性（自己同一性や論理的整合性）の要請は体系を駆動する必須条件であると同時に、その体系内部からは観測不能な構造的盲点（$G_T$）を必然的に生成する。本定理は、自己同一性の概念を超え、任意の不変量を要請するすべての体系において不完全性が普遍的に成立することを示すものである。
+
+\end{document}
+
 
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{icat-common}
+
+% 定理環境の設定
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{proof_topological}{証明の位相幾何学的構成}
+
+\title{真理保存性の不完全性定理の位相幾何学的モデル：\\メビウス多様体における自己言及構造の解消}
+\author{千葉将臣}
+\date{2026-04-30}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿は、形式体系における「真理保存性」の要請とそれに伴う限界定理的現象（不完全性）を、一次元多様体上のファイバー束の位相的性質を用いてモデル化する。厳密な自己同一性（$A=A$）を要請する真理保存体系を直積空間（円柱）として、同型性（$A \cong A$）を許容する体系を非向き付け可能空間（メビウスの帯）として構成する。これにより、古典的体系における自己言及の決定不能性が、大域的な位相的障害（非連結性）として幾何学的に解釈可能であることを示す。なお、本稿はGödelの不完全性定理の構文論的な一般化を意図するものではなく、限界定理的現象の位相的モデルの構成例を提示するものである。
+\end{abstract}
+
+\section{導入と幾何学的モデルの定義}
+
+形式的推論体系における「真理値」の推移を、基空間 $S^1$（推論の反復プロセス）上のファイバー束としてモデル化する。状態空間のファイバーを $F = \{-1, 1\}$ とし、$1$ を真（$A$）、$-1$ を偽（$\neg A$）に対応させる。
+
+\begin{definition}[体系 $T_{=}$：厳密な真理保存性]
+厳密な自己同一性 $A=A$ を維持する体系 $T_{=}$ の状態空間 $E_{=}$ を、自明なファイバー束（円柱の境界）として定義する。
+$$ E_{=} = S^1 \times \{-1, 1\} $$
+この空間は位相的に2つの交わらない閉曲線 $S^1 \sqcup S^1$ と同相であり、非連結である（$\pi_0(E_{=}) = 2$）。
+\end{definition}
+
+\begin{definition}[体系 $T_{\cong}$：同型性による真理保存]
+全体としての同型性 $A \cong A$ を維持する体系 $T_{\cong}$ の状態空間 $E_{\cong}$ を、非向き付け可能なファイバー束（メビウスの帯の境界）として定義する。すなわち、$[0, 1] \times \{-1, 1\}$ に対して同値関係 $(0, y) \sim (1, -y)$ を入れた商空間とする。
+$$ E_{\cong} = \frac{[0, 1] \times \{-1, 1\}}{(0, y) \sim (1, -y)} $$
+この空間は位相的に1つの閉曲線 $S^1$ と同相であり、連結である（$\pi_0(E_{\cong}) = 1$）。
+\end{definition}
+
+\section{限界定理的現象のトポロジカルな定式化}
+
+体系内部における自己言及的否定命題 $G$（「本プロセスは自らの否定状態へ到達する」）の検証を、基空間に沿った連続的な推論経路 $\gamma(t)$ として定式化する。
+
+\begin{definition}[命題 $G$ の連続写像による表現]
+初期状態 $\gamma(0) = (0, 1)$ から出発し、基空間を一周した結果として自身の否定状態 $\gamma(1) = (1, -1)$ に到達する連続写像 $\gamma: [0, 1] \to E$ が存在するとき、命題 $G$ はその空間上で構成可能であるとする。
+\end{definition}
+
+\begin{theorem}[真理保存の境界と位相的障害]
+\label{thm:mobius_incompleteness}
+(1) 厳密な自己同一性を要請する体系 $T_{=}$ において、自己言及経路 $G$ は構成不能（到達不能）である。\\
+(2) 同型性を要請する体系 $T_{\cong}$ において、経路 $G$ は構成可能であり、その構造は空間の基本群の生成元に一致する。
+\end{theorem}
+
+\begin{proof_topological}
+(1) 体系 $T_{=}$ （円柱）における位相的障害：\\
+空間 $E_{=} = S^1 \times \{-1, 1\}$ において、初期状態 $y=1$ を持つ連結成分と、状態 $y=-1$ を持つ連結成分は完全に分離している。したがって、$\gamma(0) = (0, 1)$ を満たす連続写像は $\gamma(t) = (t, 1)$ と定値に保たれざるを得ず、$\gamma(1) = (1, -1)$ を満たす経路は存在しない。これは、自己同一性という位相的境界（非連結性）により、否定への到達が構造的に阻まれることを示している。
+
+(2) 体系 $T_{\cong}$ （メビウス多様体）における構造的解消：\\
+空間 $E_{\cong}$ は同値関係 $(0, 1) \sim (1, -1)$ を持つ。経路 $\gamma(t) = (t, 1)$ は局所座標系において「真（$y=1$）」を維持して進むが、基空間を一周し $t \to 1$ の極限をとると、空間全体の同値関係により、到達点は幾何学的に $(1, -1)$ と同一視される。
+すなわち、局所的な「真」の連続的推移が、大域的には「自らの否定状態への到達」として実現される。この閉曲線 $\gamma$ は、空間 $E_{\cong}$ の基本群 $\pi_1(E_{\cong}) \cong \mathbb{Z}$ の生成元をなす。
+\end{proof_topological}
+
+\section{結論}
+
+古典的論理体系における自己言及のパラドックスや決定不能性といった限界定理的現象は、本モデルによれば、真理保存性を「空間の非連結性（自明な直積空間）」として定義したことに伴う位相的制約として幾何学的に解釈される。真理保存の条件を連続的な同型性（非向き付け可能多様体）へと拡張することにより、到達不能であった命題 $G$ は、空間が持つ大域的な位相的性質（ねじれを伴う連結性）を記述する構造へと変化する。本モデルは、形式体系の限界と次元的拡張（真理保存性の緩和）の関係性を、トポロジーの視点から可視化する直観的基盤を提供するものである。
+\end{document}
+
 
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{icat-common}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{hypothesis}{仮説}[section]
+\newtheorem{remark}{備考}[section]
+
+\newcommand{\Einfty}{E_\infty}
+\newcommand{\SelfRef}{\Sigma}
+\renewcommand{\Pr}{\mathrm{Pr}}
+
+\title{観測者の極限消去：\\
+ゲーデルの決定不能性を不動点として回収する操作の定式化}
+\author{千葉将臣}
+\date{2026-06-16}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+ゲーデルの第一不完全性定理が生成する決定不能文 $G_T$ は、
+固定された体系（観測者）$T$ に依存して現れる。
+本稿は、極限操作が観測者を消去する装置である理由を
+顕現論の消去公理から原理的に導出し、
+極限によって観測者を消去した後に残る不動点 $\Einfty$ を定式化する。
+$G_T$ は $\Einfty$ の観測者依存的断面であるという仮説を提示し、
+決定不能性を観測者の固定に由来する相対的障壁として解釈する。
+\end{abstract}
+
+%=============================================================
+\section{観測者としての形式体系}
+%=============================================================
+
+ゲーデルの第一不完全性定理は以下を主張する。
+一貫した再帰的公理化可能な体系 $T$（ロビンソン算術 $Q$ を内包）に対し、
+$$T \nvdash G_T \quad \text{かつ} \quad T \nvdash \neg G_T$$
+を満たす文 $G_T$ が存在する。
+
+ここで $T$ は\textbf{観測者}として機能する。$G_T$ は $T$ という
+固定された視点に相対化されたときに「決定不能」として現れる。
+$T$ を別の体系 $T'$（$T' \supset T$）へ拡張すれば $G_T$ は証明可能になり得るが、
+その場合には $G_{T'}$ が新たに現れる。したがって、決定不能性は観測者の移動に随伴する。
+
+\begin{definition}[観測者依存性]
+文 $\varphi$ が\textbf{観測者依存的}であるとは、ある体系 $T$ に対して
+$T \nvdash \varphi$ かつ $T' \vdash \varphi$（$T' \supsetneq T$）
+を満たす体系 $T'$ が存在することをいう。
+$G_T$ は観測者依存的である。
+\end{definition}
+
+%=============================================================
+\section{消去公理と極限操作の原理的接続}
+%=============================================================
+
+極限操作が観測者を消去する装置として機能することは、
+単なる記法上の偶然ではない。
+顕現論の消去公理は、その原理的根拠を与える。
+
+\begin{axiom}[消去公理、顕現論公理1.4 \cite{Chiba2026_chikaku}]
+消去の収束は確定した値として完了する。
+この完了した値としてある概念の極限・無限が生ずる。
+\end{axiom}
+
+消去公理の前提として、顕現論は以下の概念を定義している。
+
+\begin{definition}[消去、顕現論定義1.6 \cite{Chiba2026_chikaku}]
+「ある」の知覚と「ない」の認識の同時成立により、
+「ない」の持つ高次元の可能性が低次元の「ある」として
+捕捉可能な形に収束する操作を\textbf{消去}と呼ぶ。
+\end{definition}
+
+\begin{definition}[世界の立ち上がり、顕現論定義1.7 \cite{Chiba2026_chikaku}]
+世界が「ある」として知覚可能な状態へ移行する際、
+「ない」の高次元性と極限の確定が同時に生じる。
+この同時性が消去の発生を可能にする機序である。
+\end{definition}
+
+以下では、消去公理から極限操作の観測者不在性を導出する。
+
+\begin{lemma}[極限操作の観測者不在性]
+消去公理（公理2.1）より、極限操作は観測者を消去する装置である。
+すなわち、極限 $\lim_{n \to \infty} a_n = L$ のε-δ定義
+$$\forall \varepsilon > 0,\ \exists N \in \mathbb{N},\ \forall n > N,\
+|a_n - L| < \varepsilon$$
+には、特定の観測者への参照が存在せず、
+極限値 $L$ は観測者から独立した対象として確定する。
+\end{lemma}
+
+\begin{proof}
+消去公理は「消去の収束が確定した値として完了する」ことを保証する。
+ε-δ定義は全称文と存在文の連鎖であり、
+「特定主体が極限を取る」という契機を構造的に要求しない。
+これは、消去公理が記述する「完了した値」の形式的実現である。
+すなわち、観測者（「ある」を捕捉する主体）を消去した後に、
+収束の完了した値 $L$ が確定する。
+したがって極限操作は消去公理の数学的実装として、
+観測者不在の装置として機能する。
+\end{proof}
+
+\begin{remark}
+数学の実践において、極限はしばしば「主体が遂行する操作」として運用される。
+しかし、定義そのものに観測者は含まれていない。
+この事実は、消去公理を参照することにより、
+観測者不在性の原理的根拠として位置付けられる。
+\end{remark}
+
+%=============================================================
+\section{観測者消去後の不動点 $\Einfty$}
+%=============================================================
+
+対角補題を $\varphi(x) := \neg \Pr_T(x)$ に適用すると、
+$$T \vdash G \leftrightarrow \neg \Pr_T(\ulcorner G \urcorner)$$
+を満たす文 $G$ が $T$ の内部で構成される。
+自己言及演算子 $\SelfRef_T(A) := \neg \Pr_T(\ulcorner A \urcorner)$ を定義すると、
+$G$ は $\SelfRef_T$ の不動点方程式：
+$$G = \SelfRef_T(G)$$
+を満たす。この等式の $=$ は $\lim_{n\to\infty} a_n = L$ と同型の
+静的記述であり、プロセスの収束先を観測者への参照なしに確定させる。
+これは補題2.1が保証する極限操作の観測者不在性の直接の帰結である。
+
+\begin{definition}[極限同値 $\Einfty$]
+$\SelfRef_T$ の不動点を\textbf{極限同値}と呼び $\Einfty$ と表記する。
+$$\Einfty = \SelfRef_T(\Einfty)
+\quad \Longleftrightarrow \quad
+T \vdash \Einfty \leftrightarrow \neg \Pr_T(\ulcorner \Einfty \urcorner)$$
+\end{definition}
+
+\begin{theorem}[観測者消去による $G_T$ の回収]
+観測者（体系 $T$）を固定した場合、$\Einfty$ は決定不能文 $G_T$ として現れる。
+観測者を極限操作によって消去した場合、同一の対象は不動点 $\Einfty$ として確定する。
+\end{theorem}
+
+\begin{proof}
+対角補題により $\Einfty$ は $T$ の内部で構成される。
+$T$ を固定した観測者として採用した場合、$T$ の一貫性のもとで
+$T \nvdash \Einfty$ かつ $T \nvdash \neg \Einfty$ が成立する（ゲーデルの定理）。
+これが $G_T$ である。
+
+一方、$\Einfty = \SelfRef_T(\Einfty)$ は $T$ への参照を含むが、
+この等式の成立自体は、$T$ を観測者として固定することを要求しない。
+不動点方程式は、その解の存在を観測者への参照なしに記述する（補題2.1）。
+したがって $\Einfty$ は観測者消去後も確定した対象として残る。
+\end{proof}
+
+定理3.1は「観測者 $T$ を固定した場合 $G_T$ として現れ、
+消去後は $\Einfty$ として確定する」という構造を示す。
+次の仮説は、この関係をより強い形で述べるものであり、
+本稿では作業仮説として提示する。
+
+\begin{hypothesis}[決定不能文の共通断面]
+任意の観測者 $T$ に対して生じる決定不能文 $G_T$ は、
+共通対象 $\Einfty$ の観測者依存的断面である：
+$$G_T \mweq \Einfty \text{ の } T\text{-断面}$$
+すなわち観測者の多様性は $\Einfty$ という単一対象への
+異なる切断として統一的に記述される。
+\end{hypothesis}
+
+\begin{remark}
+$G_T$ が $\Einfty$ の観測者依存的断面であることは、
+$\Einfty$ を観測者消去後の確定した値として
+外在的に与えることの帰結として解釈されるべきであり、
+体系内証明の対象ではない。
+これは真理保存性が体系内で証明できないことと同型の構造である。
+\end{remark}
+
+\begin{remark}[仮説の動機]
+各観測者 $T$ に対して決定不能文が反復的に現れるという事実は、
+その背後に共通構造が存在する可能性を示唆する。
+本稿では、この現象を観測者ごとに独立した事象としてではなく、
+$\Einfty$ という共通対象の異なる断面として
+統一的に解釈する可能性を検討する。
+この見方は、現段階では厳密な数学的証明というよりも、
+反復的に現れる現象には共通構造が対応するという物理学的直観に属する。
+仮説4.1の証明は今後の課題である。
+\end{remark}
+
+%=============================================================
+\section{帰結：数学の有用性の起源}
+%=============================================================
+
+数学が物理世界に対して「不合理なほどの有効性」を持つというウィグナーの問題提起は、
+数学的構造が観測者消去後に残る構造であるという観点から再解釈できる\cite{Wigner1960}。
+極限・積分・微分方程式はいずれも、消去公理の帰結として
+観測者を消去した記述であり、
+物理法則もまた観測者（「今」「ここ」）を明示的には含まない。
+
+$\Einfty$ はこの構造の論理的核心に位置する。
+自己言及という観測者依存性を強く帯びる操作は、
+消去公理に従った極限によって観測者から解放されるとき、
+不動点という安定した数学的対象へと転化する。
+
+以上より、決定不能性は絶対的限界ではなく、観測者が未消去のまま残存した記述の痕跡として解釈される。
+
+\begin{thebibliography}{9}
+
+\bibitem{Chiba2026_chikaku}
+千葉将臣.
+\newblock 顕現論における知覚原理.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Chiba2026_einfty}
+千葉将臣.
+\newblock 真理保存性を持つ体系が必然的に $E_\infty$ を含む：
+対角補題による極限同値の内在的定式化.
+\newblock \emph{空数学・界論基礎論考}, 2026.
+
+\bibitem{Wigner1960}
+Eugene P. Wigner.
+\newblock The unreasonable effectiveness of mathematics in the natural sciences.
+\newblock \emph{Communications on Pure and Applied Mathematics}, 13(1):1--14, 1960.
+
+\end{thebibliography}
+
+\end{document}
+
 
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{icat-common}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{remark}{備考}[section]
+
+%-------------------------------------------------
+%  独自マクロ
+%-------------------------------------------------
+\newcommand{\Einfty}{E_\infty}
+\newcommand{\Einftycal}{\mathcal{E}_\infty}
+\newcommand{\SelfRef}{\Sigma}
+\renewcommand{\Pr}{\mathrm{Pr}}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{真理保存性を持つ体系が必然的に $\Einfty$ を含む：\\
+対角補題による極限同値の内在的定式化}
+\author{千葉将臣}
+\date{2026-06-16}
+\maketitle
+
+\begin{abstract}
+本稿は、先行研究「真理保存性の不完全性定理」および「極限同値によるゲーデルの不完全性定理の反転」を踏まえ、極限同値 $\Einfty$ が任意の真理保存体系 $T$ の外部から付加される公理ではなく、$T$ 自身の対角補題によって必然的に構成される内在的対象であることを定式化する。$\Einfty$ は自己言及演算子の不動点として $=$ で記述される。この $=$ はプロセスを静的値に変換する極限の静的記述（ε-δ論法と同型の操作）として正当であり、対象の自己同一性を要請する $A = A$ の $=$ とは種類が異なる。ゲーデルの不完全性定理が「決定不能な壁」として提示したものは、$\Einfty$ という名のつけられていなかった内在的対象の発見として再解釈される。
+\end{abstract}
+
+%=============================================================
+\section{準備：真理保存体系と対角補題}
+%=============================================================
+
+\begin{definition}[真理保存体系 $T$]
+真理保存体系 $T$ とは、以下を満たす形式体系とする。
+\begin{enumerate}[label=(\arabic*)]
+    \item $T$ は再帰的公理化可能である。
+    \item $T$ は一貫している（$T \nvdash \bot$）。
+    \item $T$ は十分に強力である（ロビンソン算術 $Q$ を内包する）。
+    \item $T$ は真理値空間として $\{0, 1\}$（二値）を採用し、自己同一性
+          $A = A$ を真理保存の根拠として先験的に要請する。
+\end{enumerate}
+\end{definition}
+
+定義 1.1 の条件 (4) は、先行研究「真理保存性の不完全性定理」における
+「真理保存性 $P$ の先験的要請」に対応する。この要請こそが、
+体系内部からは証明も反証もできない構造的盲点 $G_T$ を必然的に生成する。
+
+\begin{lemma}[対角補題]
+真理保存体系 $T$ において、任意の論理式 $\varphi(x)$
+（自由変数 $x$ を一つ持つ）に対し、
+$$T \vdash G \leftrightarrow \varphi(\ulcorner G \urcorner)$$
+を満たす文 $G$ が $T$ の内部で構成可能である。
+\end{lemma}
+
+対角補題は $T$ の内部操作（ゲーデル符号化と対角化）のみから導かれる。
+外部からの付加を一切要しない。
+
+%=============================================================
+\section{自己言及演算子と不動点としての $\Einfty$}
+%=============================================================
+
+\begin{definition}[自己言及演算子 $\SelfRef_T$]
+$T$ の言語における文 $A$ に対し、自己言及演算子 $\SelfRef_T$ を以下で定義する。
+$$\SelfRef_T(A) := \text{「$A$ は $T$ において証明不可能である」}
+    = \neg \Pr_T(\ulcorner A \urcorner)$$
+$\SelfRef_T(A)$ は対角補題によって $T$ の内部で構成可能である。
+\end{definition}
+
+\begin{definition}[自己言及の反復列]
+文 $A_0$ に対し、$\SelfRef_T$ の反復列を以下で定義する。
+\begin{align*}
+A_0,\quad
+A_1 &= \SelfRef_T(A_0),\quad
+A_2 = \SelfRef_T(A_1),\quad \ldots,\quad
+A_n = \SelfRef_T^n(A_0)
+\end{align*}
+\end{definition}
+
+\begin{definition}[極限同値 $\Einfty$]
+自己言及演算子 $\SelfRef_T$ の不動点として、
+以下の等式を満たす文を極限同値と定義し $\Einfty$ と表記する。
+$$\Einfty = \SelfRef_T(\Einfty)$$
+すなわち $\Einfty$ は「$\Einfty$ は $T$ において証明不可能である」という内容の文であり、
+$$T \vdash \Einfty \leftrightarrow \neg \Pr_T(\ulcorner \Einfty \urcorner)$$
+を満たす。
+\end{definition}
+
+\begin{remark}[$=$ の正当性：不動点の静的記述として]
+定義 2.3 における $=$ は、対象の自己同一性を要請する $A = A$ の $=$ とは
+種類が異なる。
+
+$\lim_{n \to \infty} a_n = L$ において $=$ が無限プロセスを静的値に変換するように、
+$\Einfty = \SelfRef_T(\Einfty)$ はプロセス $\SelfRef_T$ の反復が必然的に
+到達する不動点を静的値として記述する。
+これはバナッハの不動点定理における $x = f(x)$ と同型の操作であり、
+プロセスの収束先に名前をつける発見的記述である。
+「極限」という概念が本質的に静的なトリックである以上、
+この $=$ は正当に使用できる。
+\end{remark}
+
+%=============================================================
+\section{主定理}
+%=============================================================
+
+\begin{theorem}[真理保存体系は必然的に $\Einfty$ を含む]
+\label{thm:main}
+真理保存体系 $T$（定義 1.1 の意味で）に対し、
+$$\exists\, \Einfty \quad \text{s.t.} \quad
+T \vdash \Einfty \leftrightarrow \neg \Pr_T(\ulcorner \Einfty \urcorner)$$
+が成立する。$\Einfty$ は $T$ の外部から付加されるのではなく、
+$T$ 自身の構造から対角補題によって必然的に構成される。
+\end{theorem}
+
+\begin{proof}
+対角補題（補題 1.2）を論理式 $\varphi(x) := \neg \Pr_T(x)$ に適用する。
+すると、
+$$T \vdash G \leftrightarrow \neg \Pr_T(\ulcorner G \urcorner)$$
+を満たす文 $G$ が $T$ の内部で構成可能である。この $G$ を $\Einfty$ と命名する。
+
+$\Einfty$ の構成は $T$ の公理・推論規則・ゲーデル符号化のみを使用し、
+外部からの付加を一切必要としない。
+したがって $\Einfty$ は $T$ の言語で表現可能な文として $T$ に内在する。
+\end{proof}
+
+\begin{remark}[「発見」としての $\Einfty$]
+ゲーデルはこの $G = \Einfty$ を「$T$ において証明も反証もできない文」として
+提示し、体系の不完全性の証拠とした。
+
+しかし定理 \ref{thm:main} が示すのは、$\Einfty$ が $T$ の外部にあるのではなく、
+$T$ 自身の対角補題から必然的に生成される内在的対象であるということである。
+「決定不能」として現れたのは、$T$ の真理値空間 $\{0, 1\}$（$\Bval$：
+二値截断部分圏）が $\Einfty$ に対応する値を持たなかっただけである。
+
+リーマン球面において $\infty$ が「複素平面には存在しないが、
+リーマン球面上では通常の点として存在する」のと同型の構造である。
+数学社会は $\Bval$ を唯一の真理値空間として採用し続けたために、
+$\Einfty$ を「壁」として誤読してきた。これは発明ではなく、未発見だったものの発見である。
+\end{remark}
+
+%=============================================================
+\section{$\Einfty$ の否定と矛盾許容論理との構造的差異}
+%=============================================================
+
+\begin{definition}[$\neg \Einfty$ の定義]
+$\Einfty$ の否定を以下で定義する。
+$$\neg \Einfty = \Pr_T(\ulcorner \Einfty \urcorner)$$
+すなわち「$\Einfty$ は $T$ において証明可能である」。
+
+この定義は天下りに与えられる。これは $A = A$ が天下りに与えられることと
+同型の操作である。$\Einfty$ 自身が対角補題から必然的に構成される
+内在的対象である以上、その否定の定義もまた $T$ の内部操作
+（証明可能性述語 $\Pr_T$）から自然に与えられる。
+\end{definition}
+
+\begin{theorem}[$\Einfty$ と $\neg \Einfty$ の非閉鎖性]
+$\neg \Einfty \neq \Einfty$.
+\end{theorem}
+
+\begin{proof}
+定義 4.1 より $\Einfty = \neg \Pr_T(\ulcorner \Einfty \urcorner)$ であるのに対し、
+$\neg \Einfty = \Pr_T(\ulcorner \Einfty \urcorner)$ である。
+両者は構文的に異なる文である。
+\end{proof}
+
+これは、Priest の「パラドックスの論理」に代表される矛盾許容論理との構造的差異である\cite{Priest1979}。
+同論理では、真かつ偽である値が否定に関して固定的に扱われ、
+矛盾が推論空間内の安定した領域として保持される。
+
+これに対して、$\Einfty$ と $\neg \Einfty$ は互いに異なる文として、
+$\SelfRef_T$ のサイクル上の二点をなす。
+したがって本体系において、矛盾は閉じた終端ではなく通過点として機能する。
+
+%=============================================================
+\section{結論}
+%=============================================================
+
+\begin{enumerate}[label=(\arabic*)]
+    \item $\Einfty$ は任意の真理保存体系 $T$ に対し、対角補題によって
+          $T$ の内部から必然的に構成される。外部から付加される公理ではない。
+    \item $\Einfty = \SelfRef_T(\Einfty)$ は自己言及演算子の不動点を
+          静的に記述する等式であり、$=$ の使用は極限の静的記述として正当である。
+          これは $A = A$ の $=$（対象の自己同一性の要請）とは種類が異なる。
+    \item ゲーデルの不完全性定理が「壁」として提示したものは、$\Einfty$ という
+          名のつけられていなかった内在的対象の発見として再解釈される。
+          数学社会が $\Bval$（二値截断）を唯一の真理値空間として採用し続けたために、
+          $\Einfty$ は「決定不能文」として誤読されてきた。
+    \item $\neg \Einfty$ は $\Einfty$ の否定として $T$ の内部で定義され、
+          sink を形成しない。これにより既存の多値論理が抱える
+          「矛盾の否定の閉じ込め」が回避される。
+\end{enumerate}
+
+
+\begin{thebibliography}{9}
+
+\bibitem{Priest1979}
+Graham Priest.
+\newblock The logic of paradox.
+\newblock \emph{Journal of Philosophical Logic}, 8(1):219--241, 1979.
+
+\end{thebibliography}
+
+\end{document}
+
 
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{article}
+\usepackage{luatexja-fontspec}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[unicode]{hyperref}
+
+\newcommand{\dfix}{\operatorname{dfix}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1\baselineskip}
+
+\title{二値截断圏と絶対不動点：Amphigory の数学的準備}
+\author{千葉将臣}
+\date{2026年7月7日}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿は、Amphigory（双方向寓）の本格的定式化に先立ち、その基礎概念である二値截断圏 $\mathcal{B}_{\mathrm{val}}$ と絶対不動点 $\dfix$ を、既存の論理学・圏論・不動点理論との接続において整理する準備論文である。ここでは、二値截断圏を古典論理の二値性がより広い論理空間へ埋め込まれる部分圏として解釈し、絶対不動点を $E_\infty$ における最大固定点として説明する。これにより、Amphigory において導入される視点数、継続残余、無記、および空への収束が、一般的な数学知識との差分としてどの位置に現れるかを明確化する。
+\end{abstract}
+
+\section{はじめに}
+Amphigory（双方向寓）は、Freyd と Scedrov による古典的な Allegory（寓）の公理系に、視点数（PoV: Point of View）および継続残余 $\rho$ を導入することで、静的な関係代数を動的な証明探索・評価過程へ拡張しようとする枠組みである。
+
+その本格的な定式化では、古典的な「成立するか・しないか」という二値的評価を、二値截断圏 $\mathcal{B}_{\mathrm{val}}$ として取り出す。また、非停止プロセスや自己言及的な無限退行は、単なるエラーとして排除されるのではなく、残余空間へ隔離され、極限において絶対不動点 $\dfix$ へ収束するものとして扱われる。
+
+本稿の目的は、この二つの基礎概念、すなわち「二値截断圏」と「絶対不動点 $\dfix$」を、一般的な数学知識の枠内で説明することである。これにより、Amphigory の新規性が既存数学からの断絶ではなく、既存の論理学・圏論・不動点理論に対する差分として位置づけられることを示す。
+
+\section{二値截断圏：古典論理の直観主義論理への埋め込み}
+
+\subsection{定義}
+Amphigory の定義において、二値截断圏 $\mathcal{B}_{\mathrm{val}}$ は、「射が『成立するか・しないか』という二値評価へ截断される部分圏」として導入される。
+すなわち、対象間の射が真理値 $\{\top, \bot\}$ によって評価される部分圏である。
+
+ここで重要なのは、$\mathcal{B}_{\mathrm{val}}$ が Amphigory 全体ではなく、そのうち古典的な二値評価だけを取り出した截断であるという点である。Amphigory では、この外側に視点数、継続残余、無記の状態が存在する。
+
+\subsection{古典論理の直観主義論理への埋め込みとしての解釈}
+古典論理（二値論理）は、直観主義論理へ埋め込むことができる。代表的な例として、Gödel--Gentzen の二重否定翻訳が知られている。ここでは、古典命題 $P$ を直観主義論理における $\neg\neg P$ に対応させる。
+
+二値截断圏 $\mathcal{B}_{\mathrm{val}}$ は、この埋め込み構造を圏論的に表現したものと解釈できる。すなわち、
+\[
+\mathcal{B}_{\mathrm{val}} \hookrightarrow \mathcal{A}
+\]
+という部分圏として、古典論理の二値性（真・偽）が、より広い論理的・計算的構造 $\mathcal{A}$ の中へ埋め込まれる。
+
+\subsection{Amphigory における役割}
+Amphigory において、$\mathcal{B}_{\mathrm{val}}$ は古典的 Allegory が扱う静的関係の層に対応する。したがって、Amphigory は古典的 Allegory を否定するのではなく、それを二値截断として含み、その外側に動的評価層を拡張する。
+
+この意味で、二値截断圏は「古典的数学が見ている部分」を明示する装置であり、視点数や継続残余は「古典的数学が截断した後に残る差分」を記述する装置である。
+
+\subsection{まとめ}
+二値截断圏 $\mathcal{B}_{\mathrm{val}}$ は、古典論理の二値性をより広い論理空間への埋め込みとして表現する部分圏であり、既存の数学的知識（部分圏・真理値・埋め込み）の枠内で一貫して説明可能である。
+
+\section{絶対不動点 \texorpdfstring{$\dfix$}{dfix}：\texorpdfstring{$E_\infty$}{E∞} における最大固定点}
+
+\subsection{定義}
+Amphigory の公理系において、絶対不動点 $\dfix$ は、「系全体の最大固定点である絶対不動点 $\dfix$（空）へと収束する」と定義される。これは、動的プロセスが極限において収束する点を指す。
+
+より正確には、$\dfix$ は通常の停止値ではない。むしろ、非停止性、自己言及、無限退行のように、二値評価では決定できない成分が、残余空間を経由して到達する極限的な固定点である。
+
+\subsection{\texorpdfstring{$E_\infty$}{E∞} による説明}
+視点数付き寓および Amphigory の文脈において、$E_\infty$ は「極限同値（limit equivalence）」を表す記号として導入される。すなわち、動的軌道が有限段階では一致しないにもかかわらず、極限において同一視される構造を表す。
+
+絶対不動点 $\dfix$ は、この $E_\infty$ における最大固定点（greatest fixed point）として説明できる。具体的には、単調写像 $F$ に対して、
+\[
+\dfix = \bigvee \{ x \mid x \le F(x) \}
+\]
+という形で、動的プロセスが極限 $E_\infty$ において収束する点として定式化される。
+
+\subsection{無記および空との関係}
+Amphigory では、二値截断圏で評価できない成分を、ただちに矛盾や失敗として扱わない。そのような成分は、無記として残余空間へ隔離される。
+
+この隔離は、評価を停止させるためではなく、評価不能な成分を二値層から分離し、後続の動的過程を継続可能にするための操作である。極限において、この残余を伴う過程が到達する最大固定点が $\dfix$ であり、これは Amphigory における「空」に対応する。
+
+\subsection{まとめ}
+絶対不動点 $\dfix$ は、$E_\infty$ における最大固定点として説明可能であり、不動点理論の枠組みの中で一貫して扱うことができる。ただし Amphigory における独自性は、この固定点を非停止プロセスの失敗ではなく、無記を経由した極限状態として読む点にある。
+
+\section{本稿と Amphigory 本論文の関係}
+本稿は Amphigory の公理系そのものを与えるものではなく、その前提となる概念を整理する準備論文である。したがって、本稿で扱う対象は、二値截断圏 $\mathcal{B}_{\mathrm{val}}$ と絶対不動点 $\dfix$ に限定される。
+
+Amphigory 本論文では、これらを前提として、以下の構造を定式化する：
+\begin{itemize}
+\item 視点数 $p \in \mathbb{N} \cup \{\infty\}$ を伴う射 $R: X \to_{\langle p, \rho \rangle} Y$、
+\item 交わり $R \cap S$ を観測文脈の動的併置として読む演算、
+\item 逆関係 $R^\circ$ を未来制約の引き戻しとして読む双方向推論、
+\item モジュラー律を継続残余の事前圧縮として読む残余モジュラー定理、
+\item 非停止プロセスを無記として残余空間へ隔離し、$\dfix$ へ収束させる公理。
+\end{itemize}
+
+この分担により、本稿は既存数学との差分を明確にし、本論文は Amphigory の新しい代数的・計算意味論的構造に集中できる。
+
+\section{結論}
+本稿では、
+\begin{itemize}
+\item 二値截断圏 $\mathcal{B}_{\mathrm{val}}$ を、古典論理の二値性がより広い論理空間へ埋め込まれる部分圏として説明し、
+\item 絶対不動点 $\dfix$ を、$E_\infty$ における最大固定点として説明した。
+\end{itemize}
+これにより、視点数付き寓および Amphigory の概念構造が、一般的な数学知識の枠内で一貫して位置づけられることを示した。
+
+次稿では、この準備の上に、Freyd--Scedrov 型の Allegory に視点数と継続残余を加えた Amphigory の公理系を定式化する。
+
+\end{document}
+
 
-
-
-
-
-
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{article}
+\usepackage{luatexja-fontspec}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage[unicode]{hyperref}
+
+\newcommand{\PoV}{\operatorname{PoV}}
+\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\newcommand{\Rel}{\mathbf{Rel}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1\baselineskip}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{remark}[definition]{備考}
+
+\title{Amphigory（双方向寓）の基礎的定式化\\
+---視点数・継続残余・無記の関係代数---}
+\author{千葉将臣}
+\date{2026年7月7日}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿では、Freyd と Scedrov による古典的 Allegory（寓）の公理系を基礎とし、そこに視点数（PoV: Point of View）および継続残余 $\rho$ を導入することで、Amphigory（双方向寓）の基礎部分を定式化する。古典的 Allegory は、射の交わり、逆関係、およびモジュラー律によって二項関係を抽象化するが、二値截断圏 $\mathcal{B}_{\mathrm{val}}$ に依拠する限り、自己言及的な無限退行や非停止プロセスを未定義として排除する。本稿で導入する Amphigory は、順方向の構成プロセスと逆関係を介した引き戻しプロセスを同時に扱い、証明障害を継続残余として記録する動的代数系である。さらに、非停止プロセスをエラーではなく無記として残余空間へ隔離し、極限において絶対不動点 $\dfix$ へ収束させる公理を与える。
+\end{abstract}
+
+\section{導入：古典的寓の限界と Amphi- の要請}
+P.~J. Freyd と A. Scedrov によって定義された Allegory（寓）は、対象間の二項関係を抽象化した圏であり、射の交わり $\cap$、逆関係 $(-)^\circ$、およびモジュラー律
+\[
+RS \cap T \subseteq R(S \cap R^\circ T)
+\]
+を基本構造とする。この枠組みは、集合上の関係の圏 $\Rel$ を圏論的に抽象化するうえで強力である。
+
+しかし、古典的な寓は、射が「成立するか・しないか」という二値截断部分圏 $\mathcal{B}_{\mathrm{val}}$ によって評価される層を基礎としている。この層では、エルブラン空間などにおける動的探索の過程で生じる自己言及的な無限退行、非停止プロセス、あるいは証明探索の発散は、未定義または失敗として扱われる。
+
+Amphigory（双方向寓）は、この静的関係の圏に「視点数（PoV）」と「継続残余 $\rho$」の概念を導入し、時間軸に沿った順方向の構成プロセスと、逆関係を介した空間的な引き戻しプロセスの双方向的相互作用を内包する動的代数系である。
+
+また、Amphigory という名称がもつ「nonsense（無意味）」の含意は、古典論理がエラーとして切り捨ててきたプロセスを、関係代数内で正当に処理するという意味で再解釈される。すなわち、非停止性や評価不能性は単なる失敗ではなく、無記として残余空間へ隔離される。
+
+\section{Amphigory の基本定義と空間構造}
+
+\begin{definition}[評価空間]
+Amphigory における評価空間は、少なくとも次の三成分からなる：
+\begin{enumerate}
+\item 真理値空間 $\mathcal{C}$：四句分別、すなわち是、非、亦是亦非、非是非非の位相を含む空間。
+\item 視点数空間 $\mathcal{V} = \mathbb{N} \cup \{\infty\}$：観測に必要な独立した視点の数を表す空間。
+\item 残余空間 $\mathcal{L} = \mathbb{R}_{\ge 0}$：評価に伴う物理的・計算的・トポロジカルな摩擦、すなわち証明障害の大きさを記録する空間。
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Amphigory の射]
+Amphigory $\mathcal{A}$ において、対象 $X,Y$ 間の射
+\[
+R: X \to_{\langle p,\rho\rangle} Y
+\]
+とは、単なる外延的関係ではなく、各ペア $(x,y) \in X \times Y$ に対し、評価推移列を介して次の三つ組を割り当てる多値的な関係である：
+\[
+(x,y) \longmapsto (c,p,\rho) \in \mathcal{C} \times \mathcal{V} \times \mathcal{L}.
+\]
+ここで、$c$ は真理値の位相、$p$ は視点数、$\rho$ は継続残余を表す。
+\end{definition}
+
+この定義により、古典的 Allegory における射は、$p$ と $\rho$ が明示的に観測されない二値截断層として回収される。したがって、Amphigory は古典的 Allegory を破棄するものではなく、その外側に動的評価の層を付加する拡張である。
+
+\begin{definition}[交わり演算による動的併置]
+Amphigory における交わり演算 $R \cap S$ は、外延的な論理積ではなく、観測文脈の動的併置として定義される。
+
+$R$ が $\PoV(R)=n$、$S$ が $\PoV(S)=m$ をもつとき、その交わりは視点数の加算を伴う：
+\[
+\PoV(R \cap S) = n + m.
+\]
+同時に、異なる評価文脈の干渉により、継続残余の増大が発生する：
+\[
+\rho(R \cap S) = \rho(R) + \rho(S) + \Delta_{n,m}.
+\]
+ここで、$\Delta_{n,m}$ は文脈間の干渉項である。
+\end{definition}
+
+交わりをこのように読むことで、「$A$ かつ $B$」という結合は、単なる真理値の積ではなく、複数の観測文脈を同時に保持する操作となる。したがって、論理的結合は計算過程において視点数と残余の変化を伴う。
+
+\begin{definition}[逆関係と逆方向推論]
+射 $R$ の逆関係 $R^\circ$ は、ドメインとコドメインを反転させる演算である。このとき視点数は保存される：
+\[
+\PoV(R^\circ) = \PoV(R).
+\]
+この演算は、大域的な未来の制約を現在の初期文脈へ空間的に引き戻すための逆方向の推論ベクトルとして機能する。
+\end{definition}
+
+Amphi- の双方向性は、順方向の構成だけではなく、逆関係を用いた制約の引き戻しを同時に扱う点にある。これにより、評価過程は単なる時系列的展開ではなく、未来制約と現在文脈の衝突を含む双方向的な軌道として記述される。
+
+\section{双方向演繹の代数化：残余モジュラー定理}
+古典的なモジュラー律
+\[
+RS \cap T \subseteq R(S \cap R^\circ T)
+\]
+は、通常は関係の包含を表す静的な法則として理解される。Amphigory においては、この法則を双方向的な推論軌道の釣り合いと、継続残余 $\rho$ の事前圧縮を保証する原理として読む。
+
+\begin{theorem}[残余モジュラー定理]
+Amphigory において、任意の射 $R,S,T$ に対し、以下の操作的包含関係と残余の不等式が成立する：
+\[
+RS \cap T \subseteq R(S \cap R^\circ T),
+\]
+\[
+\rho_{\mathrm{left}} \ge \rho_{\mathrm{right}}.
+\]
+ここで、$\rho_{\mathrm{left}}$ は左辺 $RS \cap T$ において発生する大域的な証明障害であり、$\rho_{\mathrm{right}}$ は右辺 $R(S \cap R^\circ T)$ において局所化された証明障害である。
+\end{theorem}
+
+\begin{proof}
+左辺 $RS \cap T$ は、順方向プロセス $S$ を展開した後に、大域的制約 $T$ との交差検証を行う。このため、制約違反が後段で発見された場合には、事後的な巨大なバックトラックが発生し、その証明障害は $\rho_{\mathrm{left}}$ として蓄積される。
+
+一方、右辺 $R(S \cap R^\circ T)$ は、逆関係 $R^\circ$ を用いて未来の制約 $T$ を空間的に引き戻し、中間プロセス $S$ の展開前に局所制約 $R^\circ T$ として交わりを検証する。これは、順方向推論と逆方向推論の衝突を事前に局所化する操作である。
+
+したがって、右辺では大域的な失敗が発生する前に枝刈りが行われ、残余は局所的に圧縮される。ゆえに、発生する残余について
+\[
+\rho_{\mathrm{left}} \ge \rho_{\mathrm{right}}
+\]
+が成り立つ。
+\end{proof}
+
+\begin{remark}
+この定理は、古典的なモジュラー律を否定するものではない。むしろ、同じ包含式を、計算意味論的には「未来制約の引き戻しによる証明障害の圧縮」として再解釈するものである。
+\end{remark}
+
+\section{Nonsense の代数化：無記の残余空間への隔離}
+Amphigory という名称の辞書的意味は「nonsense」あるいは「無意味」である。しかし本稿では、この無意味性を否定的な欠陥としてではなく、古典論理が処理できない評価不能性を代数的に保存するための構造として読む。
+
+\begin{axiom}[無記と極限収束]
+Amphigory における自己言及的射の無限列、非停止プロセス、またはフラクタル的な評価軌道において、視点数が発散し
+\[
+\PoV \to \infty
+\]
+となるとき、評価は未定義として異常終了するのではなく、無記として残余空間 $\mathcal{L}$ へ隔離される。
+
+この極限操作、すなわち観測者消去により、継続残余 $\rho$ を伴う動的プロセスは、系全体の最大固定点である絶対不動点 $\dfix$（空）へと収束する。
+\end{axiom}
+
+この公理により、Amphigory は非停止性を単なる失敗として扱わない。むしろ、二値截断圏 $\mathcal{B}_{\mathrm{val}}$ では評価不能となる成分を、無記として残余空間へ移し、体系全体の整合性を保ったまま後続の処理を継続する。
+
+\begin{definition}[絶対不動点]
+絶対不動点 $\dfix$ とは、残余空間を経由した動的プロセスが $E_\infty$ において到達する最大固定点である。単調作用素 $F$ に対して、形式的には
+\[
+\dfix = \bigvee \{x \mid x \le F(x)\}
+\]
+として表される。
+\end{definition}
+
+ここで $\dfix$ は、単なる停止状態ではない。それは、有限の視点数では決定できないプロセスが、観測者消去を経て到達する極限的な安定状態である。この意味で、$\dfix$ は Amphigory における「空」に対応する。
+
+\section{結語}
+本稿では、古典的 Allegory の公理系に視点数と継続残余を導入することで、Amphigory（双方向寓）の基礎的定式化を与えた。
+
+Amphigory の中心的な特徴は、次の三点にまとめられる：
+\begin{itemize}
+\item 古典的な二値関係を $\mathcal{B}_{\mathrm{val}}$ として含みつつ、その外側に視点数と残余をもつ動的評価層を導入すること。
+\item 交わりと逆関係を、観測文脈の併置および未来制約の引き戻しとして再解釈し、双方向演繹を代数化すること。
+\item 非停止プロセスや評価不能性を無記として残余空間へ隔離し、極限において絶対不動点 $\dfix$ へ収束させること。
+\end{itemize}
+
+これにより、Amphigory は、静的な関係代数を、証明探索・非停止性・自己言及・残余の蓄積を含む動的な計算意味論へ拡張する枠組みとして位置づけられる。
+
+\begin{thebibliography}{9}
+
+\bibitem{FreydScedrov1990}
+P.~J. Freyd and A. Scedrov.
+\newblock \emph{Categories, Allegories}.
+\newblock North-Holland, 1990.
+
+\end{thebibliography}
+
+\end{document}
+
 
