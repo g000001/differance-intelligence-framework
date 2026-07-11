@@ -1,5 +1,6 @@
 % !TEX program = lualatex
 \documentclass[11pt,a4paper]{article}
+\usepackage{icat-common}
 \usepackage{luatexja}
 \usepackage{amsmath,amssymb,amsthm,amsfonts}
 \usepackage{geometry}
@@ -8,8 +9,6 @@
 %-------------------------------------------------
 %  独自マクロ
 %-------------------------------------------------
-\newcommand{\dfix}{D_{\mathrm{fix}0}}
-\newcommand{\metaneg}{\Uparrow}
 \newcommand{\Mr}{\mathcal{M}_r}
 \newcommand{\Md}{\mathcal{M}_\delta}
 \newcommand{\Mnn}{\neg\neg}
@@ -19,7 +18,6 @@
 \newcommand{\Tint}{T_{\mathrm{int}}}
 \newcommand{\Mext}{\mathcal{M}_{\mathrm{ext}}}
 \newcommand{\Mint}{\mathcal{M}_{\mathrm{int}}}
-\newcommand{\Bval}{\mathcal{B}}
 \newcommand{\Lhagma}{\mathcal{L}}
 \newcommand{\lext}{\Lhagma_{\mathrm{ext}}}
 \newcommand{\lint}{\Lhagma_{\mathrm{int}}}
@@ -58,8 +56,8 @@
 さらに、洗練モナドとカット除去モナドは単独ではコモナドを仮定しない通常モナドとして扱えるが、
 識軸の反復によりフロベニウス性を誘導されることを示す。
 また、4+1モナドの構成が五蘊と同型の構造を持ち、
-4回のメタ否定演算 $\metaneg$ による順次的駆動が
-$\metaneg^4 A \cong \dfix$（空への収束）として記述されることを示す。
+4回のメタ否定演算 $\metanegation$ による順次的駆動が
+$\metanegation^4 A \mweq \dfix$（空への収束）として記述されることを示す。
 世俗諦と勝義諦の対応は、選択公理が担う役割と同型の構造を持つが、
 これは二値截断 $\Bval$ への投影によって生じるものであり、
 GTTTにおいては四句分別の対応として選択公理よりも一般的な形で定式化される。
@@ -228,7 +226,7 @@ $\MT$ のフロベニウス構造が各成分に誘導される。
 $S_{\MT}^4$ が $\dfix$ における同一化として閉じるとき、
 4+1モナドは識軸スパイラルを持つという。
 \begin{equation}
-  S_{\MT}^4(A) \cong \dfix
+  S_{\MT}^4(A) \mweq \dfix
 \end{equation}
 \end{definition}
 
@@ -318,9 +316,9 @@ $\dfix$ は対象として直接捕捉できないが、
 
 \begin{definition}[二諦的連携]
 \begin{align}
-  \Text \xrightarrow{\;\metaneg\;} \Tint
+  \Text \xrightarrow{\;\metanegation\;} \Tint
     &\quad\text{（メタ否定：「ある」から「ない」への駆動）} \\
-  \Tint \xrightarrow{\;\metaneg(\dfix) \cong A\;} \Text
+  \Tint \xrightarrow{\;\metanegation(\dfix) \mweq A\;} \Text
     &\quad\text{（顕現：「ない」から「ある」への再起動）}
 \end{align}
 \end{definition}
@@ -330,7 +328,7 @@ $\dfix$ は対象として直接捕捉できないが、
 
 \begin{theorem}[二諦的連携によるフロベニウス条件の確立]
 外在・内在の5モナドが相互完全観測不可能性のもとで
-$\metaneg$ と顕現により連携するとき、フロベニウス条件は
+$\metanegation$ と顕現により連携するとき、フロベニウス条件は
 
 \begin{equation}
   (\mu^{\Text} \circ \Text\,\delta^{\Text})
@@ -343,7 +341,7 @@ $\metaneg$ と顕現により連携するとき、フロベニウス条件は
 \end{theorem}
 
 \begin{proof}
-$\metaneg$ による $\Text \to \Tint$ の方向が前進（折り畳み）に、
+$\metanegation$ による $\Text \to \Tint$ の方向が前進（折り畳み）に、
 顕現 $\Tint \to \Text$ の方向が後退（展開）に対応する。
 相互完全観測不可能性は、これら二方向が単一の体系内で
 直接比較不可能であることを意味する。
@@ -382,27 +380,27 @@ $\Text$ の折り畳みと $\Tint$ の展開が $\dfix$ において同一点に
 
 \subsection{メタ否定による順次的駆動}
 
-顕現論の核心式 $\metaneg^4 A \cong \dfix$ は、
+顕現論の核心式 $\metanegation^4 A \mweq \dfix$ は、
 五蘊の順次的否定として読み直せる。
 
 \begin{equation}
   \underbrace{色}_{\Md}
-  \xrightarrow{\metaneg}
+  \xrightarrow{\metanegation}
   \underbrace{受}_{\Mnn}
-  \xrightarrow{\metaneg}
+  \xrightarrow{\metanegation}
   \underbrace{想}_{\Mr}
-  \xrightarrow{\metaneg}
+  \xrightarrow{\metanegation}
   \underbrace{行}_{\MC}
-  \xrightarrow{\metaneg}
+  \xrightarrow{\metanegation}
   \underbrace{識}_{\MT}
-  \;\cong\; \dfix
+  \;\mweq\; \dfix
   \label{eq:skandha-chain}
 \end{equation}
 
 第5番目の識が $\dfix$（空）に収束することは、
 識そのものが空であるという仏教的理解と対応する。
-統制モナド $\MT$ の再帰的自己包含——
-$\MT$ が自身を包含する固定点方程式 \eqref{eq:fixpoint}——は
+統制モナド $\MT$ の再帰的自己包含---
+$\MT$ が自身を包含する固定点方程式 \eqref{eq:fixpoint}---は
 この「識も空である」という構造の圏論的表現である。
 
 \begin{remark}[五蘊の竦みの均衡について]
@@ -414,7 +412,7 @@ $\MT$ が自身を包含する固定点方程式 \eqref{eq:fixpoint}——は
 外在側での均衡状態がどうであれ、
 内在側に対応する状態が存在することが保証されるため、
 均衡の計算規則を必要とせず、
-$\metaneg$ による次の駆動がどの蘊を起点とするかが
+$\metanegation$ による次の駆動がどの蘊を起点とするかが
 事後的に確定する。
 \end{remark}
 
@@ -431,13 +429,13 @@ $\metaneg$ による次の駆動がどの蘊を起点とするかが
   \Tint\;\text{（内在の5モナド）} &\;\longleftrightarrow\;
     \text{勝義諦（空・中道不動点の層）}
 \end{align}
-世俗諦は $\metaneg$ によって勝義諦へ駆動され、
-勝義諦は顕現 $\metaneg(\dfix) \cong A$ によって世俗諦として再起動する。
+世俗諦は $\metanegation$ によって勝義諦へ駆動され、
+勝義諦は顕現 $\metanegation(\dfix) \mweq A$ によって世俗諦として再起動する。
 \end{proposition}
 
 \subsection{残余意味論との接続}
 
-残余意味論（千葉 \cite{Chiba2026semantics}）における
+残余意味論（\cite{Chiba2026semantics}）における
 $\lext \cong \lint$（外部的指示と内部的意味の対応）は、
 本稿の $\Text \leftrightarrow \Tint$ の対応と同型の構造を持つ。
 
@@ -489,7 +487,7 @@ ZFCにおける選択公理
 非空集合族（選択対象） & 外在の5モナド $\Text$ の状態 \\
 選択関数の存在 & 外在↔内在の対応の保証 \\
 構成機序がない & 内在側が直接観測不可能 \\
-選択の実現 & $\metaneg(\dfix) \cong A$（顕現） \\
+選択の実現 & $\metanegation(\dfix) \mweq A$（顕現） \\
 \hline
 \end{tabular}
 \end{center}
@@ -514,7 +512,7 @@ GTTTにおける二諦的対応は四位相で確定する。
 
 選択公理はこの四位相の対応を
 二値截断 $\Bval$（対応が存在するかしないか）へ投影する。
-このとき $\Phi_{NS}$ の情報——宙吊り状態の対象化——が失われる。
+このとき $\Phi_{NS}$ の情報---宙吊り状態の対象化---が失われる。
 
 失われた $\Phi_{NS}$ の情報が「存在するが構成できない」
 という非構成性として現れる。
@@ -532,11 +530,11 @@ GTTTにおいては、選択公理は二諦的対応の帰結として
 \end{remark}
 
 %=============================================================
-\section{注記：洗練モナドの通常モナド化}
+\section{注記：洗練モナドが通常モナドであることについて}
 \label{sec:remark}
 %=============================================================
 
-本稿の構成では、洗練を最初からフロベニウスモナドとして仮定する必要はない。
+本稿の構成では、洗練をフロベニウスモナドとして構成する必要はない。
 洗練モナド $\Mr$ は前進方向の通常モナドとして与えればよく、
 洗練コモナドは独立した基本構造としては不要である。
 
@@ -574,12 +572,12 @@ GTTTにおいては、選択公理は二諦的対応の帰結として
   \item \textbf{外在・内在の二重構造}：
     4+1モナドが外在 $\Text$・内在 $\Tint$ の二重構造として分離され、
     相互完全観測不可能性（常に観測可能と同義）のもとで
-    $\metaneg$（世俗諦→勝義諦）と顕現（勝義諦→世俗諦）の
+    $\metanegation$（世俗諦→勝義諦）と顕現（勝義諦→世俗諦）の
     非対称的連携によってフロベニウス条件が確立されることを示した。
 
   \item \textbf{五蘊との同型}：
     4+1モナドが五蘊と対応し、
-    $\metaneg^4 A \cong \dfix$ として順次的に駆動されることを示した。
+    $\metanegation^4 A \mweq \dfix$ として順次的に駆動されることを示した。
     五蘊の竦みの均衡が離散化できない問題は、
     二重5モナド構造における対応の存在保証により迂回される。
 
@@ -600,22 +598,22 @@ GTTTにおいては、選択公理は二諦的対応の帰結として
 \bibitem{Chiba2026frobenius}
 千葉将臣.
 \newblock 洗練フロベニウスモナド（改訂版）.
-\newblock 未刊行原稿, 2026.
+\newblock 2026.
 
 \bibitem{Chiba2026cutmonad}
 千葉将臣.
 \newblock カット消去モナド：証明構造の安定化を担うモナド的定式化.
-\newblock 未刊行原稿, 2026.
+\newblock 2026.
 
 \bibitem{Chiba2026continuation}
 千葉将臣.
 \newblock 継続残余としての証明障害：実行可能性と静的証明のあいだの初等モデル.
-\newblock 未刊行原稿, 2026.
+\newblock 2026.
 
 \bibitem{Chiba2026semantics}
 千葉将臣.
 \newblock 残余意味論：意味と指示の証明論的再構成.
-\newblock 未刊行原稿, 2026.
+\newblock 2026.
 
 \bibitem{MacLane1971}
 Saunders Mac Lane.
