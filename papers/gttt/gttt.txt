@@ -1860,7 +1860,7 @@ Graham Priest.
 \title{冗（Amphigory）の基礎的定式化\\
 ---視点数・継続残余・無記の関係代数---}
 \author{千葉将臣}
-\date{2026年7月7日}
+\date{2026-07-07}
 
 \begin{document}
 
