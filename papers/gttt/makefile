@@ -5,6 +5,7 @@ LATEX_FLAGS = -interaction=nonstopmode
 
 # ソースファイルのリスト（指定された順番を維持）
 SOURCES = \
+	temporal-boolean-algebra.tex \
 	../sunyata-math/avyakata.tex \
 	../sunyata-math/pov-proof.tex \
 	pov-herbrand-space.tex \
@@ -13,7 +14,8 @@ SOURCES = \
 	../math/math-observer-elimination.tex \
 	../sunyata-math/math-limit-equivalence.tex \
 	amphigory-0.tex \
-	amphigory.tex
+	amphigory.tex \
+	../sunyata-math/5skandha-monad.tex
 
 # 中間生成物および最終的なPDFのリスト
 PDFS = $(SOURCES:.tex=.pdf)

@@ -35,52 +35,58 @@
 \DeclareMathOperator*{\bigsqcap}{\sqcap}
 \providecommand{\Ref}{\mathbf{Ref}}
 \newcommand{\Dom}{\mathbf{Dom}}
+\newcommand{\Asm}{\mathbf{Asm}}
+\newcommand{\Mod}{\mathbf{Mod}}
+\newcommand{\Real}{\Vdash}
 
 %-------------------------------------------------
 \begin{document}
 
 \title{洗練モナド：\\
-洗練順序領域理論における前進閉包作用素の定式化}
+Kleene 実現子論的基盤における前進閉包作用素の定式化}
 \author{千葉将臣}
 \date{2026-06-29}
 \maketitle
 
 \begin{abstract}
-本稿は洗練モナド $(\Mr, \etar, \mur)$ を定式化する。
+本稿は洗練モナド $(\Mr, \etar, \mur)$ を、Kleene の実現子論（realizability）を
+基礎とする実現子論的領域理論（realizability domain theory）の上に定式化する。
 洗練モナドは、対象を洗練文脈へ持ち上げ、洗練の洗練を一段階へ統合する
 前進方向の閉包作用素である。
-洗練に必要とされるフロベニウス性は、搾取モナド、二重否定モナド、洗練モナド、カット除去モナドに
-統制モナドを加えた5モナド構成において、識軸スパイラルから誘導される性質として扱う。
+洗練に必要とされるフロベニウス性は、搾取モナド、二重否定モナド、洗練モナド、
+カット除去モナドに統制モナドを加えた5モナド構成において、識軸スパイラルから
+誘導される性質として扱う。
+本稿の基盤は、従来の領域理論（domain theory）における情報順序ではなく、
+Kleene の実現子論における「実行可能性（realizability）」を洗練の本質と捉え、
+洗練順序を実現子論的構造として再構成する。
 したがって、洗練モナド自体は通常のモナドであり、
-その役割は洗練連鎖の進行、文脈化、合成、極限収束を記述することに限定されるため、
-洗練コモナドおよびフロベニウス条件を洗練構造そのものに含める必要はない。
+その役割は洗練連鎖の進行、文脈化、合成、計算可能極限収束を記述することに限定される。
+洗練コモナドおよびフロベニウス条件は洗練構造そのものに含める必要はない。
 \end{abstract}
 
 \tableofcontents
 \newpage
 
 %=============================================================
-\section{序論：洗練の前進構造}
+\section{序論：洗練の前進構造と実現子論的基盤}
 %=============================================================
 
-\subsection{通常のモナドとしての洗練}
+\subsection{実行可能性としての洗練}
 
-Moggi \cite{Moggi1991} によるモナドを用いた計算の意味論以来、
-副作用・状態・継続といった計算の文脈はモナドの
-単位 $\eta$ と乗法 $\mu$ によって記述されてきた。
-本稿では、洗練連鎖も同様に通常のモナドとして定式化する。
+Kleene \cite{Kleene1952} の『Introduction to Metamathematics』における
+実現子論（realizability）の核心は、論理的真理性が
+「計算可能関数の存在」によって実現されるということにある。
+本稿では、この実行可能性を洗練（refinement）の基礎概念として採用する。
 
-洗練モナド $\Mr$ は、対象 $A$ を「洗練過程の中にある $A$」へ持ち上げる。
-単位 $\etar_A:A\to\Mr A$ は対象の文脈化を表し、
-乗法 $\mur_A:\Mr\Mr A\to\Mr A$ は洗練の洗練を一つの洗練過程へ統合する。
+具体的には、$e \Real (A \to B)$ は
+「$A$ の実現子から $B$ の実現子を計算で構成する計算可能関数 $e$ が存在する」
+ことを意味する。洗練とは、まさにこの「より良い実現子を計算で構成する」
+過程である。したがって、洗練順序は単なる半順序ではなく、
+実現子列の計算可能構成可能性として理解される。
 
-この構成において、洗練モナドは完了確定の逆方向を基本構造として持たない。
-完了確定や後退方向は、別稿で扱う5モナド構成、すなわち統制モナドを識軸とする
-スパイラル構成から誘導される。
+\subsection{領域理論から実現子論へ}
 
-\subsection{洗練順序領域理論の動機}
-
-Abramsky \cite{Abramsky1991} のDomain Theory in Logical Form は
+Abramsky \cite{Abramsky1991} の Domain Theory in Logical Form は
 直観主義論理と領域理論を接続したが、
 情報順序 $\sqsubseteq$ における $\bot$（停止しない計算）を最小元として扱う。
 
@@ -88,66 +94,104 @@ Abramsky \cite{Abramsky1991} のDomain Theory in Logical Form は
 \bot \sqsubseteq a \sqsubseteq \top \quad \text{（情報順序）}
 \end{equation}
 
-これに対し、洗練順序では $\bot$ を未確定な全可能性として扱う。
+これに対し、本稿では Kleene の実現子論を基礎とする実現子論的領域理論
+\cite{Bauer2000,Escardo2004,Birkedal2000} を採用し、
+洗練順序を実現子論的構造として定義する。
+洗練順序では $\bot$ を未確定な全可能性として扱い、
 完了した記述 $a$ は、全可能性 $\bot$ から可能性を削減して得られる。
 
 \begin{equation}
 \bot \sqsupseteq a \sqsupseteq \top \quad \text{（洗練順序）}
 \end{equation}
 
-本稿は洗練順序を採用し、$\bot$ をRefinement Orderにおける最大元として扱う。
 この反転により、計算の進行は順序の降下として記述される。
-Hoare と He \cite{Hoare1998} のUnifying Theories of Programming（UTP）における
-洗練順序と情報順序の区別を本稿の出発点とする。
+Hoare と He \cite{Hoare1998} の Unifying Theories of Programming（UTP）
+における洗練順序と情報順序の区別を本稿の出発点とするが、
+その基礎を領域理論の点集合から Kleene の実現子論へ移行する。
 
 \subsection{本稿の目的}
 
 本稿は以下を達成する。
 
 \begin{enumerate}
-\item 洗練モナド $(\Mr,\etar,\mur)$ を圏論的に定式化する。
-\item 洗練順序領域における洗練連鎖とモナド構造の整合性を示す。
-\item 洗練連鎖の極限としての不動点収束を記述する。
-\item 他のモナドとの合成において生じる非可換性を洗練残余として定義する。
-\item フロベニウス性は洗練モナド単体の前提ではなく、5モナド構成で担保されることを明確化する。
+\item 実現子論的洗練構造を Kleene の第一実現子論の上に定式化する。
+\item 実現子論的圏上において洗練モナド $(\Mr,\etar,\mur)$ を定義する。
+\item 洗練連鎖の計算可能極限としての不動点収束を記述する。
+\item 他のモナドとの合成において生じる非可換性を実現子論的残余として定義する。
+\item フロベニウス性は洗練モナド単体の前提ではなく、5モナド構成で担保されることを
+  実現子論的基盤の上で明確化する。
 \end{enumerate}
 
 %=============================================================
-\section{予備的概念}
+\section{予備的概念：実現子論的基盤}
 %=============================================================
 
-\subsection{洗練順序と領域}
+\subsection{Kleene の第一実現子論}
 
-\begin{definition}[洗練順序領域]
-半順序集合 $(D, \sqsupseteq)$ が洗練順序領域であるとは、
+Kleene の第一実現子論では、実現子の集合は自然数 $\mathbb{N}$ とし、
+部分再帰関数 $\{e\}(n)$ を実現子の適用とする。
+本稿ではこの枠組みを基礎とする。
+
+\begin{definition}[実現関係]
+集合 $|A|$ に対し、実現関係 $\Real_A \subseteq \mathbb{N} \times |A|$ は、
+各 $x \in |A|$ に対しある $e \in \mathbb{N}$ が存在して $e \Real_A x$ となる
+ような関係である。
+\end{definition}
+
+\begin{definition}[実現子論的洗練構造]
+組 $(|D|, \Real_D, \sqsupseteq_D)$ が実現子論的洗練構造であるとは、
 以下を満たすことをいう。
 
 \begin{enumerate}
-\item $D$ は最大元 $\bot \in D$（全可能性）を持つ。
-\item $D$ は洗練連鎖の下限を持つ。
-\item 任意の有向集合 $S \subseteq D$ に対し、
-  $\bigsqcap S$ が存在する。
+\item $|D|$ は集合（carrier set）である。
+\item $\Real_D \subseteq \mathbb{N} \times |D|$ は実現関係であり、
+  各 $x \in |D|$ に対しある $e \in \mathbb{N}$ が存在して $e \Real_D x$。
+\item $\sqsupseteq_D \subseteq |D| \times |D|$ は半順序であり、
+  最大元 $\bot \in |D|$（全可能性）を持つ。
+\item 任意の洗練連鎖 $a_0 \sqsupseteq a_1 \sqsupseteq a_2 \sqsupseteq \cdots$ に対し、
+  その下限 $\bigsqcap_n a_n \in |D|$ が存在し、
+  かつ実現子列 $\langle e_n \rangle$（$e_n \Real_D a_n$）から
+  $\bigsqcap_n a_n$ を実現する実現子を計算する
+  部分再帰関数 $f$ が存在する。
+  すなわち、$f$ は $\langle e_n \rangle$ を入力として受け取り、
+  $f(\langle e_n \rangle) \Real_D \bigsqcap_n a_n$ を満たす。
 \end{enumerate}
-
-$a \sqsupseteq b$ は「$a$ は $b$ より未確定であり、より多くの可能性を含む」ことを意味する。
 \end{definition}
 
 \begin{remark}
 情報順序では $\bot$ が最小元（情報なし）であるのに対し、
 洗練順序では $\bot$ が最大元（全可能性）である。
-この反転により、計算の進行は順序の降下として記述される。
+実現子論的に解釈すると、$\bot$ は「どのような値も返しうる非決定的計算」を
+実現する実現子に対応する。
+洗練連鎖の降下は、非決定的計算から部分的決定、さらに完全決定へと
+絞り込まれる過程を表す。
 \end{remark}
 
 \begin{definition}[洗練連鎖]
-洗練順序領域 $(D, \sqsupseteq)$ における洗練連鎖とは、
+実現子論的洗練構造 $(|D|, \Real_D, \sqsupseteq_D)$ における洗練連鎖とは、
 降下列
 \begin{equation}
 \bot = a_0 \sqsupseteq a_1 \sqsupseteq a_2 \sqsupseteq \cdots
 \end{equation}
-であって、その下限 $\bigsqcap_n a_n$ が存在するものをいう。
+であって、その下限 $\bigsqcap_n a_n$ が実現子論的に存在するものをいう。
 \end{definition}
 
-\subsection{自己関手圏}
+\subsection{実現子論的圏と自己関手圏}
+
+実現子論的洗練構造を対象とする圏を構成する。
+
+\begin{definition}[実現子論的圏 $\Asm(\mathcal{K})$]
+Kleene の第一実現子論 $\mathcal{K}$ 上の実現子論的圏 $\Asm(\mathcal{K})$ は、
+以下を持つ圏である。
+
+\begin{itemize}
+\item \textbf{対象}：実現子論的洗練構造 $(|D|, \Real_D, \sqsupseteq_D)$。
+\item \textbf{射}：実現子論的連続関数 $f:|D|\to|E|$。
+  すなわち、$f$ が連続であり、かつその連続性を実現する
+  部分再帰関数 $e_f \in \mathbb{N}$ が存在する。
+  具体的には、$a \Real_D x$ ならば $\{e_f\}(a) \Real_E f(x)$。
+\end{itemize}
+\end{definition}
 
 \begin{definition}[自己関手圏]
 圏 $\mathcal{C}$ の自己関手圏を
@@ -157,10 +201,11 @@ $a \sqsupseteq b$ は「$a$ は $b$ より未確定であり、より多くの�
 と書く。
 対象は自己関手 $F:\mathcal{C}\to\mathcal{C}$、射は自然変換である。
 関手合成をモノイダル積、恒等関手を単位対象とみなす。
+本稿では $\mathcal{C} = \Asm(\mathcal{K})$ とする。
 \end{definition}
 
 %=============================================================
-\section{洗練モナドの定式化}
+\section{実現子論的洗練モナドの定式化}
 %=============================================================
 
 \subsection{洗練文脈}
@@ -169,22 +214,27 @@ $a \sqsupseteq b$ は「$a$ は $b$ より未確定であり、より多くの�
 洗練文脈 $\Mr$ を、対象が洗練順序において
 より確定した記述へ移行する過程を包摂する文脈として定義する。
 $\Mr A$ は「$A$ が洗練過程の中にある状態」を表す。
+実現子論的には、$\Mr A$ の carrier set は $A$ の洗練連鎖の集合である。
 \end{definition}
 
-\begin{definition}[洗練モナド]
-圏 $\mathcal{C}$ 上の自己関手 $\Mr:\mathcal{C}\to\mathcal{C}$ と
-自然変換 $\etar:\id_{\mathcal{C}}\Rightarrow\Mr$、
+\begin{definition}[実現子論的洗練モナド]
+実現子論的圏 $\Asm(\mathcal{K})$ 上の自己関手 $\Mr:\Asm(\mathcal{K})\to\Asm(\mathcal{K})$ と
+自然変換 $\etar:\id_{\Asm(\mathcal{K})}\Rightarrow\Mr$、
 $\mur:\Mr\Mr\Rightarrow\Mr$ からなる三つ組
 \begin{equation}
 (\Mr,\etar,\mur)
 \end{equation}
-を洗練モナドとして定義する。
+を実現子論的洗練モナドとして定義する。
 
 \begin{align}
-\etar_A &: A \to \Mr A
-  \quad \text{（対象を洗練文脈に持ち上げる）} \\
-\mur_A &: \Mr\Mr A \to \Mr A
-  \quad \text{（洗練の洗練を一段階に統合する）}
+|\Mr A| &= \{\alpha = (a_0 \sqsupseteq a_1 \sqsupseteq \cdots) \mid a_i \in |A|\} \\
+e \Real_{\Mr A} \alpha &\iff
+  \text{$e$ は $\alpha$ の各段階 $a_n$ を実現する実現子列 $\langle e_n \rangle$ を計算し、}\\
+  &\qquad\text{かつその下限 $\bigsqcap_n a_n$ を実現する実現子を計算する} \\
+\etar_A &: |A| \to |\Mr A|, \quad a \mapsto (a \sqsupseteq a \sqsupseteq \cdots) \\
+\mur_A &: |\Mr\Mr A| \to |\Mr A|, \quad
+  (\alpha^{(0)} \sqsupseteq \alpha^{(1)} \sqsupseteq \cdots) \mapsto
+  (a^{(0)}_0 \sqsupseteq a^{(1)}_1 \sqsupseteq a^{(2)}_2 \sqsupseteq \cdots)
 \end{align}
 
 モナド則は以下である。
@@ -197,10 +247,10 @@ $\mur:\Mr\Mr\Rightarrow\Mr$ からなる三つ組
 \end{align}
 \end{definition}
 
-\begin{proposition}[洗練順序との整合性]
-洗練モナドにおいて、$\etar_A:A\to\Mr A$ は
+\begin{proposition}[実現子論的洗練順序との整合性]
+実現子論的洗練モナドにおいて、$\etar_A:|A|\to|\Mr A|$ は
 対象を洗練過程へ導入する操作として定式化される。
-また、$\Mr$ は洗練順序に関して単調である。
+また、$\Mr$ は洗練順序に関して実現子論的に単調である。
 
 \begin{equation}
 a \sqsupseteq a' \Rightarrow \Mr a \sqsupseteq \Mr a'
@@ -212,61 +262,71 @@ $\Mr$ の適用は洗練過程を一段持ち上げた文脈を生成する。
 
 \begin{proof}
 $\Mr$ は自己関手であるため、対象と射を保つ。
-洗練順序を圏 $\mathcal{C}$ の射として読むと、
+洗練順序を圏 $\Asm(\mathcal{K})$ の射として読むと、
 $a\sqsupseteq a'$ は $a$ から $a'$ への洗練射を与える。
 関手性により、この射は $\Mr a$ から $\Mr a'$ への射に写される。
-したがって $\Mr$ は洗練順序に関して単調である。
+実現子論的に言えば、$a \sqsupseteq a'$ を実現する実現子から、
+$\Mr a \sqsupseteq \Mr a'$ を実現する実現子が計算可能である。
+したがって $\Mr$ は洗練順序に関して実現子論的に単調である。
 \end{proof}
 
 \subsection{洗練合成}
 
 \begin{definition}[洗練合成]
-$\mur_A:\Mr\Mr A\to\Mr A$ は、洗練された対象をさらに洗練する二段階過程を、
+$\mur_A:|\Mr\Mr A|\to|\Mr A|$ は、洗練された対象をさらに洗練する二段階過程を、
 一つの洗練過程へ圧縮する操作である。
+実現子論的には、対角線化を行う部分再帰関数が $\mur_A$ を実現する。
 \begin{equation}
-\Mr(\Mr A) \xrightarrow{\mur_A} \Mr A
+|\Mr(\Mr A)| \xrightarrow{\mur_A} |\Mr A|
 \end{equation}
 \end{definition}
 
 \begin{remark}
 洗練合成は、仕様から設計、設計から実装へ進むような多段階の洗練を、
 単一の洗練連鎖として扱うための構造である。
+実現子論的には、各段階の実現子を対角線化によって一段階の実現子へ
+圧縮する計算可能関数として理解される。
 これはUTPにおける仕様・設計・実装の洗練列と対応する。
 \end{remark}
 
 %=============================================================
-\section{不動点収束}
+\section{実現子論的不動点収束}
 %=============================================================
 
-\begin{definition}[洗練不動点]
-対象 $A$ に対し、洗練モナドの反復列
+\begin{definition}[実現子論的洗練不動点]
+対象 $A$ に対し、実現子論的洗練モナドの反復列
 \begin{equation}
-A \xrightarrow{\etar_A} \Mr A \xrightarrow{\Mr\etar_A} \Mr^2 A
-\xrightarrow{\Mr^2\etar_A} \cdots
+|A| \xrightarrow{\etar_A} |\Mr A| \xrightarrow{|\Mr\etar_A|} |\Mr^2 A|
+\xrightarrow{|\Mr^2\etar_A|} \cdots
 \end{equation}
-が洗練順序上で極限を持つとき、その極限を洗練不動点 $A^*$ と呼ぶ。
+が実現子論的洗練順序上で計算可能極限を持つとき、その極限を
+実現子論的洗練不動点 $A^*$ と呼ぶ。
 \begin{equation}
 A^* = \bigsqcap_{n\geq 0}\Mr^n A
 \end{equation}
+ここで、極限は実現子列 $\langle e_n \rangle$（$e_n \Real_{\Mr^n A} \Mr^n A$）
+から $A^*$ を実現する実現子を計算する部分再帰関数の存在を意味する。
 \end{definition}
 
-\begin{theorem}[洗練連鎖の収束]
-洗練順序領域 $(D,\sqsupseteq)$ が洗練連鎖の下限を持ち、
-$\Mr$ が連続な自己関手であるならば、任意の対象 $A$ に対して
-洗練反復列 $\{\Mr^n A\}_{n\geq 0}$ は下限 $A^*$ を持つ。
+\begin{theorem}[実現子論的洗練連鎖の収束]
+実現子論的洗練構造 $(|D|,\Real_D,\sqsupseteq_D)$ が計算可能下限を持ち、
+$\Mr$ が実現子論的連続な自己関手であるならば、
+任意の対象 $A$ に対して実現子論的洗練反復列 $\{\Mr^n A\}_{n\geq 0}$ は
+計算可能下限 $A^*$ を持つ。
 \end{theorem}
 
 \begin{proof}
-仮定より、$\{\Mr^n A\}_{n\geq 0}$ は洗練順序上の連鎖である。
-洗練順序領域は連鎖の下限を持つため、
-$\bigsqcap_{n\geq 0}\Mr^n A$ が存在する。
+仮定より、$\{\Mr^n A\}_{n\geq 0}$ は実現子論的洗練順序上の連鎖である。
+実現子論的洗練構造は計算可能下限を持つため、
+$\bigsqcap_{n\geq 0}\Mr^n A$ が存在し、
+かつその下限を実現する実現子が実現子列から計算可能である。
 これを $A^*$ と定義する。
-$\Mr$ の連続性により、$\Mr$ はこの下限を保存するため、
-$A^*$ は洗練反復に対する不動点として振る舞う。
+$\Mr$ の実現子論的連続性により、$\Mr$ はこの計算可能下限を保存するため、
+$A^*$ は実現子論的洗練反復に対する不動点として振る舞う。
 \end{proof}
 
-\begin{corollary}[$\bot$ との同型性]
-洗練順序における $\bot$（全可能性・最大元）は、
+\begin{corollary}[$\bot$ との実現子論的同型性]
+実現子論的洗練順序における $\bot$（全可能性・最大元）は、
 洗練連鎖の出発点であると同時に、不動点収束を記述するための基準点である。
 
 \begin{equation}
@@ -274,35 +334,44 @@ $A^*$ は洗練反復に対する不動点として振る舞う。
 \end{equation}
 
 情報順序における欠如としての $\bot$ ではなく、
-洗練順序における全可能性としての $\bot$ が、
+実現子論的洗練順序における全可能性としての $\bot$ が、
 洗練過程の開始条件を与える。
+実現子論的には、$\bot$ は「どの値も返しうる非決定的計算」を実現する。
 \end{corollary}
 
 %=============================================================
-\section{洗練残余}
+\section{実現子論的洗練残余}
 \label{sec:residue}
 %=============================================================
 
-\begin{definition}[洗練残余]
-洗練モナド $\Mr$ と別のモナド $\mathcal{M}$ の合成が可換でない領域を、
-洗練残余 $\mathcal{R}(\Mr,\mathcal{M})$ として定義する。
+\begin{definition}[実現子論的洗練残余]
+実現子論的洗練モナド $\Mr$ と別のモナド $\mathcal{M}$ の合成が
+実現子論的に同型でない領域を、
+実現子論的洗練残余 $\mathcal{R}(\Mr,\mathcal{M})$ として定義する。
 
 \begin{equation}
-\Mr(\mathcal{M}A) \not\cong \mathcal{M}(\Mr A)
+|\Mr(\mathcal{M}A)| \not\cong |\mathcal{M}(\Mr A)|
 \quad\Rightarrow\quad
 \mathcal{R}(\Mr,\mathcal{M}) \neq \emptyset
 \end{equation}
+
+ここで、同型は実現子論的圏 $\Asm(\mathcal{K})$ における同型を意味し、
+その同型を実現する実現子の存在を含む。
 \end{definition}
 
-\begin{theorem}[残余の確定]
-$\Mr\circ\mathcal{M}$ と $\mathcal{M}\circ\Mr$ が同型でないとき、
-二つの洗練経路の差分は洗練残余として確定する。
+\begin{theorem}[残余の実現子論的確定]
+$|\Mr\circ\mathcal{M}|$ と $|\mathcal{M}\circ\Mr|$ が
+実現子論的に同型でないとき、
+二つの洗練経路の差分は実現子論的洗練残余として確定する。
 \end{theorem}
 
 \begin{proof}
-自然変換 $\theta:\Mr\mathcal{M}\Rightarrow\mathcal{M}\Mr$ が
-同型でないとき、二つの合成関手は同一の洗練過程を表さない。
-この非同型性は、$\Mr$ による文脈化と $\mathcal{M}$ による文脈化の順序に依存する差分を生む。
+自然変換 $\theta:|\Mr\mathcal{M}|\Rightarrow|\mathcal{M}\Mr|$ が
+実現子論的に同型でないとき、二つの合成関手は同一の洗練過程を表さない。
+この非同型性は、$\Mr$ による文脈化と $\mathcal{M}$ による文脈化の順序に依存する
+差分を生む。
+実現子論的には、$\theta$ を実現する実現子が存在しないか、
+存在しても同型でないことが、この残余を正の対象として確定させる。
 その差分を $\mathcal{R}(\Mr,\mathcal{M})$ と呼ぶ。
 直観主義論理において $\neg\neg P\to P$ が一般に成立しないことと同様に、
 合成順序の非可換性は単なる失敗ではなく、残余として正の対象化を受ける。
@@ -310,30 +379,34 @@ $\Mr\circ\mathcal{M}$ と $\mathcal{M}\circ\Mr$ が同型でないとき、
 
 \begin{remark}[継続残余との対応]
 継続残余 $\rho$（千葉 \cite{Chiba2026continuation}）の語彙では、
-$\Mr\mathcal{M}\cong\mathcal{M}\Mr$ の場合は $\rho=0$ に対応し、
+$|\Mr\mathcal{M}|\cong|\mathcal{M}\Mr|$ の場合は $\rho=0$ に対応し、
 非可換な場合は $\rho>0$ に対応する。
-洗練残余は、この $\rho>0$ を圏論的な合成順序の差分として記述する。
+実現子論的洗練残余は、この $\rho>0$ を圏論的な合成順序の差分として記述し、
+その差分が実現子論的に検出可能であることを保証する。
 \end{remark}
 
 \subsection{カット除去モナドとの関係}
 
-\begin{proposition}[カット除去モナドとの共存]
+\begin{proposition}[カット除去モナドとの実現子論的共存]
 カット除去モナド $\mathcal{C}$（千葉 \cite{Chiba2026cutmonad}）は、
-洗練モナド $\Mr$ の特殊ケースではなく、洗練連鎖と共存する独立した通常モナドである。
+実現子論的洗練モナド $\Mr$ の特殊ケースではなく、
+洗練連鎖と共存する独立した通常モナドである。
 
 \begin{equation}
-\Mr\circ\mathcal{C}\cong\mathcal{C}\circ\Mr
+|\Mr\circ\mathcal{C}| \cong |\mathcal{C}\circ\Mr|
 \end{equation}
-が成立する場合、洗練の前進とカット除去の前進は可換に共存する。
+が実現子論的に成立する場合、洗練の前進とカット除去の前進は可換に共存する。
 成立しない場合、その差分は $\mathcal{R}(\Mr,\mathcal{C})$ として確定する。
 \end{proposition}
 
 \begin{proof}
 カット除去モナド $\mathcal{C}$ は証明図を正規化する前進方向のモナドである。
-一方、洗練モナド $\Mr$ は対象を洗練文脈へ持ち上げる。
+一方、実現子論的洗練モナド $\Mr$ は対象を洗練文脈へ持ち上げる。
 両者は対象とする層が異なるため、一方が他方を包摂するのではなく、
 合成可能な独立構造として扱われる。
-合成が可換ならば両者は整合的に共存し、非可換ならばその差分が残余となる。
+実現子論的に言えば、$\mathcal{C}$ と $\Mr$ を実現する実現子は異なる層で働く。
+合成が実現子論的に可換ならば両者は整合的に共存し、
+非可換ならばその差分が残余となる。
 \end{proof}
 
 %=============================================================
@@ -341,43 +414,66 @@ $\Mr\mathcal{M}\cong\mathcal{M}\Mr$ の場合は $\rho=0$ に対応し、
 %=============================================================
 
 \begin{proposition}[フロベニウス性の外部化]
-洗練モナド $\Mr$ は、それ自体の定義に洗練コモナドやフロベニウス条件を含まない。
+実現子論的洗練モナド $\Mr$ は、それ自体の定義に洗練コモナドや
+フロベニウス条件を含まない。
 フロベニウス性は、搾取モナド、二重否定モナド、洗練モナド、カット除去モナド、
-統制モナドからなる5モナド構成において担保される。
+統制モナドからなる5モナド構成において、
+実現子論的圏 $\Asm(\mathcal{K})$ 上で担保される。
 \end{proposition}
 
 \begin{proof}
-洗練モナドの基本データは $(\Mr,\etar,\mur)$ であり、
+実現子論的洗練モナドの基本データは $(\Mr,\etar,\mur)$ であり、
 これは通常のモナドのデータと一致する。
 したがって、洗練モナド単体からは余単位や余乗法は要求されない。
 後退方向やフロベニウス性は、統制モナドを識軸とするスパイラル構成によって、
 洗練モナドとカット除去モナドへ誘導される。
+実現子論的圏 $\Asm(\mathcal{K})$ はトポス的構造を持つため、
+これらのモナドは圏論的に自然に定義可能である。
 ゆえにフロベニウス性は洗練モナドの定義ではなく、
 5モナド全体の構成的帰結である。
 \end{proof}
 
 \begin{remark}
-この整理により、洗練モナドは前進方向の洗練を担う単純な構造として保持される。
+この整理により、実現子論的洗練モナドは前進方向の洗練を担う単純な構造として
+保持される。
 洗練の完了確定、方向反転、双方向性は、統制モナドを含む上位構成で扱う。
 したがって、洗練モナドと5モナド構成の役割分担が明確になる。
+実現子論的基盤は、この分離をより厳密に支える。
 \end{remark}
 
 %=============================================================
 \section{既存理論との対比}
 %=============================================================
 
+\subsection{領域理論と実現子論的領域理論の対比}
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+& \textbf{領域理論（情報順序）} & \textbf{実現子論的領域理論（洗練順序）} \\
+\hline
+基盤 & 集合と半順序 & Kleene の実現子論（$\mathbb{N}$ と部分再帰関数） \\
+対象 & 領域 $D$（点の集合） & 実現子論的構造 $(|D|,\Real_D,\sqsupseteq_D)$ \\
+射 & 連続関数 $D\to E$ & 実現子論的連続関数（実現子 $e$ が連続性を実現） \\
+極限 & 順序の上限・下限 & 実現子列の計算可能極限 \\
+$\bot$ & 最小元（情報なし） & 最大元（全可能性・非決定的計算） \\
+連続性 & 集合論的定義 & 実現子 $e$ による実現可能連続性 \\
+\hline
+\end{tabular}
+\end{center}
+
 \subsection{通常のモナドとの対比}
 
 \begin{center}
 \begin{tabular}{lll}
 \hline
-& \textbf{通常のモナド} & \textbf{洗練モナド} \\
+& \textbf{通常のモナド} & \textbf{実現子論的洗練モナド} \\
 \hline
 方向性 & 前進のみ（$\eta,\mu$） & 前進のみ（$\etar,\mur$） \\
-文脈 & 副作用・状態・継続など & 洗練過程 \\
+文脈 & 副作用・状態・継続など & 洗練過程（実現子列の計算可能構成） \\
 完了条件 & 外部から固定される場合が多い & 5モナド構成で扱う \\
-$\bot$ の扱い & 最小元（情報順序） & 全可能性（洗練順序） \\
-残余 & 通常は明示されない & 合成非可換性として記述 \\
+$\bot$ の扱い & 最小元（情報順序） & 全可能性（実現子論的洗練順序） \\
+残余 & 通常は明示されない & 実現子論的合成非可換性として記述 \\
 \hline
 \end{tabular}
 \end{center}
@@ -385,19 +481,19 @@ $\bot$ の扱い & 最小元（情報順序） & 全可能性（洗練順序） 
 \subsection{二重否定モナドとの対比}
 
 二重否定モナド $\neg\neg$ は、直観主義論理を古典論理へ反射する閉包作用素である。
-一方、洗練モナドは古典化を目的としない。
+一方、実現子論的洗練モナドは古典化を目的としない。
 洗練モナドは $\bot$ を排除せず、全可能性として保持しながら、
-洗練連鎖の進行を記述する。
+洗練連鎖の進行を実現子論的に記述する。
 
 \begin{center}
 \begin{tabular}{lll}
 \hline
-& \textbf{二重否定モナド} & \textbf{洗練モナド} \\
+& \textbf{二重否定モナド} & \textbf{実現子論的洗練モナド} \\
 \hline
 作用 & $A\mapsto\neg\neg A$ & $A\mapsto\Mr A$ \\
-目的 & 古典的安定化 & 洗練過程の文脈化 \\
-$\bot$ & 閉包外へ押し出す傾向 & 全可能性として保持 \\
-残余 & $\neg\neg A\to A$ の非成立 & 合成非可換性 \\
+目的 & 古典的安定化 & 洗練過程の文脈化（実行可能性の基盤） \\
+$\bot$ & 閉包外へ押し出す傾向 & 全可能性として実現子論的に保持 \\
+残余 & $\neg\neg A\to A$ の非成立 & 実現子論的合成非可換性 \\
 \hline
 \end{tabular}
 \end{center}
@@ -406,19 +502,20 @@ $\bot$ & 閉包外へ押し出す傾向 & 全可能性として保持 \\
 \section{適用域}
 %=============================================================
 
-洗練モナドはプログラミングに限定されない。
-洗練連鎖として記述可能な任意の過程に適用できる。
+実現子論的洗練モナドはプログラミングに限定されない。
+実現子論的洗練連鎖として記述可能な任意の過程に適用できる。
+実現子論的基盤により、これらの過程は「計算可能構成」として統一的に理解される。
 
 \begin{center}
 \begin{tabular}{ll}
 \hline
-\textbf{適用域} & \textbf{$\Mr A$ の内容} \\
+\textbf{適用域} & \textbf{$|\Mr A|$ の内容} \\
 \hline
-プログラミング & コードの洗練過程 \\
-学習 & 理解の深化過程 \\
-対話 & 議論の精緻化過程 \\
-芸術制作 & 表現の洗練過程 \\
-科学研究 & 仮説の洗練過程 \\
+プログラミング & コードの洗練過程（実現子としてのプログラム変換） \\
+学習 & 理解の深化過程（実現子としての知識構成） \\
+対話 & 議論の精緻化過程（実現子としての対話戦略） \\
+芸術制作 & 表現の洗練過程（実現子としての表現技法） \\
+科学研究 & 仮説の洗練過程（実現子としての実験設計） \\
 \hline
 \end{tabular}
 \end{center}
@@ -427,31 +524,44 @@ $\bot$ & 閉包外へ押し出す傾向 & 全可能性として保持 \\
 \section{結論}
 %=============================================================
 
-本稿は洗練モナド $(\Mr,\etar,\mur)$ を以下の観点から定式化した。
+本稿は実現子論的洗練モナド $(\Mr,\etar,\mur)$ を以下の観点から定式化した。
 
 \begin{enumerate}
-\item \textbf{理論的基盤}：
-  洗練順序領域理論において $\bot$ を全可能性として扱う
-  情報順序の反転を採用し、UTPの洗練順序・情報順序の区別を出発点とした。
+\item \textbf{実現子論的基盤}：
+  Kleene の第一実現子論を基礎とし、
+  洗練順序を実現子論的構造 $(|D|,\Real_D,\sqsupseteq_D)$ として再構成した。
+  領域理論の点集合的基盤から、実現子（自然数と部分再帰関数）による
+  実行可能性の基盤へ移行した。
 
 \item \textbf{圏論的構成}：
-  洗練モナド $(\Mr,\etar,\mur)$ を、対象を洗練文脈へ持ち上げ、
-  洗練の洗練を一段階へ統合する通常のモナドとして定義した。
+  実現子論的圏 $\Asm(\mathcal{K})$ 上において、
+  洗練モナド $(\Mr,\etar,\mur)$ を定義した。
+  対象を洗練文脈へ持ち上げ、洗練の洗練を一段階へ統合する
+  通常のモナドとして位置づけた。
 
-\item \textbf{不動点収束}：
-  洗練連鎖の極限として不動点 $A^*$ への収束を記述した。
+\item \textbf{実現子論的不動点収束}：
+  洗練連鎖の計算可能極限として不動点 $A^*$ への収束を記述した。
+  極限の実現子が実現子列から計算可能であることを保証した。
 
-\item \textbf{残余の確定}：
-  他のモナドとの合成非可換性を、洗練残余 $\mathcal{R}(\Mr,\mathcal{M})$ として定義した。
+\item \textbf{実現子論的残余の確定}：
+  他のモナドとの合成非可換性を、
+  実現子論的洗練残余 $\mathcal{R}(\Mr,\mathcal{M})$ として定義した。
+  残余が実現子論的に検出可能であることを明確化した。
 
 \item \textbf{5モナド構成との役割分担}：
   フロベニウス性を洗練モナド単体の定義から外し、
   統制モナドを含む5モナド構成によって担保される性質として位置づけた。
+  実現子論的圏のトポス的構造が、この分離を支える基盤となった。
 \end{enumerate}
 
-洗練モナドは完成した双方向構造ではなく、洗練の前進方向を担う基本モナドである。
+実現子論的洗練モナドは完成した双方向構造ではなく、
+洗練の前進方向を担う基本モナドである。
 方向反転、完了確定、フロベニウス性は、統制モナドを識軸とする上位構成で扱われる。
-この分離により、洗練モナドの定義は簡潔になり、5モナド構成における役割も明確になる。
+この分離により、洗練モナドの定義は簡潔になり、
+5モナド構成における役割も明確になる。
+Kleene の実現子論を基盤とすることで、
+洗練が「実行可能性」として自然に理解され、
+計算可能性が理論の根底にあることが保証される。
 
 \begin{thebibliography}{99}
 
@@ -460,10 +570,30 @@ Samson Abramsky.
 \newblock Domain theory in logical form.
 \newblock \emph{Annals of Pure and Applied Logic}, 51(1--2):1--77, 1991.
 
+\bibitem{Bauer2000}
+Andrej Bauer.
+\newblock The realizability approach to computable analysis and topology.
+\newblock Ph.D. thesis, Carnegie Mellon University, 2000.
+
+\bibitem{Birkedal2000}
+Lars Birkedal.
+\newblock Developing theories of types and computability via realizability.
+\newblock Ph.D. thesis, University of Edinburgh, 2000.
+
+\bibitem{Escardo2004}
+Mart\'{\i}n Escard\'o.
+\newblock Synthetic topology of data types and classical spaces.
+\newblock \emph{Electronic Notes in Theoretical Computer Science}, 87:21--156, 2004.
+
 \bibitem{Hoare1998}
 C.~A.~R. Hoare and He Jifeng.
 \newblock \emph{Unifying Theories of Programming}.
 \newblock Prentice Hall, 1998.
+
+\bibitem{Kleene1952}
+Stephen Cole Kleene.
+\newblock \emph{Introduction to Metamathematics}.
+\newblock North-Holland, 1952.
 
 \bibitem{MacLane1971}
 Saunders Mac Lane.

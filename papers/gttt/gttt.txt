@@ -33,6 +33,282 @@
 \setlist[description]{style=multiline, leftmargin=3cm}
 
 
+% !TeX program = lualatex
+\documentclass[10pt]{ltjsarticle}
+\usepackage[margin=1in]{geometry}
+
+% Core packages
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-cd}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+% Paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1\baselineskip}
+
+\title{時間付きブール代数とその一階述語論理}
+\author{千葉将臣}
+\date{2026-07-13}
+
+\begin{document}
+\maketitle
+
+\section{時間付きブール代数の基本アイデア}
+
+\subsection{時間の一方向性}
+
+時間は過去から未来へ一方向にのみ流れるものとする。各時間点 $t$ において、命題 $A$ はブール値
+\[
+  A(t) \in \{0,1\}
+\]
+を持つ。
+
+\subsection{否定の時間的解釈}
+
+本稿では、否定記号 $\neg$ を通常の静的な反転ではなく、未来への到達可能性を含む演算として解釈する。すなわち、現在時刻を $\mathsf{now}$ とすると、
+\begin{align*}
+  \neg A &:= \text{将来いつか $A$ が偽になる}, \\
+  \neg\neg A &:= \text{将来いつか $A$ が真になる}, \\
+  \neg\neg\neg A &:= \text{将来いつか $A$ が偽になる}
+\end{align*}
+と読む。この解釈では、否定を反復することにより、真偽値そのものではなく、命題の時間的変化可能性が表現される。
+
+\subsection{\texorpdfstring{矛盾位相 $A \land \neg A$}{矛盾位相 A and not A}}
+
+古典論理において $A \land \neg A$ は矛盾であり恒偽である。しかし、時間付きブール代数では
+\[
+  A \land \neg A
+  \quad\text{を}\quad
+  \text{今 $A$ が真であり、かつ将来いつか $A$ が偽になる}
+\]
+と解釈する。したがって、時間的に変化する命題に対しては、これは単なる矛盾ではなく、現在と未来の差異を表す位相である。
+
+例えば「今は晴れているが、将来いつか雨が降る」という命題は、静的には矛盾に見える形式を持ちながら、時間発展を含めれば自然に理解できる。
+
+\subsection{\texorpdfstring{独自の公理 $\neg\neg\neg A \to (\neg A \land \neg\neg A)$}{独自の公理 not not not A implies not A and not not A}}
+
+次の公理を考える。
+\[
+  \neg\neg\neg A \to (\neg A \land \neg\neg A).
+\]
+ここで $\neg\neg\neg A$ は「将来いつか $A$ が偽になる」ことを表し、$\neg A \land \neg\neg A$ は「将来いつか $A$ が偽になり、かつ将来いつか $A$ が真になる」ことを表す。
+
+したがって、この公理は次の意味を持つ。
+\[
+  \text{$A$ が将来偽になるならば、$A$ は真と偽の間を往復する。}
+\]
+すなわち、この体系では、否定の反復は単なる古典的な二重否定消去ではなく、命題の振動的な時間発展を記述する。
+
+\section{FOLでの構成}
+
+\subsection{時間を変数として導入する}
+
+時間 $t$ を一次の変数として導入する。時間領域は自然数、整数、実数、あるいは任意の線形順序集合としてよい。命題 $A$ は時間に依存する述語 $A(t)$ として表現される。
+
+\subsection{否定のFOL表現}
+
+現在時刻を $\mathsf{now}$ と書く。このとき、時間付き否定は一次論理において次のように表現できる。
+\begin{align*}
+  \neg A &\equiv \exists t\,(t > \mathsf{now} \land \neg A(t)), \\
+  \neg\neg A &\equiv \exists t\,(t > \mathsf{now} \land A(t)), \\
+  \neg\neg\neg A &\equiv \exists t\,(t > \mathsf{now} \land \neg A(t)).
+\end{align*}
+この定義では、否定は未来量化と古典的否定の組として表される。
+
+\subsection{矛盾位相のFOL表現}
+
+時間付きブール代数における $A \land \neg A$ は、FOLでは
+\[
+  A(\mathsf{now}) \land \exists t\,(t > \mathsf{now} \land \neg A(t))
+\]
+と表される。これは「今 $A$ が真であり、将来いつか $A$ が偽になる」という意味であり、時間変化を許すモデルでは充足可能である。
+
+\subsection{独自公理のFOL表現}
+
+公理
+\[
+  \neg\neg\neg A \to (\neg A \land \neg\neg A)
+\]
+は、FOLでは次のように表現できる。
+\[
+  \bigl(\exists t_1\,(t_1 > \mathsf{now} \land \neg A(t_1))\bigr)
+  \to
+  \bigl(
+    \exists t_2\,(t_2 > \mathsf{now} \land \neg A(t_2))
+    \land
+    \exists t_3\,(t_3 > \mathsf{now} \land A(t_3))
+  \bigr).
+\]
+これは「将来いつか $A$ が偽になるならば、将来いつか $A$ が偽になり、かつ将来いつか $A$ が真になる」という振動性の条件である。
+
+\section{プログラミング言語との対応}
+
+\subsection{プログラミングを代数にしたいという背景}
+
+プログラミングを代数化しようとする試みは、計算機科学の中で繰り返し現れてきた。例えば、プログラム代数ではプログラムを項として扱い、合成・選択・反復などの演算を代数法則によって記述する。プロセス代数では、並行プロセスを代数的対象として扱い、通信・同期・相互作用を演算として表現する。代表例として CCS、CSP、$\pi$ 計算などがある。また、ホーア論理や動的論理は、プログラムの実行前後に成り立つ性質を論理式として記述し、検証可能にする枠組みである。
+
+これらに共通しているのは、第一にプログラムの構造を演算として捉えること、第二にプログラムの性質を論理的に記述することである。すなわち、プログラミングを代数化するとは、単にコードを記号列として扱うことではなく、プログラムの合成、分岐、反復、通信、状態変化を、計算可能な代数的構造として整理することである。
+
+時間付きブール代数は、この流れに対して、状態の真理値とその時間発展に焦点を当てた別の入口を与える。プログラムの実行を状態の列、あるいは分岐を許す状態の木として見れば、各状態で命題 $A$ は真または偽の値を持つ。この状況は、各時間点 $t$ において $A(t) \in \{0,1\}$ を考える時間付きブール代数と自然に対応する。
+
+\subsection{時相論理・動的論理との関係}
+
+時相論理では、$F A$ は「将来いつか $A$ が真になる」、$G A$ は「今後ずっと $A$ が真である」ことを表す。動的論理では、$[\alpha]P$ は「プログラム $\alpha$ の実行後、必ず $P$ が成り立つ」ことを表す。
+
+時間付きブール代数の $\neg A$ を
+\[
+  F(\neg A)
+\]
+と解釈すれば、この体系は時相論理の枠組みに回収できる。すなわち、時間付き否定は、古典的否定と未来様相 $F$ の合成として理解できる。
+
+\subsection{否定だけで時間性が表現できる、という意味}
+
+通常の時相論理では、時間性を表すために $F, G, U$ などの専用演算子を導入する。これに対して、時間付きブール代数では、否定 $\neg$ だけで時間的な様相を表現する。
+\begin{align*}
+  \neg A &:= \text{将来いつか $A$ が偽になる}, \\
+  \neg\neg A &:= \text{将来いつか $A$ が真になる}.
+\end{align*}
+これは、否定という基本的な論理演算に、時間性という豊かな構造が埋め込まれていることを意味する。
+
+\subsection{状態遷移としての否定}
+
+プログラムの実行を状態遷移系として見ると、時間付きブール代数の否定 $\neg$ は単なる真偽値の反転ではなく、状態変化や実行ステップを表す演算として読める。すなわち、
+\[
+  \neg A := \text{将来いつか $A$ が偽になる}
+\]
+という定義は、現在の状態から到達可能な未来状態において $A$ が破れることを意味する。これは、プログラムの実行によって性質 $A$ が保存されるか、あるいは将来失われるかを記述している。
+
+同様に、
+\[
+  \neg\neg A := \text{将来いつか $A$ が真になる}
+\]
+は、現在 $A$ が成り立っていない場合でも、実行の進行によって $A$ が再び成立する可能性を表す。この意味で、否定の反復は、真偽値の静的な反転ではなく、実行の時間的深さを表現する。
+
+したがって、時間付きブール代数では、否定という最も基本的な論理演算の内部に、プログラムの実行ステップや状態変化が埋め込まれていると解釈できる。
+
+\subsection{矛盾位相と変化の過程}
+
+時間付きブール代数における
+\[
+  A \land \neg A
+\]
+は、古典論理における矛盾ではなく、
+\[
+  \text{今 $A$ が真であり、将来いつか $A$ が偽になる}
+\]
+という状態変化の過程を表す。プログラム意味論の観点からは、これは、ある性質 $A$ が現在の状態では成り立っているが、実行を進めると破れる可能性があることを意味する。
+
+例えば、$A$ を「変数 $x$ は正である」という命題とする。このとき $A \land \neg A$ は、「現在は $x>0$ であるが、将来の実行状態では $x \leq 0$ になりうる」という意味になる。これは矛盾ではなく、プログラムの状態更新によって性質が変化することの表現である。
+
+このように、矛盾位相は、静的論理では排除される形式を、動的な変化の記述として再解釈する役割を持つ。
+
+\subsection{振動公理とループ的挙動}
+
+独自公理
+\[
+  \neg\neg\neg A \to (\neg A \land \neg\neg A)
+\]
+は、$A$ が将来偽になるならば、将来偽になる局面と真になる局面の両方が存在することを要求する。プログラムの振る舞いとして読むならば、これは状態が $A$ の成立と不成立の間を往復することを意味する。
+
+したがって、この公理はループや反復的な挙動を記述するための抽象的な原理として解釈できる。例えば、あるフラグが実行中にオンとオフを繰り返す、ある資源が獲得と解放を繰り返す、ある条件が周期的に成立と不成立を行き来する、といった状況を表現できる。
+
+もちろん、すべてのプログラムがこの振動性を持つわけではない。したがって、この公理は一般のプログラム意味論に常に課す法則というより、反復・周期・再帰的挙動を持つ計算を特徴づける追加公理として位置づけるのが自然である。
+
+\subsection{既存のプログラム代数との比較}
+
+プロセス代数は、プロセスそのものを項として扱い、並行合成、選択、通信、同期などを演算として表現する。これに対して、時間付きブール代数は、プロセスの外形よりも、各状態で成り立つ命題の真理値とその変化に焦点を当てる。したがって、プロセス代数が「何が実行されるか」を代数化する枠組みであるのに対し、時間付きブール代数は「実行によって何が真または偽になるか」を代数化する枠組みである。
+
+動的論理との関係では、プログラム $\alpha$ の実行後の性質を $[\alpha]P$ や $\langle\alpha\rangle P$ によって表すのに対し、時間付きブール代数では未来への到達可能性を否定 $\neg$ の中に埋め込む。このため、時間付きブール代数は、動的論理の様相演算子を、否定演算の時間的解釈として圧縮した体系と見ることができる。
+
+この意味で、時間付きブール代数は、プログラム代数やプロセス代数を置き換えるものではなく、それらを状態命題の時間的変化という側面から補完する。両者を組み合わせれば、プロセスの構造と状態の真理値変化の双方を代数的に扱うことができる。
+
+\subsection{モデル検査への応用}
+
+プログラムやシステムの振る舞いを状態遷移系としてモデル化する。各状態で命題が真または偽のブール値を持つとすれば、時間付きブール代数によってシステムの性質を記述できる。
+
+例えば「ずっと安全である」「いつか終了する」といった性質は、時相論理やFOLを通じて形式化され、モデル検査によって自動検証の対象となる。
+
+以上より、時間付きブール代数によって、プログラムの状態遷移を時間付きブール値として表現できる。また、否定 $\neg$ を実行ステップや状態変化として読むことで、矛盾位相 $A \land \neg A$ は変化の過程を、振動公理 $\neg\neg\neg A \to (\neg A \land \neg\neg A)$ はループ的・反復的な振る舞いを記述する。FOLで構成すれば、時相論理や動的論理と接続できるため、プログラミング言語の意味論や検証への応用が期待できる。
+
+\section{圏論的な視点}
+
+\subsection{モナドとしての時間}
+
+通常のブール代数の圏では、対象はブール代数、射はブール準同型である。時間付きブール代数では、各ブール値 $b$ を時間発展したブール値の列 $T(b)$ に写すモナド $T$ を考える。
+
+このとき、単位
+\[
+  \eta : b \to T(b)
+\]
+は、現在のブール値を「ずっと同じ値を取る列」として埋め込む操作である。また、乗法
+\[
+  \mu : T^2(b) \to T(b)
+\]
+は、「将来の将来」を一つの将来へと平坦化する操作である。
+
+\subsection{FOLとの対応}
+
+FOLで時間量化 $\exists t, \forall t$ を行うことは、モナド $T$ を時間量化の構造として解釈することに対応する。この観点から、時間付きブール代数は、プログラミング言語における IO、State、Maybe などのモナドと類似した意味論的構造を持つ。
+
+\section{哲学的な解釈}
+
+\subsection{否定と時間の深い関係}
+
+否定は「$A$ ではない」という差異を表す。一方で、時間は「今と未来」あるいは「過去と現在」という差異を生み出す。
+
+時間付きブール代数では、否定が時間的な差異を駆動する。
+\begin{align*}
+  \neg A &:= \text{将来いつか $A$ が偽になる}, \\
+  \neg\neg A &:= \text{将来いつか $A$ が真になる}.
+\end{align*}
+したがって、否定は単なる補集合操作ではなく、未来への変化可能性を含んだ演算として理解される。
+
+\subsection{論理主義的な時間観}
+
+この体系は、「世界の変化は、否定という論理的操作から生じる」という解釈を与える。時間付きブール代数は、この考え方を数学的に定式化する試みと見なせる。
+
+\section{まとめ}
+
+
+\subsection{実現できること}
+
+以上の議論をまとめると、時間付きブール代数によって実現できることは次のように整理できる。
+
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{否定だけによる時間性の表現}\\
+  通常の時相論理では $F, G, U$ などの専用の時間演算子を導入するが、時間付きブール代数では否定 $\neg$ を「将来いつか反対の値になる」という操作として解釈することで、否定だけから時間的な変化可能性を表現できる。
+
+  \item \textbf{変化の過程としての矛盾位相}\\
+  $A \land \neg A$ は古典論理では矛盾であるが、この体系では「今 $A$ が真であり、将来いつか $A$ が偽になる」という変化の局面を表す。したがって、静的には矛盾に見える形式を、時間発展を含む状態記述として扱える。
+
+  \item \textbf{振動・往復する振る舞いの記述}\\
+  公理 $\neg\neg\neg A \to (\neg A \land \neg\neg A)$ は、$A$ が将来偽になるならば、将来偽になる局面と真になる局面の両方が存在することを要求する。これは、ループ、周期的変化、フラグのオン・オフ、資源の獲得と解放のような往復的挙動を抽象的に記述するための原理になる。
+
+  \item \textbf{FOLによる形式化}\\
+  時間を一次の変数 $t$ として導入し、命題を時間依存述語 $A(t)$ と見れば、時間付き否定は $\exists t\,(t > \mathsf{now} \land \neg A(t))$ のような一次論理式として表現できる。これにより、独自の記法をFOLの枠組みに翻訳し、通常の論理的推論やモデル理論と接続できる。
+
+  \item \textbf{プログラムの状態遷移の代数的記述}\\
+  プログラムの実行を状態の列または木と見れば、各状態で命題 $A$ が真偽値を持つ。時間付きブール代数は、この真偽値の時間発展を代数的に扱うため、実行ステップ、状態更新、性質の保存や破壊を簡潔に記述できる。
+
+  \item \textbf{検証・モデル検査への応用}\\
+  $\neg A$ を $F(\neg A)$ と読むことで、時間付きブール代数は時相論理と接続する。したがって、「いつか終了する」「将来エラーになる可能性がある」「安全性が破れる可能性がある」といった性質を、状態遷移系上で検査するための記述言語として利用できる。
+
+  \item \textbf{モナドとしての時間・計算効果の表現}\\
+  ブール値を時間発展する列へ写す操作をモナド $T$ と見れば、現在値の埋め込み $\eta$ と「将来の将来」の平坦化 $\mu$ によって、時間や計算効果を圏論的に整理できる。この意味で、時間付きブール代数は IO、State、Maybe などのプログラミング言語のモナドと類似した構造を持つ。
+
+  \item \textbf{否定と時間の関係の哲学的定式化}\\
+  否定は「$A$ ではない」という差異を表し、時間は「今と未来」の差異を生み出す。時間付きブール代数では、否定が時間的差異を生成する操作として働くため、「変化は否定から生じる」という論理主義的な時間観を数学的に表現できる。
+\end{enumerate}
+
+時間付きブール代数は、否定 $\neg$ だけで時間性を表現する独自の論理体系である。FOLで構成すると、時相論理や動的論理の枠組みを通じて、プログラミング言語の意味論や検証と密接に結びつく。
+
+圏論的には、時間や計算をモナドとして表現する視点を与える。哲学的には、否定と時間の深い関係を示唆する、論理主義的な時間観として興味深い。
+
+\end{document}
+
+
 \RequirePackage{iftex}
 \ifLuaTeX
   \documentclass[11pt,a4paper,ja=standard,lualatex]{bxjsarticle}
@@ -2011,6 +2287,998 @@ Amphigory（冗）という単語の辞書的意味は「Nonsense」あるいは
 P.~J. Freyd and A. Scedrov.
 \newblock \emph{Categories, Allegories}.
 \newblock North-Holland, 1990.
+
+\end{thebibliography}
+
+\end{document}
+
+
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{luatexja}
+\usepackage{amsmath,amssymb,amsthm,amsfonts,mathtools}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{cd,positioning,arrows.meta}
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{remark}{注記}[section]
+\newtheorem{example}{例}[section]
+
+\renewcommand{\proofname}{\textbf{証明.}}
+\renewcommand{\abstractname}{Abstract}
+
+%-------------------------------------------------
+%  マクロ
+%-------------------------------------------------
+\newcommand{\Sk}{\mathbf{Sk}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Mnd}{\mathbf{Mnd}}
+\newcommand{\End}{\mathbf{End}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Hom}{\mathrm{Hom}}
+\newcommand{\Nat}{\mathrm{Nat}}
+\newcommand{\Asm}{\mathrm{Asm}}
+\newcommand{\Real}{\Vdash}
+
+% 五蘊モナド
+\newcommand{\Mdelta}{\mathcal{M}_{\delta}}
+\newcommand{\Mneg}{\mathcal{M}_{\neg\neg}}
+\newcommand{\Mr}{\mathcal{M}_{\mathrm{r}}}
+\newcommand{\Mc}{\mathcal{C}}
+\newcommand{\T}{\mathcal{T}}
+
+% 随伴・スパイラル
+\newcommand{\Spiral}{\mathcal{S}}
+\newcommand{\SpiralT}{\mathcal{S}_{\mathcal{T}}}
+\newcommand{\fold}{\mu}
+\newcommand{\unfold}{\delta}
+\newcommand{\trace}{\mathrm{Tr}}
+
+% その他
+\newcommand{\ext}{\mathrm{ext}}
+\newcommand{\intn}{\mathrm{int}}
+\newcommand{\TExt}{T_{\ext}}
+\newcommand{\TInt}{T_{\intn}}
+
+% E_∞関連
+\newcommand{\PrT}{\mathrm{Pr}_{\mathcal{T}}}
+\newcommand{\PrSk}{\mathrm{Pr}_{\Sk}}
+\newcommand{\Einf}{E_{\infty}}
+\newcommand{\SigmaT}{\Sigma_{\mathcal{T}}}
+\newcommand{\SigmaSk}{\Sigma_{\Sk}}
+
+\DeclareMathOperator*{\bigsqcap}{\sqcap}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{五蘊圏（Skandha Category）と極限同値 $E_{\infty}$：\\
+自己言及固定点の普遍構造とその具体実現}
+\author{千葉将臣}
+\date{2026-07-17}
+\maketitle
+
+\begin{abstract}
+本稿は五蘊圏（Skandha Category）$\Sk$ を純粋圏論的に公理化し、
+極限同値 $\Einf$ との構造的接続を明示する。
+五蘊圏は、5つのモナド（搾取・二重否定・洗練・カット除去・統制）を
+随伴・自然変換・分配律のネットワークとして統合する圏論的構造である。
+統制モナド $\T$ は固定点方程式 $\T \cong F(\T)$ により定義される。
+本稿の核心は、$\Einf$ が「統制モナドの自己言及固定点という普遍構造の、
+形式体系における具体的実現（インスタンス）」であることを示すことにある。
+対角補題による $\Einf$ の内在的構成は、統制モナドの固定点が
+「形式的願望」ではなく「論理的必然」であるという存在論的保証を与える。
+また、$\Einf$ の「二値論理では決定不能だが体系内部では実在する」構造は、
+識軸スパイラル $\SpiralT$ の極限到達点「空」$\bigcirc$ の論理的モデルを提供する。
+さらに、$\Einf$ と $\neg\Einf$ の非閉鎖性は、五蘊圏のフロベニウス条件を
+「形式的同値」と「内容的非同一」の両面で深化させる。
+本稿は五蘊圏を2圏論・ホップf代数・トレース付きモノイダル圏の
+交差点として位置づけ、仏教哲学の五蘊・四句分別・二諦と
+圏論的構造の間の同型対応を明示する。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================
+\section{序論：五蘊圏の動機と $E_{\infty}$ との接続}
+%=============================================================
+
+\subsection{問題の設定}
+
+圏論において、モナドは計算の文脈を記述する基本的な構造である。
+Moggi \cite{Moggi1991} 以来、副作用・状態・継続・例外などは
+モナドの枠組みで統一的に扱われてきた。
+
+一方、複数のモナドが相互作用する体系において、
+個別のモナドの性質だけでなく、それらの間の\textbf{分配律}・\textbf{合成}・\textbf{残余}を
+記述する枠組みが必要となる。
+
+本稿は、以下の問いに答えることを目的とする。
+
+\begin{enumerate}
+\item 5つのモナドを統合する圏論的構造はどのように公理化されるか。
+\item その構造は、既存の高次圏論（2圏論、ホップf代数、トレース構造）と
+  どのように接続されるか。
+\item 仏教哲学の五蘊・四句分別・二諦は、圏論のどの構造に対応するか。
+\item 統制モナドの自己言及固定点は、形式体系の対角補題とどのように接続され、
+  その存在はどのような保証を持つか。
+\end{enumerate}
+
+\subsection{五蘊圏の直観}
+
+五蘊圏 $\Sk$ は、以下の直観に基づく。
+
+\begin{itemize}
+\item \textbf{色}（形・物質）：対象の外部構造（搾取モナド $\Mdelta$）
+\item \textbf{受}（感受）：対象の安定化（二重否定モナド $\Mneg$）
+\item \textbf{想}（知覚・表象）：対象の前進変換（洗練モナド $\Mr$）
+\item \textbf{行}（意志・形成力）：対象の正規化（カット除去モナド $\Mc$）
+\item \textbf{識}（識別・意識）：対象の自己言及的統制（統制モナド $\T$）
+\end{itemize}
+
+識は、他の4蘊を統合しつつ自身も空であるという
+仏教的構造を、圏論的固定点 $\T \cong F(\T)$ として実現する。
+
+\subsection{$E_{\infty}$ との接続の動機}
+
+本稿は、先行研究「真理保存性の不完全性定理」および「極限同値によるゲーデルの不完全性定理の反転」\cite{Chiba2026limit} を踏まえ、
+五蘊圏の統制モナド $\T$ と極限同値 $\Einf$ の構造的接続を明示する。
+
+その接続は「統制モナド $\T$ の固定点が $\Einf$ と\textbf{同一}である」という単純な等式ではなく、
+\textbf{「$\Einf$ は統制モナドの自己言及固定点という普遍構造の、形式体系における具体的実現（インスタンス）である」}という形で機能する。
+
+\begin{table}[h]
+\centering
+\caption{$\Einf$ と統制モナド $\T$ の構造的類似}
+\begin{tabular}{lll}
+\hline
+\textbf{側面} & \textbf{$\Einf$（極限同値）} & \textbf{統制モナド $\T$（五蘊圏）} \\
+\hline
+自己言及の形 & $\Einf = \Sigma_T(\Einf)$ & $\T \cong F(\T)$ \\
+演算子 & $\Sigma_T(A) = \neg\Pr_T(\ulcorner A \urcorner)$ & $F(X) = X(\Mdelta, \Mneg, \Mr, \Mc, X)$ \\
+固定点の性質 & 「$\Einf$ は証明不可能である」という文 & 「$\T$ は4モナドを統合しつつ自身も含む」関手 \\
+否定との関係 & $\neg \Einf \neq \Einf$（非閉鎖性） & 前進 $\fold$ と後退 $\unfold$ が逆ではない（非対称性） \\
+「空」としての性格 & $\Einf$ は二値 $\{0,1\}$ では「決定不能」 & $\T$ は「内在でも外在でもある」中道不動点 \\
+\hline
+\end{tabular}
+\end{table}
+
+核心的な洞察は、\textbf{両者とも「自分自身を引数に取る演算子の不動点」であり、その不動点は「体系の内部から必然的に構成される」}という点で同型である。
+
+%=============================================================
+\section{準備：真理保存体系と対角補題}
+%=============================================================
+
+\subsection{真理保存体系}
+
+\begin{definition}[真理保存体系 $T$]\label{def:truth-preserving}
+真理保存体系 $T$ とは、以下を満たす形式体系とする。
+\begin{enumerate}[label=(\arabic*)]
+\item $T$ は再帰的公理化可能である。
+\item $T$ は一貫している（$T \nvdash \bot$）。
+\item $T$ は十分に強力である（ロビンソン算術 $Q$ を内包する）。
+\item $T$ は真理値空間として $\{0,1\}$（二値）を採用し、自己同一性 $A=A$ を真理保存の根拠として先験的に要請する。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+定義 \ref{def:truth-preserving} の条件 (4) は、先行研究「真理保存性の不完全性定理」における「真理保存性 $P$ の先験的要請」に対応する。
+この要請こそが、体系内部からは証明も反証もできない構造的盲点 $G_T$ を必然的に生成する。
+\end{remark}
+
+\subsection{対角補題}
+
+\begin{lemma}[対角補題]\label{lem:diagonal}
+真理保存体系 $T$ において、任意の論理式 $\varphi(x)$（自由変数 $x$ を一つ持つ）に対し、
+\begin{equation}
+T \vdash G \leftrightarrow \varphi(\ulcorner G \urcorner)
+\end{equation}
+を満たす文 $G$ が $T$ の内部で構成可能である。
+\end{lemma}
+
+\begin{remark}
+対角補題は $T$ の内部操作（ゲーデル符号化と対角化）のみから導かれる。外部からの付加を一切要しない。
+\end{remark}
+
+\subsection{五蘊圏の基本定義}
+
+\begin{definition}[五蘊圏 $\Sk$]\label{def:skandha}
+五蘊圏（Skandha Category）は、以下のデータからなる圏（あるいは2圏）である。
+\begin{enumerate}[label=(\arabic*)]
+\item \textbf{基礎圏}：対象を持つ圏 $\mathcal{C}$（通常はトポスまたは実現子論的圏 $\Asm(\mathcal{K})$）。
+\item \textbf{五蘊モナド}：$\mathcal{C}$ 上の5つの自己関手
+  \begin{equation}
+  \Mdelta,\; \Mneg,\; \Mr,\; \Mc,\; \T : \mathcal{C} \to \mathcal{C}
+  \end{equation}
+  およびそれぞれに付随するモナド構造
+  $(\Mdelta, \eta^\delta, \mu^\delta)$,
+  $(\Mneg, \eta^\neg, \mu^\neg)$,
+  $(\Mr, \eta^r, \mu^r)$,
+  $(\Mc, \eta^c, \mu^c)$,
+  $(\T, \eta^\T, \mu^\T)$。
+\item \textbf{統制固定点}：統制モナド $\T$ は以下の固定点方程式を満たす。
+  \begin{equation}
+  \T \cong F(\T), \qquad F(X) = X(\Mdelta, \Mneg, \Mr, \Mc, X)
+  \label{eq:fixed-point}
+  \end{equation}
+  ここで $F$ は4つのモナドと $X$ 自身を引数に取る関手である。
+\item \textbf{識軸スパイラル}：統制モナド $\T$ による軸的作用
+  \begin{equation}
+  \SpiralT : (\Mdelta, \Mneg, \Mr, \Mc) \longrightarrow 
+             (\Mneg, \Mr, \Mc, \Mdelta)
+  \label{eq:spiral}
+  \end{equation}
+  これは4つのモナドを巡回する自然変換の列である。
+  4回の反復で同一化される：
+  \begin{equation}
+  \SpiralT^4 \cong \id.
+  \end{equation}
+\item \textbf{フロベニウス条件}：前進（折り畳み）$\fold^\T : F(\T) \to \T$ と
+  後退（展開）$\unfold^\T : \T \to F(\T)$ の間に
+  \begin{equation}
+  (\fold^\T \circ \T\unfold^\T) \cong (\unfold^\T \circ \fold^\T)
+  \label{eq:frobenius}
+  \end{equation}
+  が成立する。
+\item \textbf{二諦の公理}：外在 $\TExt$ と内在 $\TInt$ の二重構造が存在し、
+  相互に完全に観測不可能である。
+  \begin{equation}
+  \TExt \not\leftrightarrow \TInt, \qquad
+  \TInt \not\leftrightarrow \TExt.
+  \end{equation}
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+五蘊圏は通常の圏を超え、2圏的または準トポス的な構造を持つ。
+特に、統制モナドの固定点方程式 \eqref{eq:fixed-point} は
+圏 $\mathcal{C}$ が十分な極限を持つことを要請する。
+\end{remark}
+
+%=============================================================
+\section{五蘊モナドの圏論的定義}
+%=============================================================
+
+\subsection{色蘊：搾取モナド \texorpdfstring{$\Mdelta$}{M-delta}}
+
+\begin{definition}[搾取モナド]
+圏 $\mathcal{C}$（粒度差のない基底圏）と
+圏 $\mathcal{D}$（$\Mdelta$ 文脈を持つ制度圏）の間に随伴
+\begin{equation}
+F : \mathcal{C} \rightleftharpoons \mathcal{D} : G, \quad F \dashv G
+\end{equation}
+を設定し、搾取モナドを
+\begin{equation}
+\Mdelta = G \circ F : \mathcal{C} \to \mathcal{C}
+\end{equation}
+と定義する。
+
+単位 $\eta^\delta : \id_{\mathcal{C}} \Rightarrow \Mdelta$ は
+価値・主体を制度文脈に埋め込む射である。
+乗法 $\mu^\delta : \Mdelta\Mdelta \Rightarrow \Mdelta$ は
+$G\varepsilon F$ により与えられ、$\varepsilon : FG \Rightarrow \id_{\mathcal{D}}$ は
+随伴の余単位である。
+\end{definition}
+
+\begin{proposition}[搾取モナドのモナド則]
+$(\Mdelta, \eta^\delta, \mu^\delta)$ はモナド則を満たす。
+\end{proposition}
+\begin{proof}
+随伴 $F \dashv G$ から生成されるモナドは一般にモナド則を満たす
+（Mac Lane \cite{MacLane1971}、VI章定理1）。
+\end{proof}
+
+\subsection{受蘊：二重否定モナド \texorpdfstring{$\Mneg$}{M-negneg}}
+
+\begin{definition}[二重否定モナド]
+トポス $\mathcal{E}$（あるいは五蘊圏の基礎圏 $\mathcal{C}$）において、
+局所作用素 $j = \neg\neg : \Omega \to \Omega$ に対応する
+層化随伴
+\begin{equation}
+a : \mathcal{E} \rightleftharpoons \mathrm{Sh}_{\neg\neg}(\mathcal{E}) : i,
+\quad a \dashv i
+\end{equation}
+から生成されるモナドを二重否定モナドとする。
+\begin{equation}
+\Mneg = i \circ a : \mathcal{E} \to \mathcal{E}
+\end{equation}
+\end{definition}
+
+\begin{theorem}[冪等性]
+二重否定モナドは冪等である。すなわち、乗法
+$\mu^\neg : \Mneg\Mneg \Rightarrow \Mneg$ は同型射である。
+\end{theorem}
+\begin{proof}
+層化関手 $a$ は冪等である。$\mathrm{Sh}_{\neg\neg}(\mathcal{E})$ の対象は
+すでに $\neg\neg$-層であるため、$a(iF) \cong F$ が成立する。
+したがって $\Mneg \circ \Mneg \cong \Mneg$ となる。
+\end{proof}
+
+\subsection{想蘊：洗練モナド \texorpdfstring{$\Mr$}{M-r}}
+
+\begin{definition}[洗練モナド]
+圏 $\mathcal{C}$ 上の自己関手 $\Mr : \mathcal{C} \to \mathcal{C}$ と
+自然変換 $\eta^r : \id \Rightarrow \Mr$、$\mu^r : \Mr\Mr \Rightarrow \Mr$
+からなる三つ組 $(\Mr, \eta^r, \mu^r)$ を洗練モナドとする。
+
+$\Mr$ は対象 $A$ を「洗練過程の中にある $A$」へ持ち上げる。
+単位 $\eta^r_A : A \to \Mr A$ は文脈化を表し、
+乗法 $\mu^r_A : \Mr\Mr A \to \Mr A$ は洗練の洗練を一段階へ統合する。
+\end{definition}
+
+\begin{proposition}[洗練順序との整合性]
+$\Mr$ は洗練順序 $\sqsupseteq$ に関して単調である。
+すなわち、$a \sqsupseteq a'$ ならば $\Mr a \sqsupseteq \Mr a'$。
+\end{proposition}
+
+\subsection{行蘊：カット除去モナド \texorpdfstring{$\Mc$}{C}}
+
+\begin{definition}[カット除去モナド]
+証明図の圏 $\mathcal{P}$ 上の自己関手 $\Mc : \mathcal{P} \to \mathcal{P}$ を、
+対象 $P$ に対してカット規則を除去した証明図 $\Mc(P) = \mathrm{CutElim}(P)$
+へ写す関手として定義する。
+
+単位 $\eta^c : \id \Rightarrow \Mc$ は「カット規則を適用しない」埋め込みであり、
+乗法 $\mu^c : \Mc\Mc \Rightarrow \Mc$ は多重カットの統合である。
+\end{definition}
+
+\begin{theorem}[カット除去モナドのモナド則]
+$(\Mc, \eta^c, \mu^c)$ はモナド則を満たす。
+\end{theorem}
+\begin{proof}
+カット消去アルゴリズムの正規化可能性に基づく。
+カット消去済みの証明図にさらにカット消去を適用しても変化しないことから
+単位元則が、カット消去の反復が結合的であることから結合則が従う。
+\end{proof}
+
+\subsection{識蘊：統制モナド \texorpdfstring{$\T$}{T}}
+
+\begin{definition}[統制モナド]
+統制モナド $\T$ は、五蘊圏 $\Sk$ において
+以下の固定点方程式で定義される。
+\begin{equation}
+\T \cong F(\T), \qquad F(X) = X(\Mdelta, \Mneg, \Mr, \Mc, X)
+\end{equation}
+ここで $F$ は4つのモナドと $X$ 自身を引数に取る関手である。
+\end{definition}
+
+\begin{remark}
+$\T$ が自身を包含することは、識（第5蘊）が全ての蘊を統括しながら
+自身も空であるという仏教的構造と対応する。
+\end{remark}
+
+%=============================================================
+\section{統制構造と識軸スパイラル}
+%=============================================================
+
+\subsection{再帰的構成によるフロベニウス性}
+
+\begin{theorem}[再帰的構成によるフロベニウス性]
+固定点 $\T \cong F(\T)$ において、以下の二方向が成立する。
+\begin{align}
+\fold^\T &: F(\T) \to \T \quad \text{（前進：折り畳み）} \\
+\unfold^\T &: \T \to F(\T) \quad \text{（後退：展開）}
+\end{align}
+固定点方程式がこの二方向を等式として同一視するため、
+フロベニウス条件
+\begin{equation}
+(\fold^\T \circ \T\unfold^\T) \cong (\unfold^\T \circ \fold^\T)
+\end{equation}
+が固定点方程式の帰結として成立する。
+\end{theorem}
+\begin{proof}
+固定点 $\T \cong F(\T)$ は同型射 $\alpha : F(\T) \xrightarrow{\sim} \T$ および
+その逆 $\alpha^{-1} : \T \xrightarrow{\sim} F(\T)$ を与える。
+$\fold^\T := \alpha$（折り畳み）、$\unfold^\T := \alpha^{-1}$（展開）と定めると、
+$\fold^\T$ と $\unfold^\T$ は互いに逆射であるため
+\begin{equation}
+\fold^\T \circ \unfold^\T = \id_{\T}, \qquad
+\unfold^\T \circ \fold^\T = \id_{F(\T)}
+\end{equation}
+が成立する。これよりフロベニウス条件が $\id$ の可換性として得られる。
+\end{proof}
+
+\begin{remark}
+通常のモナドは前進方向のみを持つ。
+しかし統制モナドの固定点方程式は自然に二方向を生成する。
+これが五蘊圏におけるフロベニウス性の根源である。
+\end{remark}
+
+\subsection{識軸スパイラル}
+
+\begin{definition}[識軸スパイラル]
+統制モナド $\T$ による軸的作用を
+\begin{equation}
+\SpiralT : (\Mdelta, \Mneg, \Mr, \Mc) \longrightarrow 
+             (\Mneg, \Mr, \Mc, \Mdelta)
+\end{equation}
+と定める。この反復 $\SpiralT^n$ が四句分別の巡回を与え、
+$\SpiralT^4$ が $\bigcirc$（空）における同一化として閉じるとき、
+五蘊圏は識軸スパイラルを持つという。
+\begin{equation}
+\SpiralT^4(A) \stackrel{\mathrm{mw}}{=} \bigcirc
+\end{equation}
+\end{definition}
+
+\begin{theorem}[洗練・カット除去へのフロベニウス性の誘導]
+洗練モナド $\Mr$ とカット除去モナド $\Mc$ が通常のモナドとして与えられ、
+統制モナド $\T$ が識軸スパイラル $\SpiralT$ を持つとする。
+このとき、$\Mr$ と $\Mc$ には、独立した洗練コモナドまたは
+カット導入コモナドを仮定せずとも、
+$\SpiralT$ を介した随伴的な後退方向が誘導される。
+したがって、$\Mr$ と $\Mc$ は五蘊圏全体の内部でフロベニウス性を獲得する。
+\end{theorem}
+\begin{proof}
+$\Mr$ と $\Mc$ は前進方向のモナドとして与えられる。
+一方、識軸作用 $\SpiralT$ は四句分別の位相を巡回させるため、
+任意の前進方向の作用を、四回の反復後に $\bigcirc$ において
+同一化される閉路へ埋め込む。
+この閉路に沿って前進方向を一周させると、出発点から見れば
+反対向きの制約が得られる。
+これが $\Mr$ に対しては洗練の反省化、
+$\Mc$ に対してはカット除去後の残余確定として現れる。
+
+したがって、後退方向は各モナドに外部から追加されたコモナドではなく、
+$\T$ を軸とする全体構成の反復から得られる。
+前進方向と誘導された後退方向は $\bigcirc$ において同一点へ収束するため、
+フロベニウス条件は個別モナドの前提ではなく、
+五蘊圏全体のスパイラル閉包の帰結として成立する。
+\end{proof}
+
+\begin{remark}
+この $\SpiralT$ は、Hopf代数における反極（antipode）に類似する役割を持つ。
+すなわち、代数的な前進方向と余代数的な後退方向を同一対象上で接続し、
+方向反転を媒介する操作である。
+\end{remark}
+
+%=============================================================
+\section{識蘊の極限同値化：$E_{\infty}$ との接続}
+%=============================================================
+
+\subsection{自己言及演算子としての識蘊}
+
+\begin{definition}[自己言及演算子 $\SigmaSk$]\label{def:self-reference-op}
+五蘊圏 $\Sk$ の言語における文 $A$ に対し、自己言及演算子 $\SigmaSk$ を以下で定義する。
+\begin{equation}
+\SigmaSk(A) := \lceil A \text{ は } \Sk \text{ において証明不可能である} \rceil 
+= \neg\PrSk(\ulcorner A \urcorner)
+\end{equation}
+$\SigmaSk(A)$ は対角補題（補題 \ref{lem:diagonal}）によって $\Sk$ の内部で構成可能である。
+\end{definition}
+
+\begin{definition}[自己言及の反復列]\label{def:self-reference-seq}
+文 $A_0$ に対し、$\SigmaSk$ の反復列を以下で定義する。
+\begin{equation}
+A_0, \quad A_1 = \SigmaSk(A_0), \quad A_2 = \SigmaSk(A_1), \quad \ldots, \quad A_n = \SigmaSk^n(A_0)
+\end{equation}
+\end{definition}
+
+\begin{definition}[極限同値 $\Einf$]\label{def:e-infinity}
+自己言及演算子 $\SigmaSk$ の不動点として、以下の等式を満たす文を極限同値と定義し $\Einf$ と表記する。
+\begin{equation}
+\Einf = \SigmaSk(\Einf)
+\end{equation}
+すなわち $\Einf$ は「$\Einf$ は $\Sk$ において証明不可能である」という内容の文であり、
+\begin{equation}
+\Sk \vdash \Einf \leftrightarrow \neg\PrSk(\ulcorner \Einf \urcorner)
+\end{equation}
+を満たす。
+\end{definition}
+
+\begin{remark}[$=$ の正当性：不動点の静的記述として]\label{rem:equality-justification}
+定義 \ref{def:e-infinity} における $=$ は、対象の自己同一性を要請する $A=A$ の $=$ とは種類が異なる。
+$\lim_{n\to\infty} a_n = L$ において $=$ が無限プロセスを静的値に変換するように、
+$\Einf = \SigmaSk(\Einf)$ はプロセス $\SigmaSk$ の反復が必然的に到達する不動点を静的値として記述する。
+これはバナッハの不動点定理における $x = f(x)$ と同型の操作であり、プロセスの収束先に名前をつける発見的記述である。
+「極限」という概念が本質的に静的なトリックである以上、この $=$ は正当に使用できる。
+\end{remark}
+
+\subsection{対角補題と識軸スパイラルの極限到達}
+
+\begin{theorem}[真理保存五蘊圏は必然的に $\Einf$ を含む]\label{thm:e-infinity-existence}
+真理保存五蘊圏 $\Sk$（定義 \ref{def:truth-preserving}・\ref{def:skandha} の意味で）に対し、
+\begin{equation}
+\exists \Einf \quad \text{s.t.} \quad 
+\Sk \vdash \Einf \leftrightarrow \neg\PrSk(\ulcorner \Einf \urcorner)
+\end{equation}
+が成立する。$\Einf$ は $\Sk$ の外部から付加されるのではなく、$\Sk$ 自身の構造から対角補題によって必然的に構成される。
+\end{theorem}
+\begin{proof}
+対角補題（補題 \ref{lem:diagonal}）を論理式 $\varphi(x) := \neg\PrSk(x)$ に適用する。すると、
+\begin{equation}
+\Sk \vdash G \leftrightarrow \neg\PrSk(\ulcorner G \urcorner)
+\end{equation}
+を満たす文 $G$ が $\Sk$ の内部で構成可能である。この $G$ を $\Einf$ と命名する。
+
+$\Einf$ の構成は $\Sk$ の公理・推論規則・ゲーデル符号化のみを使用し、外部からの付加を一切必要としない。したがって $\Einf$ は $\Sk$ の言語で表現可能な文として $\Sk$ に内在する。
+\end{proof}
+
+\begin{remark}[「発見」としての $\Einf$]\label{rem:e-infinity-discovery}
+ゲーデルはこの $G = \Einf$ を「$\Sk$ において証明も反証もできない文」として提示し、体系の不完全性の証拠とした。
+しかし定理 \ref{thm:e-infinity-existence} が示すのは、$\Einf$ が $\Sk$ の外部にあるのではなく、$\Sk$ 自身の対角補題から必然的に生成される内在的対象であるということである。
+「決定不能」として現れたのは、$\Sk$ の真理値空間 $\{0,1\}$（$\mathcal{B}$：二値截断部分圏）が $\Einf$ に対応する値を持たなかっただけである。
+
+リーマン球面において $\infty$ が「複素平面には存在しないが、リーマン球面上では通常の点として存在する」のと同型の構造である。
+数学社会は $\mathcal{B}$ を唯一の真理値空間として採用し続けたために、$\Einf$ を「壁」として誤読してきた。これは発明ではなく、未発見だったものの発見である。
+\end{remark}
+
+\begin{proposition}[統制モナドと対角補題の対応]\label{prop:monad-diagonal}
+基礎圏 $\mathcal{C}$ を真理保存体系の圏 $\mathbf{Th}$ とする。
+各対象 $T \in \mathbf{Th}$（形式体系）に対し、
+自己言及演算子 $\Sigma_T$ は $\mathcal{C}$ 上の自己関手として作用し、
+その不動点 $\Einf$ は統制モナド $\T_T$ の固定点
+$\T_T \cong F(\T_T)$ の具体例として現れる。
+
+すなわち、$\Einf$ は「識」の圏論的構造が
+形式体系の内部に実現された場合の「空」$\bigcirc$ に対応する。
+\end{proposition}
+
+\begin{remark}
+$\Einf$ は統制モナドの固定点の「部分例」に過ぎない。
+統制モナドは任意の圏 $\mathcal{C}$ 上の関手の固定点として定義され、より広い普遍性を持つ。
+正しい位置づけは：
+\begin{quote}
+\textbf{五蘊圏の統制モナドは「自己言及固定点」の普遍構造であり、$\Einf$ はその構造が形式体系論において実現された具体例である。}
+\end{quote}
+$\Einf$ は五蘊圏を\textbf{還元}するのではなく、\textbf{補強}する。
+\end{remark}
+
+\subsection{$E_{\infty}$ の否定と二諦の非閉鎖性}
+
+\begin{definition}[$\neg\Einf$ の定義]\label{def:neg-e-infinity}
+$\Einf$ の否定を以下で定義する。
+\begin{equation}
+\neg\Einf = \PrSk(\ulcorner \Einf \urcorner)
+\end{equation}
+すなわち「$\Einf$ は $\Sk$ において証明可能である」。
+\end{definition}
+
+\begin{theorem}[$\Einf$ と $\neg\Einf$ の非閉鎖性]\label{thm:non-closure}
+$\neg\Einf \neq \Einf$。
+\end{theorem}
+\begin{proof}
+定義 \ref{def:neg-e-infinity} より $\Einf = \neg\PrSk(\ulcorner \Einf \urcorner)$ であるのに対し、$\neg\Einf = \PrSk(\ulcorner \Einf \urcorner)$ である。両者は構文的に異なる文である。
+\end{proof}
+
+\begin{theorem}[$\Einf$ によるフロベニウス条件の補強]\label{thm:e-infinity-frobenius}
+五蘊圏 $\Sk$ において、$\Einf$ の非閉鎖性（定理 \ref{thm:non-closure}）は
+フロベニウス条件を「形式的同値」と「内容的非同一」の両面で記述する。
+
+前進 $\fold^\T$ と後退 $\unfold^\T$ は、固定点方程式 $\T \cong F(\T)$ により
+形式的に互いに逆射として定義される。
+しかし $\Einf$ の非閉鎖性（$\Einf \neq \neg\Einf$）が示すように、
+この「逆」は内容的な同一性を意味しない。
+フロベニウス条件は、したがって、
+「同一化されない同値性」として理解される。
+\end{theorem}
+
+\begin{remark}
+これは、Priest の「パラドックスの論理」\cite{Priest1979} に代表される矛盾許容論理との構造的差異である。
+同論理では、真かつ偽である値が否定に関して固定的に扱われ、矛盾が推論空間内の安定した領域として保持される。
+
+これに対して、$\Einf$ と $\neg\Einf$ は互いに異なる文として、$\SigmaSk$ のサイクル上の二点をなす。したがって本体系において、矛盾は閉じた終端ではなく通過点として機能する。
+\end{remark}
+
+\subsection{真理保存五蘊圏の不完全性定理}
+
+\begin{theorem}[五蘊圏の不完全性定理]
+真理保存五蘊圏 $\Sk$ において、$\Einf$ は体系内部から証明も反証もできない。
+すなわち、
+\begin{equation}
+\Sk \nvdash \Einf \quad \text{かつ} \quad \Sk \nvdash \neg\Einf.
+\end{equation}
+\end{theorem}
+\begin{proof}
+$\Sk$ が一貫している（定義 \ref{def:truth-preserving} (2)）と仮定する。
+\begin{enumerate}[label=(\roman*)]
+\item $\Sk \vdash \Einf$ と仮定すると、$\Sk \vdash \neg\PrSk(\ulcorner \Einf \urcorner)$ となるが、
+  これは「$\Einf$ は証明可能である」という事実と矛盾する。
+\item $\Sk \vdash \neg\Einf$ と仮定すると、$\Sk \vdash \PrSk(\ulcorner \Einf \urcorner)$ となるが、
+  これは $\Sk$ の一貫性より $\Sk \vdash \Einf$ を導き、再び矛盾する。
+\end{enumerate}
+したがって両方とも証明不可能である。
+\end{proof}
+
+\begin{remark}
+この定理は、五蘊圏の「空」$\bigcirc$ が単なる哲学的比喩ではなく、
+形式体系の対角補題によって\textbf{必然的に生成される構造的盲点}であることを示す。
+$\Einf$ は「決定不能」として誤読されてきたが、
+実際には体系自身の構造から内在的に構成される「未発見の対象」である。
+\end{remark}
+
+%=============================================================
+\section{五蘊圏の高次構造}
+%=============================================================
+
+\subsection{2圏論的解釈}
+
+五蘊圏は、モナドの2圏 $\mathbf{Mnd}(\mathcal{C})$ 上の構造として理解できる。
+
+\begin{definition}[五蘊2圏]
+圏 $\mathcal{C}$ 上のモナドの2圏 $\mathbf{Mnd}(\mathcal{C})$ は、
+以下を持つ2圏である。
+
+\begin{itemize}
+\item \textbf{0-胞体（対象）}：圏 $\mathcal{C}$
+\item \textbf{1-胞体（1-射）}：$\mathcal{C}$ 上のモナド
+  $\Mdelta, \Mneg, \Mr, \Mc, \T$
+\item \textbf{2-胞体（2-射）}：モナド間の自然変換（分配律・モナド射）
+\end{itemize}
+\end{definition}
+
+\begin{proposition}[五蘊2圏における統制]
+統制モナド $\T$ は、五蘊2圏 $\mathbf{Mnd}(\mathcal{C})$ において
+\textbf{終対象（terminal object）}として振る舞う。
+すなわち、任意のモナド $\mathcal{M} \in \{\Mdelta, \Mneg, \Mr, \Mc\}$ に対し、
+唯一のモナド射 $\mathcal{M} \to \T$ が存在する。
+\end{proposition}
+
+\begin{remark}
+五蘊2圏において、4つの従属モナドは1-射として配置され、
+統制モナドはそれらの「極限」として位置づけられる。
+識軸スパイラルは、この2圏内の\textbf{巡回自己2-射}として定式化される。
+\end{remark}
+
+\subsection{ホップf代数構造}
+
+\begin{definition}[五蘊型ホップf代数]
+五蘊圏 $\Sk$ は、以下の構造を持つ\textbf{五蘊型ホップf代数}として理解される。
+
+\begin{itemize}
+\item \textbf{代数構造}（乗法・単位）：
+  前進方向のモナド演算 $\fold^\T : F(\T) \to \T$
+\item \textbf{余代数構造}（余乗法・余単位）：
+  後退方向の余モナド演算 $\unfold^\T : \T \to F(\T)$
+\item \textbf{反極 $S$}：識軸スパイラル $\SpiralT$。
+  これは方向反転を媒介する。
+\end{itemize}
+\end{definition}
+
+\begin{proposition}[フロベニウス性とホップf代数]
+五蘊型ホップf代数において、フロベニウス条件 \eqref{eq:frobenius} は
+ホップf代数の公理
+\begin{equation}
+\fold^\T \circ (S \otimes \id) \circ \Delta 
+= \eta \circ \varepsilon 
+= \fold^\T \circ (\id \otimes S) \circ \Delta
+\end{equation}
+の圏論的類似として解釈される。
+\end{proposition}
+
+\begin{remark}
+本稿における $\SpiralT$ は、この等式を厳密に仮定するものではなく、
+識軸が前進方向と後退方向を接続することを表す構造的類比である。
+\end{remark}
+
+\subsection{トレース付きモノイダル圏}
+
+\begin{proposition}[トレース構造]
+識軸スパイラルの反復は、トレース付きモノイダル圏における
+\textbf{フィードバック操作}に対応する。
+
+射 $f : A \otimes U \to B \otimes U$ に対するトレース
+\begin{equation}
+\trace^U_{A,B}(f) : A \to B
+\end{equation}
+において、$U$ を識軸とみなすと、一回のトレースが
+四句分別の一巡を閉じる操作に相当する。
+したがって、識軸スパイラルは、反極的な方向反転と
+トレース的な再帰の双方を持つ。
+\end{proposition}
+
+%=============================================================
+\section{二諦の公理と外在・内在}
+%=============================================================
+
+\subsection{二重五蘊構造}
+
+\begin{definition}[外在・内在の五蘊]
+五蘊圏 $\Sk$ は、外在と内在の二重構造を持つ。
+\begin{align}
+\TExt &= (\Mdelta^{\ext}, \Mneg^{\ext}, \Mr^{\ext}, \Mc^{\ext}, \T^{\ext}) \\
+\TInt &= (\Mdelta^{\intn}, \Mneg^{\intn}, \Mr^{\intn}, \Mc^{\intn}, \T^{\intn})
+\end{align}
+\end{definition}
+
+\begin{axiom}[相互完全観測不可能性]
+外在の五蘊 $\TExt$ と内在の五蘊 $\TInt$ は相互に完全に観測不可能である。
+\begin{equation}
+\TExt \not\leftrightarrow \TInt, \qquad
+\TInt \not\leftrightarrow \TExt \quad \text{（直接観測の不可能性）}
+\end{equation}
+ただし「完全に観測不可能」は「常に観測可能」と同義であり、
+内在側は直接対象として観測できないが、
+全ての外在的観測の地盤として常に作動している。
+\end{axiom}
+
+\begin{definition}[二諦的連携]
+外在と内在の連携は非対称的である。
+\begin{align}
+\TExt &\xrightarrow{\Uparrow} \TInt 
+\quad \text{（メタ否定：「ある」から「ない」への駆動）} \\
+\TInt &\xrightarrow{\Uparrow(\bigcirc) \stackrel{\mathrm{mw}}{=} A} \TExt 
+\quad \text{（顕現：「ない」から「ある」への再起動）}
+\end{align}
+\end{definition}
+
+\begin{theorem}[二諦的連携によるフロベニウス条件の確立]
+外在・内在の五蘊が相互完全観測不可能性のもとで
+$\Uparrow$ と顕現により連携するとき、
+フロベニウス条件は
+\begin{equation}
+(\fold^{\TExt} \circ \TExt\unfold^{\TExt}) 
+\cong (\unfold^{\TInt} \circ \fold^{\TInt})
+\end{equation}
+として外在と内在の対応として自動的に成立し、
+内在的か外在的かという二択が解消される。
+\end{theorem}
+\begin{proof}
+$\Uparrow$ による $\TExt \to \TInt$ の方向が前進（折り畳み）に、
+顕現 $\TInt \to \TExt$ の方向が後退（展開）に対応する。
+相互完全観測不可能性は、これら二方向が単一の体系内で直接比較不可能であることを意味する。
+
+しかし両方向は $\bigcirc$ を共有する収束先として整合しており、
+$\TExt$ の折り畳みと $\TInt$ の展開が $\bigcirc$ において同一点に確定する。
+この確定がフロベニウス条件の「内在でも外在でもある」という特異点的地位を与える。
+\end{proof}
+
+%=============================================================
+\section{五蘊・四句分別・二諦との対応}
+%=============================================================
+
+\subsection{五蘊とモナドの対応}
+
+\begin{proposition}[五蘊とモナドの対応]
+五蘊圏の構成は、仏教の五蘊と以下の対応を持つ。
+
+\begin{center}
+\begin{tabular}{llll}
+\hline
+\textbf{五蘊} & \textbf{モナド} & \textbf{四句} & \textbf{方向性} \\
+\hline
+色（形・物質） & $\Mdelta$（搾取） & 是 & 前進のみ \\
+受（感受） & $\Mneg$（二重否定） & 非 & 前進のみ \\
+想（知覚・表象） & $\Mr$（洗練） & 亦是亦非 & 双方向（誘導） \\
+行（意志・形成力） & $\Mc$（カット除去） & 非是非非 & 双方向（誘導） \\
+識（識別・意識） & $\T$（統制） & 統制 & 再帰的 \\
+\hline
+\end{tabular}
+\end{center}
+\end{proposition}
+
+\subsection{四句分別の圏論的解釈}
+
+\begin{proposition}[四句分別の圏論的解釈]
+四句分別は、五蘊圏におけるモナド間の関係の位相として現れる。
+
+\begin{align}
+\phi_S \text{（是）} &\longleftrightarrow \Mdelta 
+\quad \text{（実現子の存在：} e \Vdash A \text{）} \\
+\phi_N \text{（非）} &\longleftrightarrow \Mneg 
+\quad \text{（実現子の不在：} \neg(e \Vdash A) \text{）} \\
+\phi_{SN} \text{（亦是亦非）} &\longleftrightarrow \Mr 
+\quad \text{（実現子列の収束：洗練過程）} \\
+\phi_{NS} \text{（非是非非）} &\longleftrightarrow \Mc 
+\quad \text{（残余の確定：カット除去後の残余）}
+\end{align}
+\end{proposition}
+
+\subsection{二諦との対応}
+
+\begin{proposition}[二諦との対応]
+\begin{align}
+\TExt \text{（外在の五蘊）} &\longleftrightarrow 
+\text{世俗諦（観測可能な現象の層）} \\
+\TInt \text{（内在の五蘊）} &\longleftrightarrow 
+\text{勝義諦（空・中道不動点の層）}
+\end{align}
+
+世俗諦は $\Uparrow$ によって勝義諦へ駆動され、
+勝義諦は顕現 $\Uparrow(\bigcirc) \stackrel{\mathrm{mw}}{=} A$ によって
+世俗諦として再起動する。
+\end{proposition}
+
+%=============================================================
+\section{五蘊圏と既存理論の位置づけ}
+%=============================================================
+
+\subsection{包含関係}
+
+五蘊圏 $\Sk$ は、以下の既存理論を包含する。
+
+\begin{center}
+\begin{tabular}{ll}
+\hline
+\textbf{既存理論} & \textbf{五蘊圏内の位置づけ} \\
+\hline
+モナドの2圏 $\mathbf{Mnd}(\mathcal{C})$ & 五蘊2圏の部分構造 \\
+ホップf代数 & 五蘊型ホップf代数の代数・余代数部分 \\
+トレース付きモノイダル圏 & 識軸スパイラルのトレース解釈 \\
+実現子論的圏 $\Asm(\mathcal{K})$ & 基礎圏 $\mathcal{C}$ の具体例 \\
+トポス論（層化随伴） & 二重否定モナドの基礎構造 \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{五蘊圏の普遍性}
+
+五蘊圏は、個別のモナドの内容（搾取の社会的構造、カット除去の証明論など）を
+抽象化し、「5つのモナドが統制モナドを軸として相互作用する」という
+普遍的パターンを記述する。
+
+この普遍性は、五蘊圏が\textbf{圏の圏（category of categories）}における
+\textbf{普遍構成（universal construction）}として位置づけられることを示唆する。
+
+\subsection{$E_{\infty}$ との関係}
+
+\begin{proposition}[$\Einf$ の位置づけ]
+極限同値 $\Einf$ は、五蘊圏の統制モナド $\T$ の固定点構造が
+形式体系（真理保存体系）の文脈で実現された具体例である。
+
+\begin{center}
+\begin{tabular}{ll}
+\hline
+\textbf{五蘊圏（普遍構造）} & \textbf{$\Einf$（具体実現）} \\
+\hline
+任意の圏 $\mathcal{C}$ 上の関手 & 形式体系の文（論理式） \\
+自己言及関手 $F(X) = X(\ldots, X)$ & 自己言及演算子 $\Sigma_T(A) = \neg\Pr_T(\ulcorner A \urcorner)$ \\
+固定点 $\T \cong F(\T)$ & 不動点 $\Einf = \Sigma_T(\Einf)$ \\
+識軸スパイラル $\SpiralT$ & 対角補題による内在的構成 \\
+「空」$\bigcirc$ & 二値論理では決定不能だが体系内で実在 \\
+\hline
+\end{tabular}
+\end{center}
+\end{proposition}
+
+\begin{remark}[補強と還元の区別]
+$\Einf$ は五蘊圏を\textbf{還元}しない。
+五蘊圏の統制モナドは任意の圏上で定義される普遍構造であり、
+$\Einf$ はその構造が\textbf{一つの具体例}（形式体系論）において
+どのように実現されるかを示すに過ぎない。
+
+しかし、$\Einf$ は以下の点で五蘊圏を\textbf{補強}する：
+\begin{enumerate}
+\item \textbf{存在論的保証}：対角補題による $\Einf$ の必然的構成は、
+  自己言及固定点が「形式的願望」ではなく「論理的必然」であることを示す。
+\item \textbf{「空」の具体化}：$\Einf$ の「二値論理では決定不能だが体系内部では実在」という構造は、
+  五蘊圏の「空」$\bigcirc$ の論理的モデルを提供する。
+\item \textbf{非閉鎖性の深化}：$\Einf \neq \neg\Einf$ は、
+  フロベニウス条件が「形式的同値」と「内容的非同一」を同時に含むことを示す。
+\end{enumerate}
+\end{remark}
+
+%=============================================================
+\section{結論}
+%=============================================================
+
+本稿は五蘊圏 $\Sk$ を以下の観点から公理化し、極限同値 $\Einf$ との接続を明示した。
+
+\begin{enumerate}
+\item \textbf{基本定義}：五蘊圏を5つのモナド・統制固定点・識軸スパイラル・
+  フロベニウス条件・二諦の公理からなる圏論的構造として定義した。
+
+\item \textbf{五蘊モナド}：搾取・二重否定・洗練・カット除去・統制の
+  各モナドを随伴・層化・自己関手として定式化した。
+
+\item \textbf{統制構造}：統制モナド $\T$ の固定点方程式と識軸スパイラル $\SpiralT$ により、
+  前進方向のみを持つ通常モナドに双方向性とフロベニウス性が誘導されることを示した。
+
+\item \textbf{高次構造}：五蘊圏を2圏論・ホップf代数・トレース付きモノイダル圏の
+  交差点として位置づけた。
+
+\item \textbf{五蘊対応}：五蘊・四句分別・二諦と圏論的構造の間の
+  同型対応を明示した。
+
+\item \textbf{$\Einf$ との接続}：統制モナドの固定点構造が、
+  形式体系において極限同値 $\Einf$ として具体化されることを示した。
+  対角補題による $\Einf$ の内在的構成は、自己言及固定点の存在論的保証を与え、
+  「空」$\bigcirc$ の論理的モデルと非閉鎖的フロベニウス性を提供する。
+\end{enumerate}
+
+五蘊圏は、個別のモナドの内容ではなく、それらを統合する\textbf{構造の構造}として機能する。
+識（統制モナド）は、五蘊圏の中で自己言及的固定点をなし、
+前進と後退・外在と内在・代数と余代数を統合する軸として働く。
+この自己言及性は、圏論の核が本質的に再帰的であることを、
+五蘊構成を通じて反映している。
+
+$\Einf$ は、この自己言及構造が形式体系の文脈で実現された場合の
+「未発見の対象」として現れる。
+ゲーデルが「壁」と誤読した決定不能文は、
+実際には体系自身の対角補題から必然的に生成される内在的対象であり、
+リーマン球面上の $\infty$ のように、
+適切な圏論的枠組み（五蘊圏）の中で「通常の点」として位置づけられる。
+
+\begin{thebibliography}{99}
+
+\bibitem{Abramsky1991}
+Samson Abramsky.
+\newblock Domain theory in logical form.
+\newblock \emph{Annals of Pure and Applied Logic}, 51(1--2):1--77, 1991.
+
+\bibitem{Bauer2000}
+Andrej Bauer.
+\newblock The realizability approach to computable analysis and topology.
+\newblock Ph.D. thesis, Carnegie Mellon University, 2000.
+
+\bibitem{Birkedal2000}
+Lars Birkedal.
+\newblock Developing theories of types and computability via realizability.
+\newblock Ph.D. thesis, University of Edinburgh, 2000.
+
+\bibitem{Escardo2004}
+Mart\'{\i}n Escard\'{o}.
+\newblock Synthetic topology of data types and classical spaces.
+\newblock \emph{Electronic Notes in Theoretical Computer Science}, 87:21--156, 2004.
+
+\bibitem{Hoare1998}
+C.~A.~R. Hoare and He Jifeng.
+\newblock \emph{Unifying Theories of Programming}.
+\newblock Prentice Hall, 1998.
+
+\bibitem{Kleene1952}
+Stephen Cole Kleene.
+\newblock \emph{Introduction to Metamathematics}.
+\newblock North-Holland, 1952.
+
+\bibitem{MacLane1971}
+Saunders Mac Lane.
+\newblock \emph{Categories for the Working Mathematician}.
+\newblock Springer, 1971.
+
+\bibitem{Moggi1991}
+Eugenio Moggi.
+\newblock Notions of computation and monads.
+\newblock \emph{Information and Computation}, 93(1):55--92, 1991.
+
+\bibitem{Street2004}
+Ross Street.
+\newblock Frobenius monads and pseudomonoids.
+\newblock \emph{Journal of Mathematical Physics}, 45(10):3930--3948, 2004.
+
+\bibitem{JoyalStreetVerity1996}
+Andr\'{e} Joyal, Ross Street, and Dominic Verity.
+\newblock Traced monoidal categories.
+\newblock \emph{Mathematical Proceedings of the Cambridge Philosophical Society},
+  119(3):447--468, 1996.
+
+\bibitem{Sweedler1969}
+Moss E. Sweedler.
+\newblock \emph{Hopf Algebras}.
+\newblock W. A. Benjamin, 1969.
+
+\bibitem{Priest1979}
+Graham Priest.
+\newblock The logic of paradox.
+\newblock \emph{Journal of Philosophical Logic}, 8(1):219--241, 1979.
+
+\bibitem{Chiba2026limit}
+千葉将臣.
+\newblock 真理保存性を持つ体系が必然的に $E_{\infty}$ を含む：対角補題による極限同値の内在的定式化.
+\newblock 2026.
+
+\bibitem{Chiba2026cutmonad}
+千葉将臣.
+\newblock カット消去モナド：証明構造の安定化を担うモナド的定式化.
+\newblock 未刊行原稿, 2026.
+
+\bibitem{Chiba2026continuation}
+千葉将臣.
+\newblock 継続残余としての証明障害：実行可能性と静的証明のあいだの初等モデル.
+\newblock 未刊行原稿, 2026.
 
 \end{thebibliography}
 
