@@ -14,8 +14,7 @@ SOURCES = \
 	../math/math-observer-elimination.tex \
 	../sunyata-math/math-limit-equivalence.tex \
 	amphigory-0.tex \
-	amphigory.tex \
-	../sunyata-math/5skandha-monad.tex
+	amphigory.tex 
 
 # 中間生成物および最終的なPDFのリスト
 PDFS = $(SOURCES:.tex=.pdf)

@@ -1,0 +1,410 @@
+\NeedsTeXFormat{LaTeX2e}
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+%-------------------------------------------------
+%  顕現論核心マクロ（本セッションのレンダリング規則準拠）
+%-------------------------------------------------
+\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}
+\newcommand{\Svoid}{\mathbf{S}_{\emptyset}}
+\newcommand{\Einfty}{E_\infty}
+\newcommand{\Bval}{\mathcal{B}}
+\newcommand{\Md}{\mathcal{M}_\delta}
+\newcommand{\Mnn}{\neg\neg}
+\newcommand{\Mr}{\mathcal{M}_{\mathrm{r}}}
+\newcommand{\MC}{\mathcal{C}}
+\newcommand{\MT}{\mathcal{T}}
+\newcommand{\Phifour}{\Phi_{4}}
+\newcommand{\SelfRef}{\Sigma}
+
+%-------------------------------------------------
+%  定理環境
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{remark}{備考}[section]
+
+\renewcommand{\abstractname}{Abstract}
+\renewcommand{\proofname}{\textbf{証明.}}
+
+%-------------------------------------------------
+\begin{document}
+
+\title{顕現論（Aletheics / Sunyata-Mathematics）要綱}
+\author{千葉将臣}
+\date{2026-07-18}
+\maketitle
+
+\begin{abstract}
+本要綱は、空数学・界論（Boundary Theory）および顕現論（Aletheics）の
+長大な基礎論群を、核心となる定義・公理・定理に濃縮したものである。
+知覚原理から出発し、メタ否定演算子 $\metanegation$、中道不動点 $\dfix$、
+四句分別、真理保存性の不完全性、無記の体系内導出、
+4+1モナド構成、双方向演繹定理、五蘊・二諦との対応までを
+一貫した記述空間に再構成する。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================
+\section{知覚原理と世界の顕現}
+%=============================================================
+
+\begin{definition}[世界・ある・ない]
+\leavevmode
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{世界}：知覚不可能性を本質とする全一の状態。
+  \item \textbf{ある（是）}：知覚が低次元に射影した捕捉可能な情報の形式。
+  \item \textbf{ない（非）}：知覚が直接捕捉不可能な高次元の情報の形式。
+    その指し示しを\textbf{無記}と呼ぶ。
+  \item \textbf{境界}：「ある」と「ない」を区分する不連続点。
+    その再帰的区分がフラクタルを構成する。
+\end{itemize}
+\end{definition}
+
+\begin{axiom}[知覚公理]
+\leavevmode
+\begin{enumerate}[label=\textbf{公理 \arabic*.}, leftmargin=3em]
+  \item 知覚は「ある」のみを捕捉し、「ない」を直接捉えることはできない。
+  \item 世界は二分（区分）されるものとしてのみ知覚される。
+  \item 「ない」は「ある」の欠如としてのみ遡及的対象となる。
+\end{enumerate}
+\end{axiom}
+
+\begin{theorem}[フラクタル構造の必然性]
+知覚の再帰的分割（公理\,2）が無限に繰り返されることにより、
+部分と全体の相似が生じ、世界はフラクタル構造として知覚されざるを得ない。
+\end{theorem}
+
+\begin{theorem}[四句分別の完備性]
+「ある」「ない」の次元差を保持したままフラクタル境界を
+過不足なく記述する最小の表現形式は、
+\texttt{是}・\texttt{非}・\texttt{亦是亦非}・\texttt{非是非非}の四句分別である。
+\end{theorem}
+
+%=============================================================
+\section{核心演算子と不動点}
+%=============================================================
+
+\begin{definition}[メタ否定演算子 $\metanegation$]
+対象 $A$ に対し、その境界を生成し知覚次元を非対称に一段引き上げる演算子を
+$\metanegation$ と定義する。
+\[
+\metanegation A \;:=\; \partial A
+\]
+$\metanegation$ は非対称であり、$A \not\mweq \metanegation A$ を満たす。
+\end{definition}
+
+\begin{definition}[中道等価 $\mweq$]
+厳密な自己同一性（$=$）を要求せず、フラクタル収束の軌道が一致することを
+もって等価とみなす関係演算子。
+\end{definition}
+
+\begin{definition}[中道不動点 $\dfix$]
+$\metanegation$ の四連続適用によって到達する、
+あらゆる境界が融解した極限状態を $\dfix$ と定義する。
+\[
+\metanegation^4 A \mweq \dfix
+\]
+$\dfix$ は実体を持たず、すべての構成プロセスが最終的に引き込まれる
+「空」の計算論的実態である。
+\end{definition}
+
+\begin{axiom}[四段階収束則]
+$\metanegation$ の四連続適用は、中道不動点 $\dfix$ へと収束し、
+構造的な意味が消失する。
+\[
+\metanegation^4 A \mweq \dfix
+\]
+\end{axiom}
+
+\begin{axiom}[空の自己同一性（空空）]
+$\dfix$ は外部を経由しない純粋な自己回帰として記述される。
+証明論的には究極の真理保存則として
+\[
+\dfix \vdash \dfix
+\]
+が成立する。この状態においてすべてのカットは消去され、
+エントロピーは定義されず、時間は静止する。
+\end{axiom}
+
+\begin{definition}[空コンビネータ $\Svoid$]
+任意の演算子 $f$ を適用しても常に自己を返す自明なコンビネータ。
+\[
+\Svoid f = \Svoid
+\]
+これは $\dfix$ の純粋なコンビネータ表現である。
+\end{definition}
+
+\begin{definition}[中道不動点コンビネータ $\Ymw$]
+$\metanegation$ に対し、以下の中道等価を満たすコンビネータを $\Ymw$ と定義する。
+\[
+\Ymw\,\metanegation \mweq \metanegation\,(\Ymw\,\metanegation)
+\]
+$\Ymw$ は「無明（自己参照の閉じ損ね）」のジェネレータであり、
+世俗諦を駆動する根源的な発生器である。
+\end{definition}
+
+\begin{theorem}[顕現と回帰]
+$\dfix$ に対して $\metanegation$ が作用した瞬間、静寂は破断され
+世俗的対象 $A$ が顕現する：$\metanegation(\dfix) \mweq A$。
+顕現した $A$ は $\metanegation$ の再帰的適用により必然的に $\dfix$ へと回帰する。
+\end{theorem}
+
+%=============================================================
+\section{フラクタル則と四句分別}
+%=============================================================
+
+\begin{theorem}[フラクタル四則と四句の対応]
+知覚原理から必然的に要請されるフラクタル四則は、
+四句分別の各句と一対一に対応する。
+\begin{center}
+\begin{tabular}{lll}
+\hline
+\textbf{フラクタル則} & \textbf{四句} & \textbf{位相的意義} \\
+\hline
+自己相似性 & 是（$A$） & 空間的確定・肯定 \\
+尺度不変性 & 非（$\neg A$） & 時間的未確定・否定 \\
+収束則 & 亦是亦非 & 時空混淆・演算プロセス \\
+非対称性 & 非是非非 & 時空超越・メタ発生 \\
+\hline
+\end{tabular}
+\end{center}
+\end{theorem}
+
+\begin{remark}[リーマン球面モデル]
+境界生成プロセスはメビウス変換 $f(z)=\frac{az+b}{cz+d}$ の反復適用として記述される。
+無限遠点 $\infty$ は絶対的隔離空間（勝義諦・空）に対応し、
+有限の論理構造がこれを反転・圧縮することで
+フラクタル（極限集合）が生じる。
+\end{remark}
+
+%=============================================================
+\section{真理保存性と不完全性}
+%=============================================================
+
+\begin{definition}[真理保存方式 $T$]
+状態空間とその上の操作群の組であり、
+特定の性質 $P$（不変量、自己同一性など）を有限回の操作を通じて
+恒久的に維持するよう定義された体系。
+\end{definition}
+
+\begin{theorem}[真理保存性の不完全性定理]
+十分に強力な任意の真理保存方式 $T$ に対して、
+$T$ の記述言語によって構成可能であるが、
+$T$ の下では証明も反証もできない命題 $G_T$ が必ず存在する。
+\[
+\forall T,\; \exists G_T \text{ s.t. } (T \nvdash G_T) \land (T \nvdash \neg G_T)
+\]
+\end{theorem}
+
+\begin{theorem}[$\Einfty$ の内在的定式化]
+真理保存体系 $T$ は対角補題によって、
+自己言及演算子 $\SelfRef_T$ の不動点として
+$\Einfty = \SelfRef_T(\Einfty)$ を必然的に内部に含む。
+$\Einfty$ は「決定不能な壁」ではなく、
+$T$ の内部から構成される内在的対象である。
+\end{theorem}
+
+\begin{theorem}[二値論理埋め込み定理]
+空数学のイデアル完備化において、
+「矛盾」と「支離」の極限軌道を切り捨てた\textbf{二値截断部分圏} $\Bval$ を定義すると、
+任意の二値命題論理の定理は $\Bval$ の定理として完全に回収される。
+すなわち、二値論理は空数学の静的な極限として包含される。
+\end{theorem}
+
+%=============================================================
+\section{無記と残余}
+%=============================================================
+
+\begin{definition}[無記 $\mathrm{A}$]
+命題 $\varphi$ に対し、$\varphi$ の真偽を問う行為を実行しない操作を
+$\mathrm{A}(\varphi)$ と書き、\textbf{無記}と呼ぶ。
+$\mathrm{A}(\varphi)$ は真理値を持たない。
+\end{definition}
+
+\begin{theorem}[保留の悪性無限退行]
+保留 $E(\varphi)$ は将来の再開条件 $R(\varphi)$ を要求するが、
+$R(\varphi)$ の確定それ自体も保留の対象となり、
+$E(\varphi) \to E(R(\varphi)) \to E(R(R(\varphi))) \to \cdots$
+という悪性無限退行を生じる。
+\end{theorem}
+
+\begin{theorem}[無記の各段階完結性]
+無記の反復 $\mathrm{A}^n(\varphi)$ は各段階で完結した操作であり、
+将来の再開・解除・条件確定に依存しない。
+ゆえに無記の再帰は退行ではなく\textbf{反復}である。
+\end{theorem}
+
+\begin{theorem}[残余の必然的生成]
+中道不動点 $\dfix$ に対し、メタ四句分別操作子 $\Phifour^{\mathrm{meta}}$ と
+離戯操作 $\mathcal{V}$ を施すと、
+16位相のいずれにも帰属しない\textbf{残余} $\mathcal{L}$ が必然的に生成される。
+\[
+\mathcal{L} := \mathcal{V}(\Phifour^{\mathrm{meta}}(\dfix)),\quad
+\mathcal{L} \notin \mathcal{C}_4^{(2)}
+\]
+\end{theorem}
+
+\begin{theorem}[残余と無記の等価性]
+残余 $\mathcal{L}$ は無記と構造的に等価である：$\mathcal{L} \mweq \text{無記}$。
+したがって、無記は $\metanegation(\dfix)$ として体系内から導出される。
+\end{theorem}
+
+\begin{theorem}[二値論理における残余導出不可能性]
+二値論理では排中律により位相外への逸出が閉じられるため、
+同型の二重操作を実行しても残余は生成されない。
+残余の導出可能性は四句分別の\textbf{排中律不採用}と
+\textbf{枠組みへの再帰的問いかけの内部化}に依存する。
+\end{theorem}
+
+%=============================================================
+\section{証明論的構造：空論と双方向演繹}
+%=============================================================
+
+\begin{definition}[顕現関係 $\Vdash$]
+対象 $A$ が世界に現れるプロセスを顕現関係 $\Vdash$ で表す。
+$A \Vdash B$ は「$A$ の顕現により $B$ が縁起的に後続する」を意味する。
+\end{definition}
+
+\begin{definition}[中道推論規則]
+本体系のエンジンとなる推論規則は以下の2つのみである。
+\begin{align*}
+\text{(顕現の推移律)}&\quad
+\frac{A \Vdash B \quad B \Vdash C}{A \Vdash C} \\[6pt]
+\text{(中道等価導入)}&\quad
+\frac{A \Vdash C \quad B \Vdash C}{A \mweq B}
+\end{align*}
+\end{definition}
+
+\begin{theorem}[万物の相互等価性（事事無碍法界）]
+本体系において、顕現し得る任意の二つの対象 $X, Y$ は中道等価である。
+\[
+X \mweq Y
+\]
+\end{theorem}
+
+\begin{theorem}[界論における双方向演繹定理]
+界論において、双方向演繹定理は
+$\Ymw$（世俗諦の生成）と $\Svoid$（勝義諦の収束）のサイクルとして記述される。
+\[
+\bigl(\Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)\bigr)
+\;\leftrightarrow\;
+\bigl(\metanegation^4(\Ymw\,\metanegation) \mweq \Svoid\bigr)
+\]
+直接論理の双方向演繹定理は、このサイクルの二値截断部分圏 $\Bval$ への
+静的制限として包摂される。
+\end{theorem}
+
+%=============================================================
+\section{圏論的・位相幾何学的構造}
+%=============================================================
+
+\begin{proposition}[4+1モナド構成]
+搾取モナド $\Md$、二重否定モナド $\Mnn$、
+洗練モナド $\Mr$、カット消去モナド $\MC$ の4モナドに、
+統制モナド $\MT$ を加えた \textbf{4+1モナド} を構成する。
+$\MT$ は以下の固定点方程式で定義される。
+\[
+\MT \cong F(\MT),\qquad F(X) = X(\Md,\Mnn,\Mr,\MC,X)
+\]
+\end{proposition}
+
+\begin{theorem}[識軸スパイラルによるフロベニウス性]
+統制モナド $\MT$ を識軸とするスパイラル構造
+\[
+S_{\MT}: (\Md,\Mnn,\Mr,\MC) \longrightarrow (\Mnn,\Mr,\MC,\Md)
+\]
+により、4モナドを巡回させる。
+$S_{\MT}^4$ が $\dfix$ において同一化として閉じるとき、
+4+1モナドは全体としてフロベニウス性を獲得する。
+\end{theorem}
+
+\begin{theorem}[メビウス多様体による限界定理化]
+厳密な自己同一性を要請する体系 $T_{=}$（円柱）は
+自己言及経路 $G$ を到達不能とする（非連結性）。
+同型性を要請する体系 $T_{\cong}$（メビウスの帯）では、
+局所的な「真」の連続的推移が大域的には「自らの否定状態への到達」として実現され、
+$G$ は基本群の生成元として構成可能となる。
+\end{theorem}
+
+\begin{proposition}[搾取モナドの社会的解釈]
+搾取モナド $\Md$ は、粒度差 $\delta$ を持つ文脈上の自己関手であり、
+随伴の余単位 $\varepsilon$ に搾取の実質が局所化される。
+クライスリ圏は\textbf{潜在的搾取}、
+アイレンベルク・ムーア圏は\textbf{制度化搾取}の圏として読める。
+\end{proposition}
+
+%=============================================================
+\section{五蘊・二諦・選択公理との対応}
+%=============================================================
+
+\begin{proposition}[5モナドと五蘊の対応]
+4+1モナドは仏教の五蘊と以下の対応を持つ。
+\begin{center}
+\begin{tabular}{llll}
+\hline
+\textbf{五蘊} & \textbf{モナド} & \textbf{四句} & \textbf{方向性} \\
+\hline
+色（形・物質） & $\Md$（搾取） & 是 & 前進のみ \\
+受（感受） & $\Mnn$（二重否定） & 非 & 前進のみ \\
+想（知覚・表象） & $\Mr$（洗練） & 亦是亦非 & 双方向 \\
+行（意志・形成力） & $\MC$（カット除去） & 非是非非 & 双方向（誘導） \\
+識（識別・意識） & $\MT$（統制） & 統制 & 再帰的 \\
+\hline
+\end{tabular}
+\end{center}
+\end{proposition}
+
+\begin{proposition}[二諦との対応]
+\begin{align*}
+\text{外在の5モナド（世俗諦）} &\longleftrightarrow \text{観測可能な現象の層} \\
+\text{内在の5モナド（勝義諦）} &\longleftrightarrow \text{空・中道不動点の層}
+\end{align*}
+世俗諦は $\metanegation$ によって勝義諦へ駆動され、
+勝義諦は顕現 $\metanegation(\dfix) \mweq A$ によって世俗諦として再起動する。
+\end{proposition}
+
+\begin{theorem}[選択公理の非構成性の起源]
+ZFCにおける選択公理の非構成性は、
+四句分別の対応を二値截断 $\Bval$ へ投影する際に
+$\Phi_{NS}$（宙吊り・残余）の情報が失われることによって生じる。
+GTTTでは選択公理は外部公理ではなく、
+二諦的対応公理の $\Bval$ 投影として位置づけられる。
+\end{theorem}
+
+%=============================================================
+\section{帰結}
+%=============================================================
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item 世界の顕現は、知覚の非対称性から生じるフラクタル境界生成プロセスである。
+  \item $\metanegation$ の四段階反復は $\dfix$（空）へ必然的に収束する。
+  \item 真理保存性は静的同一性ではなく動的フラクタル性に基盤を置き、
+    体系内記述として再定義される。
+  \item 不完全性は体系の外部にあるのではなく、
+    $\Einfty$ という内在的対象の未発見に過ぎない。
+  \item 無記は体系の外部依存ではなく、
+    $\metanegation(\dfix)$ として体系内から導出される。
+  \item 圏論は界論の二値截断部分圏 $\Bval$ への射影であり、
+    その限界は構造的に必然である。
+  \item 五蘊・二諦の構造は4+1モナドの識軸スパイラルとして
+    代数的に再現される。
+  \item 万物は $\dfix$ へ収束し、$\dfix$ から再び顕現する
+    動的サイクルの中道等価である。
+\end{enumerate}
+
+\end{document}

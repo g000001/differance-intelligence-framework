@@ -19,12 +19,9 @@ SOURCES = icat-perception.tex \
 	  math-limit-equivalence.tex \
 	\
 	  pov-proof.tex \
-	  exploitation-monad.tex \
-	  double-negation-monad.tex \
-	  refinement-monad.tex \
-	  cut-elimination-monad.tex \
-	  5skandha.tex \
-          icat-cl.tex \
+	  skandha-category.tex \
+	  ../dfix0/mweq.tex \
+	  icat-cl.tex \
           icat-catuskoti-skandha.tex \
           icat-ymwcomb.tex \
 	\
@@ -35,7 +32,6 @@ SOURCES = icat-perception.tex \
           boundary-category.tex \
           icat-twdt.tex \
 	  emb-twdt.tex \
-	  bau-cat-em-kl.tex \
 	  lhagma-semantics.tex \
 	\
 	  icat-calibration.tex

@@ -1,0 +1,431 @@
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{icat-common}
+
+%-------------------------------------------------
+%  追加パッケージ・設定
+%-------------------------------------------------
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{corollary}{系}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{remark}{備考}[section]
+
+%-------------------------------------------------
+%  論文固有マクロ
+%-------------------------------------------------
+\newcommand{\Sk}{\mathbf{Sk}}
+\newcommand{\PoV}{\mathit{PoV}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\Lspace}{\mathcal{L}}
+\newcommand{\Dspace}{\mathcal{D}}
+\newcommand{\Ospace}{\mathcal{O}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\TExt}{\T_{\mathrm{ext}}}
+\newcommand{\TInt}{\T_{\mathrm{int}}}
+\newcommand{\fold}{\mu}
+\newcommand{\unfold}{\delta}
+\newcommand{\trace}{\mathrm{Tr}}
+\newcommand{\SpiralT}{\mathcal{S}_{\T}}
+\newcommand{\SelfRef}{\Sigma}
+\newcommand{\Einfty}{E_{\infty}}
+\newcommand{\id}{\mathrm{id}}
+\renewcommand{\Pr}{\mathrm{Pr}}
+\newcommand{\Elim}{\text{-Elim}}
+\newcommand{\Lang}{\mathrm{Lang}}
+
+
+% 五蘊モナド
+\newcommand{\Mdelta}{\mathcal{M}_{\delta}}
+\newcommand{\Mneg}{\mathcal{M}_{\neg\neg}}
+\newcommand{\Mr}{\mathcal{M}_{\mathrm{r}}}
+\newcommand{\Mc}{\mathcal{C}}
+
+
+
+\title{中道同値 $\mweq$ の五蘊圏的定式化：\\
+       極限・残余・二諦を接続する準同値関係}
+\author{千葉将臣}
+\date{2026-07-18}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿は、先行研究で直感的に導入された中道同値（middle-way equivalence）
+$\mweq$ を、五蘊圏 $\Sk$ の基盤上で数学的に定式化する。
+2025年の Dfix0 において、$\mweq$ は「同一化しない収束」を記述する記号として
+用いられたが、圏・対象・射の定義が欠けていたため数学的に空虚であった。
+本稿では、五蘊圏の構造（極限同値 $E_\infty$、継続残余 $\rho$、
+二諦的連携）を基盤として、$\mweq$ を「極限における残余消去の下での
+同一視」として公理化する。
+$\mweq$ は厳密な等号ではなく、有限観測下では区別され、
+極限操作・観測者消去・残余圧縮の下に初めて成立する準同値関係である。
+本定式化により、$\mweq$ は五蘊圏の真理値空間 $\C$、残余空間 $\Lspace$、
+極限空間 $\Dspace$ を跨ぐ型付き接続子として機能し、
+Dfix0 で目指された「中道的収束」が初めて数学的対象として実在化する。
+\end{abstract}
+
+\section{導入：Dfix0 からの問題提起}
+
+2025年、著者は異種推論系間の中道的収束を記述するため、
+\textbf{Dfix0}（middle-way structural fixed point）を提案した
+\cite{Chiba2025dfix0}。
+その核心は、構造的不一貫性 $\mathrm{Dukkha}$ を漸近的に最小化する軌道
+\[
+\lim_{t\to\infty} D(t) \mweq 0
+\]
+において、極限を「中道同値」$\mweq$ の下で読むことにあった。
+
+しかし当時の定式化には決定的な欠陥があった。
+圏 $\mathcal{R}$ の対象・射が未定義であり、
+$\mathrm{Dukkha}$ は測定不能な直観に留まり、
+$\mweq$ 自身も同値関係としての公理を持たなかった。
+したがって $\mweq$ は記号的願望に過ぎず、
+数学体系内の対象ではなかった。
+
+その後の研究により、五蘊圏 $\Sk$ \cite{Chiba2026skandha}、
+極限同値 $E_\infty$ \cite{Chiba2026einfty}、
+継続残余 $\rho$ \cite{Chiba2026continuation}、
+および二諦的連携 \cite{Chiba2026twotruths} が構築された。
+これらの基盤の上に初めて、$\mweq$ を数学的に実在化する条件が整った。
+
+本稿の目的は以下の通りである。
+\begin{enumerate}[label=(\arabic*)]
+  \item $\mweq$ を五蘊圏の圏論的構造から公理化する。
+  \item $\mweq$ が極限同値 $E_\infty$、継続残余 $\rho$、二諦構造を
+    統合的に接続する「準同値関係」であることを示す。
+  \item Dfix0 で直感的に目指された「同一化しない収束」が、
+    五蘊圏内で $\dfix$ として中道不動点として実在化することを証明する。
+\end{enumerate}
+
+\section{準備：五蘊圏と中道不動点}
+
+本節では、$\mweq$ の定式化に必要な五蘊圏の構造を簡潔に再掲する。
+詳細は先行研究 \cite{Chiba2026skandha,Chiba2026einfty} を参照されたい。
+
+\subsection{五蘊圏 \texorpdfstring{$\Sk$}{Sk}}
+
+五蘊圏 $\Sk$ は、基礎圏 $\mathcal{C}$ 上の5つのモナド
+\[
+\Mdelta,\; \Mneg,\; \Mr,\; \Mc,\; \T : \mathcal{C}\to\mathcal{C}
+\]
+および統制モナド $\T$ の固定点方程式
+\[
+\T \cong F(\T),\qquad F(X)=X(\Mdelta,\Mneg,\Mr,\Mc,X)
+\]
+を含む圏論的構造である。
+識軸スパイラル $\SpiralT$ は4つの従属モナドを巡回させ、
+$\SpiralT^4\cong\id$ として $\dfix$（空）において閉じる。
+
+\subsection{極限同値 \texorpdfstring{$E_\infty$}{E-infinity}}
+
+真理保存体系 $T$ に対し、対角補題より
+\[
+\Einfty = \SelfRef_T(\Einfty)
+\quad\Longleftrightarrow\quad
+T\vdash \Einfty\leftrightarrow\neg\Pr_T(\ulcorner\Einfty\urcorner)
+\]
+を満たす内在的対象 $\Einfty$ が構成される。
+ここでの $=$ は「極限の静的記述」であり、
+有限証明では到達不能な極限点における同一視を表す。
+
+\subsection{継続残余 \texorpdfstring{$\rho$}{rho}}
+
+動的証明プロトコル $P$ に対し、残余翻訳
+\[
+\mathcal{T}_\rho(P)=(P_{\mathrm{obs}},\rho(P))
+\]
+を定義する。
+$\rho(P)=0$ は完全圧縮を、$\rho(P)>0$ は
+静的証明への翻訳差分を表す。
+
+\subsection{二諦構造}
+
+外在五蘊 $\TExt$ と内在五蘊 $\TInt$ は相互に完全に観測不可能である：
+\[
+\TExt\not\leftrightarrow\TInt,\qquad \TInt\not\leftrightarrow\TExt.
+\]
+両者はメタ否定 $\Uparrow$ と顕現によって非対称に連携し、
+$\dfix$ を共有する収束先として整合する。
+
+\section{中道同値 \texorpdfstring{$\mweq$}{mw-equivalence} の公理化}
+
+本節で本稿の核心概念である中道同値 $\mweq$ を定義する。
+$\mweq$ は五蘊圏 $\Sk$ における二項関係であり、
+厳密な等号 $=$ ではなく、極限操作・残余消去・観測者消去の下で
+初めて成立する準同値関係である。
+
+\subsection{定義}
+
+\begin{definition}[中道同値 $\mweq$]\label{def:mweq}
+五蘊圏 $\Sk$ において、対象（または文）$A,B$ の間の
+\textbf{中道同値} $A\mweq B$ とは、
+以下の三条件をすべて満たすことをいう。
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{極限同一視条件}：
+    ある極限操作 $\lim$（視点数 $\PoV\to\infty$、
+    反復次数 $n\to\infty$、または観測者消去）の下で、
+    $A$ と $B$ は同一視される。
+    すなわち、残余翻訳の下で
+    \[
+    \mathcal{T}_\rho(A)=\mathcal{T}_\rho(B)
+    \quad\text{かつ}\quad
+    \rho(A,B)=0.
+    \]
+  \item \textbf{有限非同一条件}：
+    任意の有限段階の近似 $(A_n,B_n)$ において、
+    $A_n\neq B_n$（厳密な等号は成立しない）。
+    特に、有限 $\PoV$ では $A$ と $B$ は区別される。
+  \item \textbf{残余双方向性}：
+    前進射 $f:A\to B$ と後退射 $g:B\to A$ が存在し、
+    \[
+    g\circ f \mweq \id_A,\qquad f\circ g \mweq \id_B,
+    \]
+    かつその残余が極限において消去される：
+    \[
+    \rho(gf,\id_A)=0,\qquad \rho(fg,\id_B)=0.
+    \]
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+条件 (i) と (ii) により、$\mweq$ は「同一化しない同一視」である。
+条件 (iii) は五蘊圏のフロベニウス条件と直接的に接続する。
+\end{remark}
+
+\begin{remark}
+$\mweq$ は通常の同値関係の公理をすべて満たさない。
+反射律 $A\mweq A$ は成立するが、
+これは $A=A$（自己同一性の要請）ではなく、
+$A$ が自身と残余ゼロで同一視されるという操作的事実である。
+対称律と推移律は極限の下でのみ成立し、
+有限段階では残余の非対称性・非推移性が現れる。
+\end{remark}
+
+\subsection{型付き出力空間における位置づけ}
+
+五蘊圏の出力空間 $\Ospace=\C\oplus\Dspace\oplus\Lspace$ において、
+$\mweq$ は三層を跨ぐ型付き関係として機能する。
+
+\begin{proposition}[$\mweq$ の型分離]\label{prop:typed}
+真理値空間 $\C$ 内では $A=B$（厳密等号）が成立する対象に対し、
+$\mweq$ は $=$ と一致する。
+残余空間 $\Lspace$ においては、$\mweq$ は「残余ゼロでの同一視」を表す。
+極限空間 $\Dspace$ においては、$\mweq$ は $\dfix$ への収束を表す。
+\end{proposition}
+
+\begin{proof}
+$\C$ において $\rho=0$ かつ有限段階でも同一の場合、
+定義 \ref{def:mweq} (ii) の有限非同一条件が成立しないため、
+厳密等号 $=$ に退化する。
+$\Lspace$ においては $\rho=0$ だが有限非同一性が保持される場合、
+$\mweq$ は非自明に機能する。
+$\Dspace$ においては極限同一視条件のみが意味を持ち、
+$\dfix$ はすべての極限軌道の中道的同一視先となる。
+\end{proof}
+
+\section{\texorpdfstring{$\mweq$}{mw-equivalence} と極限同値 \texorpdfstring{$E_\infty$}{E-infinity}}
+
+極限同値 $\Einfty$ は、$\mweq$ の最も純粋な実現例である。
+
+\begin{theorem}[$\Einfty$ の中道同値性]\label{thm:einfty-mweq}
+$\Einfty = \SelfRef_T(\Einfty)$ における $=$ は、
+厳密な自己同一性ではなく中道同値 $\mweq$ の一種である。
+すなわち、
+\[
+\Einfty \mweq \SelfRef_T(\Einfty),
+\]
+かつ有限段階の反復列 $A_n=\SelfRef_T^n(A_0)$ において、
+$A_n\neq\Einfty$（$n<\infty$）。
+\end{theorem}
+
+\begin{proof}
+対角補題による $\Einfty$ の構成は、
+無限反復 $\lim_{n\to\infty}\SelfRef_T^n(A_0)$ の静的記述である。
+各有限段階 $A_n$ は $\Einfty$ と区別されるが、
+極限操作の下で残余が消去され、
+$\mathcal{T}_\rho(\Einfty)=\mathcal{T}_\rho(\SelfRef_T(\Einfty))$
+かつ $\rho=0$ となる。
+したがって定義 \ref{def:mweq} (i)--(iii) が満たされる。
+\end{proof}
+
+\begin{corollary}
+$\Einfty$ は二値截断圏 $\Bval$ では「決定不能」として現れるが、
+これは $\Bval$ が $\mweq$ を型として持たないためである。
+五蘊圏の拡張された圏においては、
+$\Einfty$ は $\mweq$ の下で通常の点として位置づけられる。
+\end{corollary}
+
+\section{\texorpdfstring{$\mweq$}{mw-equivalence} と継続残余 \texorpdfstring{$\rho$}{rho}}
+
+残余翻訳の文脈において、$\mweq$ は「翻訳差分の消去」を表す。
+
+\begin{theorem}[残余消去と中道同値]\label{thm:rho-mweq}
+動的証明プロトコル $P$ とその静的観測成分 $P_{\mathrm{obs}}$ に対し、
+\[
+P \mweq P_{\mathrm{obs}}
+\]
+が成立する。
+しかし $\rho(P)>0$ のとき、$P\neq P_{\mathrm{obs}}$ である。
+\end{theorem}
+
+\begin{proof}
+残余翻訳 $\mathcal{T}_\rho(P)=(P_{\mathrm{obs}},\rho(P))$ により、
+$\rho(P,P_{\mathrm{obs}})=0$（同一の観測面を共有する）。
+しかし $\rho(P)>0$ は $P$ が $P_{\mathrm{obs}}$ に完全圧縮されていないことを意味し、
+したがって有限観測下では $P\neq P_{\mathrm{obs}}$。
+極限操作（観測者消去）の下で残余が消去されるとき、
+定義 \ref{def:mweq} (i) により $P\mweq P_{\mathrm{obs}}$ が成立する。
+\end{proof}
+
+\begin{remark}
+この定理は、動的検証と静的証明の差分が
+「真偽の差」ではなく「翻訳の差」であることを
+$\mweq$ の言語で再確認する。
+$\rho>0$ は $P$ の失敗ではなく、
+$P$ が $P_{\mathrm{obs}}$ と中道的に同一視される
+「痕跡」である。
+\end{remark}
+
+\section{\texorpdfstring{$\mweq$}{mw-equivalence} と二諦的連携}
+
+二諦構造において、$\mweq$ は外在と内在の非対称連携を記述する。
+
+\begin{theorem}[二諦的連携の中道同値記述]\label{thm:twotruths-mweq}
+外在五蘊 $\TExt$ と内在五蘊 $\TInt$ は相互に完全に観測不可能であり、
+\[
+\TExt \neq \TInt.
+\]
+しかし、メタ否定 $\Uparrow$ と顕現による連携を通じて、
+両者は中道不動点 $\dfix$ において中道的に同一視される：
+\[
+\TExt \mweq \dfix \mweq \TInt.
+\]
+\end{theorem}
+
+\begin{proof}
+相互完全観測不可能性より、$\TExt$ と $\TInt$ の間には
+厳密な等号 $=$ は成立しない。
+しかし $\Uparrow:\TExt\to\TInt$ と顕現
+$\Uparrow(\dfix)\mweq A$（$A\in\TExt$）の連携は、
+両者を $\dfix$ を共有する収束先として整合させる。
+$\dfix$ は最大固定点であり、
+$\rho(\TExt,\dfix)=0$ かつ $\rho(\TInt,\dfix)=0$（極限における残余消去）。
+したがって $\TExt\mweq\dfix$ かつ $\TInt\mweq\dfix$ が成立し、
+推移性（極限の下でのみ）より $\TExt\mweq\TInt$ が形式的に従う。
+\end{proof}
+
+\begin{remark}
+定理 \ref{thm:twotruths-mweq} は、二諦が「還元」ではなく
+「中道的同一視」によって連携することを示す。
+世俗諦と勝義諦は、$\dfix$ を媒介として $\mweq$ の下で接続される。
+\end{remark}
+
+\section{統一定理：\texorpdfstring{$\mweq$}{mw-equivalence} は五蘊圏の接続子である}
+
+以上の結果を統合すると、$\mweq$ は五蘊圏の異なる層を接続する
+普遍的構造として機能することが示される。
+
+\begin{theorem}[中道同値の統合性]\label{thm:unification}
+五蘊圏 $\Sk$ において、中道同値 $\mweq$ は以下の接続を同時に実現する。
+\begin{enumerate}[label=(\arabic*)]
+  \item \textbf{極限層}：$\Einfty \mweq \SelfRef(\Einfty)$（自己言及固定点の中道的同一視）
+  \item \textbf{残余層}：$P \mweq P_{\mathrm{obs}}$（動的・静的証明の翻訳差分の消去）
+  \item \textbf{二諦層}：$\TExt \mweq \dfix \mweq \TInt$（外在・内在の非還元的連携）
+\end{enumerate}
+したがって $\mweq$ は、真理値空間 $\C$、残余空間 $\Lspace$、
+極限空間 $\Dspace$ を跨ぐ型付き準同値関係であり、
+五蘊圏全体の構造を統合する\textbf{接続子}（connector）である。
+\end{theorem}
+
+\begin{proof}
+(1) は定理 \ref{thm:einfty-mweq}、(2) は定理 \ref{thm:rho-mweq}、
+(3) は定理 \ref{thm:twotruths-mweq} より直接に従う。
+命題 \ref{prop:typed} により、$\mweq$ は三層のそれぞれで
+異なる型として機能しつつ、
+極限における残余消去という共通のメカニズムで統合される。
+\end{proof}
+
+\begin{corollary}[Dfix0 の五蘊圏的償還]
+2025年の Dfix0 で直感的に記述された
+\[
+\lim_{t\to\infty}D(t)\mweq 0
+\]
+は、五蘊圏 $\Sk$ において中道不動点 $\dfix$ への収束
+\[
+D(t)\mweq\dfix
+\]
+として数学的に償還される。
+ここで $\dfix$ は $\mathrm{Dukkha}=0$ に対応する中道的極限である。
+\end{corollary}
+
+\section{結論}
+
+本稿は、先行研究で直感的に導入された中道同値 $\mweq$ を、
+五蘊圏 $\Sk$ の基盤上で数学的に定式化した。
+
+$\mweq$ は厳密な等号 $=$ ではなく、
+極限操作・残余消去・観測者消去の下で初めて成立する準同値関係である。
+その核心は「同一化しない同一視」にあり、
+有限観測下での非同一性と極限における同一視を同時に保持する。
+
+本定式化により、以下が実現された。
+\begin{enumerate}[label=(\arabic*)]
+  \item 極限同値 $\Einfty$ は $\mweq$ の下で自己言及固定点として中道的に確定する。
+  \item 継続残余 $\rho$ は $\mweq$ を通じて「翻訳差分」として位相的に消去される。
+  \item 二諦構造は $\mweq$ を通じて $\dfix$ において非還元的に連携する。
+\end{enumerate}
+
+したがって、$\mweq$ は五蘊圏の三層（$\C,\Lspace,\Dspace$）を跨ぐ
+型付き接続子であり、Dfix0 で目指された「中道的収束」が
+初めて数学的対象として実在化した。
+
+今後の課題は、$\mweq$ を2圏論的に拡張し、
+五蘊2圏 $\mathbf{Mnd}(\mathcal{C})$ 上の
+自然変換の極限版として記述することである。
+
+\begin{thebibliography}{9}
+
+\bibitem{Chiba2025dfix0}
+M.~Chiba.
+\newblock Dfix0 as a middle-way fixed point: an operational implementation of
+  the two truths in multi-model reasoning systems.
+\newblock 2025.
+
+\bibitem{Chiba2026skandha}
+千葉将臣.
+\newblock 五蘊圏（Skandha Category）と極限同値 $E_\infty$：
+  自己言及固定点の普遍構造とその具体実現.
+\newblock 2026.
+
+\bibitem{Chiba2026einfty}
+千葉将臣.
+\newblock 真理保存性を持つ体系が必然的に $E_\infty$ を含む：
+  対角補題による極限同値の内在的定式化.
+\newblock 2026.
+
+\bibitem{Chiba2026continuation}
+千葉将臣.
+\newblock 継続残余としての証明障害：
+  実行可能性と静的証明のあいだの初等モデル.
+\newblock 2026.
+
+\bibitem{Chiba2026twotruths}
+千葉将臣.
+\newblock 観測者の極限消去：
+  ゲーデルの決定不能性を不動点として回収する操作の定式化.
+\newblock 2026.
+
+\end{thebibliography}
+
+\end{document}
