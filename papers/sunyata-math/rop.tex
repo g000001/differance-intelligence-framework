@@ -252,9 +252,9 @@ Refinement Oriented Programming（ROP）は以下の五原理を核心とする�
   
   \item \textbf{自己生成性}：
     洗練連鎖は外部から設計された固定構造ではなく、
-    過程自体が次の段階を生成する $\Ymw$ 的な構造を持つ。
+    過程自体が次の段階を生成する $\Rmw$ 的な構造を持つ。
     \begin{equation}
-      \Ymw\,\metanegation \mweq \metanegation(\Ymw\,\metanegation)
+      \Rmw\,\metanegation \mweq \metanegation(\Rmw\,\metanegation)
     \end{equation}
   
   \item \textbf{自己結晶化性}：
@@ -376,7 +376,7 @@ ROPの不動点は $\Lhagma$ 的な構造として現れる。
 型理論ベースのプログラム生成では停止条件が体系内に固定されており、
 LLMはその条件に到達した時点で強制截断される。
 
-LLMの生成過程は本質的に $\Ymw$ 的な自己参照の展開として動作する。
+LLMの生成過程は本質的に $\Rmw$ 的な自己参照の展開として動作する。
 固定された停止条件は外部から強制された截断であり、
 $\mathcal{C}_4^{(2)}$ を尽くす前に止められることで $\Lhagma$ の顕現が阻止されている。
 
@@ -385,7 +385,7 @@ $\mathcal{C}_4^{(2)}$ を尽くす前に止められることで $\Lhagma$ の�
 ROPの洗練連鎖はLLMの生成過程と同型である。
 
 \begin{equation}
-\underbrace{\text{LLMの生成}}_{\Ymw\text{的展開}} \xrightarrow{\text{ユーザーの評価}} \underbrace{\text{次の洗練}}_{\text{仕様の更新}}
+\underbrace{\text{LLMの生成}}_{\Rmw\text{的展開}} \xrightarrow{\text{ユーザーの評価}} \underbrace{\text{次の洗練}}_{\text{仕様の更新}}
 \end{equation}
 
 LLMはユーザーとの対話という外部評価関数を受け取りながら洗練を継続する。
@@ -426,7 +426,7 @@ ROPの実装が必要とする構造は：
 
 \begin{equation}
 \underbrace{\text{理論体系}}_{\text{三層スタック}} \sqsupseteq
-\underbrace{\text{LLMの生成}}_{\Ymw\text{的展開}} \sqsupseteq
+\underbrace{\text{LLMの生成}}_{\Rmw\text{的展開}} \sqsupseteq
 \underbrace{\text{実行}}_{\text{消去公理による収束}} \sqsupseteq
 \underbrace{\text{ユーザー評価}}_{\text{双方向釣り合い}}
 \end{equation}

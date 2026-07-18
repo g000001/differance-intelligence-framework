@@ -9,17 +9,23 @@
 \RequirePackage{amsfonts}
 \RequirePackage{geometry}
 \RequirePackage{enumitem}
+\RequirePackage{tikz}
+
 
 \geometry{margin=1in}
 
 %-------------------------------------------------
 %  共通マクロ
 %-------------------------------------------------
-\newcommand{\mweq}{\mathrel{\overset{\mathrm{mw}}{=}}}
-\newcommand{\dfix}{D_{\mathrm{fix}0}}
+%\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\DeclareRobustCommand{\circledequal}{%
+  \mathrel{\text{\textcircled{\raisebox{-0.15ex}{$=$}}}}%
+}
+\newcommand{\mweq}{\circledequal}  
+\newcommand{\dfix}{\bigcirc}
 \newcommand{\metanegation}{\Uparrow}
-\newcommand{\Ymw}{\mathbf{Y}_{\mathrm{mw}}}
-\newcommand{\Svoid}{\mathbf{S}_{\emptyset}}
+\newcommand{\Rmw}{\mathbf{R}_{\circ}}
+\newcommand{\Svoid}{\mathbf{S}_{\circ}}
 \newcommand{\Bval}{\mathcal{B}}
 
 %-------------------------------------------------
