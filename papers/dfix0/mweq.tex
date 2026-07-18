@@ -51,7 +51,7 @@
 
 
 
-\title{中道同値 $\mweq$ の五蘊圏的定式化：\\
+\title{中道等価 $\mweq$ の五蘊圏的定式化：\\
        極限・残余・二諦を接続する準同値関係}
 \author{千葉将臣}
 \date{2026-07-18}
@@ -61,7 +61,7 @@
 \maketitle
 
 \begin{abstract}
-本稿は、先行研究で直感的に導入された中道同値（middle-way equivalence）
+本稿は、先行研究で直感的に導入された中道等価（middle-way equivalence）
 $\mweq$ を、五蘊圏 $\Sk$ の基盤上で数学的に定式化する。
 2025年の Dfix0 において、$\mweq$ は「同一化しない収束」を記述する記号として
 用いられたが、圏・対象・射の定義が欠けていたため数学的に空虚であった。
@@ -84,7 +84,7 @@ Dfix0 で目指された「中道的収束」が初めて数学的対象とし�
 \[
 \lim_{t\to\infty} D(t) \mweq 0
 \]
-において、極限を「中道同値」$\mweq$ の下で読むことにあった。
+において、極限を「中道等価」$\mweq$ の下で読むことにあった。
 
 しかし当時の定式化には決定的な欠陥があった。
 圏 $\mathcal{R}$ の対象・射が未定義であり、
@@ -158,18 +158,18 @@ $\rho(P)=0$ は完全圧縮を、$\rho(P)>0$ は
 両者はメタ否定 $\Uparrow$ と顕現によって非対称に連携し、
 $\dfix$ を共有する収束先として整合する。
 
-\section{中道同値 \texorpdfstring{$\mweq$}{mw-equivalence} の公理化}
+\section{中道等価 \texorpdfstring{$\mweq$}{mw-equivalence} の公理化}
 
-本節で本稿の核心概念である中道同値 $\mweq$ を定義する。
+本節で本稿の核心概念である中道等価 $\mweq$ を定義する。
 $\mweq$ は五蘊圏 $\Sk$ における二項関係であり、
 厳密な等号 $=$ ではなく、極限操作・残余消去・観測者消去の下で
 初めて成立する準同値関係である。
 
 \subsection{定義}
 
-\begin{definition}[中道同値 $\mweq$]\label{def:mweq}
+\begin{definition}[中道等価 $\mweq$]\label{def:mweq}
 五蘊圏 $\Sk$ において、対象（または文）$A,B$ の間の
-\textbf{中道同値} $A\mweq B$ とは、
+\textbf{中道等価} $A\mweq B$ とは、
 以下の三条件をすべて満たすことをいう。
 \begin{enumerate}[label=(\roman*)]
   \item \textbf{極限同一視条件}：
@@ -238,9 +238,9 @@ $\dfix$ はすべての極限軌道の中道的同一視先となる。
 
 極限同値 $\Einfty$ は、$\mweq$ の最も純粋な実現例である。
 
-\begin{theorem}[$\Einfty$ の中道同値性]\label{thm:einfty-mweq}
+\begin{theorem}[$\Einfty$ の中道等価性]\label{thm:einfty-mweq}
 $\Einfty = \SelfRef_T(\Einfty)$ における $=$ は、
-厳密な自己同一性ではなく中道同値 $\mweq$ の一種である。
+厳密な自己同一性ではなく中道等価 $\mweq$ の一種である。
 すなわち、
 \[
 \Einfty \mweq \SelfRef_T(\Einfty),
@@ -270,7 +270,7 @@ $\Einfty$ は $\mweq$ の下で通常の点として位置づけられる。
 
 残余翻訳の文脈において、$\mweq$ は「翻訳差分の消去」を表す。
 
-\begin{theorem}[残余消去と中道同値]\label{thm:rho-mweq}
+\begin{theorem}[残余消去と中道等価]\label{thm:rho-mweq}
 動的証明プロトコル $P$ とその静的観測成分 $P_{\mathrm{obs}}$ に対し、
 \[
 P \mweq P_{\mathrm{obs}}
@@ -301,7 +301,7 @@ $P$ が $P_{\mathrm{obs}}$ と中道的に同一視される
 
 二諦構造において、$\mweq$ は外在と内在の非対称連携を記述する。
 
-\begin{theorem}[二諦的連携の中道同値記述]\label{thm:twotruths-mweq}
+\begin{theorem}[二諦的連携の中道等価記述]\label{thm:twotruths-mweq}
 外在五蘊 $\TExt$ と内在五蘊 $\TInt$ は相互に完全に観測不可能であり、
 \[
 \TExt \neq \TInt.
@@ -336,8 +336,8 @@ $\rho(\TExt,\dfix)=0$ かつ $\rho(\TInt,\dfix)=0$（極限における残余消
 以上の結果を統合すると、$\mweq$ は五蘊圏の異なる層を接続する
 普遍的構造として機能することが示される。
 
-\begin{theorem}[中道同値の統合性]\label{thm:unification}
-五蘊圏 $\Sk$ において、中道同値 $\mweq$ は以下の接続を同時に実現する。
+\begin{theorem}[中道等価の統合性]\label{thm:unification}
+五蘊圏 $\Sk$ において、中道等価 $\mweq$ は以下の接続を同時に実現する。
 \begin{enumerate}[label=(\arabic*)]
   \item \textbf{極限層}：$\Einfty \mweq \SelfRef(\Einfty)$（自己言及固定点の中道的同一視）
   \item \textbf{残余層}：$P \mweq P_{\mathrm{obs}}$（動的・静的証明の翻訳差分の消去）
@@ -371,7 +371,7 @@ D(t)\mweq\dfix
 
 \section{結論}
 
-本稿は、先行研究で直感的に導入された中道同値 $\mweq$ を、
+本稿は、先行研究で直感的に導入された中道等価 $\mweq$ を、
 五蘊圏 $\Sk$ の基盤上で数学的に定式化した。
 
 $\mweq$ は厳密な等号 $=$ ではなく、
