@@ -27,6 +27,8 @@
 \newcommand{\Rmw}{\mathbf{R}_{\circ}}
 \newcommand{\Svoid}{\mathbf{S}_{\circ}}
 \newcommand{\Bval}{\mathcal{B}}
+\newcommand{\Lhagma}{\mathcal{L}}
+\newcommand{\Avyakata}{\mathcal{A}}
 
 %-------------------------------------------------
 %  共通表示設定
@@ -316,14 +318,15 @@ FOLで時間量化 $\exists t, \forall t$ を行うことは、モナド $T$ を
 
 \RequirePackage{iftex}
 \ifLuaTeX
-  \documentclass[11pt,a4paper,ja=standard,lualatex]{bxjsarticle}
+  \documentclass[11pt,a4paper,ja=standard,lualatex]{article}
 \else\ifXeTeX
-  \documentclass[11pt,a4paper,ja=standard,xelatex]{bxjsarticle}
+  \documentclass[11pt,a4paper,ja=standard,xelatex]{article}
 \else
-  \documentclass[11pt,a4paper,ja=standard,pdflatex]{bxjsarticle}
+  \documentclass[11pt,a4paper,ja=standard,pdflatex]{sarticle}
 \fi\fi
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{bm}
+\usepackage{icat-common}
 
 \newtheorem{theorem}{定理}
 \newtheorem{definition}{定義}
@@ -334,7 +337,7 @@ FOLで時間量化 $\exists t, \forall t$ を行うことは、モナド $T$ を
 \newtheorem{operation}{操作}
 
 \title{無記の意味論：意味と指示の不動点\\
-—保留の再帰と無記の再帰の分岐について—}
+---保留の再帰と無記の再帰の分岐について---}
 \author{千葉将臣}
 \date{2026-06-30}
 
@@ -353,7 +356,7 @@ FOLで時間量化 $\exists t, \forall t$ を行うことは、モナド $T$ を
 無記の不動点として、すなわち
 「無記は無記である」と断定するほかない、ということである。
 
-そのために本論文は、まず保留（エポケー、$E$）と無記（$\mathrm{A}$）を
+そのために本論文は、まず保留（エポケー、$E$）と無記（$\Avyakata$）を
 分離する。保留は将来の再開条件 $R$ を要求するため、
 $E(\varphi)\to E(R(\varphi))\to E(R(R(\varphi)))\to\cdots$
 という悪性無限退行を生じる。これに対して無記の再帰は、
@@ -431,9 +434,9 @@ $\varphi$ は体系 $T$ に対して\textbf{記}であるという。
 \begin{definition}[無記]
 命題、あるいは命題的に見える問い $\varphi$ に対し、
 $\varphi$ の真偽を問う行為を実行しない操作を
-$\mathrm{A}(\varphi)$ と書き、\textbf{無記}と呼ぶ。
+$\Avyakata(\varphi)$ と書き、\textbf{無記}と呼ぶ。
 
-$\mathrm{A}(\varphi)$ は真理値を持たない。
+$\Avyakata(\varphi)$ は真理値を持たない。
 これは「$\varphi$ は真でも偽でもない」という第三の真理値ではなく、
 $\varphi$ に対して真理値を付与する行為そのものを
 実行しないという操作である。
@@ -471,9 +474,9 @@ $\varphi$ に対して真理値を付与する行為そのものを
 真理値を付与しない。
 すなわち、
 \begin{equation}
-\mathrm{A}\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
+\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
 \qquad
-\mathrm{A}\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
+\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
 \end{equation}
 を実行する。
 \end{operation}
@@ -572,16 +575,16 @@ $E(E(\varphi))=E(\varphi)$ は、判断中断状態の同一性を示す。
 
 \begin{theorem}[無記の各段階の完結性]
 任意の自然数 $n\geq1$ に対して、
-$\mathrm{A}^{n}(\varphi)$ はそれ自体で完結した操作である。
-すなわち、$\mathrm{A}^{n}(\varphi)$ の実行は、
+$\Avyakata^{n}(\varphi)$ はそれ自体で完結した操作である。
+すなわち、$\Avyakata^{n}(\varphi)$ の実行は、
 将来の再開・解除・条件確定に依存しない。
 \end{theorem}
 
 \begin{proof}
-$\mathrm{A}(\varphi)$ は「$\varphi$ について真偽を問う行為を
+$\Avyakata(\varphi)$ は「$\varphi$ について真偽を問う行為を
 実行しない」という操作であり、今この場で完結する。
-$\mathrm{A}(\mathrm{A}(\varphi))$ もまた、
-「$\mathrm{A}(\varphi)$ について真偽を問う行為を実行しない」
+$\Avyakata(\Avyakata(\varphi))$ もまた、
+「$\Avyakata(\varphi)$ について真偽を問う行為を実行しない」
 という操作であり、同様に今この場で完結する。
 この反復のどの段階にも、保留における解除条件 $R$ は現れない。
 したがって無記の反復は、正当化を次段階に先送りする退行ではない。
@@ -590,7 +593,7 @@ $\mathrm{A}(\mathrm{A}(\varphi))$ もまた、
 \begin{corollary}[退行と反復の区別]
 $E$ の再帰は退行である。
 各段階が次段階の正当化に依存し、いずれの段階も自立しないからである。
-これに対して $\mathrm{A}$ の再帰は反復である。
+これに対して $\Avyakata$ の再帰は反復である。
 各段階がその場で完結し、次段階に正当化を委ねないからである。
 \end{corollary}
 
@@ -599,15 +602,15 @@ $E$ の再帰は退行である。
 \begin{proposition}[無記の非冪等性]
 一般に、
 \begin{equation}
-\mathrm{A}(\mathrm{A}(\varphi))\neq\mathrm{A}(\varphi).
+\Avyakata(\Avyakata(\varphi))\neq\Avyakata(\varphi).
 \end{equation}
 \end{proposition}
 
 \begin{proof}
-$\mathrm{A}(\varphi)$ は、$\varphi$ について真偽を問う行為を
+$\Avyakata(\varphi)$ は、$\varphi$ について真偽を問う行為を
 実行しない操作である。
-一方 $\mathrm{A}(\mathrm{A}(\varphi))$ は、
-$\mathrm{A}(\varphi)$ という操作について真偽を問う行為を
+一方 $\Avyakata(\Avyakata(\varphi))$ は、
+$\Avyakata(\varphi)$ という操作について真偽を問う行為を
 実行しない操作である。
 両者は対象の階層が異なる。
 したがって両者は同一視されない。
@@ -649,11 +652,11 @@ $\mathrm{A}(\varphi)$ という操作について真偽を問う行為を
 
 \begin{definition}[無記の不動点]
 対象 $\Phi$ が、記の枠組みによる同一化・分離・可能性化・予想化の
-いずれによっても保存されず、ただ $\mathrm{A}$ の遂行によってのみ
+いずれによっても保存されず、ただ $\Avyakata$ の遂行によってのみ
 その位置を保つとき、$\Phi$ は無記の不動点にあるという。
 このとき次の断定が成り立つ。
 \begin{equation}
-\Phi\text{ は }\mathrm{A}\text{ である。}
+\Phi\text{ は }\Avyakata\text{ である。}
 \end{equation}
 \end{definition}
 
@@ -668,15 +671,15 @@ $\mathrm{A}(\varphi)$ という操作について真偽を問う行為を
 この関係は、無記の不動点としてのみ記述される。
 すなわち、
 \begin{equation}
-\mathrm{A}\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
+\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
 \qquad
-\mathrm{A}\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
+\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
 \end{equation}
 であり、さらにこの無記化自体についても
 \begin{equation}
-\mathrm{A}\Bigl(\mathrm{A}\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr)\Bigr),
+\Avyakata\Bigl(\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr)\Bigr),
 \qquad
-\mathrm{A}\Bigl(\mathrm{A}\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)\Bigr)
+\Avyakata\Bigl(\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)\Bigr)
 \end{equation}
 である。
 \end{theorem}
@@ -693,9 +696,9 @@ $\mathrm{A}(\varphi)$ という操作について真偽を問う行為を
 よって定理3.2の悪性無限退行を呼び込む。
 
 残る操作は、同一性命題にも分離命題にも真理値を付与しない
-$\mathrm{A}$ の遂行である。
+$\Avyakata$ の遂行である。
 さらに、この遂行を命題として固定することを避けるためには、
-$\mathrm{A}$ 自体にも $\mathrm{A}$ を適用する必要がある。
+$\Avyakata$ 自体にも $\Avyakata$ を適用する必要がある。
 この反復は定理4.1により退行ではなく、各段階で完結する。
 したがって意味と指示の関係は、無記の不動点としてのみ保存される。
 \end{proof}
@@ -703,11 +706,11 @@ $\mathrm{A}$ 自体にも $\mathrm{A}$ を適用する必要がある。
 \subsection{断定形の必然性}
 
 \begin{theorem}[無記の断定形必然性]
-無記 $\mathrm{A}(\varphi)$ を、保留・留保・予想・
+無記 $\Avyakata(\varphi)$ を、保留・留保・予想・
 「〜かもしれない」といった回避表現によって記述することはできない。
-$\mathrm{A}(\varphi)$ について意味のある記述を与える唯一の方法は、
+$\Avyakata(\varphi)$ について意味のある記述を与える唯一の方法は、
 \begin{equation}
-\varphi\text{ について }\mathrm{A}\text{ である。}
+\varphi\text{ について }\Avyakata\text{ である。}
 \end{equation}
 という断定形である。
 \end{theorem}
@@ -726,7 +729,7 @@ $\mathrm{A}(\varphi)$ について意味のある記述を与える唯一の方�
 \begin{remark}[断定は確信ではない]
 ここでいう断定形は、確信の強さや真理性の主張ではない。
 それは、ある操作が今この場で遂行され完結したことの表明である。
-$\mathrm{A}(\varphi)$ と断定することは、
+$\Avyakata(\varphi)$ と断定することは、
 $\varphi$ が真であるとも偽であるとも主張しない。
 それは、$\varphi$ について真偽を問う行為を実行しない操作が
 完結したことを述べる。
@@ -736,14 +739,14 @@ $\varphi$ が真であるとも偽であるとも主張しない。
 
 本論文は、意味と指示の関係を、同一性・分離・可能性・予想の
 いずれにも回収されない構造として扱った。
-そのために、保留 $E$ と無記 $\mathrm{A}$ を区別した。
+そのために、保留 $E$ と無記 $\Avyakata$ を区別した。
 
 \begin{enumerate}
 \item 保留 $E$ は状態としては冪等であるが、再開条件 $R$ を要求するため、
   正当化の層で悪性無限退行に陥る。
-\item 無記 $\mathrm{A}$ は、真偽を問う行為を実行しない操作であり、
+\item 無記 $\Avyakata$ は、真偽を問う行為を実行しない操作であり、
   将来の再開条件を要求しない。
-\item 無記の再帰 $\mathrm{A}^{n}(\varphi)$ は、各段階で完結する反復であり、
+\item 無記の再帰 $\Avyakata^{n}(\varphi)$ は、各段階で完結する反復であり、
   保留の退行とは異なる。
 \item 意味と指示は不可分でありつつ同一ではないが、
   この関係は命題として確定されない。
@@ -814,6 +817,336 @@ Stephen Cole Kleene.
 \end{thebibliography}
 
 \end{document}
+
+
+% !TeX program = lualatex
+\documentclass[11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{proposition}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{corollary}[theorem]{系}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{assumption}[theorem]{仮定}
+\newtheorem{remark}[theorem]{注意}
+
+\newcommand{\PrT}{\mathrm{Pr}_T}
+\newcommand{\SelfRef}{\mathrm{SelfRef}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\Res}{\mathrm{Res}}
+\newcommand{\Supp}{\operatorname{supp}}
+\newcommand{\Spc}{\operatorname{Spc}}
+
+\title{言語の外点\\
+---強制法と四重残余束による到達不能性の幾何学---}
+\author{千葉将臣}
+\date{2026-07-19}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本論文は、形式的体系の内部では対象として定義できないが、内部からの関係によって間接的に指示できるものを「外点」\(\bigcirc\) と呼び、その数学的記述を試みる。
+第一に、完備ブール代数値モデルと強制関係を用い、基底モデルに属さないジェネリック・フィルターを、基底モデル内で定義可能な関係によって指示する。
+第二に、四種の操作に伴う情報損失を安定圏における余ファイバーとして定式化し、それらの台の共通部分を四重残余束（Quadruple Residual Bundle; QRB）の特異領域と定義する。
+強制法に関する標準定理とQRBに固有の仮定を明確に分離することで、外点とジェネリック・フィルターの同一視を無条件の定理とはせず、比較写像が満たすべき条件として提示する。
+これにより、到達不能性を単なる未定義性ではなく、複数の比較写像が同時に同値でなくなる幾何学的障害として研究するための形式的枠組みを与える。
+\end{abstract}
+
+\section{はじめに}
+
+\subsection{問題設定}
+
+十分に強い形式的体系は、自身の構文を算術化できる一方、自身の真理を内部で完全に定義することはできない\cite{godel1931,tarski1936}。
+Kripke の真理理論は部分的真理述語の最小不動点を構成するが、得られた言語の外側から新たな真理概念を問うリベンジ問題は残る\cite{kripke1975}。
+したがって、本論文では外部を新しい対象定数として内部言語に追加するのではなく、内部で計算できる関係が外部に対して与える制約によって指示する。
+
+この方針には二つの段階がある。
+第一段階は、強制関係 \(p\Vdash\varphi\) による外部の指示である。
+第二段階は、複数の論理的・圏論的操作が捨てる情報を残余として記録し、その共通の非自明領域を幾何学化することである。
+
+\subsection{本論文の寄与と射程}
+
+本論文の寄与は次の三点である。
+\begin{enumerate}
+\item 強制法の定義可能性補題と真理補題を、外部の「定義」ではなく「指示」のモデルとして整理する。
+\item 安定テンソル三角圏において四つの残余対象とQRBを定義し、その特異領域を台の交差として与える。
+\item ジェネリック・フィルターとQRB特異領域の対応を、無条件の同一視ではなく、明示的な比較写像を要する研究仮説として定式化する。
+\end{enumerate}
+
+特に、強制法が任意の集合論的命題を保存するとは主張しない。
+強制拡大は連続体仮説のような命題を変え得るが、基底モデルが推移的である場合には順序数を保存し、同じ自然数構造上の一階算術文の真理を保存する。
+
+\section{形式的準備}
+\label{sec:prelim}
+
+\subsection{体系と自己言及}
+
+\begin{assumption}\label{ass:T}
+\(T\) は再帰的に公理化された無矛盾な一階理論であり、少なくとも Robinson 算術 \(Q\) を含み、自身の構文と証明関係を算術化できるとする。
+\end{assumption}
+
+論理式 \(\varphi\) の Gödel 数を \(\ulcorner\varphi\urcorner\)、\(T\) の標準的な証明可能性述語を \(\PrT(x)\) と書く。
+
+\begin{lemma}[対角線補題]\label{lem:diagonal}
+任意の一変数論理式 \(\psi(x)\) に対して、文 \(G\) が存在し、
+\[
+T\vdash G\leftrightarrow\psi(\ulcorner G\urcorner)
+\]
+が成り立つ。
+\end{lemma}
+
+補題\ref{lem:diagonal}で \(\psi(x)\equiv\neg\PrT(x)\) とすれば、適切な追加条件の下で Gödel 文が得られる\cite{kleene1952}。
+記法として
+\[
+\SelfRef_T(\varphi)=\neg\PrT(\ulcorner\varphi\urcorner)
+\]
+と置く。ただし、これは対象言語の全真理を与える作用素ではない。
+
+\subsection{トポスと二重否定層化}
+
+\begin{definition}[エレメンタリー・トポス]
+圏 \(\mathcal{E}\) がエレメンタリー・トポスであるとは、有限極限を持ち、デカルト閉であり、部分対象分類子 \(\Omega\) を持つことをいう。
+\end{definition}
+
+一般のトポスの内部論理は直観主義的である。
+Lawvere--Tierney 位相 \(j=\neg\neg\) に伴う層化関手 \(a_{\neg\neg}\) は、同型を除いて冪等である\cite{johnstone2002}。
+したがって、二重否定層化から生じる残余は「層化が非冪等であること」ではなく、単位写像
+\(X\to a_{\neg\neg}X\) が一般には同型でないことによって測るべきである。
+
+\section{強制法による外部の指示}
+\label{sec:forcing}
+
+\subsection{ブール値と強制関係}
+
+\begin{assumption}\label{ass:forcing}
+\(M\) を集合論の十分な有限部分を満たす可算推移モデル、\(\mathbb{P}\in M\) を分離的な強制半順序、\(\mathbb{B}\) を \(M\) におけるその正則開完備化とする。
+\end{assumption}
+
+\(M^{\mathbb{B}}\) を \(\mathbb{B}\) 値宇宙とし、論理式 \(\varphi\) のブール値を
+\(\lVert\varphi\rVert_{\mathbb{B}}\in\mathbb{B}\) と書く。
+
+\begin{definition}[強制関係]
+\(p\in\mathbb{P}\) と強制言語の論理式 \(\varphi\) に対して
+\[
+p\Vdash\varphi
+\quad\Longleftrightarrow\quad
+p\leq\lVert\varphi\rVert_{\mathbb{B}}
+\]
+と定める。
+\end{definition}
+
+\begin{theorem}[定義可能性補題と真理補題]\label{thm:forcing}
+仮定\ref{ass:forcing}の下で、各論理式 \(\varphi\) に対する関係
+\(p\Vdash\varphi\) は \(M\) 内で再帰的に定義できる。
+さらに、\(G\subseteq\mathbb{P}\) が \(M\)-ジェネリックならば
+\[
+M[G]\models\varphi(\tau_1^G,\ldots,\tau_n^G)
+\quad\Longleftrightarrow\quad
+(\exists p\in G)\;p\Vdash\varphi(\tau_1,\ldots,\tau_n)
+\]
+が成り立つ。
+\end{theorem}
+
+定理\ref{thm:forcing}は強制法の標準的な基本定理である\cite{cohen1963,bell1985,jech2003}。
+右辺は \(M\) 内で扱えるが、ジェネリック・フィルター \(G\) 自身は一般に \(M\) の元ではない。
+この非対称性が、本論文における「外部を定義せずに指示する」という考えの厳密な原型である。
+
+\begin{proposition}[相対的無矛盾性と算術的絶対性]\label{prop:preservation}
+\(M\models\mathrm{ZFC}\) かつ \(G\) が \(M\)-ジェネリックならば、\(M[G]\models\mathrm{ZFC}\) であり、\(M\) と \(M[G]\) は同じ順序数を持つ。
+さらに両者が標準的な \(\omega\) を共有する限り、自然数構造だけを量化領域とする一階算術文の真理は一致する。
+\end{proposition}
+
+\begin{remark}
+命題\ref{prop:preservation}は、強制拡大が集合論の全命題について保存拡大であることを意味しない。
+新しい実数、すなわち \(\omega\) の新しい部分集合が追加される場合があり、集合論的命題の真理値は変化し得る。
+\end{remark}
+
+\section{四重残余束の構成}
+\label{sec:qrb}
+
+\subsection{残余対象}
+
+QRBを文字通りの位相的ベクトル束と仮定するのではなく、まず余ファイバーを持つ圏で残余を定義する。
+
+\begin{assumption}\label{ass:category}
+\(\mathcal{C}\) を冪等完備な安定テンソル三角圏とし、\(X\in\mathcal{C}^c\) を体系 \(T\) の意味論的状態を表すコンパクト対象とする。
+各 \(i\in\{S,N,SN,NS\}\) に対し、完全自己関手 \(M_i\colon\mathcal{C}\to\mathcal{C}\) と自然変換
+\(\eta_i\colon\mathrm{Id}_{\mathcal{C}}\Rightarrow M_i\) が与えられ、\(M_i\) はコンパクト対象を保つとする。
+\end{assumption}
+
+\begin{definition}[四つの残余]
+各操作の残余対象を完全三角
+\[
+X\xrightarrow{\eta_i(X)}M_iX\longrightarrow\Res_i(X)\longrightarrow\Sigma X
+\]
+によって定まる余ファイバー
+\[
+\Res_i(X)=\operatorname{cofib}\!\bigl(\eta_i(X)\bigr)
+\]
+と定義する。
+\end{definition}
+
+想定する四操作は次の通りである。
+\begin{enumerate}
+\item \(M_S\)：同一性を外延的等号へ截断する比較操作。単なる恒等関手を選べば残余はゼロになるため、非自明な比較写像を明示する必要がある。
+\item \(M_N\)：二重否定層化。残余 \(\Res_N(X)\) は \(X\to a_{\neg\neg}X\) が同型でない度合いを表す。
+\item \(M_{SN}\)：随伴 \(F\dashv U\) から生じるモナド \(UF\)。残余は単位 \(X\to UFX\) の非可逆性を表す。
+\item \(M_{NS}\)：構文の対角化を意味論側に実現する自己参照比較操作。この実現の存在は追加構造であり、対角線補題だけから自動的には得られない。
+\end{enumerate}
+
+\begin{definition}[四重残余束]
+対象 \(X\) における四重残余束を
+\[
+\QRB(X)=
+\Res_S(X)\oplus\Res_N(X)\oplus
+\Res_{SN}(X)\oplus\Res_{NS}(X)
+\]
+と定義する。
+\end{definition}
+
+\subsection{台と外点領域}
+
+\(\mathcal{C}^c\) を \(\mathcal{C}\) のコンパクト対象の部分圏とし、Balmer スペクトル
+\(\Spc(\mathcal{C}^c)\) 上の台を \(\Supp(-)\) と書く\cite{balmer2005}。
+
+\begin{definition}[外点領域]
+四つの残余が同時に非自明となる領域を
+\[
+\mathcal{O}_X=
+\bigcap_{i\in\{S,N,SN,NS\}}\Supp\bigl(\Res_i(X)\bigr)
+\subseteq\Spc(\mathcal{C}^c)
+\]
+と定義する。
+\(\mathcal{O}_X\neq\varnothing\) のとき、その点をQRBの外点候補と呼ぶ。
+\end{definition}
+
+\begin{theorem}[交差点の判定]\label{thm:intersection}
+仮定\ref{ass:category}の下で、素点 \(\mathfrak{p}\in\Spc(\mathcal{C}^c)\) が \(\mathcal{O}_X\) に属することと、すべての \(i\) について局所化された比較写像
+\[
+\eta_i(X)_{\mathfrak p}\colon
+X_{\mathfrak p}\longrightarrow(M_iX)_{\mathfrak p}
+\]
+が同型でないことは同値である。
+\end{theorem}
+
+\begin{proof}
+安定圏では射が同型であることとその余ファイバーがゼロ対象であることが同値である。
+また、\(\mathfrak p\notin\Supp(Y)\) であることは局所化 \(Y_{\mathfrak p}\) がゼロであることと同値である。
+これを四つの余ファイバーへ適用すればよい。
+\end{proof}
+
+定理\ref{thm:intersection}により、外点領域は比喩ではなく、四つの比較写像が同時に可逆性を失う素点の集合として特徴づけられる。
+ただし、その非空性は一般には保証されず、具体的な圏と四操作ごとに証明されなければならない。
+
+\section{強制法とQRBを結ぶ比較原理}
+\label{sec:comparison}
+
+ジェネリック・フィルター \(G\) と \(\mathcal{O}_X\) は、ここまでの定義だけでは異なる種類の対象である。
+前者は強制半順序上のフィルターであり、後者はテンソル三角スペクトルの部分集合である。
+両者を同一視するには比較写像が必要となる。
+
+\begin{assumption}[指示写像]\label{ass:designation}
+順序を保つ写像
+\[
+\Theta\colon\mathbb{B}\longrightarrow
+\operatorname{Open}\!\bigl(\Spc(\mathcal{C}^c)\bigr)
+\]
+が存在し、有限交叉と任意結合を保存するとする。
+さらに、点 \(\xi_G\in\mathcal O_X\) が存在し、各 \(p\in\mathbb P\) に対して
+\(p\in G\) と \(\xi_G\in\Theta(p)\) が同値であるとする。
+\end{assumption}
+
+\begin{proposition}[条件付き指示原理]\label{prop:designation}
+仮定\ref{ass:designation}の下で、\(p\Vdash\varphi\) ならば
+\[
+\mathcal{O}_X\cap\Theta(p)
+\subseteq
+\mathcal{O}_X\cap\Theta\!\left(\lVert\varphi\rVert_{\mathbb B}\right)
+\]
+が成り立つ。
+したがって、QRB外点領域上でも強制関係と整合する包含関係によって \(\varphi\) を指示できる。
+\end{proposition}
+
+\begin{proof}
+\(p\Vdash\varphi\) の定義から \(p\leq\lVert\varphi\rVert_{\mathbb B}\) である。
+\(\Theta\) の単調性により
+\(\Theta(p)\subseteq\Theta(\lVert\varphi\rVert_{\mathbb B})\) を得る。
+両辺と \(\mathcal{O}_X\) の交わりを取れば結論が従う。
+\end{proof}
+
+命題\ref{prop:designation}が与えるのは、ジェネリック・フィルターとQRBの完全な同型ではなく、両者の指示構造が整合するための十分条件である。
+具体例を構成するには、\(\mathbb B\)、\(\mathcal C\)、四関手、および \(\Theta\) を同時に指定し、仮定\ref{ass:designation}を検証する必要がある。
+
+\section{結論}
+\label{sec:conclusion}
+
+本論文は、言語の外点を二つの水準に分けて定式化した。
+強制法の水準では、基底モデルに属さないジェネリック・フィルターを、内部で定義可能な強制関係によって間接的に指示できる。
+圏論的水準では、四つの比較操作の余ファイバーをQRBとして束ね、その台の共通部分を、すべての比較が同時に可逆性を失う外点領域として定義した。
+
+この分離によって、標準的な強制定理、圏論から従う交差点判定、そして今後構成すべき指示写像を区別できる。
+今後の主要課題は、具体的な論理トポスまたは安定圏において \(\mathcal O_X\neq\varnothing\) を示し、強制代数から台の開集合への写像 \(\Theta\) を構成することである。
+その達成によって初めて、ジェネリックな外部と四重残余の特異領域との対応が、比喩ではなく具体的な数学的定理となる。
+
+\begin{thebibliography}{99}
+
+\bibitem{balmer2005}
+Paul Balmer,
+``The spectrum of prime ideals in tensor triangulated categories,''
+\emph{Journal für die reine und angewandte Mathematik}, 588, 149--168, 2005.
+
+\bibitem{bell1985}
+John L. Bell,
+\emph{Boolean-Valued Models and Independence Proofs in Set Theory},
+Oxford University Press, 1985.
+
+\bibitem{cohen1963}
+Paul J. Cohen,
+``The independence of the continuum hypothesis,''
+\emph{Proceedings of the National Academy of Sciences}, 50, 1143--1148, 1963.
+
+\bibitem{godel1931}
+Kurt Gödel,
+``Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I,''
+\emph{Monatshefte für Mathematik und Physik}, 38, 173--198, 1931.
+
+\bibitem{jech2003}
+Thomas Jech,
+\emph{Set Theory: The Third Millennium Edition, Revised and Expanded},
+Springer, 2003.
+
+\bibitem{johnstone2002}
+Peter T. Johnstone,
+\emph{Sketches of an Elephant: A Topos Theory Compendium},
+Oxford University Press, 2002.
+
+\bibitem{kleene1952}
+Stephen C. Kleene,
+\emph{Introduction to Metamathematics},
+North-Holland, 1952.
+
+\bibitem{kripke1975}
+Saul A. Kripke,
+``Outline of a theory of truth,''
+\emph{The Journal of Philosophy}, 72(19), 690--716, 1975.
+
+\bibitem{tarski1936}
+Alfred Tarski,
+``Der Wahrheitsbegriff in den formalisierten Sprachen,''
+\emph{Studia Philosophica}, 1, 261--405, 1936.
+
+\end{thebibliography}
+
+\end{document}
+
 
 % !TEX program = lualatex
 \documentclass[11pt,a4paper,ja=standard,autodetect-engine]{bxjsarticle}
@@ -1437,6 +1770,7 @@ J.~Herbrand.
 \end{thebibliography}
 
 \end{document}
+
 
 % !TEX program = lualatex
 \documentclass[11pt,a4paper]{article}
