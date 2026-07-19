@@ -7,6 +7,7 @@ LATEX_FLAGS = -interaction=nonstopmode
 SOURCES = \
 	temporal-boolean-algebra.tex \
 	../sunyata-math/avyakata.tex \
+	qrb.tex \
 	../sunyata-math/pov-proof.tex \
 	pov-herbrand-space.tex \
 	../sunyata-math/titotp.tex \
