@@ -821,7 +821,7 @@ Stephen Cole Kleene.
 
 % !TeX program = lualatex
 \documentclass[11pt]{ltjsarticle}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{lmodern}
 \usepackage[unicode]{hyperref}
 
@@ -842,18 +842,19 @@ Stephen Cole Kleene.
 \newcommand{\Res}{\mathrm{Res}}
 \newcommand{\Supp}{\operatorname{supp}}
 \newcommand{\Spc}{\operatorname{Spc}}
+\newcommand{\dfix}{\bigcirc}
 
-\title{言語の外点\\
+\title{言語の外点：\\
 ---強制法と四重残余束による到達不能性の幾何学---}
 \author{千葉将臣}
-\date{2026-07-19}
+\date{2026年7月19日}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-本論文は、形式的体系の内部では対象として定義できないが、内部からの関係によって間接的に指示できるものを「外点」\(\bigcirc\) と呼び、その数学的記述を試みる。
+本論文は、形式的体系の内部では対象として定義できないが、内部からの関係によって間接的に指示できるものを「外点」\(\dfix\) と呼び、その数学的記述を試みる。
 第一に、完備ブール代数値モデルと強制関係を用い、基底モデルに属さないジェネリック・フィルターを、基底モデル内で定義可能な関係によって指示する。
 第二に、四種の操作に伴う情報損失を安定圏における余ファイバーとして定式化し、それらの台の共通部分を四重残余束（Quadruple Residual Bundle; QRB）の特異領域と定義する。
 強制法に関する標準定理とQRBに固有の仮定を明確に分離することで、外点とジェネリック・フィルターの同一視を無条件の定理とはせず、比較写像が満たすべき条件として提示する。
@@ -959,6 +960,16 @@ M[G]\models\varphi(\tau_1^G,\ldots,\tau_n^G)
 右辺は \(M\) 内で扱えるが、ジェネリック・フィルター \(G\) 自身は一般に \(M\) の元ではない。
 この非対称性が、本論文における「外部を定義せずに指示する」という考えの厳密な原型である。
 
+\begin{definition}[強制法における外点]\label{def:forcing-outer-point}
+基底モデル \(M\) の外部にある \(M\)-ジェネリック・フィルター \(G\) を、強制法によって指示される外点 \(\dfix\) の意味論的代表と呼び、
+\[
+\dfix_{\mathrm{Forc}}\coloneqq G
+\]
+と表す。
+この等式は \(M\) の内部で対象 \(G\) を定義するものではなく、メタ理論において外点 \(\dfix\) の役割を \(G\) に担わせるという意味論的な同定である。
+体系内部から利用できるのは \(G\) 自体ではなく、定理\ref{thm:forcing}の強制関係 \(p\Vdash\varphi\) を通じて記述される \(\dfix_{\mathrm{Forc}}\) の条件付きの振る舞いである。
+\end{definition}
+
 \begin{proposition}[相対的無矛盾性と算術的絶対性]\label{prop:preservation}
 \(M\models\mathrm{ZFC}\) かつ \(G\) が \(M\)-ジェネリックならば、\(M[G]\models\mathrm{ZFC}\) であり、\(M\) と \(M[G]\) は同じ順序数を持つ。
 さらに両者が標準的な \(\omega\) を共有する限り、自然数構造だけを量化領域とする一階算術文の真理は一致する。
@@ -1028,6 +1039,10 @@ X\xrightarrow{\eta_i(X)}M_iX\longrightarrow\Res_i(X)\longrightarrow\Sigma X
 \(\mathcal{O}_X\neq\varnothing\) のとき、その点をQRBの外点候補と呼ぶ。
 \end{definition}
 
+ここで \(\mathcal O_X\) は外点 \(\dfix\) そのものではなく、四つの残余が同時に検出される外点候補の領域である。
+したがって、強制法における代表 \(\dfix_{\mathrm{Forc}}=G\) と対応させるべき対象は領域全体 \(\mathcal O_X\) ではなく、その内部の特定の点である。
+また、\(\dfix\)は \(\mathcal O_X\) の元（点）であり、\(\mathcal O_X\) はその候補領域である。
+
 \begin{theorem}[交差点の判定]\label{thm:intersection}
 仮定\ref{ass:category}の下で、素点 \(\mathfrak{p}\in\Spc(\mathcal{C}^c)\) が \(\mathcal{O}_X\) に属することと、すべての \(i\) について局所化された比較写像
 \[
@@ -1064,6 +1079,24 @@ X_{\mathfrak p}\longrightarrow(M_iX)_{\mathfrak p}
 \(p\in G\) と \(\xi_G\in\Theta(p)\) が同値であるとする。
 \end{assumption}
 
+\begin{definition}[QRBにおける外点]\label{def:qrb-outer-point}
+仮定\ref{ass:designation}を満たす点 \(\xi_G\in\mathcal O_X\) を、QRBによって表現された外点と呼び、
+\[
+\dfix_{\mathrm{QRB}}\coloneqq\xi_G
+\]
+と定める。
+このとき外点の二つの表現の関係を
+\[
+\dfix
+\quad\longleftrightarrow\quad
+\dfix_{\mathrm{Forc}}=G
+\quad\longleftrightarrow\quad
+\dfix_{\mathrm{QRB}}=\xi_G\in\mathcal O_X
+\]
+と記す。
+右側の対応は仮定\ref{ass:designation}に依存し、\(G\) と \(\xi_G\) が同一の集合論的対象であることではなく、条件 \(p\) の所属と開集合 \(\Theta(p)\) への所属が一致するという指示構造の同値を意味する。
+\end{definition}
+
 \begin{proposition}[条件付き指示原理]\label{prop:designation}
 仮定\ref{ass:designation}の下で、\(p\Vdash\varphi\) ならば
 \[
@@ -1083,18 +1116,22 @@ X_{\mathfrak p}\longrightarrow(M_iX)_{\mathfrak p}
 \end{proof}
 
 命題\ref{prop:designation}が与えるのは、ジェネリック・フィルターとQRBの完全な同型ではなく、両者の指示構造が整合するための十分条件である。
+すなわち、体系内部から強制関係によって指示される外点 \(\dfix_{\mathrm{Forc}}\) の振る舞いが、QRB側では点 \(\dfix_{\mathrm{QRB}}\) の開近傍への所属関係として再表現される。
 具体例を構成するには、\(\mathbb B\)、\(\mathcal C\)、四関手、および \(\Theta\) を同時に指定し、仮定\ref{ass:designation}を検証する必要がある。
 
 \section{結論}
 \label{sec:conclusion}
 
 本論文は、言語の外点を二つの水準に分けて定式化した。
-強制法の水準では、基底モデルに属さないジェネリック・フィルターを、内部で定義可能な強制関係によって間接的に指示できる。
-圏論的水準では、四つの比較操作の余ファイバーをQRBとして束ね、その台の共通部分を、すべての比較が同時に可逆性を失う外点領域として定義した。
+強制法の水準では、基底モデルに属さないジェネリック・フィルターを \(\dfix_{\mathrm{Forc}}=G\) として、内部で定義可能な強制関係によって間接的に指示できる。
+圏論的水準では、四つの比較操作の余ファイバーをQRBとして束ね、その台の共通部分を外点候補領域 \(\mathcal O_X\) とし、指示写像が存在する場合には \(\dfix_{\mathrm{QRB}}=\xi_G\in\mathcal O_X\) と定めた。
 
 この分離によって、標準的な強制定理、圏論から従う交差点判定、そして今後構成すべき指示写像を区別できる。
 今後の主要課題は、具体的な論理トポスまたは安定圏において \(\mathcal O_X\neq\varnothing\) を示し、強制代数から台の開集合への写像 \(\Theta\) を構成することである。
 その達成によって初めて、ジェネリックな外部と四重残余の特異領域との対応が、比喩ではなく具体的な数学的定理となる。
+
+\section*{謝辞}
+本稿の構想に関する議論に感謝する。
 
 \begin{thebibliography}{99}
 
