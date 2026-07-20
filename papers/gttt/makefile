@@ -6,15 +6,14 @@ LATEX_FLAGS = -interaction=nonstopmode
 # ソースファイルのリスト（指定された順番を維持）
 SOURCES = \
 	temporal-boolean-algebra.tex \
-	../sunyata-math/avyakata.tex \
-	qrb.tex \
-	../sunyata-math/pov-proof.tex \
+	../logic/avyakata.tex \
+	../logic/qrb.tex \
+	../logic/pov-proof.tex \
 	pov-herbrand-space.tex \
 	../sunyata-math/titotp.tex \
 	../sunyata-math/titotp-mebius.tex \
-	../math/math-observer-elimination.tex \
-	../sunyata-math/math-limit-equivalence.tex \
-	amphigory-0.tex \
+	../logic/math-observer-elimination.tex \
+	../logic/math-limit-equivalence.tex \
 	amphigory.tex 
 
 # 中間生成物および最終的なPDFのリスト

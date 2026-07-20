@@ -4,26 +4,18 @@ PDFTK = pdftk
 LATEX_FLAGS = -interaction=nonstopmode
 
 # ソースファイルのリスト（指定された順番を維持）
-SOURCES = boundary-theory-core.tex \
-	  lhagma-avyakata-dfix0.tex \
-          icat-dfix0.tex \
-          icat-truth-preservation.tex \
-          titotp.tex \
-          titotp-mebius.tex \
-	  icat-cl.tex \
-          icat-catuskoti-skandha.tex \
-          icat-ymwcomb.tex \
-	  icat-sunyata-theory.tex \
-          icat-lk.tex \
-	  aletheic-proof-theory.tex \
-          boundary-category.tex \
-          icat-twdt.tex \
-	  emb-twdt.tex \
-	  icat-calibration.tex
+SOURCES = \
+	qrb.tex \
+	avyakata.tex \
+	pov-proof.tex \
+	lhagma-semantics.tex \
+	il-ait.tex \
+	math-catuskoti.tex
+
 
 # 中間生成物および最終的なPDFのリスト
 PDFS = $(SOURCES:.tex=.pdf)
-TARGET = icat.pdf
+TARGET = _logic.pdf
 
 # デフォルトターゲット
 all: $(TARGET)
@@ -38,11 +30,11 @@ $(TARGET): $(PDFS)
 	# 目次や参照がある場合、2回実行する必要がある場合は以下を有効にしてください
 	# $(LATEX) $(LATEX_FLAGS) $<
 
-bigtex: $(SOURCES)
-	@rm -f icat.txt
+txt: $(SOURCES)
+	@rm -f _logic.txt
 	for f in icat-common.sty $(SOURCES); do \
-		cat $$f >> icat.txt; \
-		echo '' >> icat.txt; \
+		cat $$f >> _logic.txt; \
+		echo '' >> _logic.txt; \
 	done
 
 # 掃除用

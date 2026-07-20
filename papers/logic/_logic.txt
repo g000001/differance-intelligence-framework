@@ -1,0 +1,1765 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{icat-common}[2026/06/29 Common settings for ICAT papers]
+
+\RequirePackage{fix-cm}
+\RequirePackage{luatexja}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{amsfonts}
+\RequirePackage{geometry}
+\RequirePackage{enumitem}
+\RequirePackage{tikz}
+
+
+\geometry{margin=1in}
+
+%-------------------------------------------------
+%  共通マクロ
+%-------------------------------------------------
+%\newcommand{\dfix}{D_{\mathrm{fix}0}}
+\DeclareRobustCommand{\circledequal}{%
+  \mathrel{\text{\textcircled{\raisebox{-0.15ex}{$=$}}}}%
+}
+\newcommand{\mweq}{\circledequal}  
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\metanegation}{\Uparrow}
+\newcommand{\Rmw}{\mathbf{R}_{\circ}}
+\newcommand{\Svoid}{\mathbf{S}_{\circ}}
+\newcommand{\Bval}{\mathcal{B}}
+\newcommand{\Lhagma}{\mathcal{L}}
+\newcommand{\Avyakata}{\mathcal{A}}
+
+%-------------------------------------------------
+%  共通表示設定
+%-------------------------------------------------
+\renewcommand{\abstractname}{Abstract}
+\renewcommand{\refname}{参考文献}
+\providecommand{\bibname}{参考文献}
+\renewcommand{\bibname}{参考文献}
+\setlist[description]{style=multiline, leftmargin=3cm}
+
+% !TeX program = lualatex
+\documentclass[11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{lmodern}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{proposition}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{corollary}[theorem]{系}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{assumption}[theorem]{仮定}
+\newtheorem{remark}[theorem]{注意}
+
+\newcommand{\PrT}{\mathrm{Pr}_T}
+\newcommand{\SelfRef}{\mathrm{SelfRef}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\Res}{\mathrm{Res}}
+\newcommand{\Supp}{\operatorname{supp}}
+\newcommand{\Spc}{\operatorname{Spc}}
+\newcommand{\dfix}{\bigcirc}
+
+\title{言語の外点：\\
+---強制法と四重残余束による到達不能性の幾何学---}
+\author{千葉将臣}
+\date{2026年7月19日}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本論文は、形式的体系の内部では対象として定義できないが、内部からの関係によって間接的に指示できるものを「外点」\(\dfix\) と呼び、その数学的記述を試みる。
+第一に、完備ブール代数値モデルと強制関係を用い、基底モデルに属さないジェネリック・フィルターを、基底モデル内で定義可能な関係によって指示する。
+第二に、四種の操作に伴う情報損失を安定圏における余ファイバーとして定式化し、それらの台の共通部分を四重残余束（Quadruple Residual Bundle; QRB）の特異領域と定義する。
+強制法に関する標準定理とQRBに固有の仮定を明確に分離することで、外点とジェネリック・フィルターの同一視を無条件の定理とはせず、比較写像が満たすべき条件として提示する。
+これにより、到達不能性を単なる未定義性ではなく、複数の比較写像が同時に同値でなくなる幾何学的障害として研究するための形式的枠組みを与える。
+\end{abstract}
+
+\section{はじめに}
+
+\subsection{問題設定}
+
+十分に強い形式的体系は、自身の構文を算術化できる一方、自身の真理を内部で完全に定義することはできない\cite{godel1931,tarski1936}。
+Kripke の真理理論は部分的真理述語の最小不動点を構成するが、得られた言語の外側から新たな真理概念を問うリベンジ問題は残る\cite{kripke1975}。
+したがって、本論文では外部を新しい対象定数として内部言語に追加するのではなく、内部で計算できる関係が外部に対して与える制約によって指示する。
+
+この方針には二つの段階がある。
+第一段階は、強制関係 \(p\Vdash\varphi\) による外部の指示である。
+第二段階は、複数の論理的・圏論的操作が捨てる情報を残余として記録し、その共通の非自明領域を幾何学化することである。
+
+\subsection{本論文の寄与と射程}
+
+本論文の寄与は次の三点である。
+\begin{enumerate}
+\item 強制法の定義可能性補題と真理補題を、外部の「定義」ではなく「指示」のモデルとして整理する。
+\item 安定テンソル三角圏において四つの残余対象とQRBを定義し、その特異領域を台の交差として与える。
+\item ジェネリック・フィルターとQRB特異領域の対応を、無条件の同一視ではなく、明示的な比較写像を要する研究仮説として定式化する。
+\end{enumerate}
+
+特に、強制法が任意の集合論的命題を保存するとは主張しない。
+強制拡大は連続体仮説のような命題を変え得るが、基底モデルが推移的である場合には順序数を保存し、同じ自然数構造上の一階算術文の真理を保存する。
+
+\section{形式的準備}
+\label{sec:prelim}
+
+\subsection{体系と自己言及}
+
+\begin{assumption}\label{ass:T}
+\(T\) は再帰的に公理化された無矛盾な一階理論であり、少なくとも Robinson 算術 \(Q\) を含み、自身の構文と証明関係を算術化できるとする。
+\end{assumption}
+
+論理式 \(\varphi\) の Gödel 数を \(\ulcorner\varphi\urcorner\)、\(T\) の標準的な証明可能性述語を \(\PrT(x)\) と書く。
+
+\begin{lemma}[対角線補題]\label{lem:diagonal}
+任意の一変数論理式 \(\psi(x)\) に対して、文 \(G\) が存在し、
+\[
+T\vdash G\leftrightarrow\psi(\ulcorner G\urcorner)
+\]
+が成り立つ。
+\end{lemma}
+
+補題\ref{lem:diagonal}で \(\psi(x)\equiv\neg\PrT(x)\) とすれば、適切な追加条件の下で Gödel 文が得られる\cite{kleene1952}。
+記法として
+\[
+\SelfRef_T(\varphi)=\neg\PrT(\ulcorner\varphi\urcorner)
+\]
+と置く。ただし、これは対象言語の全真理を与える作用素ではない。
+
+\subsection{トポスと二重否定層化}
+
+\begin{definition}[エレメンタリー・トポス]
+圏 \(\mathcal{E}\) がエレメンタリー・トポスであるとは、有限極限を持ち、デカルト閉であり、部分対象分類子 \(\Omega\) を持つことをいう。
+\end{definition}
+
+一般のトポスの内部論理は直観主義的である。
+Lawvere--Tierney 位相 \(j=\neg\neg\) に伴う層化関手 \(a_{\neg\neg}\) は、同型を除いて冪等である\cite{johnstone2002}。
+したがって、二重否定層化から生じる残余は「層化が非冪等であること」ではなく、単位写像
+\(X\to a_{\neg\neg}X\) が一般には同型でないことによって測るべきである。
+
+\section{強制法による外部の指示}
+\label{sec:forcing}
+
+\subsection{ブール値と強制関係}
+
+\begin{assumption}\label{ass:forcing}
+\(M\) を集合論の十分な有限部分を満たす可算推移モデル、\(\mathbb{P}\in M\) を分離的な強制半順序、\(\mathbb{B}\) を \(M\) におけるその正則開完備化とする。
+\end{assumption}
+
+\(M^{\mathbb{B}}\) を \(\mathbb{B}\) 値宇宙とし、論理式 \(\varphi\) のブール値を
+\(\lVert\varphi\rVert_{\mathbb{B}}\in\mathbb{B}\) と書く。
+
+\begin{definition}[強制関係]
+\(p\in\mathbb{P}\) と強制言語の論理式 \(\varphi\) に対して
+\[
+p\Vdash\varphi
+\quad\Longleftrightarrow\quad
+p\leq\lVert\varphi\rVert_{\mathbb{B}}
+\]
+と定める。
+\end{definition}
+
+\begin{theorem}[定義可能性補題と真理補題]\label{thm:forcing}
+仮定\ref{ass:forcing}の下で、各論理式 \(\varphi\) に対する関係
+\(p\Vdash\varphi\) は \(M\) 内で再帰的に定義できる。
+さらに、\(G\subseteq\mathbb{P}\) が \(M\)-ジェネリックならば
+\[
+M[G]\models\varphi(\tau_1^G,\ldots,\tau_n^G)
+\quad\Longleftrightarrow\quad
+(\exists p\in G)\;p\Vdash\varphi(\tau_1,\ldots,\tau_n)
+\]
+が成り立つ。
+\end{theorem}
+
+定理\ref{thm:forcing}は強制法の標準的な基本定理である\cite{cohen1963,bell1985,jech2003}。
+右辺は \(M\) 内で扱えるが、ジェネリック・フィルター \(G\) 自身は一般に \(M\) の元ではない。
+この非対称性が、本論文における「外部を定義せずに指示する」という考えの厳密な原型である。
+
+\begin{definition}[強制法における外点]\label{def:forcing-outer-point}
+基底モデル \(M\) の外部にある \(M\)-ジェネリック・フィルター \(G\) を、強制法によって指示される外点 \(\dfix\) の意味論的代表と呼び、
+\[
+\dfix_{\mathrm{Forc}}\coloneqq G
+\]
+と表す。
+この等式は \(M\) の内部で対象 \(G\) を定義するものではなく、メタ理論において外点 \(\dfix\) の役割を \(G\) に担わせるという意味論的な同定である。
+体系内部から利用できるのは \(G\) 自体ではなく、定理\ref{thm:forcing}の強制関係 \(p\Vdash\varphi\) を通じて記述される \(\dfix_{\mathrm{Forc}}\) の条件付きの振る舞いである。
+\end{definition}
+
+\begin{proposition}[相対的無矛盾性と算術的絶対性]\label{prop:preservation}
+\(M\models\mathrm{ZFC}\) かつ \(G\) が \(M\)-ジェネリックならば、\(M[G]\models\mathrm{ZFC}\) であり、\(M\) と \(M[G]\) は同じ順序数を持つ。
+さらに両者が標準的な \(\omega\) を共有する限り、自然数構造だけを量化領域とする一階算術文の真理は一致する。
+\end{proposition}
+
+\begin{remark}
+命題\ref{prop:preservation}は、強制拡大が集合論の全命題について保存拡大であることを意味しない。
+新しい実数、すなわち \(\omega\) の新しい部分集合が追加される場合があり、集合論的命題の真理値は変化し得る。
+\end{remark}
+
+\section{四重残余束の構成}
+\label{sec:qrb}
+
+\subsection{残余対象}
+
+QRBを文字通りの位相的ベクトル束と仮定するのではなく、まず余ファイバーを持つ圏で残余を定義する。
+
+\begin{assumption}\label{ass:category}
+\(\mathcal{C}\) を冪等完備な安定テンソル三角圏とし、\(X\in\mathcal{C}^c\) を体系 \(T\) の意味論的状態を表すコンパクト対象とする。
+各 \(i\in\{S,N,SN,NS\}\) に対し、完全自己関手 \(M_i\colon\mathcal{C}\to\mathcal{C}\) と自然変換
+\(\eta_i\colon\mathrm{Id}_{\mathcal{C}}\Rightarrow M_i\) が与えられ、\(M_i\) はコンパクト対象を保つとする。
+\end{assumption}
+
+\begin{definition}[四つの残余]
+各操作の残余対象を完全三角
+\[
+X\xrightarrow{\eta_i(X)}M_iX\longrightarrow\Res_i(X)\longrightarrow\Sigma X
+\]
+によって定まる余ファイバー
+\[
+\Res_i(X)=\operatorname{cofib}\!\bigl(\eta_i(X)\bigr)
+\]
+と定義する。
+\end{definition}
+
+想定する四操作は次の通りである。
+\begin{enumerate}
+\item \(M_S\)：同一性を外延的等号へ截断する比較操作。単なる恒等関手を選べば残余はゼロになるため、非自明な比較写像を明示する必要がある。
+\item \(M_N\)：二重否定層化。残余 \(\Res_N(X)\) は \(X\to a_{\neg\neg}X\) が同型でない度合いを表す。
+\item \(M_{SN}\)：随伴 \(F\dashv U\) から生じるモナド \(UF\)。残余は単位 \(X\to UFX\) の非可逆性を表す。
+\item \(M_{NS}\)：構文の対角化を意味論側に実現する自己参照比較操作。この実現の存在は追加構造であり、対角線補題だけから自動的には得られない。
+\end{enumerate}
+
+\begin{definition}[四重残余束]
+対象 \(X\) における四重残余束を
+\[
+\QRB(X)=
+\Res_S(X)\oplus\Res_N(X)\oplus
+\Res_{SN}(X)\oplus\Res_{NS}(X)
+\]
+と定義する。
+\end{definition}
+
+\subsection{台と外点領域}
+
+\(\mathcal{C}^c\) を \(\mathcal{C}\) のコンパクト対象の部分圏とし、Balmer スペクトル
+\(\Spc(\mathcal{C}^c)\) 上の台を \(\Supp(-)\) と書く\cite{balmer2005}。
+
+\begin{definition}[外点領域]
+四つの残余が同時に非自明となる領域を
+\[
+\mathcal{O}_X=
+\bigcap_{i\in\{S,N,SN,NS\}}\Supp\bigl(\Res_i(X)\bigr)
+\subseteq\Spc(\mathcal{C}^c)
+\]
+と定義する。
+\(\mathcal{O}_X\neq\varnothing\) のとき、その点をQRBの外点候補と呼ぶ。
+\end{definition}
+
+ここで \(\mathcal O_X\) は外点 \(\dfix\) そのものではなく、四つの残余が同時に検出される外点候補の領域である。
+したがって、強制法における代表 \(\dfix_{\mathrm{Forc}}=G\) と対応させるべき対象は領域全体 \(\mathcal O_X\) ではなく、その内部の特定の点である。
+また、\(\dfix\)は \(\mathcal O_X\) の元（点）であり、\(\mathcal O_X\) はその候補領域である。
+
+\begin{theorem}[交差点の判定]\label{thm:intersection}
+仮定\ref{ass:category}の下で、素点 \(\mathfrak{p}\in\Spc(\mathcal{C}^c)\) が \(\mathcal{O}_X\) に属することと、すべての \(i\) について局所化された比較写像
+\[
+\eta_i(X)_{\mathfrak p}\colon
+X_{\mathfrak p}\longrightarrow(M_iX)_{\mathfrak p}
+\]
+が同型でないことは同値である。
+\end{theorem}
+
+\begin{proof}
+安定圏では射が同型であることとその余ファイバーがゼロ対象であることが同値である。
+また、\(\mathfrak p\notin\Supp(Y)\) であることは局所化 \(Y_{\mathfrak p}\) がゼロであることと同値である。
+これを四つの余ファイバーへ適用すればよい。
+\end{proof}
+
+定理\ref{thm:intersection}により、外点領域は比喩ではなく、四つの比較写像が同時に可逆性を失う素点の集合として特徴づけられる。
+ただし、その非空性は一般には保証されず、具体的な圏と四操作ごとに証明されなければならない。
+
+\section{強制法とQRBを結ぶ比較原理}
+\label{sec:comparison}
+
+ジェネリック・フィルター \(G\) と \(\mathcal{O}_X\) は、ここまでの定義だけでは異なる種類の対象である。
+前者は強制半順序上のフィルターであり、後者はテンソル三角スペクトルの部分集合である。
+両者を同一視するには比較写像が必要となる。
+
+\begin{assumption}[指示写像]\label{ass:designation}
+順序を保つ写像
+\[
+\Theta\colon\mathbb{B}\longrightarrow
+\operatorname{Open}\!\bigl(\Spc(\mathcal{C}^c)\bigr)
+\]
+が存在し、有限交叉と任意結合を保存するとする。
+さらに、点 \(\xi_G\in\mathcal O_X\) が存在し、各 \(p\in\mathbb P\) に対して
+\(p\in G\) と \(\xi_G\in\Theta(p)\) が同値であるとする。
+\end{assumption}
+
+\begin{definition}[QRBにおける外点]\label{def:qrb-outer-point}
+仮定\ref{ass:designation}を満たす点 \(\xi_G\in\mathcal O_X\) を、QRBによって表現された外点と呼び、
+\[
+\dfix_{\mathrm{QRB}}\coloneqq\xi_G
+\]
+と定める。
+このとき外点の二つの表現の関係を
+\[
+\dfix
+\quad\longleftrightarrow\quad
+\dfix_{\mathrm{Forc}}=G
+\quad\longleftrightarrow\quad
+\dfix_{\mathrm{QRB}}=\xi_G\in\mathcal O_X
+\]
+と記す。
+右側の対応は仮定\ref{ass:designation}に依存し、\(G\) と \(\xi_G\) が同一の集合論的対象であることではなく、条件 \(p\) の所属と開集合 \(\Theta(p)\) への所属が一致するという指示構造の同値を意味する。
+\end{definition}
+
+\begin{proposition}[条件付き指示原理]\label{prop:designation}
+仮定\ref{ass:designation}の下で、\(p\Vdash\varphi\) ならば
+\[
+\mathcal{O}_X\cap\Theta(p)
+\subseteq
+\mathcal{O}_X\cap\Theta\!\left(\lVert\varphi\rVert_{\mathbb B}\right)
+\]
+が成り立つ。
+したがって、QRB外点領域上でも強制関係と整合する包含関係によって \(\varphi\) を指示できる。
+\end{proposition}
+
+\begin{proof}
+\(p\Vdash\varphi\) の定義から \(p\leq\lVert\varphi\rVert_{\mathbb B}\) である。
+\(\Theta\) の単調性により
+\(\Theta(p)\subseteq\Theta(\lVert\varphi\rVert_{\mathbb B})\) を得る。
+両辺と \(\mathcal{O}_X\) の交わりを取れば結論が従う。
+\end{proof}
+
+命題\ref{prop:designation}が与えるのは、ジェネリック・フィルターとQRBの完全な同型ではなく、両者の指示構造が整合するための十分条件である。
+すなわち、体系内部から強制関係によって指示される外点 \(\dfix_{\mathrm{Forc}}\) の振る舞いが、QRB側では点 \(\dfix_{\mathrm{QRB}}\) の開近傍への所属関係として再表現される。
+具体例を構成するには、\(\mathbb B\)、\(\mathcal C\)、四関手、および \(\Theta\) を同時に指定し、仮定\ref{ass:designation}を検証する必要がある。
+
+\section{結論}
+\label{sec:conclusion}
+
+本論文は、言語の外点を二つの水準に分けて定式化した。
+強制法の水準では、基底モデルに属さないジェネリック・フィルターを \(\dfix_{\mathrm{Forc}}=G\) として、内部で定義可能な強制関係によって間接的に指示できる。
+圏論的水準では、四つの比較操作の余ファイバーをQRBとして束ね、その台の共通部分を外点候補領域 \(\mathcal O_X\) とし、指示写像が存在する場合には \(\dfix_{\mathrm{QRB}}=\xi_G\in\mathcal O_X\) と定めた。
+
+この分離によって、標準的な強制定理、圏論から従う交差点判定、そして今後構成すべき指示写像を区別できる。
+今後の主要課題は、具体的な論理トポスまたは安定圏において \(\mathcal O_X\neq\varnothing\) を示し、強制代数から台の開集合への写像 \(\Theta\) を構成することである。
+その達成によって初めて、ジェネリックな外部と四重残余の特異領域との対応が、比喩ではなく具体的な数学的定理となる。
+
+\section*{謝辞}
+本稿の構想に関する議論に感謝する。
+
+\begin{thebibliography}{99}
+
+\bibitem{balmer2005}
+Paul Balmer,
+``The spectrum of prime ideals in tensor triangulated categories,''
+\emph{Journal für die reine und angewandte Mathematik}, 588, 149--168, 2005.
+
+\bibitem{bell1985}
+John L. Bell,
+\emph{Boolean-Valued Models and Independence Proofs in Set Theory},
+Oxford University Press, 1985.
+
+\bibitem{cohen1963}
+Paul J. Cohen,
+``The independence of the continuum hypothesis,''
+\emph{Proceedings of the National Academy of Sciences}, 50, 1143--1148, 1963.
+
+\bibitem{godel1931}
+Kurt Gödel,
+``Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I,''
+\emph{Monatshefte für Mathematik und Physik}, 38, 173--198, 1931.
+
+\bibitem{jech2003}
+Thomas Jech,
+\emph{Set Theory: The Third Millennium Edition, Revised and Expanded},
+Springer, 2003.
+
+\bibitem{johnstone2002}
+Peter T. Johnstone,
+\emph{Sketches of an Elephant: A Topos Theory Compendium},
+Oxford University Press, 2002.
+
+\bibitem{kleene1952}
+Stephen C. Kleene,
+\emph{Introduction to Metamathematics},
+North-Holland, 1952.
+
+\bibitem{kripke1975}
+Saul A. Kripke,
+``Outline of a theory of truth,''
+\emph{The Journal of Philosophy}, 72(19), 690--716, 1975.
+
+\bibitem{tarski1936}
+Alfred Tarski,
+``Der Wahrheitsbegriff in den formalisierten Sprachen,''
+\emph{Studia Philosophica}, 1, 261--405, 1936.
+
+\end{thebibliography}
+
+\end{document}
+
+\RequirePackage{iftex}
+\ifLuaTeX
+  \documentclass[11pt,a4paper,ja=standard,lualatex]{article}
+\else\ifXeTeX
+  \documentclass[11pt,a4paper,ja=standard,xelatex]{article}
+\else
+  \documentclass[11pt,a4paper,ja=standard,pdflatex]{sarticle}
+\fi\fi
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{icat-common}
+
+\newtheorem{theorem}{定理}
+\newtheorem{definition}{定義}
+\newtheorem{proposition}{命題}
+\newtheorem{corollary}{系}
+\newtheorem{example}{例}
+\newtheorem{remark}{注意}
+\newtheorem{operation}{操作}
+
+\title{無記の意味論：意味と指示の不動点\\
+---保留の再帰と無記の再帰の分岐について---}
+\author{千葉将臣}
+\date{2026-06-30}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本論文は、意味（Sinn）と指示（Bedeutung）の関係を、
+分離可能とも同一とも断定しないための操作として
+無記（むき、Skt.\ avy\=akata）を定式化する。
+意味と指示は不可分であるが、同一ではない。
+しかしこの関係を「不可分である」「同一ではない」と命題化した瞬間、
+それは真偽・可能不可能・予想・独立性といった記の枠組みに回収される。
+本論文の主張は、この回収を避けるためには、意味と指示の関係を
+無記の不動点として、すなわち
+「無記は無記である」と断定するほかない、ということである。
+
+そのために本論文は、まず保留（エポケー、$E$）と無記（$\Avyakata$）を
+分離する。保留は将来の再開条件 $R$ を要求するため、
+$E(\varphi)\to E(R(\varphi))\to E(R(R(\varphi)))\to\cdots$
+という悪性無限退行を生じる。これに対して無記の再帰は、
+各段階で完結する操作の反復であり、退行ではない。
+さらに本論文は、この反復を「可能か不可能か」「予想されるか」
+という形で述べること自体が保留の再帰を呼び戻すことを示し、
+無記についての有効な記述は断定形でしか成立しないことを論じる。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入：記の罠}
+
+\subsection{記の枠組みとその限界}
+
+ある命題 $\varphi$ について、数学・論理学は通常、以下のいずれかの
+立場を取る。
+
+\begin{itemize}
+\item $\varphi$ は証明可能である（定理）。
+\item $\varphi$ は反証可能である（否定の定理）。
+\item $\varphi$ は与えられた体系から独立である
+  （ゲーデルの不完全性定理の意味で）。
+\item $\varphi$ は現時点で未解決だが、いずれ真偽が定まると想定される
+  （予想）。
+\end{itemize}
+
+本論文ではこれら四つの立場をまとめて\textbf{記}（き）の枠組みと呼ぶ。
+記の枠組みに共通するのは、$\varphi$ について
+「真偽がいずれかに定まっている、あるいは定まりうる」
+という前提である。独立性命題でさえ、
+「証明できないし反証もできない」という事実そのものは
+体系内で確定した記述として扱われる。
+
+この枠組みは、ある種の問いに対して過剰に強い。
+たとえば「意味と指示は分離可能か」「意味と指示は同一か」
+という問いに対して、肯定・否定・独立性・予想のいずれかを
+与えようとすると、意味と指示の関係はすでに
+命題的対象として固定されている。
+しかし本論文が扱う関係は、その固定以前にある。
+意味と指示は不可分であるが、同一ではない。
+この言い方自体も、厳密には記の枠組みに接近する。
+したがって本論文は、この関係を真偽の対象としてではなく、
+操作として扱う。
+
+\subsection{可能不可能・予想という回収}
+
+この種の論点は、しばしば次の二つの形式の議論に回収される。
+
+\begin{enumerate}
+\item 「無記として表現することは可能である／不可能である」。
+\item 「無記として表現できると予想される／考えられる」。
+\end{enumerate}
+
+しかし第一の形式は、無記を可能性命題として扱う。
+第二の形式は、無記を将来の確定を予定した予想命題として扱う。
+いずれも、無記を記の枠組みに戻す。
+本論文の目的は、無記を可能不可能や予想として述べることではない。
+無記が必要となる構造を示し、無記は無記であるとしか述べられない
+地点を確定することである。
+
+\section{記と無記}
+
+\subsection{記の定義}
+
+\begin{definition}[記]
+命題 $\varphi$ に対し、$\varphi$ の真偽を問うことが
+体系 $T$ の内部で意味を持つ（すなわち $T \vdash \varphi$,
+$T \vdash \neg\varphi$, あるいは
+$T \nvdash \varphi$ かつ $T \nvdash \neg\varphi$ という
+独立性の判定が $T$ の言語で記述可能である）とき、
+$\varphi$ は体系 $T$ に対して\textbf{記}であるという。
+\end{definition}
+
+\begin{definition}[無記]
+命題、あるいは命題的に見える問い $\varphi$ に対し、
+$\varphi$ の真偽を問う行為を実行しない操作を
+$\Avyakata(\varphi)$ と書き、\textbf{無記}と呼ぶ。
+
+$\Avyakata(\varphi)$ は真理値を持たない。
+これは「$\varphi$ は真でも偽でもない」という第三の真理値ではなく、
+$\varphi$ に対して真理値を付与する行為そのものを
+実行しないという操作である。
+\end{definition}
+
+\begin{remark}
+保留は将来の再開を予定する語であり、無記とは異なる。
+無記は判断を延期しない。
+無記は、問いを真偽の対象として立てる行為を、今ここで実行しない。
+\end{remark}
+
+\subsection{意味と指示への適用}
+
+記号 $S$ の意味を $\mathrm{Sinn}(S)$、
+指示対象を $\mathrm{Bed}(S)$ と書く。
+このとき次の二つの問いは、どちらも記の枠組みに属する。
+
+\begin{align}
+\mathrm{Sinn}(S) &= \mathrm{Bed}(S),\\
+\mathrm{Sinn}(S) &\perp \mathrm{Bed}(S).
+\end{align}
+
+第一式は意味と指示を同一化する。
+第二式は意味と指示を分離した独立対象として固定する。
+しかし、意味と指示の関係はこの二択では捉えられない。
+意味は指示なしに空転せず、指示は意味なしに記号的対象として現れない。
+この意味で両者は不可分である。
+他方で、意味は指示対象そのものではなく、指示対象も意味そのものではない。
+この意味で両者は同一ではない。
+
+したがって、本論文は次の操作を置く。
+
+\begin{operation}[意味と指示の無記]
+意味と指示の関係について、同一性命題にも分離命題にも
+真理値を付与しない。
+すなわち、
+\begin{equation}
+\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
+\qquad
+\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
+\end{equation}
+を実行する。
+\end{operation}
+
+この操作は、意味と指示が「同一か否か未解決である」と述べるものではない。
+また「分離可能かどうかは今後の研究課題である」と述べるものでもない。
+それらは予想ないし保留であり、記の枠組みに属する。
+無記は、意味と指示の関係を命題的二択へ移す操作を停止する。
+
+\section{保留の再帰}
+
+\subsection{保留の定義}
+
+\begin{definition}[保留（エポケー）]
+命題 $\varphi$ に対し、$\varphi$ についての判断を
+将来の再開を予定して中断する操作を $E(\varphi)$ と書く。
+$E(\varphi)$ は次の二条件を含む。
+
+\begin{enumerate}
+\item \textbf{再開可能性}：ある時点で $E(\varphi)$ は解除され、
+  $\varphi$ について記の判定が下される可能性が残されている。
+\item \textbf{対象の保存}：$E(\varphi)$ の実行中、
+  $\varphi$ という対象そのものは保存される。
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[$E$ の冪等性]
+$E$ は状態として冪等である。すなわち
+\begin{equation}
+E(E(\varphi))=E(\varphi).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+$E(\varphi)$ は「$\varphi$ についての判断が中断されている」
+という状態である。この状態にさらに保留を適用しても、
+新しい判断状態は生じない。判断が中断されているという
+同一状態が継続するだけである。したがって $E$ は冪等である。
+\end{proof}
+
+\subsection{解除条件による悪性無限退行}
+
+状態としての冪等性だけを見れば、保留の反復は単なる収束である。
+しかし保留には再開可能性が含まれる。
+この点を明示すると、保留は悪性無限退行を生じる。
+
+\begin{definition}[保留の解除条件]
+$E(\varphi)$ が解除される条件を $R(\varphi)$ と書く。
+$R(\varphi)$ は「いつ・いかなる条件のもとで
+$\varphi$ についての判断を再開するか」を定める命題である。
+\end{definition}
+
+\begin{theorem}[保留の悪性無限退行]
+$R(\varphi)$ が確定しない限り、$E(\varphi)$ は
+真に保留として機能しない。
+ところが $R(\varphi)$ の確定それ自体も一つの判断であるため、
+そこにも保留が適用可能である。
+したがって、
+\begin{equation}
+E(\varphi)\longrightarrow E(R(\varphi))
+\longrightarrow E(R(R(\varphi)))
+\longrightarrow\cdots
+\end{equation}
+という列が生じる。
+この列では、いずれの段階においても保留の正当化条件が完結せず、
+次の段階へ先送りされる。
+ゆえにこれは悪性無限退行である。
+\end{theorem}
+
+\begin{proof}
+保留が保留であるためには、将来の再開条件が少なくとも原理的に
+与えられなければならない。再開条件が与えられないなら、
+それは保留ではなく、判断しないことの無期限化である。
+しかし再開条件 $R(\varphi)$ を確定する判断もまた命題的対象であり、
+保留の対象から除外できない。
+したがって $R(\varphi)$ には $E(R(\varphi))$ が、
+さらに $R(R(\varphi))$ には $E(R(R(\varphi)))$ が適用される。
+この反復は、各段階の正当化を次段階に依存させるため、
+どの段階でも完結しない。
+\end{proof}
+
+\begin{remark}
+この退行は、保留が状態として冪等であることと矛盾しない。
+$E(E(\varphi))=E(\varphi)$ は、判断中断状態の同一性を示す。
+一方、悪性退行は、その中断状態を保留として正当化する
+再開条件の層に生じる。
+保留は状態としては一つに潰れるが、正当化としては無限に先送りされる。
+\end{remark}
+
+\section{無記の再帰}
+
+\subsection{無記の反復は退行ではない}
+
+無記の反復は、保留の退行とは異なる。
+無記は将来の再開条件を要求しないからである。
+
+\begin{theorem}[無記の各段階の完結性]
+任意の自然数 $n\geq1$ に対して、
+$\Avyakata^{n}(\varphi)$ はそれ自体で完結した操作である。
+すなわち、$\Avyakata^{n}(\varphi)$ の実行は、
+将来の再開・解除・条件確定に依存しない。
+\end{theorem}
+
+\begin{proof}
+$\Avyakata(\varphi)$ は「$\varphi$ について真偽を問う行為を
+実行しない」という操作であり、今この場で完結する。
+$\Avyakata(\Avyakata(\varphi))$ もまた、
+「$\Avyakata(\varphi)$ について真偽を問う行為を実行しない」
+という操作であり、同様に今この場で完結する。
+この反復のどの段階にも、保留における解除条件 $R$ は現れない。
+したがって無記の反復は、正当化を次段階に先送りする退行ではない。
+\end{proof}
+
+\begin{corollary}[退行と反復の区別]
+$E$ の再帰は退行である。
+各段階が次段階の正当化に依存し、いずれの段階も自立しないからである。
+これに対して $\Avyakata$ の再帰は反復である。
+各段階がその場で完結し、次段階に正当化を委ねないからである。
+\end{corollary}
+
+\subsection{無記の非冪等性}
+
+\begin{proposition}[無記の非冪等性]
+一般に、
+\begin{equation}
+\Avyakata(\Avyakata(\varphi))\neq\Avyakata(\varphi).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+$\Avyakata(\varphi)$ は、$\varphi$ について真偽を問う行為を
+実行しない操作である。
+一方 $\Avyakata(\Avyakata(\varphi))$ は、
+$\Avyakata(\varphi)$ という操作について真偽を問う行為を
+実行しない操作である。
+両者は対象の階層が異なる。
+したがって両者は同一視されない。
+\end{proof}
+
+この非冪等性は、保留の冪等性と対照的である。
+保留は同じ中断状態へ潰れる。
+無記は潰れない。
+しかし潰れないことは退行を意味しない。
+無記の各段階は完結したまま、次の段階を許す。
+
+\section{無記の不動点}
+
+\subsection{なぜ不動点が必要か}
+
+意味と指示の関係について、次の二つはいずれも不十分である。
+
+\begin{enumerate}
+\item 意味と指示は同一である。
+\item 意味と指示は分離可能である。
+\end{enumerate}
+
+第一は差異を消す。
+第二は不可分性を消す。
+さらに、次の二つも不十分である。
+
+\begin{enumerate}
+\item 意味と指示は同一か分離可能か、まだ分からない。
+\item 意味と指示は同一でも分離可能でもないと予想される。
+\end{enumerate}
+
+これらは保留または予想であり、将来の確定条件を要求する。
+したがって保留の再帰へ入る。
+必要なのは、意味と指示の関係を未決問題として残すことではない。
+必要なのは、その関係を真偽の対象にしない操作が、
+それ自体として完結していることを示すことである。
+
+\subsection{不動点としての無記}
+
+\begin{definition}[無記の不動点]
+対象 $\Phi$ が、記の枠組みによる同一化・分離・可能性化・予想化の
+いずれによっても保存されず、ただ $\Avyakata$ の遂行によってのみ
+その位置を保つとき、$\Phi$ は無記の不動点にあるという。
+このとき次の断定が成り立つ。
+\begin{equation}
+\Phi\text{ は }\Avyakata\text{ である。}
+\end{equation}
+\end{definition}
+
+ここで「不動点」とは、関数方程式 $f(x)=x$ の形式的同一性を
+主張する語ではない。
+むしろ、記の操作をいくら適用しても対象が記として固定されず、
+無記として述べるほかないという操作的位置を指す。
+
+\begin{theorem}[意味と指示の無記不動点]
+意味と指示の関係は、同一性命題としても分離命題としても、
+また可能性命題・予想命題としても記述されない。
+この関係は、無記の不動点としてのみ記述される。
+すなわち、
+\begin{equation}
+\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
+\qquad
+\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
+\end{equation}
+であり、さらにこの無記化自体についても
+\begin{equation}
+\Avyakata\Bigl(\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr)\Bigr),
+\qquad
+\Avyakata\Bigl(\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)\Bigr)
+\end{equation}
+である。
+\end{theorem}
+
+\begin{proof}
+意味と指示を同一とすれば、指示対象に還元されない意味の層が消える。
+意味と指示を分離すれば、意味が指示なしには対象化されず、
+指示も意味なしには記号的に現れないという不可分性が消える。
+したがって、同一性命題と分離命題はいずれも対象を保存しない。
+
+次に、この関係を「未決」「可能」「予想」として述べると、
+判断の将来の確定が予定される。
+これは保留 $E$ と同型であり、解除条件 $R$ を要求する。
+よって定理3.2の悪性無限退行を呼び込む。
+
+残る操作は、同一性命題にも分離命題にも真理値を付与しない
+$\Avyakata$ の遂行である。
+さらに、この遂行を命題として固定することを避けるためには、
+$\Avyakata$ 自体にも $\Avyakata$ を適用する必要がある。
+この反復は定理4.1により退行ではなく、各段階で完結する。
+したがって意味と指示の関係は、無記の不動点としてのみ保存される。
+\end{proof}
+
+\subsection{断定形の必然性}
+
+\begin{theorem}[無記の断定形必然性]
+無記 $\Avyakata(\varphi)$ を、保留・留保・予想・
+「〜かもしれない」といった回避表現によって記述することはできない。
+$\Avyakata(\varphi)$ について意味のある記述を与える唯一の方法は、
+\begin{equation}
+\varphi\text{ について }\Avyakata\text{ である。}
+\end{equation}
+という断定形である。
+\end{theorem}
+
+\begin{proof}
+回避表現は、記述 $D$ について将来の確定・再検討の可能性を含意する。
+これは保留 $E(D)$ と同型である。
+定理3.2より、$E(D)$ は解除条件 $R(D)$ の確定を要求し、
+悪性無限退行に陥る。
+したがって、無記を回避表現で述べることは、
+無記が回避するはずの保留の再帰を記述の層で呼び戻す。
+これを避けるには、記述が将来の解除条件を要求しない
+断定形でなければならない。
+\end{proof}
+
+\begin{remark}[断定は確信ではない]
+ここでいう断定形は、確信の強さや真理性の主張ではない。
+それは、ある操作が今この場で遂行され完結したことの表明である。
+$\Avyakata(\varphi)$ と断定することは、
+$\varphi$ が真であるとも偽であるとも主張しない。
+それは、$\varphi$ について真偽を問う行為を実行しない操作が
+完結したことを述べる。
+\end{remark}
+
+\section{結論}
+
+本論文は、意味と指示の関係を、同一性・分離・可能性・予想の
+いずれにも回収されない構造として扱った。
+そのために、保留 $E$ と無記 $\Avyakata$ を区別した。
+
+\begin{enumerate}
+\item 保留 $E$ は状態としては冪等であるが、再開条件 $R$ を要求するため、
+  正当化の層で悪性無限退行に陥る。
+\item 無記 $\Avyakata$ は、真偽を問う行為を実行しない操作であり、
+  将来の再開条件を要求しない。
+\item 無記の再帰 $\Avyakata^{n}(\varphi)$ は、各段階で完結する反復であり、
+  保留の退行とは異なる。
+\item 意味と指示は不可分でありつつ同一ではないが、
+  この関係は命題として確定されない。
+  それは無記の不動点として、無記であると断定されるほかない。
+\item 無記を可能不可能・予想・保留として述べることは、
+  無記を記へ戻す。
+  したがって無記についての有効な記述は断定形でしか成立しない。
+\end{enumerate}
+
+この結論は、仏教で事象の分析手法として広く利用されてきたインド論理学の四句分別（catu\d{s}ko\d{t}i）との
+対応を持つ。本論で検討した意味と指示の関係は、少なくとも次の
+四つの言明形式として展開できる。
+\begin{enumerate}
+\item 意味と指示は同一である。
+\item 意味と指示は分離可能である。
+\item 意味と指示は同一か分離可能か、まだ分からない。
+\item 意味と指示は同一でも分離可能でもないと予想される。
+\end{enumerate}
+これらは、肯定・否定・未決・非二択化という四つの仕方で
+意味と指示を記の対象へ移そうとする試みである。
+しかし本論の立場では、これら四つのいずれも、
+意味と指示の関係を無記として保持しない。
+したがって、無記を四句分別によって検討した結果もまた無記である。
+この点で、本論の結論は、龍樹『中論』における空の四句分別による分析を
+思想的先行例として持ち、その構造を、
+意味と指示の関係として再定式化するものである。
+
+結論は次の一文に集約される。
+
+\begin{quote}
+意味と指示の関係は、無記の不動点として無記である。
+\end{quote}
+
+この断定は、意味と指示についての新たな真理値を主張しない。
+それは、意味と指示を同一性・分離・可能性・予想の問いへ
+移す行為を実行しないという操作が、ここで完結したことを述べる。
+
+\begin{thebibliography}{99}
+
+\bibitem{Frege1892}
+Gottlob Frege.
+\newblock \"{U}ber Sinn und Bedeutung.
+\newblock \emph{Zeitschrift f\"{u}r Philosophie und philosophische Kritik},
+  100:25--50, 1892.
+
+\bibitem{NagarjunaGarfield1995}
+N\=ag\=arjuna.
+\newblock \emph{The Fundamental Wisdom of the Middle Way}.
+\newblock Translated with commentary by Jay L. Garfield.
+\newblock Oxford University Press, 1995.
+
+\bibitem{Husserl1913}
+Edmund Husserl.
+\newblock \emph{Ideen zu einer reinen Ph\"{a}nomenologie und
+  ph\"{a}nomenologischen Philosophie}.
+\newblock Max Niemeyer, 1913.
+
+\bibitem{Austin1962}
+J.\ L.\ Austin.
+\newblock \emph{How to Do Things with Words}.
+\newblock Oxford University Press, 1962.
+
+\bibitem{Kleene1952}
+Stephen Cole Kleene.
+\newblock \emph{Introduction to Metamathematics}.
+\newblock North-Holland, 1952.
+
+\end{thebibliography}
+
+\end{document}
+
+% !TEX program = lualatex
+\documentclass[11pt,a4paper,ja=standard,autodetect-engine]{bxjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+
+\newtheorem{theorem}{定理}
+\newtheorem{definition}{定義}
+\newtheorem{proposition}{命題}
+\newtheorem{example}{例}
+\newtheorem{remark}{注意}
+
+\title{継続残余としての証明障害：\\ 実行可能性と静的証明のあいだの初等モデル}
+\author{千葉将臣}
+\date{2026\mbox{-}06\mbox{-}29}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本論文は、動的な計算過程を古典的な静的証明へ写すときに現れる差分を、継続残余 $\rho$ として記述する初等的モデルを提案する。出発点は、直観主義論理では一般に二重否定除去 $\neg\neg A\to A$ が許されず、Curry\mbox{--}Howard 対応のもとで古典的制御は継続構造として解釈される、という標準的な観察である。本稿ではこの継続構造のうち、構成的な証拠として直接観測されない評価文脈を残余と呼ぶ。さらに、プログラムの \texttt{if} 分岐、メビウス帯の向き反転、コラッツ写像の軌道検証を例として、実行時には追跡できるが、実行前に静的な $\rho=0$ 証明として圧縮する際に残余指標が現れる、というモデルを与える。本稿の主張はコラッツ予想の ZFC 独立性ではなく、動的検証から静的証明への翻訳に生じる証明圧縮上の障害を可視化することである。
+\end{abstract}
+
+\section{導入}
+
+数学的証明は通常、完成した静的対象として提示される。一方で、計算機上の検証や構成的な推論では、命題はしばしば実行可能な過程として現れる。たとえば、ある入力 $n$ に対してプログラムを実行し、有限時間後に望ましい出力が得られることを確認することはできる。しかし、その確認手順全体を実行前から一つの静的定理として固定することは、一般に別の問題である。
+
+本稿の目的は、この差を「真偽の差」ではなく「翻訳の差」として扱うことである。すなわち、動的な実行プロトコル $P$ を古典的な証明対象へ写すとき、観測可能な部分 $P_{\mathrm{obs}}$ と、評価文脈として残る継続成分 $\mathcal{R}(P)$ とに分ける。そして、後者そのものを古典的対象として完全保存するのではなく、その影を残余指標 $\rho(P)$ として記録する。
+
+この立場では、$\rho=0$ は「実行前に古典的証明として完全圧縮できる」ことを意味し、$\rho>0$ は「実行時の継続成分が静的証明へ完全には消去されていない」ことを意味する。ただし、$\rho>0$ は直ちに命題の独立性や反証を意味しない。これはあくまで、動的検証から静的証明へ移る際の証明圧縮上の残余である。
+
+\section{論理的背景：二重否定と継続}
+
+直観主義論理では、命題 $A$ に対して一般には
+\begin{equation}
+    \neg\neg A \to A
+\end{equation}
+を導出できない。これは、$A$ の否定が矛盾を導くことと、$A$ の構成的証拠を直接与えることが区別されるためである。
+
+Curry\mbox{--}Howard 対応のもとでは、証明はプログラムに、命題は型に対応する。この対応において、古典論理の二重否定除去や排中律は、継続、例外、制御演算子のような計算構造として解釈される。つまり、古典的には $A$ と見なされる証明の内部に、構成的には「$A$ を否定する文脈を受け取って全体を制御する」評価文脈が含まれる。
+
+本稿では、この評価文脈を残余の原型とみなす。
+
+\begin{definition}[継続残余]
+命題 $A$ の古典的証明を構成的・計算論的に読むとき、直接の値または構成的証拠として観測される部分を $A_{\mathrm{obs}}$ とし、二重否定除去、排中律、例外処理、または \texttt{if} 分岐の未選択枝として評価文脈に残る部分を $\mathcal{R}(A)$ とする。この $\mathcal{R}(A)$ の古典的に観測可能な指標を継続残余 $\rho(A)$ と呼ぶ。
+\end{definition}
+
+\begin{remark}
+ここでいう「存在」は、直観主義論理と古典論理の差分を継続構造として読むという意味での存在である。したがって、任意の具体的命題について $\rho(A)>0$ が自動的に従うわけではない。各問題に対して、どの翻訳を採用し、どの継続成分を観測不能成分とみなすかを明示する必要がある。
+\end{remark}
+
+\section{残余翻訳}
+
+動的な検証手順を $P$ とする。$P$ は、実行時には入力、分岐、ループ、例外処理を通じて値を返す。一方、古典的証明では、これらの実行過程を停止した静的対象として記述する必要がある。
+
+\begin{definition}[残余翻訳]
+動的証明プロトコル $P$ に対し、古典的観測者が静的対象として固定できる成分を $P_{\mathrm{obs}}$、固定しきれない継続成分を $\mathcal{R}(P)$ とする。残余翻訳とは、写像
+\begin{equation}
+    \mathcal{T}_{\rho}(P)=(P_{\mathrm{obs}},\rho(P))
+\end{equation}
+である。ここで $\rho(P)$ は $\mathcal{R}(P)$ そのものではなく、その分岐差分、ホロノミー欠損、または二重否定除去コストとして古典的に観測可能な不変量へ写したものである。
+\end{definition}
+
+この定義により、古典的証明と動的検証の差を次のように表せる。
+\begin{itemize}
+    \item $\rho(P)=0$：$P$ は実行前に静的証明へ完全圧縮される。
+    \item $\rho(P)>0$：$P$ の継続成分の影が静的観測面に残る。
+\end{itemize}
+
+重要なのは、$\rho(P)>0$ が $P$ の失敗を意味しないことである。むしろ、$P$ は実行時には正しく動くが、その正しさを静的対象として固定する際に追加の指標が必要になる、という状況を表す。
+
+\section{分岐差分としての残余}
+
+最も初等的なモデルは、プログラムの \texttt{if} 分岐である。ある状態 $s$ に対して、プログラムが
+\begin{equation}
+    P(s)=
+    \begin{cases}
+        P_{1}(s) & \text{if } b(s)=1,\\
+        P_{0}(s) & \text{if } b(s)=0
+    \end{cases}
+\end{equation}
+として実行されるとする。
+
+実行時には、$b(s)$ の値に応じて一方の枝だけが選ばれる。しかし静的証明では、選ばれなかった枝も含め、分岐全体が同一の証明対象へ収束することを示す必要がある。このとき、分岐差分を
+\begin{equation}
+    \partial_{\rho}P(s)=P_{1}(s)-P_{0}(s)
+\end{equation}
+と形式的に書く。実際には $P_{1}(s)$ と $P_{0}(s)$ が数値でない場合もあるため、これは「二つの枝の観測差」を表す記号である。
+
+\begin{definition}[分岐残余]
+分岐プログラム $P$ に対し、二つの枝が古典的観測面で同一視できるとき $\partial_{\rho}P=0$ と書く。同一視できない差分が残るとき、適当な大きさ関数 $\|\cdot\|$ により
+\begin{equation}
+    \rho(P)=\|\partial_{\rho}P\|
+\end{equation}
+と定める。
+\end{definition}
+
+このモデルでは、$\rho=0$ は「どちらの枝を通っても静的証明として同じ対象に戻る」ことを意味する。$\rho>0$ は「実行時には一方の枝が処理されるが、静的観測では未選択枝の影が残る」ことを意味する。
+
+\section{メビウス帯：残余インデックスの最小例}
+
+メビウス帯は、残余を直観的に説明する最小例である。帯の上を一周すると、局所的には連続的に進んでいるだけである。しかし始点へ戻ったとき、向きは反転している。二周すると元に戻る。
+
+この構造を、状態集合 $X$ と符号 $\varepsilon\in\{+1,-1\}$ を持つ系として表す。メビウス輸送を
+\begin{equation}
+    M(x,\varepsilon)=(x',-\varepsilon)
+\end{equation}
+と書けば、二回の輸送では
+\begin{equation}
+    M^{2}(x,\varepsilon)=(x'',\varepsilon)
+\end{equation}
+となり、符号は回復する。
+
+\begin{definition}[メビウス残余]
+一周後の符号反転を古典的な単一平面上で消去しようとするとき、観測面に残る向きの差分を
+\begin{equation}
+    \rho_{\mathrm{Mob}}=1
+\end{equation}
+と記録する。二周後には反転が相殺されるため、合成された観測では
+\begin{equation}
+    \rho_{\mathrm{Mob}}^{(2)}=0
+\end{equation}
+と書く。
+\end{definition}
+
+この例が示すのは、動的な輸送そのものは矛盾なく実行できるが、一周分のねじれを単一の静的平面に完全消去しようとすると、向き反転のインデックスが残る、ということである。ここでの $\rho$ は矛盾や反証ではなく、継続された輸送の曲率的な痕跡である。
+
+\section{コラッツ写像と実行前圧縮の残余}
+
+コラッツ写像 $C:\mathbb{N}\to\mathbb{N}$ を
+\begin{equation}
+    C(n)=
+    \begin{cases}
+        n/2 & (n\equiv 0 \pmod 2),\\
+        3n+1 & (n\equiv 1 \pmod 2)
+    \end{cases}
+\end{equation}
+で定める。コラッツ予想は
+\begin{equation}
+    \mathrm{Col}:\quad \forall n\in\mathbb{N}\,\exists k\in\mathbb{N}\; C^{k}(n)=1
+\end{equation}
+という形を持つ。
+
+各 $n$ を固定すれば、プログラムを実行して軌道を追跡できる。この意味で、有限範囲の追試はランタイム検証である。一方、静的証明では、全ての $n$ について停止時刻を統制する構造を実行前に与える必要がある。構成的には、これは停止時刻関数
+\begin{equation}
+    K:\mathbb{N}\to\mathbb{N},\qquad C^{K(n)}(n)=1
+\end{equation}
+を何らかの有限な証明原理によって支配することに近い。
+
+\begin{definition}[コラッツ残余]
+コラッツ検証プロトコル $P_{\mathrm{Col}}$ に対し、個々の入力で実行時に得られる停止確認を $P_{\mathrm{run}}(n)$ とする。これらを実行前に一つの静的証明対象へ圧縮する際に必要となる未回収の分岐・停止時刻・評価文脈の指標を
+\begin{equation}
+    \rho_{\mathrm{Col}}=\rho(P_{\mathrm{Col}})
+\end{equation}
+と呼ぶ。
+\end{definition}
+
+この定義のもとで、$\rho_{\mathrm{Col}}=0$ は、コラッツ軌道の全入力に対する停止確認が実行前に静的証明として完全圧縮されている状態を表す。$\rho_{\mathrm{Col}}>0$ は、個々の実行では停止を確認できても、その確認列全体を一つの静的証明対象へ移す段階で、分岐構造または停止時刻構造の残余が残ることを表す。
+
+\begin{proposition}[実行検証と静的圧縮の非対称性]
+有限個の入力に対するコラッツ軌道の実行検証は、コラッツ予想の静的証明とは異なる。前者は各入力に対するランタイム上の到達確認であり、後者は全入力を支配する実行前の圧縮原理を必要とする。
+\end{proposition}
+
+\begin{proof}
+有限集合 $F\subset\mathbb{N}$ に対しては、各 $n\in F$ の軌道を計算し、ある $k_{n}$ について $C^{k_{n}}(n)=1$ を確認すればよい。しかし、コラッツ予想は全称命題であり、任意の $n$ に対して停止時刻の存在を示す必要がある。したがって、有限個の実行履歴の集積と、全入力を支配する静的証明とは論理的に区別される。
+\end{proof}
+
+\begin{remark}
+本稿の主張は、コラッツ型の分岐実行を静的な $\rho=0$ 証明へ翻訳する際に、停止時刻関数と分岐構造に由来する残余指標を導入できる、というモデル的主張である（これはコラッツ予想が ZFC 独立であることを意味しない）。また、標準的なコラッツ予想が停止性問題と同値であるとも主張しない。
+\end{remark}
+
+
+\section{ZFC+U 語彙における $\rho_{\mathrm{Col}}=0$ 証明の未完結性}
+
+前節までで、コラッツ写像そのものの真偽ではなく、コラッツ型分岐実行を静的な証明対象へ翻訳する際の残余指標 $\rho_{\mathrm{Col}}$ を導入した。本節では、この指標に関するモデル内命題を述べる。ここでいう未完結性は、コラッツ予想の ZFC 独立性を意味するものではなく、$\rho_{\mathrm{Col}}=0$ という完全圧縮条件を ZFC+U の語彙だけで閉じることの困難を表す。
+
+\begin{proposition}[$\rho_{\mathrm{Col}}=0$ 証明の ZFC+U 語彙内未完結性]
+本稿の残余翻訳モデルにおいて、$\rho_{\mathrm{Col}}=0$ を示すためには、停止時刻関数
+\begin{equation}
+    K:\mathbb{N}\to\mathbb{N},\qquad C^{K(n)}(n)=1
+\end{equation}
+を全入力に対して与えるだけでなく、その構成が全ての分岐継続を消去していることを示す必要がある。ZFC+U の通常の静的語彙は、この継続消去の完了を直接表す原理を含まない。したがって、$\rho_{\mathrm{Col}}=0$ の証明は、ZFC+U の語彙だけでは完結した対象として記述されず、追加の残余翻訳または継続消去原理を必要とする。
+\end{proposition}
+
+\begin{proof}
+$\rho_{\mathrm{Col}}=0$ とは、個々の入力に対する実行時の停止確認が、未回収の分岐・停止時刻・評価文脈を残さず、一つの静的証明対象へ完全圧縮されることを意味する。コラッツ命題は
+\begin{equation}
+    \forall n\in\mathbb{N}\,\exists k\in\mathbb{N}\; C^{k}(n)=1
+\end{equation}
+という形を持つため、構成的に読むならば、各入力 $n$ に停止時刻 $K(n)$ を割り当てる全域的構成が必要になる。
+
+しかし、本稿の残余翻訳では、$K$ の値を与えるだけでは十分ではない。$\rho_{\mathrm{Col}}=0$ は、各 $K(n)$ の存在に加えて、奇偶分岐によって発生する全ての未選択枝、評価文脈、停止時刻の探索過程が、静的証明対象の内部で完全に回収されていることを要求する。すなわち、必要なのは単なる停止時刻関数ではなく、停止時刻関数の構成が継続残余を残さないことの証明である。
+
+ZFC+U の通常の語彙は、集合、関数、関係、量化によって静的対象を記述する。一方、ここで要求される「継続消去の完了」は、定義1の意味での $\mathcal{R}(P_{\mathrm{Col}})$ の完全消去である。すなわち、定義1の意味での $\mathcal{R}(P_{\mathrm{Col}})$ の完全消去は、集合・関数・関係・量化からなる ZFC+U の通常の語彙には属さない条件として扱われる。記号的には、
+\begin{equation}
+    \mathcal{R}(P_{\mathrm{Col}})\text{-Elim}
+    \notin
+    \mathrm{Lang}(\mathrm{ZFC+U})
+\end{equation}
+と表せる。ここで $\mathcal{R}(P_{\mathrm{Col}})\text{-Elim}$ は定義1の意味での継続成分の完全消去を表す略記であり、$\mathrm{Lang}(\mathrm{ZFC+U})$ は集合・関数・関係・量化による通常語彙を表す。したがって、この条件を ZFC+U 内の通常の対象として表すには、残余翻訳 $\mathcal{T}_{\rho}$ または同等の継続消去原理を追加で明示しなければならない。
+
+よって、本稿のモデルにおいては、$\rho_{\mathrm{Col}}=0$ の証明は ZFC+U の語彙だけでは閉じず、少なくとも残余翻訳または継続消去を記述する追加語彙を必要とする。
+\end{proof}
+
+\begin{remark}
+本命題は ZFC+U における証明可能性の独立性を主張しない。主張しているのは、$\rho_{\mathrm{Col}}=0$ という完全圧縮条件を記述するために必要な継続消去の語彙が ZFC+U に含まれないという、語彙の層の問題である。コラッツ予想そのものが ZFC+U で証明可能かどうかは、本稿の射程外である。ただし、$\rho_{\mathrm{Col}}=0$ がコラッツ予想の静的証明の完成と同値である以上、その記述に必要な語彙が ZFC+U に届かないという事実は、ZFC+U の語彙内でのコラッツ予想の完全な証明記述が原理的に困難であることを示唆する。
+\end{remark}
+
+\section{残余を古典的に見せるための翻訳コード}
+
+残余そのものは継続構造であり、古典的な静的対象へそのまま戻すことは難しい。そこで、本稿では残余を次の三種類の古典的指標として翻訳する。
+
+\begin{enumerate}
+    \item \textbf{分岐差分}：\texttt{if} の二つの枝が静的観測面で同一対象へ戻るかを測る。
+    \item \textbf{ホロノミー欠損}：ループを一周した後に、状態、型、符号、向きが恒等的に戻るかを測る。
+    \item \textbf{二重否定除去コスト}：$\neg\neg A$ から $A$ を取り出すときに必要な継続制御の有無を測る。
+\end{enumerate}
+
+これらをまとめて、残余翻訳コードを
+\begin{equation}
+    \mathcal{T}_{\rho}(P)=
+    \bigl(P_{\mathrm{obs}},
+    \partial_{\rho}P,
+    \mathrm{Hol}_{\rho}(P),
+    \mathrm{Cost}_{\neg\neg}(P)\bigr)
+\end{equation}
+と書く。ここで $P_{\mathrm{obs}}$ は古典的に固定可能な証明成分、残りの三項は継続成分の影である。
+
+この形式化の利点は、古典的観測者に対して「残余は見えない」と言うだけでなく、「残余そのものは見えないが、分岐差分、ホロノミー欠損、二重否定除去コストとしてその影は見える」と述べられる点にある。
+
+\section{結論}
+
+本稿では、直観主義論理と古典論理の差分を継続構造として読み、そのうち構成的証拠として直接観測されない部分を継続残余 $\rho$ と呼ぶ初等モデルを提示した。さらに、\texttt{if} 分岐、メビウス帯、コラッツ写像を通じて、動的実行では追跡できるが、実行前の静的証明へ圧縮する際に残余指標が現れる、という構図を説明した。
+
+本稿の立場では、証明とは単に真なる命題を記号列として保存することではなく、動的検証プロトコルをどの程度まで静的対象へ圧縮できるかという翻訳問題でもある。$\rho=0$ は完全圧縮を、$\rho>0$ は継続成分の影が残ることを表す。今後の課題は、残余指標を具体的な形式体系内で符号化し、各問題に対して $\rho$ を比較可能な不変量として計算することである。
+
+\end{document}
+
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{icat-common}
+\usepackage{hyperref}
+
+%-------------------------------------------------
+%  独自マクロ定義
+%-------------------------------------------------
+\newcommand{\sem}{\mathsf{Sem}}
+\newcommand{\refe}{\mathsf{Ref}}
+\newcommand{\sense}{\mathsf{Sense}}
+\newcommand{\ctx}{\Gamma}
+\newcommand{\botext}{\bot_{\mathrm{ext}}}
+\newcommand{\botint}{\bot_{\mathrm{int}}}
+\newcommand{\lext}{\Lhagma_{\mathrm{ext}}}
+\newcommand{\lint}{\Lhagma_{\mathrm{int}}}
+\newcommand{\yon}{\mathsf{R}}
+
+%-------------------------------------------------
+%  定理環境の設定
+%-------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{thesis}{命題}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{remark}{補足}[section]
+
+\begin{document}
+
+\title{残余意味論：意味と指示の証明論的再構成}
+\author{千葉将臣}
+\date{2026-06-26}
+\maketitle
+
+\begin{abstract}
+本稿は、意味（sense）と指示（reference）の関係を、対象の直接的同一性ではなく、外部的指定と内部的特徴付けの対応として再構成する試みである。通常、指示は対象が何を指すかを与え、意味はその対象がどのような仕方で与えられるかを与えるとされる。本稿では、この二分法に対して、対象水準の記述を排除した後にもなお残る「残余」$\Lhagma$ を導入し、指示を $\lext$、意味を $\lint$ として形式化する。そのうえで、直観主義論理における矛盾元 $\bot$ が、外部から導入される定数でありながら、局所的な矛盾文脈から体系内で導出される点に注目する。この二重性を模型として、残余 $\Lhagma$ を、外部的に指定される指示と内部的に構成される意味が対応する特異点として解釈する。最後に、この対応を米田の補題そのものではなく、対象がその文脈的振る舞いによって特徴付けられるという米田型の類比として位置付ける。
+\end{abstract}
+
+\section{序論}
+
+意味と指示の区別は、言語哲学および論理意味論における基本問題である。指示は表現が何を指すかに関わり、意味はその指示対象がどのような認識的・論理的経路を通じて与えられるかに関わる。本稿の目的は、この区別を証明論的に再構成することである。
+
+本稿で中心となる概念は「残余」$\Lhagma$ である。残余とは、対象水準の述語、構成、または指示可能な内容を排除した後にも、なお体系上の役割として残るものを指す。残余は、単なる対象ではなく、外部的に指定される側面と、内部的な推論過程を通じて特徴付けられる側面をあわせ持つ。本稿では前者を $\lext$、後者を $\lint$ と表記する。
+
+本稿の主張は、意味と指示の関係を、単純な同一性としてではなく、次の対応として捉える点にある。
+\[
+\lext \cong \lint .
+\]
+この式は、意味と指示が区別なく同じであることを意味しない。むしろ、外部的に指定された残余の指示が、体系内部の推論過程によって意味として回収されることを表す。
+
+\section{意味・指示・残余}
+
+\begin{definition}[指示]
+指示 $\refe(A)$ とは、表現 $A$ が外部的に何を指すかを表す側面である。本稿では、残余 $\Lhagma$ の指示的側面を $\lext$ と書く。
+\end{definition}
+
+\begin{definition}[意味]
+意味 $\sense(A)$ とは、表現 $A$ がどのような推論過程、排他過程、または文脈的振る舞いを通じて特徴付けられるかを表す側面である。本稿では、残余 $\Lhagma$ の意味的側面を $\lint$ と書く。
+\end{definition}
+
+\begin{definition}[残余]
+残余 $\Lhagma$ とは、対象水準の述語や構成を排除した後にも、体系内でなお区別可能な役割として残るものを指す。残余は、対象的内容を持つ通常の指示対象ではなく、外部的指定と内部的特徴付けの対応点として定義される。
+\end{definition}
+
+以上の定義により、残余は次の二側面を持つ。
+\[
+\Lhagma = (\lext, \lint).
+\]
+ここで $\lext$ は「何が残るか」を表し、$\lint$ は「それがどのように残るか」を表す。したがって、残余意味論における中心問題は、$\lext$ と $\lint$ がどのような条件のもとで対応するかである。
+
+\section{直観主義論理における矛盾元の二重性}
+
+直観主義論理において、$\bot$ は通常、矛盾または構成不可能性を表す定数として導入される。この意味では、$\bot$ は外部から体系の語彙に与えられる基礎記号である。これを $\botext$ と書く。
+
+一方で、$\bot$ は局所的な矛盾文脈から体系内で導出される。たとえば、文脈 $\ctx$ が命題 $P$ とその否定 $\neg P$、すなわち $P \to \bot$ を含むとき、含意除去により次が得られる。
+\[
+\frac{P \qquad P \to \bot}{\bot}
+\]
+この場合の $\bot$ は、外部から与えられた記号ではなく、体系内部の推論過程によって到達される結論である。これを $\botint$ と書く。
+
+したがって、直観主義論理における $\bot$ には、少なくとも次の二つの側面がある。
+\[
+\botext \qquad \text{および} \qquad \botint .
+\]
+本稿では、この二つが同一の記号 $\bot$ において一致することを、次の作業上の同型関係として表す。
+\[
+\botext \cong \botint .
+\]
+この同型は、無条件に $\vdash \bot$ が成り立つことを意味しない。むしろ、$\bot$ が外部から導入される定数であると同時に、矛盾的な局所文脈のもとで体系内から到達される特異点であることを表す。
+
+\section{残余意味論の基本命題}
+
+前節の $\bot$ の二重性は、残余 $\Lhagma$ の構造を理解するための模型を与える。すなわち、残余もまた、外部的に指定される側面と、内部的に導出または特徴付けられる側面を持つ。
+
+\begin{definition}[外部的残余]
+外部的残余 $\lext$ とは、対象水準の記述を排除した後に、なお「残るもの」として指定される指示的側面である。
+\end{definition}
+
+\begin{definition}[内部的残余]
+内部的残余 $\lint$ とは、対象水準の述語を排除する過程、矛盾を局所化する過程、または推論を正規化する過程を通じて、体系内部で特徴付けられる意味的側面である。
+\end{definition}
+
+\begin{thesis}[残余意味論の基本命題]
+残余 $\Lhagma$ は、外部的に指定される指示 $\lext$ と、内部的に特徴付けられる意味 $\lint$ が対応する点として定式化される。
+\[
+\lext \cong \lint .
+\]
+\end{thesis}
+
+この命題は、意味と指示の単純な同一視ではない。指示は外部的指定として与えられ、意味は内部的構成として与えられる。両者は異なる記述水準に属するが、残余 $\Lhagma$ において対応する。この対応が成立する点で、残余は通常の対象ではなく、意味と指示の接続を担う形式的特異点となる。
+
+\section{米田型対応としての残余}
+
+圏論における米田の補題は、対象がその対象へ向かう射、またはその対象から出る射の全体によって特徴付けられることを示す。本稿は米田の補題そのものを直接適用するものではない。しかし、残余意味論における $\lext \cong \lint$ は、外部的に指定された対象が、その対象をめぐる文脈的振る舞いによって内部的に特徴付けられるという点で、米田型の類比を持つ。
+
+この類比を明示するため、文脈 $\ctx$ から残余 $\Lhagma$ への到達可能性を、形式的に次のように表す。
+\[
+\yon(\Lhagma)(\ctx) := \mathrm{Hom}(\ctx, \Lhagma).
+\]
+ここで $\mathrm{Hom}(\ctx, \Lhagma)$ は、文脈 $\ctx$ から残余 $\Lhagma$ へ至る推論、排他、または正規化の経路を表す記号である。このとき、内部的残余 $\lint$ は、単独の対象としてではなく、文脈から残余へ至る振る舞いの総体として理解される。
+\[
+\lint \simeq \yon(\Lhagma).
+\]
+したがって、外部的に指定される $\lext$ と、文脈的振る舞いとして特徴付けられる $\lint$ が対応することは、残余が外部指定と内部構成の交差点であることを意味する。
+
+\begin{remark}[米田型という限定]
+本稿でいう米田型対応は、圏論上の米田の補題を厳密に適用する主張ではない。ここで意図されるのは、対象の同一性を、その対象をめぐる文脈的振る舞いによって特徴付けるという方法論的類比である。
+\end{remark}
+
+\section{意味と指示の再構成}
+
+残余意味論の観点では、意味と指示の関係は次のように整理される。
+\[
+\refe(\Lhagma) = \lext,
+\qquad
+\sense(\Lhagma) = \lint .
+\]
+したがって、意味と指示の関係は、次の対応として表される。
+\[
+\refe(\Lhagma) \cong \sense(\Lhagma).
+\]
+ただし、この式は意味と指示が区別なく同じであることを主張しない。むしろ、残余においては、外部的指示が内部的意味構成によって回収されるという特別な構造が成立することを表す。
+
+この再構成により、意味は単なる主観的把握様式ではなく、体系内部の推論過程として扱われる。また、指示は単なる外部対象ではなく、内部的意味構成によって回収可能な残余として扱われる。したがって、残余意味論は、意味と指示の関係を、対象と記述の関係ではなく、外部指定と内部導出の関係として定式化する。
+
+\section{空論との関係}
+
+本稿の議論は、空論に依存するものではない。しかし、空論における中道不動点 $\dfix$ と残余 $\Lhagma$ の関係は、残余意味論の一つの応用例を与える。空論では、対象水準の差異を消去した後に残る真理保存則が、基底状態として定式化される。このとき、残余 $\Lhagma$ は、外部的には「消去後に残るもの」として指定され、内部的には推論の帰着過程を通じて特徴付けられる。
+
+したがって、空論における
+\[
+\Lhagma \cong \dfix
+\]
+という対応は、残余意味論の観点からは、外部的指示と内部的意味構成の一致例として解釈できる。ただし、本稿の主張は空論の内部に限定されない。残余意味論は、意味と指示の関係一般を、証明論的・文脈論的に再記述するための独立した枠組みである。
+
+\section{結論}
+
+本稿では、意味と指示の関係を、残余 $\Lhagma$ を介して証明論的に再構成した。まず、直観主義論理における $\bot$ が、外部から導入される定数でありながら、局所的矛盾文脈のもとでは体系内部から導出されることを確認した。この二重性を模型として、残余 $\Lhagma$ を、外部的に指定される指示 $\lext$ と、内部的に特徴付けられる意味 $\lint$ が対応する点として定式化した。
+
+この構成により、意味と指示の関係は、単純な同一性ではなく、外部指定と内部導出の対応として理解される。さらに、この対応は、米田の補題そのものではないが、対象をその文脈的振る舞いによって特徴付けるという意味で米田型の類比を持つ。以上により、残余意味論は、意味と指示の関係を、論理・証明論・文脈性の観点から再考するための枠組みを与える。
+
+\begin{thebibliography}{9}
+\bibitem{frege}
+Gottlob Frege.
+\textit{"Uber Sinn und Bedeutung}.
+Zeitschrift f\"ur Philosophie und philosophische Kritik, 100, 1892.
+本稿では、意味と指示の古典的区別を参照する基礎文献として用いる。
+
+\bibitem{heyting}
+A. Heyting.
+\textit{Intuitionism: An Introduction}.
+North-Holland, 1956.
+本稿では、直観主義論理および矛盾元の形式化の参照文献として用いる。
+
+\bibitem{yoneda}
+Nobuo Yoneda.
+On Ext and exact sequences.
+\textit{Journal of the Faculty of Science, University of Tokyo, Section I}, 8, 1960.
+本稿では、対象を文脈的振る舞いによって特徴付ける方法論的類比の参照として用いる。
+\end{thebibliography}
+
+\end{document}
+
+% !TEX program = lualatex
+\RequirePackage{fix-cm}
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+
+\theoremstyle{plain}
+\newtheorem{lemma}{補題}
+\newtheorem{theorem}{定理}
+
+\title{構成的論理における $\neg\neg$-差分とアルゴリズム的ランダム性：\\実現可能性を介したChaitin不完全性定理の一般化}
+\author{千葉将臣}
+\date{2026-07-11}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+直観主義論理において、意味論的には古典的に真（$\neg\neg A$）でありながら構成的には証明不可能な命題（$A$）の集合、すなわち「$\neg\neg$-差分」の構造は、これまで主に位相的・集合論的な観点から研究されてきた。本稿では、この論理的ギャップを、単一命題 $A$ と $\neg\neg A$ の差分そのものとしてではなく、停止判定に関する命題族 $\{E_N\}_N$ のうち構成的に到達不能となる添字の閾値現象として操作化する。我々は、Lawvere--Tierneyの $\neg\neg$-位相を用いた空間的アプローチ（疎集合と測度零集合の乖離）の限界を指摘し、Kleeneの実現可能性（realizability）と接頭辞Kolmogorov複雑度を直接結びつける代替的な枠組みを提案する。主定理として、直観主義算術において「長さ $N$ 以下の全プログラムの停止性を一様に決定する排中律」の実現にはChaitinの $\Omega$ と同等の情報量が要求されることを示し、公理系の複雑度 $K(F)$ を超える領域で $F \vdash \neg\neg E_N$ かつ $F \nvdash E_N$ が生じることを証明する。
+\end{abstract}
+
+\section{序論}
+
+\subsection{背景と動機}
+
+直観主義論理と古典論理の最大の違いは、排中律 $A \lor \neg A$ や二重否定の除去 $\neg\neg A \to A$ の扱いに存する。Glivenkoの定理やGödel--Gentzenの負解釈が示すように、古典論理は直観主義論理の中に「二重否定で翻訳された安定な命題のクラス（$\neg\neg$-層）」として埋め込むことができる。トポス理論においては、LawvereとTierney (1972) がこれを $\neg\neg$-位相（$\neg\neg$-topology）という概念で幾何学的に定式化し、任意のトポス内部に古典論理を満たすブール・トポスを構築する道を開いた。
+
+本研究の核心的な動機は、「古典的な真理空間と直観主義的な構成空間の間に生じる『差分（$\neg\neg A \setminus A$）』とは、一体どのような数学的実体なのか」という問いである。直観主義的に $A$ が成立するためには、その命題を構成的に裏付ける証拠（実現子、realizer）が必要となる。したがって、「$\neg\neg A$ だが $A$ ではない」という状態は、対象が意味論的には確定しているにもかかわらず、そこへ到達するためのアルゴリズム的な構成ステップが欠如している状態を指す。
+
+\subsection{位相的アプローチの限界と情報論的転回}
+
+この「差分空間」を幾何学的・位相的に捉えようとする素朴な試みは、深刻な困難に直面する。Cantor空間上の位相的構成（Baire空間の性質等）を用いた場合、$\neg\neg$-差分はnowhere dense（疎集合、meager ideal）に対応する。一方で、アルゴリズム的情報理論（AIT）において「到達不能な情報」の代名詞であるMartin-Löfランダムな実数の集合は、Lebesgue測度零（null ideal）の補集合として定義される。Cichońの図式が示すように、meager idealとnull idealは独立した公理力を持つため、両者は素朴には一致しない。
+
+この乖離は、現象を「外側からの空間の大きさ」で測ろうとしたことに起因する。本稿では、Hyland (1982) のEffective Topos（$\mathcal{Eff}$）の精神に則り、空間の形ではなく「実現子の構成に要求される計算複雑度（証明コスト）」という内側からの尺度を採用する。Schnorrの定理により、Martin-Löfランダム性は「Kolmogorov複雑度による非圧縮性」と完全に同値であることが知られている。我々はこの事実を利用し、位相的差分をそのまま同一視するのではなく、命題族 $\{E_N\}_N$ に対する到達不能性として再定式化することで、直観的推論の限界とAITにおける情報論的限界（Chaitinの不完全性定理）を比較可能な形に置き直す。
+
+なお、本稿の $D_F(E_N)$ は、もとの問題意識である「単一の命題 $A$ と $\neg\neg A$ の間に何があるか」をそのまま集合として取り出したものではない。むしろ、停止判定排中律の有限近似 $E_N$ をパラメータ化し、どの有限段階から先で $F$ が構成的実現子を供給できなくなるかを測る指標である。この操作化により、$\neg\neg$-差分を「命題族に沿った閾値現象」として扱う。
+
+\subsection{関連研究と本稿の位置づけ}
+
+Chaitinの不完全性定理は、十分に強い健全な形式体系が、その記述複雑度を大きく超えるKolmogorov複雑度をもつ具体的対象の非圧縮性を証明できないことを示す。また、Solovayによる停止確率 $\Omega$ の研究は、$\Omega$ の初期ビットが有限長プログラムの停止情報を符号化することを明確にした。したがって、本稿で用いる情報論的下界そのものは、AITにおける既存の標準的事実に基づいている。
+
+本稿の新規性は、これらの既存結果を直観主義的証明論の言葉へ移し替える点にある。具体的には、Kleene実現可能性とNelsonの抽出定理を明示的に経由することで、$F \vdash E_N$ という構成的証明可能性から一様停止判定の実現子が抽出され、その実現子の複雑度が $K(F)+O(\log N)$ に抑えられることを示す。この上界と、$\Omega$ 由来の下界 $N-O(1)$ を衝突させることで、Chaitin型の情報論的不完全性を「$\neg\neg E_N$ は証明できるが $E_N$ は証明できない」というrealizability上の到達不能性として表現する。
+
+\section{予備知識}
+
+本稿で用いるアルゴリズム的情報理論、および直観主義的証明論の基本概念を定義する。
+
+\subsection{接頭辞Kolmogorov複雑度とChaitinの $\Omega$}
+
+チューリング完全な\textbf{万能接頭辞機械（universal prefix-free machine）} $U$ を一つ固定する。入力プログラム $p \in \{0, 1\}^*$ は接頭辞符号（ある有効なプログラムが別の有効なプログラムの接頭辞にならない）をなすとする。
+
+対象となる文字列または自然数 $x$ に対する\textbf{接頭辞Kolmogorov複雑度} $K(x)$ を、以下のように定義する。
+\[
+K(x) := \min \{ \lvert p\rvert : U(p) = x \}.
+\]
+ここで $\lvert p\rvert$ はプログラム $p$ のビット長を表す。また、万能機械 $U$ が停止する確率（Chaitinの定数）を以下で定義する。
+\[
+\Omega := \sum_{U(p)\downarrow} 2^{-\lvert p\rvert}.
+\]
+$\Omega$ は計算不可能な実数であり、その二進展開の最初の $N$ ビットを $\Omega_N$ としたとき、$K(\Omega_N) \ge N - O(1)$ を満たす（すなわち、漸近的に非圧縮である）ことが知られている。
+
+\subsection{直観主義算術とKleeneの実現可能性}
+
+基礎となる形式体系として、\textbf{直観主義算術（Heyting Arithmetic, HA）}、あるいはそれを拡張した健全かつ帰納的に公理化可能な体系 $F$ を対象とする。体系 $F$ の公理と推論規則を列挙するプログラムの最小ビット長を $K(F)$ と記述する。
+
+Kleeneのnumerical realizability関係 $e \Vdash A$（自然数 $e$ が論理式 $A$ を実現する）を標準的に定義する。特に以下の性質に留意する。
+
+\begin{itemize}
+\item \textbf{停止問題の述語:} $T(n, n, s)$ を「プログラム $n$ が入力 $n$ に対して $s$ ステップで停止する」という原始帰納的関係とする。停止問題は $H(n) \equiv \exists s\, T(n, n, s)$ と表される。
+\item $e \Vdash \exists s\, T(n, n, s)$ とは、$e$ を計算すると具体的な停止ステップ数 $s$ を出力し、かつ $T(n, n, s)$ が真であることを意味する。
+\item $e \Vdash (A \lor B)$ とは、$e$ を計算するとペア $\langle i, p \rangle$ が得られ、$i=0$ なら $p \Vdash A$、$i=1$ なら $p \Vdash B$ となることである。
+\end{itemize}
+
+さらに、構成的体系の根幹をなす事実として\textbf{Nelsonの抽出定理}（1947）を用いる。すなわち、$F \vdash A$ であるならば、その証明のGödel数から、アルゴリズム的に実際の実現子 $e$（$e \Vdash A$）を抽出する部分再帰的関数が存在する。
+
+
+\section{枠組みの定式化}
+
+\subsection{一様停止判定命題と情報量}
+
+本稿では、対象とする命題として、単一のプログラムの停止問題ではなく、「一定の長さ以下のすべてのプログラムの停止性を一様に決定する命題」を採用する。
+
+万能接頭辞機械 $U$ への入力プログラム $p$ に関する停止問題を $H(p) \equiv \exists s\, T_U(p, p, s)$ と表す。このとき、長さ $N$ 以下のすべてのプログラムに関する排中律 $E_N$ を以下のように定義する。
+\[
+E_N \equiv \forall p \in \{0, 1\}^{\le N}\, (H(p) \lor \neg H(p)).
+\]
+ここで、最初の $N$ 個の自然数に対する停止性ではなく、「長さ $N$ 以下の接頭辞プログラム」を対象とする点が決定的に重要である。最初の $N$ 個のプログラムのうち停止するものの個数（高々 $N$）を指定するための情報量は $\log_2 N$ ビットで済むが、長さ $N$ 以下の全接頭辞プログラム（最大 $2^{N+1}-1$ 個）の停止性を網羅的に決定するためには、本質的にChaitinの定数 $\Omega$ の最初の $N$ ビットに相当する情報量が要求される。
+
+\subsection{$\neg\neg$-差分集合の定義}
+
+健全で帰納的に公理化可能な直観主義形式体系 $F$（直観主義算術HAを含む）を固定する。体系 $F$ に相対的な古典的真理と構成的真理のギャップを測るため、以下の$\neg\neg$-差分集合を定義する。
+\[
+D_F(E_N) := \{ N \in \mathbb{N} : F \vdash \neg\neg E_N \text{ かつ } F \nvdash E_N \}.
+\]
+古典論理のモデル（Lawvere--Tierneyの $\neg\neg$-層）においては、排中律の二重否定は自明に真であるため、この集合は「意味論的には確定しているが、体系 $F$ 内部での構成的証明が存在しない添字 $N$ の集合」を正確に表現している。本研究の目的は、この論理的な差分集合が空でないことを示すだけでなく、その発生境界がアルゴリズム的情報理論の限界と正確に一致することを証明することである。
+
+\section{主定理とその証明}
+
+本章では、体系 $F$ の複雑度 $K(F)$ と、$E_N$ の構成的証明から抽出される実現子の複雑度を評価することで、主定理を導く。
+
+\subsection{証明からの実現子抽出}
+
+最初の補題として、体系 $F$ において $E_N$ が証明可能であると仮定した場合の、実現子の情報論的な上限を定める。
+
+\begin{lemma}[証明複雑度による実現子の上界]
+健全で帰納的に公理化可能な直観主義形式体系 $F$ において、$F \vdash E_N$ が成立するならば、$E_N$ を実現するあるインデックス $e \in \mathbb{N}$（すなわち $e \Vdash E_N$）が存在し、その接頭辞Kolmogorov複雑度 $K(e)$ は以下の上界を満たす。
+\[
+K(e) \le K(F) + O(\log N).
+\]
+ここで隠れた定数は $N$ および $F$ に依存しない。
+\end{lemma}
+
+\begin{proof}
+$F \vdash E_N$ を仮定する。このとき、万能機械 $U$ 上で動作する以下のアルゴリズム $\mathcal{M}$ を構成する。
+\begin{enumerate}
+\item \textbf{証明の探索:} 体系 $F$ の定理を列挙するプログラム（サイズ $K(F)$）と、自然数 $N$ の自己区切り表現（サイズ $O(\log N)$）を用いて、$F$ の定理を順次生成し、結論が $E_N$ のGödel数と一致する証明 $p_{E_N}$ を発見する。仮定より、この探索は有限時間で停止する。
+\item \textbf{実現子の抽出:} Nelsonの抽出定理（1947）により、構成的体系の証明 $p_{E_N}$ から、その結論の実現子を抽出する部分再帰的関数 $\varepsilon$ が存在する。$\mathcal{M}$ は $\varepsilon(p_{E_N})$ を計算し、その結果 $e$ を出力する。
+\end{enumerate}
+アルゴリズム $\mathcal{M}$ 自身の動作コードと関数 $\varepsilon$ の記述長は定数 $O(1)$ であるため、万能機械 $U$ が $e$ を出力するために必要な全プログラムサイズは
+\[
+K(e) \le K(F) + K(N) + O(1) \le K(F) + O(\log N)
+\]
+となる。
+\end{proof}
+
+\subsection{実現子の情報論的下界}
+
+次に、$E_N$ を実現するいかなるアルゴリズムも、本質的にChaitinの $\Omega$ と同等の情報量を内包せざるを得ないことを示す。
+
+\begin{lemma}[ランダム性による実現子の下界]
+命題 $E_N$ を実現する任意のインデックス $e$（$e \Vdash E_N$）について、その接頭辞Kolmogorov複雑度は以下の下界を満たす。
+\[
+K(e) \ge N - O(1).
+\]
+ここで隠れた定数は $N$ に依存しない。
+\end{lemma}
+
+\begin{proof}
+$e \Vdash E_N$ と仮定する。実現可能性の定義より、$e$ は長さ $N$ 以下の任意のプログラム $p$ を入力として受け取り、その停止性の真理値フラグを正しく出力する計算可能関数として機能する。この $e$ をサブルーチンとして用いることで、長さ $N$ 以下の全プログラムの停止性を判定し、以下の有限和を正確に計算できる。
+\[
+\Omega^{(N)} = \sum_{\lvert p\rvert \le N,\, U(p)\downarrow} 2^{-\lvert p\rvert}.
+\]
+Chaitin（1975）の定理により、長さ $N$ 以下の全停止プログラムの集合から、真の停止確率 $\Omega$ の二進展開の最初の $N$ ビット $\Omega_N$ を抽出する計算可能関数が存在する。したがって、$e$ に $O(1)$ の定数長プログラムを結合するだけで $\Omega_N$ を出力可能である。
+\[
+K(\Omega_N) \le K(e) + O(1).
+\]
+一方で、$\Omega$ はMartin-Löfランダムな実数であり、AITの基本定理により $K(\Omega_N) \ge N - c$ が成り立つ。これらを結合し、$K(e) \ge N - O(1)$ を得る。
+\end{proof}
+
+\subsection{差分の発生境界}
+
+以上の準備の下で、論理の差分がAITの非圧縮性によって生じることを決定的に証明する。
+
+\begin{theorem}[$\neg\neg$-差分の情報論的境界]
+任意の健全な直観主義形式体系 $F$ に対して、ある定数 $c, d > 0$ が存在し、次が成り立つ。
+\[
+N > K(F) + c \log N + d \implies N \in D_F(E_N).
+\]
+すなわち、体系の複雑度 $K(F)$ を漸近的に超えるすべての $N$ は、古典的真理と構成的真理の差分空間に属する。
+\end{theorem}
+
+\begin{proof}
+条件を満たす $N$ について、$N \in D_F(E_N)$、すなわち (1) $F \vdash \neg\neg E_N$ かつ (2) $F \nvdash E_N$ の両方を示す。
+
+\textbf{Part 1: 古典的自明性}
+直観主義論理において $\neg\neg(A \lor \neg A)$ は定理である。$E_N$ は有限集合 $\{0, 1\}^{\le N}$ 上の量化であり、有限個の論理積に展開可能である。直観主義論理において二重否定は有限の論理積に対して分配的であるため、任意の $N$ について $F \vdash \neg\neg E_N$ が常に成立する。
+
+\textbf{Part 2: 構成的不到達性}
+背理法を用いる。ある $N$ について $F \vdash E_N$ が成立したと仮定する。補題1より、$E_N$ を実現する $e$ が存在し、$K(e) \le K(F) + c_1 \log N + c_2$ を満たす。一方、補題2より同じ $e$ は $K(e) \ge N - c_3$ を満たさねばならない。結合すると、
+\[
+N - c_3 \le K(F) + c_1 \log N + c_2
+\]
+であり、したがって
+\[
+N \le K(F) + c_1 \log N + (c_2 + c_3)
+\]
+となる。しかし、定数 $c = c_1$、$d = c_2 + c_3$ と置いたとき、$N > K(F) + c \log N + d$ となる $N$ を選択すれば論理的矛盾が生じる。体系 $F$ の健全性により仮定は誤りであり、この領域では $F \nvdash E_N$ でなければならない。
+
+以上より、境界を超えたすべての $N$ において $F \vdash \neg\neg E_N$ かつ $F \nvdash E_N$ であり、$N \in D_F(E_N)$ が証明された。
+\end{proof}
+
+
+
+\section{トポス理論的解釈：$\mathcal{Eff}$ と $\neg\neg$-位相の幾何学}
+
+前章で示された主定理は、証明論的・計算量的な限界を与える定理である。本章では、それをHylandのEffective Topos $\mathcal{Eff}$ における幾何学的・位相的な構造と対応づける解釈を述べる。ただし以下の議論は、主定理から直ちに従う証明済みの主張と、それに基づくトポス論的な読み替えとを区別して提示する。
+
+\subsection{$\mathcal{Eff}$ における実数対象と $\Omega$ の位置づけ}
+
+$\mathcal{Eff}$ においては、実数の定義（Cauchy実数、Dedekind実数、MacNeille実数など）が、古典的な集合論のモデル（$Set$）とは異なり一致しないことが知られている。Chaitinの定数 $\Omega$ は、その定義から左切断（有理数の下界）が帰納的可枚挙であるため、$\mathcal{Eff}$ 内部において下半実数（lower real）としては正当な対象として存在する。
+
+しかし、$\Omega$ が $\mathcal{Eff}$ において完全な実数（Dedekind実数）として扱われるためには、十分細かい精度で有理近似との大小関係を決定する実現子が必要になる。この要求は、有限精度では命題 $E_N$ を実現するアルゴリズムの要求と同型の情報を含む。
+
+\begin{theorem}[有限精度実数化の障害]
+任意の健全な直観主義形式体系 $F$ に対して、ある定数 $c,d>0$ が存在し、$N>K(F)+c\log N+d$ ならば、$F$ は $\Omega$ の最初の $N$ ビットを決定する実現子を与える証明を持たない。
+\end{theorem}
+
+\begin{proof}
+もしそのような実現子を $F$ の証明から抽出できるならば、$\Omega_N$ から長さ $N$ 以下の接頭辞プログラムの停止性を復元する標準的な計算を経由して、$E_N$ の実現子が得られる。これは主定理の $F \nvdash E_N$ と矛盾する。
+\end{proof}
+
+したがって、「$N \approx K(F)$ の段階で $\Omega$ の実数としての実体化が破綻する」という表現は、厳密には上の有限精度版の系をトポス論的に読んだものである。すなわち、$\Omega$ は $\mathcal{Eff}$ 内部において下半実数としては自然に現れるが、体系 $F$ が供給できる実現子だけでは、十分大きな精度でDedekind実数的な決定性を与えられない対象として振る舞う。
+
+\subsection{$\neg\neg$-層化によるオラクル注入と空間の差分}
+
+LawvereとTierneyの $\neg\neg$-位相は、$\mathcal{Eff}$ 内部に古典論理を満たすブール・部分トポス（$\neg\neg$-層）を切り出す。この $\neg\neg$-層は、外部の古典的な集合界 $Set$ と同値になることが知られている。
+
+本稿の枠組みにおいて、$\neg\neg$ 演算子による二重否定シフトは、単なる論理規則ではなく、実現子の構成プロセスを保留し、外部の古典的決定性を参照する操作として解釈できる。主定理が示す $N \in D_F(E_N)$ という差分領域の発生は、この意味で「$\mathcal{Eff}$ の構成的世界では実現子が得られないが、$\neg\neg$-層では古典的に安定化される」有限段階を特定している。
+
+これまで、Cantor空間におけるこの種の「差分」を位相的に捉えると、meager ideal（疎集合）とnull ideal（測度零）の不一致に直面する。本稿はこの不一致を同一空間上で解消したわけではない。むしろ、位相的定義を採用し続けるのではなく、命題族 $\{E_N\}_N$ の添字集合 $D_F(E_N)$ へと問題を移し、トポス内部での\textbf{証明コスト（接頭辞Kolmogorov複雑度）}によって代替的に定式化した。この定式化は、当初の動機である「構成的証拠の欠如」をより直接に測るものであり、オラクルなしでは圧縮不可能な情報が、どの有限段階から構成的到達不能性として現れるかを記述する。
+
+\section{結論と今後の展望}
+
+\subsection{結論}
+
+本研究は、「直観主義論理と古典論理の差分」という問題意識を、停止判定排中律の命題族 $\{E_N\}_N$ に沿った閾値現象として操作化した。我々は、Lawvere--Tierneyの $\neg\neg$-位相を用いた空間的・測度的なアプローチが抱える齟齬を回避し、Kleeneの実現可能性と接頭辞Kolmogorov複雑度を直接結びつける代替的な枠組みを構築した。
+
+この枠組みにおいて、直観主義算術における一様停止判定命題 $E_N$ の構成的証明には、Chaitinの $\Omega$ と等価な情報量が不可避に要求される（補題2）。一方で、形式体系 $F$ が生成できる実現子の情報量は $K(F)$ にバウンドされる（補題1）。この証明論的限界と情報論的限界の衝突から導かれる主定理により、公理系の複雑度を漸近的に超える領域（$N > K(F) + c \log N + d$）において、古典的には自明な命題が直観主義的には完全に到達不能になることが示された。
+
+この意味で、$D_F(E_N)$ に現れる $\neg\neg$-差分は、体系から見て予測不可能なランダムビットが構成的到達不能性として現れる場所を示している。本結果は、Chaitinの不完全性定理をrealizability toposの観点から読み替え、論理学・計算機科学・圏論の結びつきを明確化するものである。
+
+\subsection{今後の展望}
+
+本研究の成果は、証明論とアルゴリズム的情報理論の交差点において、さらに多くの研究の方向性を示唆している。
+
+\begin{enumerate}
+\item \textbf{他のランダム性概念への拡張:} 本稿ではMartin-Löfランダム性（Chaitinの $\Omega$）と接頭辞複雑度に焦点を当てたが、Schnorrランダム性や計算可能ランダム性など、他のランダム性の階層が $\mathcal{Eff}$ のどのような論理的断片、あるいは別の位相・closure operatorと対応するかを解明することは興味深い課題である。
+\item \textbf{直観主義的逆数学との接続:} $E_N$ に代表される命題群を、Markovの原理（Markov's Principle, MP）やLPO（Limited Principle of Omniscience）といった構成的数学の諸原理と複雑度論的に関連付けることで、公理系の強さを「ランダムビットの抽出能力」として測り直す新たな逆数学の構築が期待される。
+\item \textbf{より高次のトポスにおける不完全性:} 本枠組みを、算術に留まらず高階論理や型理論に対応する実現可能性トポス（例：modified realizability topos）へと拡張し、計算の停止性以外の「高次の情報論的非圧縮性」がどのような論理的差分を生み出すかを幾何学的に研究することが次のステップとなろう。
+\end{enumerate}
+
+\end{document}
+
+% !TEX program = lualatex
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\newtheorem{definition}{定義}
+\newtheorem{theorem}{定理}
+\newtheorem{example}{例}
+
+\newcommand{\phiS}{\phi_{\text{S}}}
+\newcommand{\phiN}{\phi_{\text{N}}}
+\newcommand{\phiSN}{\phi_{\text{SN}}}
+\newcommand{\phiNS}{\phi_{\text{NS}}}
+\newcommand{\metanegation}{\mathord{\sim}}
+\newcommand{\dfix}{\mathbf{d}}
+\newcommand{\mweq}{\equiv_{\text{m}}}
+\newcommand{\Einfty}{E_{\infty}}
+\newcommand{\Md}{\mathcal{M}_{\text{d}}}
+\newcommand{\Mnn}{\mathcal{M}_{\text{nn}}}
+\newcommand{\Mr}{\mathcal{M}_{\text{r}}}
+\newcommand{\MC}{\mathcal{M}_{\text{C}}}
+\newcommand{\MT}{\mathcal{M}_{\text{T}}}
+\newcommand{\SMT}{S_{\MT}}
+\newcommand{\Bval}{\mathcal{B}}
+\newcommand{\Lhagma}{\mathcal{L}}
+\newcommand{\Rmw}{\mathbf{R}_{\mathrm{mw}}}
+
+\title{論理学・数学の4つの足場と古典的限界}
+\author{千葉将臣}
+\date{2026-07-03}
+
+\begin{document}
+
+\maketitle
+
+\section{はじめに}
+
+本稿では、論理学・数学における「4つの足場」――
+\begin{enumerate}[label=(\arabic*)]
+  \item 二重否定の残余（非 $\phiN$）
+  \item 選択公理（亦是亦非 $\phiSN$）
+  \item 真理保存性（是 $\phiS$）
+  \item 不可能性（非是非非 $\phiNS$）
+\end{enumerate}
+――と、それらが生み出す古典的限界について、顕現論の四句分別の観点から整理する。
+
+\section{4つの足場の定義}
+
+\begin{definition}[四句分別]
+  顕現論における四句分別は、以下の4つの位相からなる：
+  \begin{itemize}
+    \item 是（$\phiS$）：真理保存性（静的同一性・可能なもの）
+    \item 非（$\phiN$）：二重否定の残余（言語の外にあるが内部から生成）
+    \item 亦是亦非（$\phiSN$）：双方向プロセス（洗練・カット除去）
+    \item 非是非非（$\phiNS$）：不可能性（決定不能性、ランダム性・非圧縮性、外部反映の限界）
+  \end{itemize}
+\end{definition}
+
+\begin{definition}[4つの足場]
+  論理学・数学における4つの足場は、四句分別と以下のように対応する：
+  \begin{itemize}
+    \item 二重否定の残余（非 $\phiN$）：直観主義論理における「$\neg\neg A$ は $A$ と同値ではない」。
+    \item 選択公理（亦是亦非 $\phiSN$）：非時間的な同時存在を保証する公理。
+    \item 真理保存性（是 $\phiS$）：証明が終われば真偽は固定される性質。
+    \item 不可能性（非是非非 $\phiNS$）：決定不能性、ランダム性・非圧縮性、外部対象の内部反映の限界など。
+  \end{itemize}
+\end{definition}
+
+
+\section{二値截断部分圏 \texorpdfstring{$\Bval$}{B} における特異点としての諸定理}
+
+本節では、従来「パラドックス」と呼ばれてきた現象を、矛盾や異常ではなく、
+二値截断部分圏 $\Bval$ において観測される特異点として捉え直す。
+顕現論の観点では、これらの現象は四句分別の力学が二値論理へ射影された際に生じる
+局所的な歪みである。
+
+\subsection{選択公理とバナッハ＝タルスキーの特異点}
+
+\begin{theorem}[バナッハ＝タルスキー]
+  選択公理（AC）を仮定すると、3次元の球を有限個の部分に分割し、
+  それらを回転と平行移動だけで組み替えると、元と同じ大きさの球を2つ作れる。
+\end{theorem}
+
+選択公理は、無限の選択プロセスという時間的・アルゴリズム的過程を迂回し、
+結果としての対応の存在を一挙に保証する。
+これは、外在の5モナドと内在の5モナドの双方向軌道が、
+非時間的に同時に釣り合う亦是亦非（$\phiSN$）の力学である。
+
+バナッハ＝タルスキーの定理が示す直観への違背は、
+この亦是亦非の非時間的な同時存在性を、
+局所的な是、すなわち体積保存という静的同一性の枠組みで観測しようとした際に生じる
+トポロジカルな歪みである。
+したがって、この定理は単なる奇妙な逆説ではなく、
+選択公理が $\Bval$ へ射影されたときに現れる古典的特異点として理解される。
+
+\subsection{ゲーデルの不完全性定理と決定不能の特異点}
+
+\begin{theorem}[ゲーデル]
+  一貫した再帰的公理化可能な体系 $T$ に対し、
+  $T \nvdash G_T$ かつ $T \nvdash \neg G_T$ となる文 $G_T$ が存在する。
+\end{theorem}
+
+不完全性定理が生み出す決定不能文 $G_T$ は、非是非非（$\phiNS$）の具現化である。
+すなわち、観測者としての体系 $T$ を固定したまま極限対象に言及しようとすると、
+対象そのものを構成・観測することはできない。
+しかし、「証明不可能である」という結果のみが、境界における破綻として体系内部に投影される。
+
+これはパラドックスではなく、観測者を極限消去したあとに残る極限同値 $\Einfty$ の、
+観測者依存的な局所的断面に過ぎない。
+したがって、$G_T$ は体系の欠陥ではなく、
+体系が自らの観測境界に到達したことを示す特異点である。
+
+\subsection{直観主義における排中律の拒否}
+
+\begin{example}[直観主義論理]
+  直観主義論理では、排中律 $A \lor \neg A$ は一般には証明できないが、
+  $\neg\neg(A \lor \neg A)$ は証明できる。
+\end{example}
+
+この現象は、二重否定の残余（$\phiN$）の典型例である。
+二重否定は古典論理への閉包を志向するが、
+直観主義論理では $\neg\neg A \to A$ は一般には成立しない。
+この非成立は単なる欠如ではなく、古典的閉包によって消去しきれない継続残余 $\rho$ の発生を示す。
+
+顕現論では、この残余はメタレベルにおいて正の対象 $\Lhagma$ として回収される。
+したがって、排中律の拒否は、古典論理の失敗ではなく、
+閉包操作が次なる文脈を生成する境界を露出させる現象である。
+
+\section{静的ビット割当の棄却と四句の力学的ベクトル}
+
+四句分別は、静的な真理値ビットの割当ではない。
+すなわち、是・非・亦是亦非・非是非非を、単に真、偽、両立、非両立のような
+固定されたラベルとして扱うべきではない。
+むしろ四句分別は、推論の動的プロセスにおける力学ベクトルの相転移として解釈されるべきである。
+
+\subsection{是（\texorpdfstring{$\phiS$}{phiS}）：静的同一性と固定化のベクトル}
+
+是は、動的でフラクタルな推論プロセスを捨象し、
+結果としての真偽、すなわち $A=A$ のみを固定・截断する力学である。
+このベクトルは、証明が終了した後の対象を静的同一性として安定化する。
+しかし、その安定化は、生成過程や残余を不可視化する圧縮でもある。
+
+\subsection{非（\texorpdfstring{$\phiN$}{phiN}）：内部からの逸出ベクトル}
+
+非は、二重否定モナド等の閉包作用素が系を古典論理へ圧縮しようとする際、
+不可避的に生じる継続残余 $\rho$ の位相である。
+内部からは計算の失敗または否定として現れるが、
+メタレベルでは次なる文脈を展開する正の対象 $\Lhagma$ として回収される。
+
+\subsection{亦是亦非（\texorpdfstring{$\phiSN$}{phiSN}）：非時間的同時存在の均衡ベクトル}
+
+亦是亦非は、順方向の構成プロセスと逆方向の境界指示が独立して進行し、
+双方が非時間的かつ同時に釣り合った瞬間に生じる均衡状態である。
+この位相は、双方向演繹定理の均衡として理解できる。
+選択公理が非構成的な存在を一挙に保証するのも、
+この均衡ベクトルが $\Bval$ に射影された結果として解釈される。
+
+\subsection{非是非非（\texorpdfstring{$\phiNS$}{phiNS}）：境界から内部への投影ベクトル}
+
+非是非非は、四句分別のいずれの位相への帰属試行も失敗することによって確定する残余である。
+極限対象 $\Einfty$ は、内部の操作で直接観測することができない。
+しかし、その観測不能性は、境界における破綻としてのみ結果を内部に投影する。
+
+この位相において、決定不能性、ランダム性、非圧縮性、外部対象の内部反映の限界は、
+同じ構造を持つ。
+それらは体系の外部にある単なる不可知ではなく、
+体系が自らの境界を内部へ投影した結果として現れる。
+
+\section{外部依存の内部回収とブートストラップ機構}
+
+古典数学は、自らの正当性を担保するために、
+真理保存性（$A=A$）や選択公理を体系の外部から要請してきた。
+これに対し、顕現論および一般二諦理論（GTTT）は、
+4つの足場を体系の内部操作の帰結として回収することで、
+自己説明的なブートストラップ機構を与える。
+
+すなわち、真理保存の強要（是）がもたらす圧縮の限界が残余（非）を生み出し、
+その残余を回収する双方向の釣り合い（亦是亦非）が選択公理的対応を導出する。
+さらに、その釣り合いの限界が決定不能な特異点 $\Einfty$（非是非非）として露呈する。
+
+GTTTは、この一連の
+\begin{equation}
+  \text{固定化} \longrightarrow \text{逸出} \longrightarrow
+  \text{均衡} \longrightarrow \text{限界の露呈}
+\end{equation}
+という力学的サイクル自体を、世界を駆動する無明ジェネレータ $\Rmw$ として定式化する。
+外部の足場に依存せず、自らの演算の破綻と残余によって自らを再起動させるこの機構が、
+顕現論における自己開放的な理論アーキテクチャである。
+
+\section{結論}
+
+論理学・数学における古典的限界は、
+4つの足場（二重否定の残余、選択公理、真理保存性、不可能性）の
+いずれか、または組み合わせから生じる。
+これらは数学の内部構造と外部境界を網羅しており、
+顕現論の四句分別（是・非・亦是亦非・非是非非）として
+明示的な足場に据えることで、
+古典的限界をブートストラップの材料として再構成できる。
+
+\end{document}
+

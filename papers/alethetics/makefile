@@ -4,26 +4,15 @@ PDFTK = pdftk
 LATEX_FLAGS = -interaction=nonstopmode
 
 # ソースファイルのリスト（指定された順番を維持）
-SOURCES = boundary-theory-core.tex \
-	  lhagma-avyakata-dfix0.tex \
-          icat-dfix0.tex \
-          icat-truth-preservation.tex \
-          titotp.tex \
-          titotp-mebius.tex \
-	  icat-cl.tex \
-          icat-catuskoti-skandha.tex \
-          icat-ymwcomb.tex \
-	  icat-sunyata-theory.tex \
-          icat-lk.tex \
-	  aletheic-proof-theory.tex \
-          boundary-category.tex \
-          icat-twdt.tex \
-	  emb-twdt.tex \
-	  icat-calibration.tex
+SOURCES = icat-perception.tex \
+	  ../logic/avyakata.tex \
+          icat-leges-fractales.tex \
+          fractal-id.tex \
+	  aletheics-observer-elimination.tex
 
 # 中間生成物および最終的なPDFのリスト
 PDFS = $(SOURCES:.tex=.pdf)
-TARGET = icat.pdf
+TARGET = aletheics.pdf
 
 # デフォルトターゲット
 all: $(TARGET)
@@ -39,10 +28,10 @@ $(TARGET): $(PDFS)
 	# $(LATEX) $(LATEX_FLAGS) $<
 
 bigtex: $(SOURCES)
-	@rm -f icat.txt
+	@rm -f aletheics.txt
 	for f in icat-common.sty $(SOURCES); do \
-		cat $$f >> icat.txt; \
-		echo '' >> icat.txt; \
+		cat $$f >> aletheics.txt; \
+		echo '' >> aletheics.txt; \
 	done
 
 # 掃除用
