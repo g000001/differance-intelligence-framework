@@ -38,7 +38,7 @@
 \maketitle
 
 \begin{abstract}
-本論文は、形式的体系の内部では対象として定義できないが、内部からの関係によって間接的に指示できるものを「外点」$\dfix$ と呼び、その数学的記述を試みる。第一に、完備ブール代数的推移モデルと強制関係を用い、基底モデルに属さないジェネリック・フィルターを、基底モデル内で定義可能な関係によって指示する。第二に、四種の操作に伴う情報損失を安定圏における余ファイバーとして定式化し、それらの台の共通部分を四重残余束（Quadruple Residual Bundle; QRB）の特異領域と定義する。強制法に関する標準定理とQRBに固有の仮定を明確に分離することで、外点とジェネリック・フィルターの同一視を無条件の定理とはせず、比較写像が満たすべき条件として提示する。さらに第三に、外点を「値の定義」ではなく「演算の幾何学的到達点」として再解釈し、$1/0\leadsto\dfix$ を典例として計算論的外点の診断機構を展開する。これにより、到達不能性を単なる未定義性ではなく、複数の比較写像が同時に同値でなくなる幾何学的障害として研究するための形式的枠組みを与える。最後に、外点が真理保存性を通過する前に位置する「根源的単位元」であることを示唆し、今後の代数的展開への接続を開く。
+本論文は、形式的体系の内部では対象として定義できないが、内部からの関係によって間接的に指示できる外部を記号 $\dfix$ で表し、その数学的記述を試みる。$\dfix$ は値や点そのものではなく、外部への到達を記録する指示記号である。第一に、完備ブール代数的推移モデルと強制関係を用い、基底モデルに属さないジェネリック・フィルターを、基底モデル内で定義可能な関係によって指示する。第二に、四種の操作に伴う情報損失を安定圏における余ファイバーとして定式化し、それらの台の共通部分を四重残余束（Quadruple Residual Bundle; QRB）の特異領域と定義する。強制法に関する標準定理とQRBに固有の仮定を明確に分離することで、ジェネリック・フィルターとQRB側の代表点の対応を無条件の同一視とはせず、比較写像が満たすべき条件として提示する。さらに第三に、外点指示を「値の定義」ではなく「演算の幾何学的到達」の診断として再解釈し、$1/0\leadsto\dfix$ を典例として計算論的外点の診断機構を展開する。これにより、到達不能性を単なる未定義性ではなく、複数の比較写像が同時に同値でなくなる幾何学的障害として研究するための形式的枠組みを与える。最後に、$\dfix$ が真理保存性を通過する前に位置する「根源的単位元」を指示することを示唆し、今後の代数的展開への接続を開く。
 \end{abstract}
 
 \section{はじめに}
@@ -303,33 +303,7 @@ $p\Vdash\varphi$ の定義から $p\leq\|\varphi\|_{\mathbb{B}}$ である。$\T
 
 この分離によって、標準的な強制定理、圏論から従う交差点判定、そして今後構成すべき指示写像を区別できる。今後の主要課題は、具体的な論理トポスまたは安定圏において $\mathcal{O}_X\neq\varnothing$ を示し、強制代数から台の開集合への写像 $\Theta$ を構成することである。その達成によって初めて、ジェネリックな外部と四重残余の特異領域との対応が、比喩ではなく具体的な数学的定理となる。さらに、計算論的外点の診断機構を、より広範な操作的意味論（部分性モナド、車輪代数、制限圏）へと接続することも、今後の展望である。
 
-\begin{thebibliography}{99}
-\bibitem{balmer}
-Paul Balmer, ``The spectrum of prime ideals in tensor triangulated categories,'' \textit{Journal f\"{u}r die reine und angewandte Mathematik}, 588, 149--168, 2005.
-
-\bibitem{bell}
-John L. Bell, \textit{Boolean-Valued Models and Independence Proofs in Set Theory}, Oxford University Press, 1985.
-
-\bibitem{cohen}
-Paul J. Cohen, ``The independence of the continuum hypothesis,'' \textit{Proceedings of the National Academy of Sciences}, 50, 1143--1148, 1963.
-
-\bibitem{godel}
-Kurt G\"{o}del, ``\"{U}ber formal unentscheidbare S\"{a}tze der Principia Mathematica und verwandter Systeme I,'' \textit{Monatshefte f\"{u}r Mathematik und Physik}, 38, 173--198, 1931.
-
-\bibitem{jech}
-Thomas Jech, \textit{Set Theory: The Third Millennium Edition, Revised and Expanded}, Springer, 2003.
-
-\bibitem{johnstone}
-Peter T. Johnstone, \textit{Sketches of an Elephant: A Topos Theory Compendium}, Oxford University Press, 2002.
-
-\bibitem{kleene}
-Stephen C. Kleene, \textit{Introduction to Metamathematics}, North-Holland, 1952.
-
-\bibitem{kripke}
-Saul A. Kripke, ``Outline of a theory of truth,'' \textit{The Journal of Philosophy}, 72(19), 690--716, 1975.
-
-\bibitem{tarski}
-Alfred Tarski, ``Der Wahrheitsbegriff in den formalisierten Sprachen,'' \textit{Studia Philosophica}, 1, 261--405, 1936.
-\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{ref}
 
 \end{document}
