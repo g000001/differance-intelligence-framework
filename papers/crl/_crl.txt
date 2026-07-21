@@ -1,0 +1,893 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage{graphicx}
+
+% 定理環境
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{example}[definition]{例}
+
+\newcommand{\ZFC}{\mathrm{ZFC}}
+\newcommand{\PrT}{\mathrm{Pr}_T}
+\newcommand{\SelfRef}{\mathrm{SelfRef}}
+\newcommand{\Forc}{\mathrm{Forc}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\Res}{\mathrm{Res}}
+\newcommand{\cofib}{\mathrm{cofib}}
+\newcommand{\PoV}{\mathrm{PoV}}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\Spc}{\mathrm{Spc}}
+\newcommand{\Open}{\mathrm{Open}}
+\newcommand{\dfix}{\bigcirc}
+\DeclareMathOperator{\fib}{fib}
+
+\title{言語の外点：\\[0.2em]
+  {\Large —強制法と四重残余束による到達不能性の幾何学—}}
+\author{千葉将臣}
+\date{2026-07-19}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本論文は、形式的体系の内部では対象として定義できないが、内部からの関係によって間接的に指示できる外部を記号 $\dfix$ で表し、その数学的記述を試みる。$\dfix$ は値や点そのものではなく、外部への到達を記録する指示記号である。第一に、完備ブール代数的推移モデルと強制関係を用い、基底モデルに属さないジェネリック・フィルターを、基底モデル内で定義可能な関係によって指示する。第二に、四種の操作に伴う情報損失を安定圏における余ファイバーとして定式化し、それらの台の共通部分を四重残余束（Quadruple Residual Bundle; QRB）の特異領域と定義する。強制法に関する標準定理とQRBに固有の仮定を明確に分離することで、ジェネリック・フィルターとQRB側の代表点の対応を無条件の同一視とはせず、比較写像が満たすべき条件として提示する。さらに第三に、外点指示を「値の定義」ではなく「演算の幾何学的到達」の診断として再解釈し、$1/0\leadsto\dfix$ を典例として計算論的外点の診断機構を展開する。これにより、到達不能性を単なる未定義性ではなく、複数の比較写像が同時に同値でなくなる幾何学的障害として研究するための形式的枠組みを与える。最後に、$\dfix$ が真理保存性を通過する前に位置する「根源的単位元」を指示することを示唆し、今後の代数的展開への接続を開く。
+\end{abstract}
+
+\section{はじめに}
+
+\subsection{問題設定}
+
+十分に強い形式的体系は、自身の構文を算術化できる一方、自身の真理を内部で完全に定義することはできない \cite{godel,tarski}。Kripke の真理理論は部分的真理述語の最小不動点を構成するが、得られた言語の外側から新たな真理概念を問うリベンジ問題は残る \cite{kripke}。したがって、本論文では外部を新しい対象定数として内部言語に追加するのではなく、内部で計算できる関係が外部に対して与える制約によって指示する。
+
+この方針には二つの段階がある。第一段階は、強制関係 $p\Vdash\varphi$ による外部の指示である。第二段階は、複数の論理的・圏論的操作が捨てる情報を残余として記録し、その共通の非自明領域を幾何学化することである。
+
+本稿ではさらに第三の段階を提示する。外点 $\dfix$ は、体系内部の演算（例えば除算 $1/0$）が、内部の真理値の網を通過する前に「飛び出して」しまう幾何学的到達点として診断される。これは値の定義ではなく、操作の四重残余が同時に非ゼロとなり、外点領域に到達したことを記録する式である。
+
+\subsection{本論文の寄与と射程}
+
+本論文の寄与は次の四点である。
+
+\begin{enumerate}
+ \item 強制法の定義可能性補題と真理補題を、外部の「定義」ではなく「指示」のモデルとして整理する。
+ \item 安定テンソル三角圏において四つの残余対象とQRBを定義し、その特異領域を台の交差として与える。
+ \item ジェネリック・フィルターとQRB特異領域の対応を、無条件の同一視ではなく、明示的な比較写像を要する研究仮説として定式化する。
+ \item 外点を計算論的マーカーとして再解釈し、$1/0\leadsto\dfix$ を典例として、操作の幾何学的診断と根源的単位元の概念を導入する。
+\end{enumerate}
+
+特に、強制法が任意の集合論的命題を保存するとは主張しない。強制拡大は連続体仮説のような命題を変え得るが、基底モデルが推移的である場合には順序数を保存し、同じ自然数構造上の一階算術文の真理を保存する。
+
+\section{形式的準備}
+
+\subsection{体系と自己言及}
+
+\begin{assumption}
+$T$ は再帰的に公理化された無矛盾な一階理論であり、少なくとも Robinson 算術 $Q$ を含み、自身の構文と証明関係を算術化できるとする。
+\end{assumption}
+
+論理式 $\varphi$ の Gödel 数を $\ulcorner\varphi\urcorner$、$T$ の標準的な証明可能性述語を $\PrT(x)$ と書く。
+
+\begin{lemma}[対角線補題]
+任意の一変数論理式 $\psi(x)$ に対して、文 $G$ が存在し、
+\[
+ T\vdash G\leftrightarrow\psi(\ulcorner G\urcorner)
+\]
+が成り立つ。
+\end{lemma}
+
+補題 2.2 で $\psi(x)\equiv\neg\PrT(x)$ とすれば、適切な追加条件の下で Gödel 文が得られる \cite{kleene}。記法として
+\[
+ \SelfRef_T(\varphi)=\neg\PrT(\ulcorner\varphi\urcorner)
+\]
+と置く。ただし、これは対象言語の全真理を与える作用素ではない。
+
+\subsection{トポスと二重否定層化}
+
+\begin{definition}[エレメンタリー・トポス]
+圏 $\mathcal{E}$ がエレメンタリー・トポスであるとは、有限極限を持ち、デカルト閉であり、部分対象分類子 $\Omega$ を持つことをいう。
+\end{definition}
+
+一般のトポスの内部論理は直観主義的である。Lawvere--Tierney 位相 $j=\neg\neg$ に伴う層化関手 $a_{\neg\neg}$ は、同型を除いて冪等である \cite{johnstone}。したがって、二重否定層化から生じる残余は「層化が非冪等であること」ではなく、単位写像 $X\to a_{\neg\neg}X$ が一般には同型でないことによって測るべきである。
+
+\section{強制法による外部の指示}
+
+\subsection{ブール値と強制関係}
+
+\begin{assumption}
+$M$ を集合論の十分な有限部分を満たす可算推移モデル、$\mathbb{P}\in M$ を分離的な強制半順序、$\mathbb{B}$ を $M$ におけるその正則開完備化とする。
+\end{assumption}
+
+$M^{\mathbb{B}}$ を $\mathbb{B}$ 値宇宙とし、論理式 $\varphi$ のブール値を $\|\varphi\|_{\mathbb{B}}\in\mathbb{B}$ と書く。
+
+\begin{definition}[強制関係]
+$p\in\mathbb{P}$ と強制言語の論理式 $\varphi$ に対して
+\[
+ p\Vdash\varphi \quad\Longleftrightarrow\quad p\leq\|\varphi\|_{\mathbb{B}}
+\]
+と定める。
+\end{definition}
+
+\begin{theorem}[定義可能性補題と真理補題]
+仮定 3.1 の下で、各論理式 $\varphi$ に対する関係 $p\Vdash\varphi$ は $M$ 内で再帰的に定義できる。さらに、$G\subseteq\mathbb{P}$ が $M$-ジェネリックならば
+\[
+ M[G]\models\varphi(\tau_1^G,\dots,\tau_n^G) \quad\Longleftrightarrow\quad (\exists p\in G)\;p\Vdash\varphi(\tau_1,\dots,\tau_n)
+\]
+が成り立つ。
+\end{theorem}
+
+定理 3.3 は強制法の標準的な基本定理である \cite{cohen,bell,jech}。右辺は $M$ 内で扱えるが、ジェネリック・フィルター $G$ 自身は一般に $M$ の元ではない。この非対称性が、本論文における「外部を定義せずに指示する」という考えの厳密な原型である。
+
+\begin{definition}[強制法における外点]
+基底モデル $M$ の外部にある $M$-ジェネリック・フィルター $G$ を、強制法によって指示される外点 $\dfix$ の意味論的代表と呼び、
+\[
+ \dfix_{\Forc}:=G
+\]
+と表す。この等式は $M$ の内部で対象 $G$ を定義するものではなく、メタ理論において外点 $\dfix$ の役割を $G$ に担わせるという意味論的な同定である。体系内部から利用できるのは $G$ 自体ではなく、定理 3.3 の強制関係 $p\Vdash\varphi$ を通じて記述される $\dfix_{\Forc}$ の条件付きの振る舞いである。
+\end{definition}
+
+\begin{proposition}[相対的無矛盾性と算術的絶対性]
+$M\models\ZFC$ かつ $G$ が $M$-ジェネリックならば、$M[G]\models\ZFC$ であり、$M$ と $M[G]$ は同じ順序数を持つ。さらに両者が標準的な $\omega$ を共有する限り、自然数構造だけを量化領域とする一階算術文の真理は一致する。
+\end{proposition}
+
+\begin{remark}
+命題 3.5 は、強制拡大が集合論の全命題について保存拡大であることを意味しない。新しい実数、すなわち $\omega$ の新しい部分集合が追加される場合があり、集合論的命題の真理値は変化し得る。
+\end{remark}
+
+\subsection{計算論的外点：操作の幾何学的診断}\label{sec:comp-ext}
+
+これまでの外点 $\dfix_{\Forc}$ は、集合論的強制法の文脈で定義された。しかし、外点の概念はこれに留まらない。本節では、外点を「値の定義」ではなく「演算の幾何学的到達点」として再解釈し、計算論的外点の診断機構を展開する。
+
+\begin{definition}[指示的等式]
+対象 $X$ 上の項（あるいは操作の適用）$t$ に対し、
+\[
+ t\leadsto\dfix
+\]
+は、$t$ の生成する操作の残余束が外点領域に到達したことを意味する\textbf{指示的等式}である。これは $t$ が値 $\dfix$ を「持つ」という定義的等式ではなく、$t$ が外点を\textbf{指示した}という幾何学的診断である。
+\end{definition}
+
+\begin{definition}[操作の残余束]
+対象 $X$ 上の二項操作 $\mu:X\times X\to X$（部分射として解釈される）と特異入力 $\delta\in X$ に対し、\textbf{操作の残余束} $\mathrm{ORB}_\mu(\delta)$ を
+\[
+ \mathrm{ORB}_\mu(\delta):=\bigoplus_{i\in\{S,N,SN,NS\}}\Res_i(\mu(-,\delta))
+\]
+と定める。ここで $\mu(-,\delta):X\to X$ は部分射と見なし、各 $\Res_i$ は \S 4 で定義する四つの残余対象である。
+\end{definition}
+
+\begin{example}[$1/0\leadsto\dfix$ の四重診断]
+除算 $\mu(a,b)=a/b$ の特異入力 $\delta=0$ における操作の残余束 $\mathrm{ORB}_{/}(0)$ は、以下の四重崩壊を示す。
+
+\begin{enumerate}
+ \item[$M_S$（同一性）:] $a/b=c\Longleftrightarrow a=b\cdot c$ であるが、$1=0\cdot c$ はどの $c$ でも満たされない。同一性の回復が不可能であり、比較写像 $\eta_S$ は非同型となる。
+ \item[$M_N$（二重否定）:] $1/0$ が「無限大」と仮定しても、$0\cdot\infty$ は直観主義的に確定しない。二重否定層化 $a_{\neg\neg}$ による還元が破綻し、$\eta_N$ は非同型となる。
+ \item[$M_{SN}$（随伴）:] 乗法と除法の随伴関係において、$0$ は単位元ではなく吸収元である。随伴の単位射 $X\to UFX$ が非可逆となり、$\eta_{SN}$ は非同型となる。
+ \item[$M_{NS}$（自己参照）:] $x=1/0$ とおくと $x=1/(1/x)$ となり、自己言及的ループに陥る。対角化の意味論的実現が崩壊し、$\eta_{NS}$ は非同型となる。
+\end{enumerate}
+
+したがって $1/0\leadsto\dfix$ とは、「除算操作の残余が四重に非ゼロになり、外点領域に到達した」という幾何学的診断である。
+\end{example}
+
+\begin{proposition}[四重崩壊の同時性]
+操作 $\mu$ の特異入力 $\delta$ において、四つの局所化比較写像 $\eta_i(\mu(-,\delta))_{\mathfrak{p}}$ が同時に非同型となるとき、$\delta$ は外点領域 $\mathcal{O}_X$ の点を指示する。
+\end{proposition}
+
+この命題は、\S 4 の定理 4.5（交差点の判定）の操作的応用である。$1/0\leadsto\dfix$ は、値の定義ではなく、操作が外点を指示したことを記録する式なのである。
+
+\section{四重残余束の構成}
+
+\subsection{残余対象}
+
+QRBを文字通りの位相的ベクトル束と仮定するのではなく、まず余ファイバーを持つ圏で残余を定義する。
+
+\begin{assumption}
+$\mathcal{C}$ を冪等完備な安定テンソル三角圏とし、$X\in\mathcal{C}^c$ を体系 $T$ の意味論的状態を表すコンパクト対象とする。各 $i\in\{S,N,SN,NS\}$ に対し、完全自己関手 $M_i:\mathcal{C}\to\mathcal{C}$ と自然変換 $\eta_i:\Id_{\mathcal{C}}\Rightarrow M_i$ が与えられ、$M_i$ はコンパクト対象を保つとする。
+\end{assumption}
+
+\begin{definition}[四つの残余]
+各操作の残余対象を完全三角
+\[
+ X\xrightarrow{\eta_i(X)}M_i X\longrightarrow\Res_i(X)\longrightarrow\Sigma X
+\]
+によって定まる余ファイバー
+\[
+ \Res_i(X)=\cofib(\eta_i(X))
+\]
+と定義する。
+\end{definition}
+
+想定する四操作は次の通りである。
+\begin{enumerate}
+ \item $M_S$：同一性を外延的等号へ截断する比較操作。単なる恒等関手を選べば残余はゼロになるため、非自明な比較写像を明示する必要がある。
+ \item $M_N$：二重否定層化。残余 $\Res_N(X)$ は $X\to a_{\neg\neg}X$ が同型でない度合いを表す。
+ \item $M_{SN}$：随伴 $F\dashv U$ から生じるモナド $UF$。残余は単位 $X\to UFX$ の非可逆性を表す。
+ \item $M_{NS}$：構文の対角化を意味論側に実現する自己参照比較操作。この実現の存在は追加構造であり、対角線補題だけから自動的には得られない。
+\end{enumerate}
+
+\begin{definition}[四重残余束]
+対象 $X$ における四重残余束を
+\[
+ \QRB(X)=\Res_S(X)\oplus\Res_N(X)\oplus\Res_{SN}(X)\oplus\Res_{NS}(X)
+\]
+と定義する。
+\end{definition}
+
+\subsection{台と外点領域}
+
+$\mathcal{C}^c$ を $\mathcal{C}$ のコンパクト対象の部分圏とし、Balmer スペクトル $\Spc(\mathcal{C}^c)$ 上の台を $\supp(-)$ と書く \cite{balmer}。
+
+\begin{definition}[外点領域]
+四つの残余が同時に非自明となる領域を
+\[
+ \mathcal{O}_X=\bigcap_{i\in\{S,N,SN,NS\}}\supp\bigl(\Res_i(X)\bigr)\subseteq\Spc(\mathcal{C}^c)
+\]
+と定義する。$\mathcal{O}_X\neq\varnothing$ のとき、その点を QRB の外点候補と呼ぶ。
+\end{definition}
+
+ここで $\mathcal{O}_X$ は外点 $\dfix$ そのものではなく、四つの残余が同時に検出される外点候補の領域である。したがって、強制法における代表 $\dfix_{\Forc}=G$ と対応させるべき対象は領域全体 $\mathcal{O}_X$ ではなく、その内部の特定の点である。また、$\dfix$ は $\mathcal{O}_X$ の元（点）であり、$\mathcal{O}_X$ はその候補領域である。
+
+\begin{theorem}[交差点の判定]
+仮定 4.1 の下で、素点 $\mathfrak{p}\in\Spc(\mathcal{C}^c)$ が $\mathcal{O}_X$ に属することと、すべての $i$ について局所化された比較写像
+\[
+ \eta_i(X)_{\mathfrak{p}}:X_{\mathfrak{p}}\longrightarrow(M_i X)_{\mathfrak{p}}
+\]
+が同型でないことは同値である。
+\end{theorem}
+
+\begin{proof}
+安定圏では射が同型であることとその余ファイバーがゼロ対象であることが同値である。また、$\mathfrak{p}\notin\supp(Y)$ であることは局所化 $Y_{\mathfrak{p}}$ がゼロであることと同値である。これを四つの余ファイバーへ適用すればよい。
+\end{proof}
+
+定理 4.5 により、外点領域は比喩ではなく、四つの比較写像が同時に可逆性を失う素点の集合として特徴づけられる。ただし、その非空性は一般には保証されず、具体的な圏と四操作ごとに証明されなければならない。
+
+\subsection{根源的単位元}
+
+外点 $\dfix$ は、四つの比較写像の可逆性が同時に崩壊する点であるが、その意味はより根源的である。$\dfix$ は、恒等関手（単位元）や随伴の単位射が成立するために必要な「非自明な差異」を内包した地点であり、真理保存性（命題 3.5）が通過する\textbf{前}に位置する。
+
+\begin{definition}[根源的単位元]
+対象 $X$ において、四つの局所化比較写像 $\eta_i(X)_{\mathfrak{p}}$ が同時に非同型となる外点 $\mathfrak{p}\in\mathcal{O}_X$ を、$X$ の\textbf{根源的単位元}（primal unit）と呼ぶ。このとき、恒等関手、二重否定層化、随伴単位、自己参照対角化のいずれもが、$\mathfrak{p}$ において「単位」としての機能を喪失し、残余のみが露出する。
+\end{definition}
+
+\begin{remark}
+根源的単位元 $\dfix$ は、$M$ の内部真理の網（ブール値 $\|\varphi\|_{\mathbb{B}}$ の評価体系）を通過するのではなく、その網が張られる以前の層に位置する。命題 3.5 の真理保存性は、あくまで $\dfix$ が既に「飛び出した後」に後から確認される帰結に過ぎない。したがって $\dfix$ は、単なる外部の対象ではなく、あらゆる単位的・同一性的構造が成立するために必要な、しかしそれ自身はいかなる単位性にも還元されない根源である。
+\end{remark}
+
+\section{強制法と QRB を結ぶ比較原理}
+
+ジェネリック・フィルター $G$ と $\mathcal{O}_X$ は、ここまでの定義だけでは異なる種類の対象である。前者は強制半順序上のフィルターであり、後者はテンソル三角スペクトルの部分集合である。両者を同一視するには比較写像が必要となる。
+
+\begin{assumption}[指示写像]
+順序を保つ写像
+\[
+ \Theta:\mathbb{B}\longrightarrow\Open\bigl(\Spc(\mathcal{C}^c)\bigr)
+\]
+が存在し、有限交叉と任意結合を保存するとする。さらに、点 $\xi_G\in\mathcal{O}_X$ が存在し、各 $p\in\mathbb{P}$ に対して $p\in G$ と $\xi_G\in\Theta(p)$ が同値であるとする。
+\end{assumption}
+
+\begin{definition}[QRB における外点]
+仮定 5.1 を満たす点 $\xi_G\in\mathcal{O}_X$ を、QRB によって表現された外点と呼び、
+\[
+ \dfix_{\QRB}:=\xi_G
+\]
+と定める。このとき外点の二つの表現の関係を
+\[
+ \dfix \;\longleftrightarrow\; \dfix_{\Forc}=G \;\longleftrightarrow\; \dfix_{\QRB}=\xi_G\in\mathcal{O}_X
+\]
+と記す。右側の対応は仮定 5.1 に依存し、$G$ と $\xi_G$ が同一の集合論的対象であることではなく、条件 $p$ の所属と開集合 $\Theta(p)$ への所属が一致するという指示構造の同値を意味する。
+\end{definition}
+
+\begin{proposition}[条件付き指示原理]
+仮定 5.1 の下で、$p\Vdash\varphi$ ならば
+\[
+ \mathcal{O}_X\cap\Theta(p)\subseteq\mathcal{O}_X\cap\Theta(\|\varphi\|_{\mathbb{B}})
+\]
+が成り立つ。したがって、QRB 外点領域上でも強制関係と整合する包含関係によって $\varphi$ を指示できる。
+\end{proposition}
+
+\begin{proof}
+$p\Vdash\varphi$ の定義から $p\leq\|\varphi\|_{\mathbb{B}}$ である。$\Theta$ の単調性により $\Theta(p)\subseteq\Theta(\|\varphi\|_{\mathbb{B}})$ を得る。両辺と $\mathcal{O}_X$ の交わりを取れば結論が従う。
+\end{proof}
+
+命題 5.3 が与えるのは、ジェネリック・フィルターと QRB の完全な同型ではなく、両者の指示構造が整合するための十分条件である。すなわち、体系内部から強制関係によって指示される外点 $\dfix_{\Forc}$ の振る舞いが、QRB 側では点 $\dfix_{\QRB}$ の開近傍への所属関係として再表現される。具体例を構成するには、$\mathbb{B}$、$\mathcal{C}$、四関手、および $\Theta$ を同時に指定し、仮定 5.1 を検証する必要がある。
+
+\section{結論}
+
+本論文は、言語の外点を三つの水準に分けて定式化した。強制法の水準では、基底モデルに属さないジェネリック・フィルターを $\dfix_{\Forc}=G$ として、内部で定義可能な強制関係によって間接的に指示できる。圏論的水準では、四つの比較操作の余ファイバーを QRB として束ね、その台の共通部分を外点候補領域 $\mathcal{O}_X$ とし、指示写像が存在する場合には $\dfix_{\QRB}=\xi_G\in\mathcal{O}_X$ と定めた。そして計算論的水準では、外点を「値の定義」ではなく「演算の幾何学的到達点」として再解釈し、$1/0\leadsto\dfix$ を典例として、操作の四重崩壊が外点領域に到達したことを診断する機構を展開した。
+
+さらに、外点 $\dfix$ が真理保存性を通過する前に位置する「根源的単位元」であることを示唆した。$\dfix$ は、恒等関手や随伴の単位射が生成される前の、あらゆる単位的構造の成立条件そのものを体現する。これは到達不能性を単なる未定義性ではなく、複数の比較写像が同時に同値でなくなる幾何学的障害として研究するための、新しい形式的枠組みを与える。
+
+この分離によって、標準的な強制定理、圏論から従う交差点判定、そして今後構成すべき指示写像を区別できる。今後の主要課題は、具体的な論理トポスまたは安定圏において $\mathcal{O}_X\neq\varnothing$ を示し、強制代数から台の開集合への写像 $\Theta$ を構成することである。その達成によって初めて、ジェネリックな外部と四重残余の特異領域との対応が、比喩ではなく具体的な数学的定理となる。さらに、計算論的外点の診断機構を、より広範な操作的意味論（部分性モナド、車輪代数、制限圏）へと接続することも、今後の展望である。
+
+\bibliographystyle{plain}
+\bibliography{../ref}
+
+\end{document}
+
+
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{article}
+\usepackage{luatexja-fontspec}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage[unicode]{hyperref}
+
+\newcommand{\PoV}{\operatorname{PoV}}
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\Forc}{\mathrm{Forc}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\Rel}{\mathbf{Rel}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1\baselineskip}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{remark}[definition]{備考}
+\newtheorem{note}[definition]{注記}
+
+\title{冗（Amphigory）の基礎的定式化\\
+---視点数・継続残余・無記の関係代数---}
+\author{千葉将臣}
+\date{2026-07-07}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿では、Freyd と Scedrov による古典的な寓（Allegory）の公理系を基礎とし、そこに視点数（PoV: Point of View）および継続残余 $\rho$ を導入することで、冗の基礎部分を定式化する。寓は、射の交わり、逆関係、およびモジュラー律によって二項関係を抽象化するが、二値截断圏 $\mathcal{B}_{\mathrm{val}}$ に依拠する限り、自己言及的な無限退行や非停止プロセスを未定義として排除する。本稿で導入する冗は、順方向の構成プロセスと逆関係を介した引き戻しプロセスを同時に扱い、証明障害を継続残余として記録する動的代数系である。さらに、非停止プロセスをエラーではなく無記として残余空間へ隔離し、内部的には最大不動点 $\nu F$ への収束として記述しつつ、その収束が指し示す外部を記号 $\dfix$ によって指示する公理を与える。
+\end{abstract}
+
+\section{導入：古典的寓の限界と Amphi- の要請}
+P.~J. Freyd と A. Scedrov によって定義された寓は、対象間の二項関係を抽象化した圏であり \cite{FreydScedrov1990}、射の交わり $\cap$、逆関係 $(-)^\circ$、およびモジュラー律
+\[
+RS \cap T \subseteq R(S \cap R^\circ T)
+\]
+を基本構造とする。この枠組みは、集合上の関係の圏 $\Rel$ を圏論的に抽象化するうえで強力である。
+
+\begin{note}[本稿の位置づけ]
+本稿は Freyd--Scedrov の古典的 Allegory を基盤とし、視点数（PoV）と継続残余 $\rho$ によって動的評価体系を構築する。四重残余束（QRB）は、同じ到達不能性の問題を安定テンソル三角圏と強制法の側面から幾何学的に定式化する \cite{ChibaQRB2026}。両者は異なる理論基盤を持つが、記号 $\dfix$ を通じて「定義せずに指示する」という同一の問題意識を共有する。
+\end{note}
+
+しかし、古典的な寓は、射が「成立するか・しないか」という二値截断部分圏 $\mathcal{B}_{\mathrm{val}}$ によって評価される層を基礎としている。この層では、エルブラン空間などにおける動的探索の過程で生じる自己言及的な無限退行、非停止プロセス、あるいは証明探索の発散は、未定義または失敗として扱われる。
+
+冗は、この静的関係の圏に「視点数（PoV）」と「継続残余 $\rho$」の概念を導入し、時間軸に沿った順方向の構成プロセスと、逆関係を介した空間的な引き戻しプロセスの双方向的相互作用を内包する動的代数系である。
+
+また、Amphigory（冗）という語句がもつ「無意味」の含意は、古典論理がエラーとして切り捨ててきたプロセスを、関係代数内で正当に処理するという意味で再解釈される。すなわち、非停止性や評価不能性は単なる失敗ではなく、無記として残余空間へ隔離される。
+
+\section{冗の基本定義と空間構造}
+
+\begin{definition}[評価空間]
+冗における評価空間は、少なくとも次の三成分からなる：
+\begin{enumerate}
+\item 真理値空間 $\mathcal{C}$：四句分別、すなわち是、非、亦是亦非、非是非非の位相を含む空間。
+\item 視点数空間 $\mathcal{V} = \mathbb{N} \cup \{\infty\}$：観測に必要な独立した視点の数を表す空間。
+\item 残余空間 $\mathcal{L} = \mathbb{R}_{\ge 0}$：評価に伴う物理的・計算的・トポロジカルな摩擦、すなわち証明障害の大きさを記録する空間。
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[冗の射]
+冗 $\mathcal{A}$ において、対象 $X,Y$ 間の射
+\[
+R: X \to_{\langle p,\rho\rangle} Y
+\]
+とは、単なる外延的関係ではなく、各ペア $(x,y) \in X \times Y$ に対し、評価推移列を介して次の三つ組を割り当てる多値的な関係である：
+\[
+(x,y) \longmapsto (c,p,\rho) \in \mathcal{C} \times \mathcal{V} \times \mathcal{L}.
+\]
+ここで、$c$ は真理値の位相、$p$ は視点数、$\rho$ は継続残余を表す。
+\end{definition}
+
+この定義により、古典的な寓における射は、$p$ と $\rho$ が明示的に観測されない二値截断層として回収される。したがって、冗は寓の外側に動的評価の層を付加する拡張である。
+
+\begin{definition}[交わり演算による動的併置]
+寓における交わり演算 $R \cap S$ は、外延的な論理積ではなく、観測文脈の動的併置として定義される。
+
+$R$ が $\PoV(R)=n$、$S$ が $\PoV(S)=m$ をもつとき、その交わりは視点数の加算を伴う：
+\[
+\PoV(R \cap S) = n + m.
+\]
+同時に、異なる評価文脈の干渉により、継続残余の増大が発生する：
+\[
+\rho(R \cap S) = \rho(R) + \rho(S) + \Delta_{n,m}.
+\]
+ここで、$\Delta_{n,m}$ は文脈間の干渉項である。
+\end{definition}
+
+交わりをこのように読むことで、「$A$ かつ $B$」という結合は、単なる真理値の積ではなく、複数の観測文脈を同時に保持する操作となる。したがって、論理的結合は計算過程において視点数と残余の変化を伴う。
+
+\begin{definition}[逆関係と逆方向推論]
+射 $R$ の逆関係 $R^\circ$ は、ドメインとコドメインを反転させる演算である。このとき視点数は保存される：
+\[
+\PoV(R^\circ) = \PoV(R).
+\]
+この演算は、大域的な未来の制約を現在の初期文脈へ空間的に引き戻すための逆方向の推論ベクトルとして機能する。
+\end{definition}
+
+Amphi- の語幹が意味する双方向性/両義性は、順方向の構成だけではなく、逆関係を用いた制約の引き戻しを同時に扱う点にある。これにより、評価過程は単なる時系列的展開ではなく、未来制約と現在文脈の衝突を含む双方向的な軌道として記述される。
+
+\section{双方向演繹の代数化：残余モジュラー定理}
+古典的なモジュラー律
+\[
+RS \cap T \subseteq R(S \cap R^\circ T)
+\]
+は、通常は関係の包含を表す静的な法則として理解される。冗においては、この法則を双方向的な推論軌道の釣り合いと、継続残余 $\rho$ の事前圧縮を保証する原理として読む。
+
+\begin{theorem}[残余モジュラー定理]
+冗において、任意の射 $R,S,T$ に対し、以下の操作的包含関係と残余の不等式が成立する：
+\[
+RS \cap T \subseteq R(S \cap R^\circ T),
+\]
+\[
+\rho_{\mathrm{left}} \ge \rho_{\mathrm{right}}.
+\]
+ここで、$\rho_{\mathrm{left}}$ は左辺 $RS \cap T$ において発生する大域的な証明障害であり、$\rho_{\mathrm{right}}$ は右辺 $R(S \cap R^\circ T)$ において局所化された証明障害である。
+\end{theorem}
+
+\begin{proof}
+左辺 $RS \cap T$ は、順方向プロセス $S$ を展開した後に、大域的制約 $T$ との交差検証を行う。このため、制約違反が後段で発見された場合には、事後的な巨大なバックトラックが発生し、その証明障害は $\rho_{\mathrm{left}}$ として蓄積される。
+
+一方、右辺 $R(S \cap R^\circ T)$ は、逆関係 $R^\circ$ を用いて未来の制約 $T$ を空間的に引き戻し、中間プロセス $S$ の展開前に局所制約 $R^\circ T$ として交わりを検証する。これは、順方向推論と逆方向推論の衝突を事前に局所化する操作である。
+
+したがって、右辺では大域的な失敗が発生する前に枝刈りが行われ、残余は局所的に圧縮される。ゆえに、発生する残余について
+\[
+\rho_{\mathrm{left}} \ge \rho_{\mathrm{right}}
+\]
+が成り立つ。
+\end{proof}
+
+\begin{remark}
+この定理は、古典的なモジュラー律を否定するものではない。むしろ、同じ包含式を、計算意味論的には「未来制約の引き戻しによる証明障害の圧縮」として再解釈するものである。
+\end{remark}
+
+\section{Nonsense の代数化：無記の残余空間への隔離}
+Amphigory（冗）という単語の辞書的意味は「Nonsense」あるいは「無意味」である。しかし本稿では、この無意味性を否定的な欠陥としてではなく、古典論理が処理できない評価不能性を代数的に保存するための構造として読む。
+
+\begin{axiom}[無記と極限収束]
+視点数が発散し
+\[
+\PoV \to \infty
+\]
+となるとき、評価は未定義として異常終了するのではなく、無記として残余空間 $\mathcal{L}$ へ隔離される。この極限において、有限の視点数では決定できないプロセスは、体系内部では最大不動点 $\nu F$ への収束として記述される。記号 $\dfix$ は $\nu F$ の値そのものを表すのではなく、この収束を通じて QRB における外点を指示する。
+\end{axiom}
+
+この公理により、冗は非停止性を単なる失敗として扱わない。むしろ、二値截断圏 $\mathcal{B}_{\mathrm{val}}$ では評価不能となる成分を、無記として残余空間へ移し、体系全体の整合性を保ったまま後続の処理を継続する。
+
+\begin{definition}[中道不動点とその指示]
+完備束 $L$ 上の単調作用素 $F\colon L\to L$ に対し、その最大不動点を
+\[
+\nu F := \bigvee \{x\in L \mid x \le F(x)\}
+\]
+と定め、これを中道不動点と呼ぶ。本稿の記号 $\dfix$ は値 $\nu F$ と同一視される対象ではなく、$\nu F$ という内部代表を介して、有限の視点数からは定義できない外部を指示する記号である。この指示関係を
+\[
+\dfix \rightsquigarrow \nu F
+\]
+と表す。
+\end{definition}
+
+\begin{note}[QRB との対応]
+本稿の指示記号 $\dfix$ は、四重残余束（QRB）における計算論的外点、すなわち強制法による外点 $\dfix_{\Forc}$ および QRB 外点 $\dfix_{\QRB}$ を概念的に指し示す \cite{ChibaQRB2026}。これは $\nu F$ と QRB の外点との無条件の同一視ではなく、記号 $\dfix$ を通じた「到達不能性の幾何学」に対する問題意識の共有を示す。本稿の理論基盤である Allegory 的構造を変更することなく、QRB の外点は「内部から指示される外部」として本稿に取り込まれる。
+\end{note}
+
+ここで極限的な安定状態を内部で表すのは $\nu F$ であり、$\dfix$ は停止状態や値ではない。$\dfix$ は、有限の視点数では決定できないプロセスが観測者消去を経て指し示す外部の位置を示す。この指示的な意味において、$\dfix$ は冗における「空」に対応する。
+
+\section{結語}
+本稿では、古典的な寓の公理系に視点数と継続残余を導入することで、冗の基礎的定式化を与えた。
+
+冗の中心的な特徴は、次の三点にまとめられる：
+\begin{itemize}
+\item 古典的な二値関係を $\mathcal{B}_{\mathrm{val}}$ として含みつつ、その外側に視点数と残余をもつ動的評価層を導入すること。
+\item 交わりと逆関係を、観測文脈の併置および未来制約の引き戻しとして再解釈し、双方向演繹を代数化すること。
+\item 非停止プロセスや評価不能性を無記として残余空間へ隔離し、内部的には中道不動点 $\nu F$ への収束として記述しつつ、その収束が示す外部を $\dfix$ によって指示すること。
+\end{itemize}
+
+これにより、冗は、静的な関係代数を、証明探索・非停止性・自己言及・残余の蓄積を含む動的な計算意味論へ拡張する枠組みとして位置づけられる。
+
+\bibliographystyle{plain}
+\bibliography{../ref}
+
+\end{document}
+
+
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{example}[definition]{例}
+\newtheorem{remark}[definition]{注記}
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{proposition}[definition]{命題}
+
+\newcommand{\PoV}{\operatorname{PoV}}
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\Rel}{\mathbf{Rel}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\Forc}{\mathrm{Forc}}
+
+\title{計算関係論理\\
+{\large ---PoV--\texorpdfstring{$\rho$}{rho} インターフェイスによる動的評価体系---}}
+\author{千葉将臣}
+\date{2026-07-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、Freyd と Scedrov の寓（Allegory）を基盤として、視点数 $\PoV$ と継続残余 $\rho$ を射の評価情報へ組み込む計算関係論理（Computational Relational Logic; CRL）を提案する。CRL の中心構造は PoV--$\rho$ インターフェイスであり、異なる評価文脈間の情報移送を、視点数の変換と残余の蓄積・圧縮として記述する。交わりは観測文脈の動的併置、逆関係は未来制約の引き戻しとして解釈される。古典的モジュラー律から得られる関係包含と、追加の残余圧縮仮定とを明確に分離し、残余モジュラー定理を条件付きで与える。さらに、非停止過程を内部では単調作用素の最大不動点 $\nu F$ によって表し、その内部表現が指し示す外部を値ではない指示記号 $\dfix$ で記録する。エルブラン空間上の証明探索を例として、順方向、逆方向、極限という三層の計算論的時間を定式化する。最後に、確率的推論および大規模言語モデルとの対応を、同一視ではなく検証を要する解釈仮説として提示する。
+\end{abstract}
+
+\section{導入}
+
+Freyd と Scedrov による寓は、二項関係の圏 $\Rel$ を、射の半順序、交わり、逆関係、およびモジュラー律によって抽象化する枠組みである \cite{FreydScedrov1990}。関係の包含と合成を統一的に扱える一方、通常の寓の公理だけでは、証明探索に要する分岐数、後戻りの大きさ、非停止過程に残る計算障害などは記録されない。
+
+計算関係論理は、この静的な関係構造を置き換えるのではなく、その各射に動的評価情報を付加する。評価情報は、独立した観測・選択の数を表す視点数 $\PoV$ と、計算・証明・制約伝播に残る障害を表す継続残余 $\rho$ からなる。両者は異なる評価文脈を接続する境界面、すなわち PoV--$\rho$ インターフェイスとして働く。
+
+本稿の目的は次の四点である。
+\begin{enumerate}
+ \item 寓の射に評価位相、視点数、継続残余を付加した CRL の基本構造を定義する。
+ \item 交わり、逆関係、モジュラー律を動的評価の観点から再解釈する。
+ \item 非停止過程の内部表現 $\nu F$ と、外部への指示記号 $\dfix$ を区別する。
+ \item エルブラン空間上の証明探索と確率的推論への応用可能性を示す。
+\end{enumerate}
+
+\begin{remark}[本稿の位置づけ]
+冗（Amphigory）は、視点数と継続残余を持つ動的関係代数の原型を提示した \cite{ChibaAmphigory2026}。本稿はその構想を「計算関係論理」として整理し、PoV--$\rho$ インターフェイスを独立した構造として定式化する。四重残余束（QRB）は、同じ到達不能性の問題を安定テンソル三角圏と強制法の側から幾何学化する \cite{ChibaQRB2026}。CRL と QRB は理論基盤を異にするが、$\dfix$ を値ではなく外部到達の指示記号として用いる点を共有する。
+\end{remark}
+
+\section{評価付き寓と PoV--\texorpdfstring{$\rho$}{rho} インターフェイス}
+
+\subsection{基礎となる寓}
+
+\begin{assumption}[寓的基盤]
+$\mathcal{A}$ を寓とする。各対象 $X,Y$ に対して射の集合 $\mathcal{A}(X,Y)$ は半順序と有限交わり $\cap$ を持ち、各射 $R:X\to Y$ には逆関係 $R^\circ:Y\to X$ が定まる。また、合成を $RS$ と書くとき、モジュラー律
+\[
+ RS\cap T\;\leq\;R(S\cap R^\circ T)
+\]
+が成り立つとする。
+\end{assumption}
+
+この仮定は CRL の静的骨格である。以下で導入する評価は、射の等号や包含を変更せず、それらの計算的実現に注釈を与える。
+
+\subsection{評価空間}
+
+\begin{definition}[評価空間]
+CRL の評価空間を
+\[
+ \mathcal{E}:=\mathcal{C}\times\mathcal{V}\times\mathcal{L}
+\]
+とする。各成分は次を表す。
+\begin{enumerate}
+ \item $\mathcal{C}$ は評価位相の空間であり、少なくとも真、偽、両立、未決定を区別する。
+ \item $\mathcal{V}:=\mathbb{N}\cup\{\infty\}$ は視点数空間である。
+ \item $\mathcal{L}:=\mathbb{R}_{\geq0}\cup\{\infty\}$ は継続残余空間である。
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[CRL の射]
+対象 $X,Y$ 間の CRL 射とは、寓の射 $R:X\to Y$ と、その計算的実現に付随する評価写像
+\[
+ \epsilon_R:X\times Y\longrightarrow
+ \mathcal{C}\times\mathcal{V}\times\mathcal{L},
+ \qquad
+ (x,y)\longmapsto(c_R(x,y),p_R(x,y),\rho_R(x,y))
+\]
+の組である。略記として
+\[
+ R:X\longrightarrow_{\langle p,\rho\rangle}Y
+\]
+と書く。
+\end{definition}
+
+$p_R(x,y)$ は関係 $xRy$ を構成・検査するために必要な独立した選択点の数、$\rho_R(x,y)$ は失敗した分岐、未解決制約、再計算などの残余を表す。これらの具体的な測定法は意味論または実装ごとに指定される。
+
+\subsection{インターフェイス}
+
+\begin{definition}[PoV--$\rho$ インターフェイス]
+射 $R,S$ の評価情報を接続する PoV--$\rho$ インターフェイスとは、部分写像
+\[
+ \Phi_{R,S}:
+ (\mathcal{V}\times\mathcal{L})^2
+ \dashrightarrow
+ \mathcal{V}\times\mathcal{L}
+\]
+であって、二つの評価文脈から合成後の視点数と残余を生成するものをいう。基本形を
+\[
+ \Phi_{R,S}\bigl((n,\alpha),(m,\beta)\bigr)
+ =\bigl(n+m,\alpha+\beta+\Delta_{R,S}(n,m)\bigr)
+\]
+とする。$\Delta_{R,S}(n,m)\geq0$ は文脈干渉項である。
+\end{definition}
+
+インターフェイスは単なる数値の組ではなく、文脈間で何を保存し、何を残余へ送るかを定める規約である。$\Delta=0$ は独立な文脈の併置を、$\Delta>0$ は共有変数、競合制約、観測順序などによる干渉を表す。
+
+\section{双方向演繹の代数化}
+
+\subsection{動的併置}
+
+\begin{definition}[交わりの動的評価]
+$R$ と $S$ の交わりを観測文脈の併置として評価し、
+\[
+ \PoV(R\cap S)=\PoV(R)+\PoV(S),
+\]
+\[
+ \rho(R\cap S)
+ =\rho(R)+\rho(S)+\Delta_{R,S}
+\]
+とする。
+\end{definition}
+
+この式は寓における交わりの普遍的定義ではなく、CRL が採用する評価規約である。したがって $\Delta$ の選択はモデルの一部であり、具体例ごとに検証されなければならない。
+
+\subsection{逆関係と制約の引き戻し}
+
+\begin{definition}[逆方向評価]
+射 $R$ の逆関係について
+\[
+ \PoV(R^\circ)=\PoV(R)
+\]
+とし、$R^\circ$ を終域側の制約を始域側へ引き戻す逆方向推論として解釈する。残余については一般に
+\[
+ \rho(R^\circ)=\rho(R)+\Delta_R^\circ
+\]
+とし、$\Delta_R^\circ\geq0$ を逆方向化の追加費用とする。
+\end{definition}
+
+逆関係そのものは時間反転ではない。CRL における「逆方向の時間」とは、後段で判明した制約を前段の探索状態へ戻し、未展開の分岐を削除する操作的順序を指す。
+
+\subsection{残余モジュラー定理}
+
+寓のモジュラー律は射の包含を与えるが、残余の大小はそれだけからは従わない。そこで次の計算意味論的仮定を分離する。
+
+\begin{assumption}[局所制約による残余圧縮]
+任意の適合する射 $R,S,T$ に対して、未来制約 $T$ を $R^\circ T$ として先に引き戻す評価戦略は、事後的に $T$ と照合する戦略より残余を増加させないとする。すなわち
+\[
+ \rho\bigl(R(S\cap R^\circ T)\bigr)
+ \leq
+ \rho(RS\cap T)
+\]
+が成り立つ。
+\end{assumption}
+
+\begin{theorem}[残余モジュラー定理]
+仮定 2.1 および仮定 3.3 の下で、
+\[
+ RS\cap T\leq R(S\cap R^\circ T),
+\]
+\[
+ \rho_{\mathrm{left}}\geq\rho_{\mathrm{right}}
+\]
+が成り立つ。ここで
+\[
+ \rho_{\mathrm{left}}:=\rho(RS\cap T),
+ \qquad
+ \rho_{\mathrm{right}}:=\rho\bigl(R(S\cap R^\circ T)\bigr)
+\]
+である。
+\end{theorem}
+
+\begin{proof}
+第一式は寓のモジュラー律である。第二式は仮定 3.3 の書き換えである。したがって、関係包含は寓の公理から、計算費用の比較は追加の圧縮仮定から、それぞれ独立に得られる。
+\end{proof}
+
+\begin{remark}
+残余不等式を無条件の定理としないことが重要である。制約の引き戻し自体が高価なモデルや、局所化によって分岐が増えるモデルでは仮定 3.3 が成立しない可能性がある。
+\end{remark}
+
+\section{無記、最大不動点、外部指示}
+
+\subsection{非停止評価の隔離}
+
+\begin{axiom}[無記と極限収束]
+評価列に沿って視点数が発散し
+\[
+ \PoV\longrightarrow\infty
+\]
+となるとき、その評価を任意の通常値へ同一視せず、無記として残余空間へ隔離する。評価状態の完備束上に単調作用素 $F$ が与えられている場合、内部的な極限は最大不動点 $\nu F$ によって表す。
+\end{axiom}
+
+\begin{definition}[中道不動点]
+$L$ を完備束、$F:L\to L$ を単調作用素とする。最大不動点
+\[
+ \nu F:=\bigvee\{x\in L\mid x\leq F(x)\}
+\]
+を中道不動点と呼ぶ。
+\end{definition}
+
+\begin{definition}[外部指示記号]
+$\dfix$ は $\nu F$ の値でも $L$ の追加要素でもなく、内部表現 $\nu F$ を介して、有限の視点数では決定できない外部を指示する記号である。この指示関係を
+\[
+ \dfix\rightsquigarrow\nu F
+\]
+と書く。
+\end{definition}
+
+\begin{remark}[QRB との対応]
+CRL の $\dfix$ は、QRB における強制法の指示記号 $\dfix_{\Forc}$ および QRB の指示記号 $\dfix_{\QRB}$ と問題意識を共有する \cite{ChibaQRB2026}。これは $\nu F$、ジェネリック・フィルター、QRB の代表点を同一視する主張ではない。共通するのは、内部対象として値を追加する代わりに、内部から外部への到達を記録する文法である。
+\end{remark}
+
+\section{エルブラン空間上の計算論的時間}
+
+\subsection{エルブラン・関係}
+
+一階シグネチャ $\Sigma$ のエルブラン宇宙を $H_\Sigma$ とする。論理プログラムのゴール、代入、制約集合を状態として含む集合を $\mathsf{State}(H_\Sigma)$ と書く。SLD 解像および制約論理プログラミングの標準的背景については \cite{Lloyd1987,JaffarLassez1987} を参照する。
+
+\begin{definition}[エルブラン・関係]
+証明探索の一段階を表す CRL 射
+\[
+ R:\mathsf{State}(H_\Sigma)
+ \longrightarrow_{\langle p,\rho\rangle}
+ \mathsf{State}(H_\Sigma)
+\]
+をエルブラン・関係と呼ぶ。$p$ は選択可能な節、リテラル、代入候補による分岐量を、$\rho$ は失敗した単一化、未解決制約、再訪した状態の重み付き総和を表す。
+\end{definition}
+
+\begin{proposition}[計算論的時間の三層]
+エルブラン・関係による探索は、次の三種類の操作的順序を持つ。
+\begin{enumerate}
+ \item 順方向時間：ゴール簡約と部分ゴール生成による探索状態の更新。
+ \item 逆方向時間：失敗情報、型制約、終端条件のバックトラックまたは制約伝播。
+ \item 極限時間：循環または無限分岐により有限の $\PoV$ では決定できず、無記として隔離される評価列。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+第一項は解像ステップの向き、第二項は失敗した後続状態から先行状態への制約移送に対応する。第三項は公理 4.1 を、循環または無限分岐を持つ評価列へ適用したものである。
+\end{proof}
+
+\begin{example}[循環を含む経路探索]
+有向グラフ上の述語 $\mathsf{path}(x,y)$ を再帰的な Horn 節で定義する。循環を含むグラフで $\mathsf{path}(a,z)$ を深さ優先探索すると、節と辺の選択が $\PoV$ を増加させ、失敗した単一化と再訪状態が $\rho$ に蓄積される。到達先 $z$ から逆向きに到達可能性制約を伝播すれば分岐を削減できるが、その圧縮量は探索戦略とグラフ構造に依存する。無限循環が検出も切断もされない場合、その評価列は通常の成功・失敗へ還元せず、$\dfix$ によって外部化を指示する。
+\end{example}
+
+\section{確率的推論への解釈仮説}
+
+CRL の評価位相 $\mathcal{C}$ は、多値または確率的な評価を収容できる。ただし、$\PoV$ や $\rho$ を既存の機械学習パラメータと直接同一視することはできない。本節では、検証対象となる解釈仮説だけを述べる。確率的推論の一般的背景については \cite{Bishop2006}、アテンション機構については \cite{Vaswani2017} を参照する。
+
+\begin{assumption}[確率的解釈仮説]
+確率的推論過程に対して、次の量を観測可能にできると仮定する。
+\begin{enumerate}
+ \item 有効視点数 $\PoV_{\mathrm{eff}}$：同時に保持される相互に区別可能な仮説・文脈・サンプルの有効数。
+ \item 確率的残余 $\rho_{\mathrm{prob}}$：棄却された仮説、未説明分散、制約違反、計算予算超過を重み付けした量。
+ \item 干渉項 $\Delta$：文脈融合による情報重複または矛盾の追加費用。
+\end{enumerate}
+\end{assumption}
+
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.30\textwidth} >{\raggedright\arraybackslash}p{0.56\textwidth}}
+\toprule
+CRL の量 & 確率的推論における候補的解釈 \\
+\midrule
+$\PoV$ & 有効サンプル数、競合仮説数、保持された文脈の多様性 \\
+$\rho$ & 未説明損失、棄却分岐、制約違反、計算予算の残差 \\
+$R^\circ$ & 後段の損失・制約を前段表現へ伝播する逆方向処理 \\
+$\dfix$ & 所定の計算予算と観測文脈では決定できないことの指示 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+大規模言語モデルにおいて、アテンション・ヘッド数、温度、コンテキスト長をそのまま $\PoV$ と置くことはしない。それらから推定される有効な仮説多様性を $\PoV_{\mathrm{eff}}$ の候補とする。同様に、$\rho$ を幻覚の度合いそのものとはせず、事実制約違反、校正誤差、棄却候補、計算費用を含む複合指標として設計する必要がある。
+
+この仮説を理論へ昇格させるには、具体的な推論アルゴリズムごとに $\epsilon_R$、$\Phi_{R,S}$、$\Delta$ を定義し、残余圧縮仮定が成立する条件を実験的・数学的に検証しなければならない。
+
+\section{結論}
+
+本稿は、寓の射に視点数と継続残余を付加し、それらの受け渡しを PoV--$\rho$ インターフェイスとして組織する計算関係論理を提案した。静的な関係包含と動的な評価費用を区別することで、モジュラー律は寓の公理、残余不等式は圧縮仮定に由来することを明確にした。
+
+CRL の中心的な特徴は次の三点である。
+\begin{enumerate}
+ \item 交わりと逆関係を、文脈の併置と制約の引き戻しとして動的に評価する。
+ \item 非停止過程を内部では最大不動点 $\nu F$ によって表し、その外部到達を値ではない記号 $\dfix$ で指示する。
+ \item エルブラン探索、制約伝播、確率的推論を、視点数、残余、干渉という共通の語彙で比較する。
+\end{enumerate}
+
+今後の課題は、具体的モデルにおける $\Delta$ と $\rho$ の構成、合成に関する結合律、残余圧縮仮定の十分条件、および QRB の残余対象との比較写像を与えることである。これらが確立されれば、CRL は静的関係代数と動的計算意味論の間を接続する評価付き関係論理として位置づけられる。
+
+\bibliographystyle{plain}
+\bibliography{../ref}
+
+\end{document}
+
+
+@article{balmer,
+  author  = {Paul Balmer},
+  title   = {The Spectrum of Prime Ideals in Tensor Triangulated Categories},
+  journal = {Journal f{"u}r die reine und angewandte Mathematik},
+  volume  = {588},
+  pages   = {149--168},
+  year    = {2005}
+}
+
+@book{bell,
+  author    = {John L. Bell},
+  title     = {Boolean-Valued Models and Independence Proofs in Set Theory},
+  publisher = {Oxford University Press},
+  year      = {1985}
+}
+
+@article{cohen,
+  author  = {Paul J. Cohen},
+  title   = {The Independence of the Continuum Hypothesis},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {50},
+  pages   = {1143--1148},
+  year    = {1963}
+}
+
+@article{godel,
+  author  = {Kurt G{"o}del},
+  title   = {{"U}ber formal unentscheidbare S{"a}tze der Principia Mathematica und verwandter Systeme I},
+  journal = {Monatshefte f{"u}r Mathematik und Physik},
+  volume  = {38},
+  pages   = {173--198},
+  year    = {1931}
+}
+
+@book{jech,
+  author    = {Thomas Jech},
+  title     = {Set Theory: The Third Millennium Edition, Revised and Expanded},
+  publisher = {Springer},
+  year      = {2003}
+}
+
+@book{johnstone,
+  author    = {Peter T. Johnstone},
+  title     = {Sketches of an Elephant: A Topos Theory Compendium},
+  publisher = {Oxford University Press},
+  year      = {2002}
+}
+
+@book{kleene,
+  author    = {Stephen C. Kleene},
+  title     = {Introduction to Metamathematics},
+  publisher = {North-Holland},
+  year      = {1952}
+}
+
+@article{kripke,
+  author  = {Saul A. Kripke},
+  title   = {Outline of a Theory of Truth},
+  journal = {The Journal of Philosophy},
+  volume  = {72},
+  number  = {19},
+  pages   = {690--716},
+  year    = {1975}
+}
+
+@article{tarski,
+  author  = {Alfred Tarski},
+  title   = {Der Wahrheitsbegriff in den formalisierten Sprachen},
+  journal = {Studia Philosophica},
+  volume  = {1},
+  pages   = {261--405},
+  year    = {1936}
+}
+
+@book{FreydScedrov1990,
+  author    = {Peter J. Freyd and Andre Scedrov},
+  title     = {Categories, Allegories},
+  publisher = {North-Holland},
+  year      = {1990}
+}
+
+@misc{ChibaQRB2026,
+  author = {千葉将臣},
+  title  = {言語の外点：強制法と四重残余束による到達不能性の幾何学},
+  note   = {Manuscript, 2026-07-19},
+  year   = {2026}
+}
+

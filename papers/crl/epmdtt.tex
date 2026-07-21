@@ -1,0 +1,619 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{example}[definition]{例}
+\newtheorem{remark}[definition]{注記}
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{corollary}[definition]{系}
+\newtheorem{conjecture}[definition]{予想}
+
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\EPMDTT}{\mathrm{EPMDTT}}
+\newcommand{\Obs}{\mathrm{Obs}}
+\newcommand{\Ext}{\mathrm{Ext}}
+\newcommand{\Prf}{\mathrm{Prf}}
+\newcommand{\Con}{\mathrm{Con}}
+\newcommand{\Ind}{\mathbf{Ind}_{\dfix}}
+\newcommand{\Meta}{\mathcal{M}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\Forc}{\mathrm{Forc}}
+\newcommand{\Res}{\mathrm{Res}}
+\newcommand{\False}{\mathbf{0}}
+\newcommand{\Unit}{\mathbf{1}}
+\newcommand{\Type}{\mathrm{Type}}
+\newcommand{\sem}[1]{\mathopen{[\![}#1\mathclose{]\!]}}
+
+\title{Gödel 第二不完全性定理の肯定的転回：\\
+○依存型による証明論の外部化}
+\author{千葉将臣}
+\date{2026-07-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Gödel の第二不完全性定理は、十分に強い再帰的理論 $T$ が自己の無矛盾性を内部で証明できないことを示す。本稿は、この否定的結論を撤回するのではなく、証明不能性を「内部から到達できない外部への指示」として記録する外点指示付き依存型理論（External-Point Marked Dependent Type Theory; EPMDTT）を提案する。以下、これを「○依存型」と呼ぶ。通常の型判断 $\Gamma\vdash_T a:A$ と区別して、メタ理論 $\Meta$ に相対化された指示的判断
+\[
+ \Gamma\vdash^{\Meta}_T p:A\rightsquigarrow\dfix
+\]
+を導入する。ここで $\dfix$ は値や証明項ではなく、内部証明の不在と外部実現可能性とを混同せずに記録する指示記号である。計算効果として $\Ind(A)=A+\Unit$ を用いるが、右成分 $\dfix$ は $A$ の値ではなく、通常の消去規則を持たない外部化マーカーとして扱う。$\Ind(A)$ を $A+\Unit$ へ消去する翻訳により、○依存型が元の理論の通常判断に対して保守的であることを示す。主要な適用として、標準的な第二不完全性定理の仮定の下で $T\nvdash\Con(T)$ を保ったまま、$\Meta$ が $T$ の無矛盾性を検証できる場合に限り、拡張体系 $\EPMDTT_{\Meta}(T)$ において $\Con(T)\rightsquigarrow\dfix$ を導出できることを示す。また、強制法および四重残余束（QRB）との対応は無条件の同型ではなく、指示写像と外部実現関係を要する条件付き比較原理として定式化する。これにより、証明不能性を解消せずに、その境界と外部依存を型システム上で可視化する枠組みを与える。
+\end{abstract}
+
+\section{導入：第二不完全性定理を超えるのではなく読み替える}
+
+\subsection{標準的な否定的解釈}
+
+$T$ を再帰的に公理化された算術理論とし、$T$ の証明可能性述語を $\Prf_T(-)$ と書く。通常の算術化では、$T$ の無矛盾性は
+\[
+ \Con(T)\;:=\;\neg\Prf_T(\ulcorner\bot\urcorner)
+\]
+によって表される。型理論的には、偽の証明コードから空型への写像として
+\[
+ \Con(T)\;:=\;\Prf_T(\bot)\to\False
+\]
+と読むことができる。
+
+十分な算術を含み、標準的な導出可能性条件を満たす無矛盾な $T$ に対して、第二不完全性定理は
+\[
+ T\nvdash\Con(T)
+\]
+を与える \cite{godel}。これは $\Con(T)$ が偽であることや、いかなるメタ理論でも $\Con(T)$ を証明できないことを意味しない。主張されるのは、指定された内部証明体系 $T$ の限界である。
+
+\begin{remark}[無矛盾性型について]
+しばしば候補として挙げられる $\prod_{A:\Type}\neg(A\times\neg A)$ は、任意の $A$ に対して $(a,n)\mapsto n(a)$ で構成できる論理原理であり、特定の形式体系 $T$ の無矛盾性を表さない。本稿では証明述語を明示した $\Prf_T(\bot)\to\False$ を用いる。
+\end{remark}
+
+\subsection{証明不能から到達不能へ}
+
+本稿の提案は $T\nvdash\Con(T)$ を反証することではない。むしろ、内部証明が存在しないという境界を、型システムの外部化効果として記録する。四重残余束（QRB）では、$\dfix$ は値や点そのものではなく、内部の演算が外点領域へ到達したことを記録する指示記号として用いられる \cite{ChibaQRB2026}。本稿はこの文法を証明論へ移し、
+\[
+ \Gamma\vdash^{\Meta}_T p:A\rightsquigarrow\dfix
+\]
+を「$A$ の内部証明」ではなく「$A$ に関する証明課題が $T$ の境界を越えて外部化されたこと」の判断と読む。
+
+\subsection{本稿の主張と非主張}
+
+本稿の主張は次の四点である。
+\begin{enumerate}
+ \item 通常の証明判断と外部指示判断を構文的に分離できる。
+ \item 指示判断をメタ理論に相対化すれば、第二不完全性定理と矛盾せずに $\Con(T)$ の外部依存を記録できる。
+ \item 外部読出しを対象理論の規則から除外する限り、○依存型は元の理論の通常判断に対して翻訳的に保守的である。
+ \item 強制法、QRB、冗（Amphigory）の間に共通する「値を定義せず、外部を指示する」文法を比較できる。
+\end{enumerate}
+
+一方、本稿は次を主張しない。
+\begin{enumerate}
+ \item $T$ が自己の無矛盾性を証明できること。
+ \item $T\nvdash A$ だけから、ある外部理論で $A$ が真であると結論できること。
+ \item 強制関係と指示的判断が無条件に同型であること。
+ \item メタ理論の階層や相対的無矛盾性の問題が消滅すること。
+\end{enumerate}
+
+\section{○依存型}
+
+\subsection{二水準の構文}
+
+対象理論を $T$、その構文・証明コード・モデルを論じるメタ理論を $\Meta$ とする。通常の依存型判断は
+\[
+ \Gamma\vdash_T a:A
+\]
+である。これに対し、指示的判断を
+\[
+ \Gamma\vdash^{\Meta}_T p:A\rightsquigarrow\dfix
+\]
+と書く。上付きの $\Meta$ は省略してはならない。指示判断は $T$ 単独の定理ではなく、$T$ の境界を $\Meta$ から観測した判断だからである。
+
+\begin{definition}[証明障害]
+$A$ に対する証明障害型 $\Obs_T(A)$ は、$A$ の通常の証明項を与える型ではなく、$T$ 内での証明探索が閉じない理由を記録するメタ理論上の型である。最低限、次のいずれかを含む。
+\begin{enumerate}
+ \item $T\nvdash A$ のメタ証明または独立性証明。
+ \item 指定された証明探索機械の発散証明。
+ \item $A$ を実現するには明示された拡大理論 $T'$ が必要であることの証明。
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[外部実現]
+$A$ の外部実現型を
+\[
+ \Ext_T(A)
+ :=
+ \sum_{T':\mathsf{Theory}}
+ \sum_{i:T\hookrightarrow T'}
+ \Prf_{T'}(iA)
+\]
+とする。これは、理論拡大 $i:T\hookrightarrow T'$ と $T'$ における $A$ の証明を明示的に保持する。
+\end{definition}
+
+証明不能性と外部実現可能性は別概念である。$T\nvdash A$ から $\Ext_T(A)$ は一般には従わない。したがって指示判断には、弱い障害判断と強い実現付き判断を区別する。
+
+\begin{definition}[二種類の指示判断]
+弱い指示判断
+\[
+ \Gamma\vdash^{\Meta}_T p:A\rightsquigarrow\dfix
+\]
+は $\Meta\vdash p:\Obs_T(A)$ を表す。強い指示判断
+\[
+ \Gamma\vdash^{\Meta}_T (p,e):A\rightsquigarrow_{\!}\dfix
+\]
+は、さらに $\Meta\vdash e:\Ext_T(A)$ が与えられていることを表す。
+\end{definition}
+
+\subsection{基本規則}
+
+指示記号の導入を無条件に許すと、任意の型が外部化でき、体系が情報を失う。そのため、$\dfix$-導入には証明障害を前提とする。
+
+\begin{definition}[指示規則]
+○依存型の基本規則を次で与える。
+\[
+\frac{\Meta\vdash o:\Obs_T(A)}
+     {\Gamma\vdash^{\Meta}_T \mathsf{mark}(o):A\rightsquigarrow\dfix}
+\quad(\dfix\text{-導入})
+\]
+\[
+\frac{\Gamma\vdash^{\Meta}_T p:A\rightsquigarrow\dfix
+      \qquad
+      \Meta\vdash e:\Ext_T(A)}
+     {\Gamma\vdash^{\Meta}_T (p,e):A\rightsquigarrow_{\!}\dfix}
+\quad(\text{外部実現の付記})
+\]
+\[
+\frac{\Gamma\vdash_T a:A}
+     {\Gamma\vdash_T \mathsf{return}(a):\Ind(A)}
+\quad(\text{内部値})
+\qquad
+\frac{\Gamma\vdash^{\Meta}_T p:A\rightsquigarrow\dfix}
+     {\Gamma\vdash_T \mathsf{mark}(p):\Ind(A)}
+\quad(\text{指示の蓄積})
+\]
+\end{definition}
+
+最後の規則は、指示判断そのものを $T$ の定理へ変換するものではない。$\mathsf{mark}(p)$ は計算型 $\Ind(A)$ の効果であって、$A$ の項ではない。
+
+\subsection{指示効果と部分性モナド}
+
+\begin{definition}[指示効果]
+意味論上の計算型を
+\[
+ \Ind(A):=A+\Unit
+\]
+と置き、左成分を $\mathsf{return}(a)$、右成分を $\mathsf{mark}(\dfix)$ と書く。$\dfix$ は $A$ の値ではなく、$A$ の計算が外部化されたことを表す効果トークンである。
+\end{definition}
+
+$A+\Unit$ は例外モナドと同じ形を持つが、指示効果の意味は「失敗値」ではなく「外部依存の記録」である。単位と結合を
+\[
+ \eta_A(a)=\mathsf{return}(a),
+\]
+\[
+ \mathsf{bind}(\mathsf{return}(a),f)=f(a),
+ \qquad
+ \mathsf{bind}(\mathsf{mark}(\dfix),f)=\mathsf{mark}(\dfix)
+\]
+で定める。これは計算効果をモナドで分離する標準的な方針に沿う \cite{Moggi1991}。一般再帰や非停止自体を精密に表す場合には、単一の右成分だけでなく、遅延ステップを持つ余帰納的部分性型が必要となる \cite{Capretta2005}。
+
+\begin{remark}[値ではない、の正確な意味]
+$\mathsf{mark}(\dfix)$ は計算型 $\Ind(A)$ の項ではあるが、対象型 $A$ の項ではない。したがって「$\dfix$ は値ではない」とは、$\dfix:A$ が導出できず、$\Ind(A)$ から $A$ への一般的な内部消去規則も存在しない、という意味である。
+\end{remark}
+
+\subsection{外部抽出は内部規則ではない}
+
+草案的な規則
+\[
+\frac{p:A\rightsquigarrow\dfix}{\mathsf{ext}(p):A}
+\]
+を $T$ 内に置けば、指示から証明を回収でき、第二不完全性定理との区別が消える。本稿では外部抽出を、拡大理論 $T'$ における解釈としてのみ許す。
+
+\begin{definition}[外部読出し]
+$e=(T',i,a):\Ext_T(A)$ に対して、メタ理論で
+\[
+ \mathsf{read}_{T'}(e):=a:\Prf_{T'}(iA)
+\]
+と定める。$\mathsf{read}_{T'}$ は $T$ の項形成規則ではない。
+\end{definition}
+
+\section{○依存型の応用例}
+
+本節では、指示判断が実装上どのような情報を与え得るかを、原因別効果、証明依存の静的追跡、メタ理論依存の明示という三つの例で説明する。以下は○依存型の完全な実装を与えるものではなく、前節の規則から導かれる設計上の利用例である。
+
+\subsection{原因別マーカーと処理方針}
+
+単一の $\dfix$ は「通常の内部値が得られなかった」という事実を記録するが、実装では原因に応じた添字を持たせる方が有用である。効果ラベルの集合を
+\[
+ E=\{\mathsf{div},\mathsf{type}\}
+   +\{\mathsf{meta}(T')\mid T'\text{ は理論拡大}\}
+\]
+とし、指示効果を
+\[
+ \mathbf{Ind}_E(A):=A+E
+\]
+へ細分化する。各ラベルに対応する指示記号を
+\[
+ \dfix_{\mathsf{div}},\qquad
+ \dfix_{\mathsf{type}},\qquad
+ \dfix_{\mathsf{meta}}[T']
+\]
+と書く。
+
+\begin{example}[ゼロ除算]
+実数上の安全な除算を
+\[
+ \mathsf{safeDiv}:\mathbb{R}\times\mathbb{R}
+ \longrightarrow \mathbf{Ind}_E(\mathbb{R})
+\]
+とし、
+\[
+ \mathsf{safeDiv}(x,y)=
+ \begin{cases}
+  \mathsf{return}(x/y),&y\neq0,\\
+  \mathsf{mark}(\dfix_{\mathsf{div}}),&y=0
+ \end{cases}
+\]
+と定める。このとき $\dfix_{\mathsf{div}}$ は数値ではなく、除算規則の適用不能を記録する。プログラム実行モードでは、既定値、区間値、利用者への警告などを与える明示的なハンドラを用意できる。一方、$\dfix_{\mathsf{type}}$ は型不整合を表す致命的効果として、通常は継続用ハンドラを与えない。
+\end{example}
+
+この区別により、「警告後に継続できる障害」と「型検査を停止すべき障害」を同じ未定義値へ潰さず、型レベルの処理方針として保持できる。ただし、回復後の値が正しいことはハンドラごとに別途証明されなければならない。
+
+\subsection{証明に混入する未処理効果の排除}
+
+標準的な全域的依存型理論では、未定義な部分関数をそのまま型付けすることはできない。問題となるのは、外部ライブラリ、抽出コード、部分関数を包むインターフェースなどを通じて、証明項の計算が未処理効果に依存する場合である。○依存型では計算判断に効果注釈を付け、
+\[
+ \Gamma\vdash_{\mathsf{prog}}t:A\;!\;\varepsilon
+\]
+と書く。ここで $\varepsilon\subseteq E$ は $t$ が生じ得る指示効果の集合である。証明モードには、より強い条件
+\[
+ \Gamma\vdash_{\mathsf{proof}}p:P\;!\;\varnothing
+\]
+を課し、未処理効果が空である場合に限って $p$ を命題 $P$ の証明項として受理する。
+
+\begin{proposition}[未処理マーカーの排除]
+証明形成規則が空効果 $\varepsilon=\varnothing$ を要求するならば、
+\[
+ \Gamma\vdash_{\mathsf{prog}}t:P\;!\;\varepsilon,
+ \qquad
+ \dfix_e\in\varepsilon
+\]
+である項 $t$ は、効果 $e$ を処理するハンドラとその正当性証明が与えられない限り、$P$ の証明項として利用できない。
+\end{proposition}
+
+\begin{proof}
+証明形成規則の前提 $\varepsilon=\varnothing$ と $\dfix_e\in\varepsilon$ が両立しないためである。ハンドラを適用する場合には、その結果の効果集合が空になることと、命題 $P$ が保存されることを別途示す必要がある。
+\end{proof}
+
+この命題は論理体系の健全性定理そのものではない。実装上の利点は、未定義操作や外部依存を含む計算を、検査されていないまま証明項へ昇格させないことである。
+
+\subsection{メタ理論依存の明示}
+
+内部で証明できない命題を直ちに「外部真理」と呼ぶことはできない。そこで、無矛盾性の指示には読出し先を添字として付け、
+\[
+ \Con(T)\rightsquigarrow
+ \dfix_{\mathsf{meta}}[T']
+\]
+と書く。この式は $T'$ が実際に $\Con(T)$ を証明することを単独では保証せず、$T'$ に外部実現を要求することを示す。強い指示判断を得るには、さらに
+\[
+ e:\Prf_{T'}\bigl(\Con(T)\bigr)
+\]
+を提示しなければならない。
+
+この添字付き表記によって、無矛盾性、完全性、モデル存在などのメタ理論的性質について、「内部では証明されていない」「どの外部理論に依存するか」「外部証明が既に与えられているか」を区別できる。
+
+\subsection{応用上の位置づけ}
+
+以上の例から、○依存型の実装上の利点は次の三点に整理できる。
+\begin{enumerate}
+ \item 未定義性の原因と回復方針を添字付き効果として区別できる。
+ \item 未処理効果に依存する計算を証明項から静的に排除できる。
+ \item メタ理論的主張の依存先と外部実現の有無を型注釈として記録できる。
+\end{enumerate}
+
+これらは既存の例外型、効果システム、モナドを置き換えるものではない。○依存型の提案は、それらの計算効果に「内部証明の境界」と「外部実現先」という証明論的意味を与える点にある。
+
+\subsection{通常判断に対する保守性}
+
+応用例が論理的に安全であるためには、指示記号の追加によって元の理論 $T$ の命題が新たに証明されないことを示す必要がある。以下では、○依存型の対象計算部分を $T$ へ戻す消去翻訳を用いる。
+
+\begin{assumption}[保守的断片]
+元の依存型理論 $T$ は単位型 $\Unit$、直和型 $A+B$ およびその通常の導入・消去規則を持つとする。○依存型の規則は次の条件を満たす。
+\begin{enumerate}
+ \item $T$ の既存の型・項・判断規則を変更しない。
+ \item 新しい対象型は $\Ind(A)$ とその添字付き変種に限られる。
+ \item 指示規則は指示判断または $\Ind(A)$ の項だけを生成し、$A$ の項を直接生成しない。
+ \item $\Ind(A)$ を消去して古い型 $B$ の項を得るハンドラは、$\mathsf{return}$ 分岐 $A\to B$ と $\mathsf{mark}$ 分岐 $\Unit\to B$ の双方を対象理論内で要求する。
+ \item $\mathsf{read}_{T'}$ はメタ理論上の操作であり、○依存型の対象項形成規則には含まれない。
+\end{enumerate}
+\end{assumption}
+
+\begin{definition}[消去翻訳]
+○依存型の対象型と対象項から $T$ への翻訳 $\sem{-}$ を、古い構文上では恒等写像とし、新しい構文について
+\[
+ \sem{\Ind(A)}
+ :=\sem{A}+\Unit,
+\]
+\[
+ \sem{\mathsf{return}(a)}
+ :=\mathsf{inl}(\sem{a}),
+ \qquad
+ \sem{\mathsf{mark}(p)}
+ :=\mathsf{inr}(\ast)
+\]
+と定める。$\mathsf{bind}$ およびハンドラは、$T$ の直和型に対する場合分けへ翻訳する。証明障害 $p:\Obs_T(A)$ の内容は対象項へ移さず、右成分の単位項 $\ast:\Unit$ だけを残す。
+\end{definition}
+
+\begin{lemma}[翻訳による型保存]
+仮定 3.3 の下で、○依存型の対象判断
+\[
+ \Gamma\vdash_{\EPMDTT_{\Meta}(T)}t:A
+\]
+が導出できるならば、
+\[
+ \sem{\Gamma}
+ \vdash_T
+ \sem{t}:\sem{A}
+\]
+が導出できる。
+\end{lemma}
+
+\begin{proof}
+○依存型の導出木に関する帰納法による。$T$ 由来の規則については翻訳が恒等的であるため、帰納法の仮定から直ちに従う。$\mathsf{return}$ の場合は直和型の左導入、$\mathsf{mark}$ の場合は $\ast:\Unit$ と直和型の右導入によって型付けできる。$\mathsf{bind}$ とハンドラの場合は、帰納法の仮定で得られる各分岐の導出に $T$ の直和消去規則を適用する。指示判断そのものは通常判断を結論とせず、対象項に現れる場合も $\mathsf{mark}$ を通じて $\mathsf{inr}(\ast)$ へ消去される。外部読出しは仮定により対象規則ではないため、帰納法のケースを持たない。
+\end{proof}
+
+\begin{theorem}[通常判断に対する翻訳的保守性]
+仮定 3.3 の下で、$\Gamma$ と $A$ が元の理論 $T$ の言語に属し、
+\[
+ \Gamma\vdash_{\EPMDTT_{\Meta}(T)}t:A
+\]
+が導出できるならば、ある $T$ の項 $t_0$ が存在して
+\[
+ \Gamma\vdash_T t_0:A
+\]
+が成り立つ。特に、○依存型は $T$ の古い命題について新しい定理を追加しない。
+\end{theorem}
+
+\begin{proof}
+補題 3.5 を適用し、$t_0:=\sem{t}$ と置く。$\Gamma$ と $A$ は古い言語に属するため、翻訳はそれらの上で恒等的であり、$\sem{\Gamma}=\Gamma$ および $\sem{A}=A$ である。したがって $\Gamma\vdash_Tt_0:A$ を得る。
+\end{proof}
+
+\begin{corollary}[無矛盾性指示の非反射性]
+$T\nvdash\Con(T)$ であるとき、指示判断
+\[
+ \EPMDTT_{\Meta}(T)\vdash\Con(T)\rightsquigarrow\dfix
+\]
+が存在しても、通常判断として
+\[
+ \EPMDTT_{\Meta}(T)\vdash c:\Con(T)
+\]
+を導くことはできない。
+\end{corollary}
+
+\begin{proof}
+そのような $c$ が存在すれば、定理 3.6 により $T\vdash\Con(T)$ が従い、仮定に反する。
+\end{proof}
+
+この保守性は仮定 3.3 の断片に対する構文的結果である。外部読出しを対象規則へ追加したり、$\mathsf{mark}$ 分岐を与えずに $\Ind(A)$ から任意の $A$ を取り出す規則を追加したりすれば、定理は成立しない。
+
+\section{第二不完全性定理の幾何学的転回}
+
+\subsection{無矛盾性の内部型}
+
+$T$ の証明コード型を $\Prf_T(A)$ とすると、無矛盾性型は
+\[
+ \Con_T:=\Prf_T(\bot)\to\False
+\]
+である。Curry--Howard 対応の下で、$c:\Con_T$ は $T$ の矛盾証明コードを空型へ送る項であり、形式化された無矛盾性証明に相当する。依存型理論における判断と命題の区別については Martin-Löf の定式化を参照する \cite{MartinLof1984}。
+
+\begin{assumption}[第二不完全性定理の適用条件]
+$T$ は再帰的に公理化され、十分な初等算術を含み、証明可能性述語が標準的な導出可能性条件を満たすとする。また、メタ理論 $\Meta$ はこれらの条件と $T$ の無矛盾性を検証できるとする。
+\end{assumption}
+
+\begin{theorem}[指示的外部化]
+仮定 4.1 の下で、次が成り立つ。
+\begin{enumerate}
+ \item $T\nvdash\Con_T$。
+ \item $\Meta$ には $T\nvdash\Con_T$ を表す障害証明 $g_2:\Obs_T(\Con_T)$ が存在する。
+ \item したがって拡張判断体系では
+ \[
+  \EPMDTT_{\Meta}(T)\vdash
+  \mathsf{mark}(g_2):\Con_T\rightsquigarrow\dfix
+ \]
+ が導出できる。
+ \item さらに、明示された拡大理論 $T'$ が $\Con_T$ を証明する場合に限り、対応する強い指示判断
+ \[
+  \EPMDTT_{\Meta}(T)\vdash
+  (g_2,e):\Con_T\rightsquigarrow_{\!}\dfix
+ \]
+ が得られる。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(1) は仮定の下での第二不完全性定理である。(2) はそのメタ理論内での形式化である。(3) は $\dfix$-導入規則から従う。(4) は $e:\Ext_T(\Con_T)$ と外部実現の付記規則から従う。いずれの段階でも $T\vdash\Con_T$ は導かれない。
+\end{proof}
+
+\begin{remark}[肯定的転回の意味]
+「肯定的」とは、証明不能性を証明可能性へ反転することではない。否定的事実 $T\nvdash\Con_T$ に、障害の型、外部化の効果、実現先の理論という正のデータ構造を与えることを意味する。
+\end{remark}
+
+\subsection{外部化図式}
+
+二水準の関係は次の図式で表される。
+\[
+\begin{array}{ccccc}
+T & \nvdash & \Con_T
+  & \rightsquigarrow & \dfix \\
+\big\downarrow i && \big\downarrow i && \big\downarrow\mathsf{read}_{T'} \\
+T' & \vdash & i(\Con_T)
+  & \longleftarrow & e:\Ext_T(\Con_T).
+\end{array}
+\]
+上段の $\rightsquigarrow\dfix$ は証明ではなく、下段の実現先を要求する指示である。下段の存在は別途示されなければならない。
+
+\subsection{強制法との条件付き比較}
+
+強制法と○依存型の間には次の類似がある。
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.40\textwidth} >{\raggedright\arraybackslash}p{0.46\textwidth}}
+\toprule
+強制法・QRB & ○依存型 \\
+\midrule
+基底モデル $M$ & 対象理論 $T$ \\
+強制拡大 $M[G]$ & 拡大理論またはメタ理論 $T'$ \\
+条件 $p$ と強制関係 $p\Vdash\varphi$ & 障害証明 $o$ と指示判断 $o:A\rightsquigarrow\dfix$ \\
+ジェネリック・フィルター $G$ & 外部実現 $e:\Ext_T(A)$ \\
+QRB の残余 $\Res_i$ & 証明探索の障害型 $\Obs_T(A)$ \\
+$\dfix_{\Forc}\rightsquigarrow G$, $\dfix_{\QRB}\rightsquigarrow\xi_G$ & $\dfix\rightsquigarrow e:\Ext_T(A)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+ただし、この表は同型の証明ではない。強制法の真理補題に相当する定理を得るには、証明条件の順序、拡大理論のクラス、指示写像、および実現関係を具体的に構成する必要がある。
+
+\begin{definition}[指示比較構造]
+$T$ に対する指示比較構造とは、前順序 $P_T$、拡大理論のクラス $\mathcal{E}_T$、写像
+\[
+ \Theta:P_T\longrightarrow\mathcal{P}(\mathcal{E}_T)
+\]
+および実現関係 $T'\Vdash_T A$ であって、$p\le q$ ならば $\Theta(p)\subseteq\Theta(q)$ を満たすものとする。
+\end{definition}
+
+\begin{conjecture}[型理論的指示補題]
+適切な指示比較構造について、
+\[
+ T'\Vdash_T A
+ \quad\Longleftrightarrow\quad
+ \exists p\in P_T\;
+ \bigl(T'\in\Theta(p)\land p:A\rightsquigarrow\dfix\bigr)
+\]
+が成り立つための十分条件を特徴づけられる。
+\end{conjecture}
+
+この予想は今後証明すべき比較原理であり、強制法の真理補題から自動的に従うものではない。
+
+\section{入れ子数学と窓の連鎖}
+
+\subsection{理論階層は消滅しない}
+
+無矛盾性証明の典型的な階層を
+\[
+ T_0\hookrightarrow T_1\hookrightarrow T_2\hookrightarrow\cdots,
+ \qquad
+ T_{n+1}\vdash\Con(T_n)
+\]
+とする。例えば、算術から集合論へ、集合論から宇宙公理を持つ理論へ移る相対的無矛盾性の議論がこの形を取る。
+
+$\dfix$ を導入しても、この階層は崩壊も停止もしない。各段階に
+\[
+ \Con(T_n)\rightsquigarrow\dfix_n
+\]
+という「窓」を付加し、その読出し先を $T_{n+1}$ として記録できるだけである。
+
+\begin{proposition}[窓の相対性]
+$T_{n+1}\vdash\Con(T_n)$ であっても、通常は
+\[
+ T_{n+1}\nvdash\Con(T_{n+1})
+\]
+である。したがって $\dfix_n$ の外部実現は $\dfix_{n+1}$ を消去せず、窓の連鎖を一段移動させる。
+\end{proposition}
+
+\begin{proof}
+$T_{n+1}$ が第二不完全性定理の仮定を満たす場合、その自己無矛盾性について同じ定理を適用すればよい。
+\end{proof}
+
+\subsection{グロタンディーク宇宙との関係}
+
+宇宙公理を持つ集合論 $\mathrm{ZFC}+U_n$ の列も、絶対的な最終理論を与えるとは限らない。本稿の指示記号は宇宙階層を不要にするのではなく、どの定理がどの宇宙拡大に依存するかを型注釈として可視化する。
+
+\begin{definition}[宇宙添字付き指示]
+$U_n$ を必要とする命題 $A$ に対して
+\[
+ A\rightsquigarrow\dfix[U_n]
+\]
+と書き、外部依存の読出し先を明示する。添字を消去した $\dfix$ は、依存先を未指定のままにした弱い指示である。
+\end{definition}
+
+この表記により、メタ理論の「絶対的優位性」ではなく、理論間の相対的な読出し可能性が前景化される。
+
+\section{独立命題と証明の幾何学}
+
+\subsection{Gödel 文}
+
+$G_T$ を $T$ の Gödel 文とする。適切な健全性条件の下で $T\nvdash G_T$ が示され、メタ理論が $G_T$ を検証できるならば、強い指示
+\[
+ G_T\rightsquigarrow_{\!}\dfix
+\]
+を与えられる。ただし、必要な健全性条件と外部実現を明記しなければならない。
+
+\subsection{集合論的独立命題}
+
+連続体仮説 CH のような独立命題では、単一の $\dfix$ を「外部では真」の意味で用いることはできない。ZFC の拡大には CH を満たすものと $\neg\mathrm{CH}$ を満たすものがあり得るからである。そこで分岐付き指示
+\[
+ \mathrm{CH}\rightsquigarrow\dfix^{+}[T_{\mathrm{CH}}],
+ \qquad
+ \neg\mathrm{CH}\rightsquigarrow\dfix^{-}[T_{\neg\mathrm{CH}}]
+\]
+を用いる。指示記号は命題の絶対的真理値ではなく、実現可能な外部方向を記録する。
+
+\subsection{障害空間}
+
+命題 $A$ ごとの障害型 $\Obs_T(A)$ を集めた族
+\[
+ \mathcal{O}_T:=\{(A,o)\mid o:\Obs_T(A)\}
+\]
+を証明障害空間と呼ぶ。この空間に、障害の由来、必要な理論拡大、証明探索の発散様式などの台を与えれば、QRB の外点候補領域との比較が可能になる。
+
+\begin{conjecture}[証明障害の QRB 表現]
+適切な安定圏 $\mathcal{C}_T$ と比較操作 $M_i$ を構成できる場合、証明障害型の族 $\Obs_T(A)$ を QRB の残余対象の台へ送る写像が存在し、複数の障害が同時に非自明となる命題を QRB の特異領域として表現できる。
+\end{conjecture}
+
+\section{関連研究と今後の課題}
+
+\subsection{四重残余束（QRB）}
+
+QRB は、複数の比較操作が同時に可逆性を失う領域を残余対象の台として幾何学化し、$\dfix$ を値や点ではなく到達の指示記号として扱う \cite{ChibaQRB2026}。本稿の $\Obs_T(A)$ は、その証明論的対応物の候補である。ただし、具体的な関手や台の写像は未構成であり、対応は研究仮説に留まる。
+
+\subsection{冗（Amphigory）}
+
+冗は視点数と継続残余を持つ動的な関係代数として、非停止過程を内部の最大不動点 $\nu F$ によって表し、その先の外部を $\dfix$ で指示する \cite{ChibaAmphigory2026}。本稿では、証明探索の内部的挙動を $\Ind(A)$ と $\Obs_T(A)$ で表し、同じ指示記号を証明論へ移す。
+
+\subsection{型理論と計算効果}
+
+Martin-Löf 型理論は命題と証明を型と項として組織する \cite{MartinLof1984}。Moggi の計算モナドは値と計算効果を分離し \cite{Moggi1991}、Capretta の部分性型は非停止計算を余帰納的に表現する \cite{Capretta2005}。○依存型の新規性候補は、単なる非停止効果ではなく、証明障害と外部実現先を添字として保持する点にある。
+
+\subsection{今後の課題}
+
+今後の課題は次の通りである。
+\begin{enumerate}
+ \item $\Obs_T(A)$ の構文を具体化し、置換・弱化・カットに対する保存性を証明する。
+ \item $\Ind$ の依存型版について、単位律・結合律・型保存を示す。
+ \item 翻訳的保守性を、依存ハンドラ、宇宙階層、同一視型を含む体系へ拡張する。
+ \item 強制法との比較構造を具体例で構成し、型理論的指示補題を証明する。
+ \item 証明障害型から QRB の残余対象への関手を構成する。
+ \item Lean、Agda、Coq などで二水準の判断を機械化する。
+\end{enumerate}
+
+\section{結論}
+
+本稿は、Gödel の第二不完全性定理を無効化せず、その否定的結論に型理論的な正の構造を与える外点指示付き依存型理論、すなわち○依存型を提案した。通常の証明判断 $a:A$ と指示判断 $p:A\rightsquigarrow\dfix$ を分離し、$\dfix$ を $A$ の値ではなく外部化効果として扱った。無矛盾性について得られるのは
+\[
+ T\nvdash\Con(T),
+ \qquad
+ \EPMDTT_{\Meta}(T)\vdash\Con(T)\rightsquigarrow\dfix
+\]
+という二水準の併存である。後者は前者の否定ではなく、前者を証明障害として記録したメタ理論相対的判断である。
+
+この枠組みは、入れ子数学を終わらせるものではない。各理論がどの外部理論に依存し、どの境界で通常の証明から指示へ移るかを「窓の連鎖」として可視化する。また、原因別マーカー、空効果を要求する証明モード、メタ理論添字によって、外部依存を実装上も静的に追跡できる。消去翻訳による保守性定理は、これらの指示を追加しても元の言語の証明能力が増加しないことを保証する。今後、より強い依存型構造に対する保守性、意味論、強制法との比較定理、および QRB による幾何学化が確立されれば、○依存型は「意味＝操作」に「外部指示」を加える証明論的枠組みとなり得る。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
