@@ -23,8 +23,7 @@ $(TARGET): $(PDFS)
 # 個別のPDF生成ルール
 %.pdf: %.tex
 	$(LATEX) $(LATEX_FLAGS) $<
-	# 目次や参照がある場合、2回実行する必要がある場合は以下を有効にしてください
-	# $(LATEX) $(LATEX_FLAGS) $<
+	$(LATEX) $(LATEX_FLAGS) $<
 
 txt: $(SOURCES)
 	@rm -f _crl.txt
