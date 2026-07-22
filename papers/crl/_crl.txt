@@ -517,8 +517,10 @@ Amphigory（冗）という単語の辞書的意味は「Nonsense」あるいは
 \newcommand{\PoV}{\operatorname{PoV}}
 \newcommand{\dfix}{\bigcirc}
 \newcommand{\Rel}{\mathbf{Rel}}
+\newcommand{\Amphi}{\mathsf{Amphi}}
 \newcommand{\QRB}{\mathrm{QRB}}
 \newcommand{\Forc}{\mathrm{Forc}}
+\newcommand{\sem}[1]{\mathopen{[\![}#1\mathclose{]\!]}}
 
 \title{計算関係論理\\
 {\large ---PoV--\texorpdfstring{$\rho$}{rho} インターフェイスによる動的評価体系---}}
@@ -529,84 +531,72 @@ Amphigory（冗）という単語の辞書的意味は「Nonsense」あるいは
 \maketitle
 
 \begin{abstract}
-本稿は、Freyd と Scedrov の寓（Allegory）を基盤として、視点数 $\PoV$ と継続残余 $\rho$ を射の評価情報へ組み込む計算関係論理（Computational Relational Logic; CRL）を提案する。CRL の中心構造は PoV--$\rho$ インターフェイスであり、異なる評価文脈間の情報移送を、視点数の変換と残余の蓄積・圧縮として記述する。交わりは観測文脈の動的併置、逆関係は未来制約の引き戻しとして解釈される。古典的モジュラー律から得られる関係包含と、追加の残余圧縮仮定とを明確に分離し、残余モジュラー定理を条件付きで与える。さらに、非停止過程を内部では単調作用素の最大不動点 $\nu F$ によって表し、その内部表現が指し示す外部を値ではない指示記号 $\dfix$ で記録する。エルブラン空間上の証明探索を例として、順方向、逆方向、極限という三層の計算論的時間を定式化する。最後に、確率的推論および大規模言語モデルとの対応を、同一視ではなく検証を要する解釈仮説として提示する。
+本稿は、視点数 $\PoV$ と継続残余 $\rho$ を備えた動的関係代数である冗（Amphigory）を全面的な基礎として、計算関係論理（Computational Relational Logic; CRL）を提案する。冗における評価空間、射、交わり、逆関係、残余モジュラー定理、無記、最大不動点 $\nu F$ および外部指示記号 $\dfix$ は既定の構造として継承し、本稿では再定義しない。CRL が新たに導入する中心構造は PoV--$\rho$ インターフェイスであり、冗の抽象的な評価推移を具体的な計算状態間の情報移送として実現する。文脈の融合に伴う視点数の変換と残余の蓄積・圧縮を記述し、冗の双方向演繹が計算モデル上で保存される条件を与える。エルブラン空間上の証明探索を主要例として、順方向、逆方向、極限という三層の計算論的時間を定式化する。最後に、確率的推論および大規模言語モデルとの対応を、同一視ではなく検証を要する解釈仮説として提示する。
 \end{abstract}
 
 \section{導入}
 
-Freyd と Scedrov による寓は、二項関係の圏 $\Rel$ を、射の半順序、交わり、逆関係、およびモジュラー律によって抽象化する枠組みである \cite{FreydScedrov1990}。関係の包含と合成を統一的に扱える一方、通常の寓の公理だけでは、証明探索に要する分岐数、後戻りの大きさ、非停止過程に残る計算障害などは記録されない。
+Freyd と Scedrov の寓は二項関係の圏 $\Rel$ を抽象化する静的骨格を与える \cite{FreydScedrov1990}。冗はこの寓的骨格に、評価位相、視点数 $\PoV$、継続残余 $\rho$、動的併置、逆方向推論、および評価不能過程を無記として保存する構造を加えた動的関係代数である \cite{ChibaAmphigory2026}。
 
-計算関係論理は、この静的な関係構造を置き換えるのではなく、その各射に動的評価情報を付加する。評価情報は、独立した観測・選択の数を表す視点数 $\PoV$ と、計算・証明・制約伝播に残る障害を表す継続残余 $\rho$ からなる。両者は異なる評価文脈を接続する境界面、すなわち PoV--$\rho$ インターフェイスとして働く。
+計算関係論理は、冗の射と評価推移を、証明探索や制約伝播などの具体的な計算状態へ解釈し、異なる評価文脈間で $\PoV$ と $\rho$ を受け渡す規約を PoV--$\rho$ インターフェイスとして付加する。すなわち、冗が動的関係の代数を与え、CRL はその計算的実現と論理的利用法を与える。
 
 本稿の目的は次の四点である。
 \begin{enumerate}
- \item 寓の射に評価位相、視点数、継続残余を付加した CRL の基本構造を定義する。
- \item 交わり、逆関係、モジュラー律を動的評価の観点から再解釈する。
- \item 非停止過程の内部表現 $\nu F$ と、外部への指示記号 $\dfix$ を区別する。
+ \item 冗の射を具体的な計算状態間の推移として実現する CRL 構造を定義する。
+ \item 評価文脈間の情報移送を担う PoV--$\rho$ インターフェイスを定式化する。
+ \item 冗の双方向演繹と残余モジュラー定理が計算的実現で保存される条件を示す。
  \item エルブラン空間上の証明探索と確率的推論への応用可能性を示す。
 \end{enumerate}
 
 \begin{remark}[本稿の位置づけ]
-冗（Amphigory）は、視点数と継続残余を持つ動的関係代数の原型を提示した \cite{ChibaAmphigory2026}。本稿はその構想を「計算関係論理」として整理し、PoV--$\rho$ インターフェイスを独立した構造として定式化する。四重残余束（QRB）は、同じ到達不能性の問題を安定テンソル三角圏と強制法の側から幾何学化する \cite{ChibaQRB2026}。CRL と QRB は理論基盤を異にするが、$\dfix$ を値ではなく外部到達の指示記号として用いる点を共有する。
+理論の継承関係は
+\[
+ \text{Allegory}\longrightarrow\text{Amphigory}
+ \longrightarrow\text{CRL}
+\]
+である。第一の矢印は動的評価構造の付加、第二の矢印は計算的実現とインターフェイス構造の付加を表す。四重残余束（QRB）は、同じ到達不能性の問題を安定テンソル三角圏と強制法の側から幾何学化する \cite{ChibaQRB2026}。CRL は冗から継承した $\dfix$ を用い、QRB との比較も冗を介して行う。
 \end{remark}
 
-\section{評価付き寓と PoV--\texorpdfstring{$\rho$}{rho} インターフェイス}
+\section{冗的基盤と PoV--\texorpdfstring{$\rho$}{rho} インターフェイス}
 
-\subsection{基礎となる寓}
+\subsection{冗から継承する構造}
 
-\begin{assumption}[寓的基盤]
-$\mathcal{A}$ を寓とする。各対象 $X,Y$ に対して射の集合 $\mathcal{A}(X,Y)$ は半順序と有限交わり $\cap$ を持ち、各射 $R:X\to Y$ には逆関係 $R^\circ:Y\to X$ が定まる。また、合成を $RS$ と書くとき、モジュラー律
+\begin{assumption}[冗的基盤]
+$\mathcal{A}$ を \cite{ChibaAmphigory2026} で定義された冗とする。したがって、評価空間
 \[
- RS\cap T\;\leq\;R(S\cap R^\circ T)
-\]
-が成り立つとする。
-\end{assumption}
-
-この仮定は CRL の静的骨格である。以下で導入する評価は、射の等号や包含を変更せず、それらの計算的実現に注釈を与える。
-
-\subsection{評価空間}
-
-\begin{definition}[評価空間]
-CRL の評価空間を
-\[
- \mathcal{E}:=\mathcal{C}\times\mathcal{V}\times\mathcal{L}
-\]
-とする。各成分は次を表す。
-\begin{enumerate}
- \item $\mathcal{C}$ は評価位相の空間であり、少なくとも真、偽、両立、未決定を区別する。
- \item $\mathcal{V}:=\mathbb{N}\cup\{\infty\}$ は視点数空間である。
- \item $\mathcal{L}:=\mathbb{R}_{\geq0}\cup\{\infty\}$ は継続残余空間である。
-\end{enumerate}
-\end{definition}
-
-\begin{definition}[CRL の射]
-対象 $X,Y$ 間の CRL 射とは、寓の射 $R:X\to Y$ と、その計算的実現に付随する評価写像
-\[
- \epsilon_R:X\times Y\longrightarrow
  \mathcal{C}\times\mathcal{V}\times\mathcal{L},
  \qquad
- (x,y)\longmapsto(c_R(x,y),p_R(x,y),\rho_R(x,y))
+ \mathcal{V}=\mathbb{N}\cup\{\infty\},
+ \qquad
+ \mathcal{L}=\mathbb{R}_{\geq0},
 \]
-の組である。略記として
-\[
- R:X\longrightarrow_{\langle p,\rho\rangle}Y
-\]
-と書く。
-\end{definition}
+評価付きの射 $R:X\to_{\langle p,\rho\rangle}Y$、交わり $R\cap S$、逆関係 $R^\circ$、合成、残余モジュラー定理、および無記に関する極限構造が与えられているものとする。本稿におけるこれらの記号と法則は、すべて冗における定義と同一であり、CRL の射とは、計算的解釈を与えられた冗の射にほかならない。
+\end{assumption}
 
-$p_R(x,y)$ は関係 $xRy$ を構成・検査するために必要な独立した選択点の数、$\rho_R(x,y)$ は失敗した分岐、未解決制約、再計算などの残余を表す。これらの具体的な測定法は意味論または実装ごとに指定される。
+\subsection{CRL 構造}
+
+\begin{definition}[冗上の CRL 構造]
+冗 $\mathcal{A}$ 上の CRL 構造とは、次のデータからなる。
+\begin{enumerate}
+ \item 各対象 $X$ に対する計算状態の解釈 $\mathsf{State}(X)$。
+ \item 各冗の射 $R:X\to_{\langle p,\rho\rangle}Y$ に対する状態推移関係 $\sem{R}\subseteq\mathsf{State}(X)\times\mathsf{State}(Y)$。
+ \item 合成可能または併置可能な射の評価情報を接続する PoV--$\rho$ インターフェイス $\Phi$。
+ \item 各状態推移に対する実現残余 $\widehat{\rho}(\sem{R})$。これは冗の抽象残余 $\rho(R)$ の計算モデル上の測定値である。
+\end{enumerate}
+状態推移の解釈は、冗の合成、交わり、逆関係、および評価推移を保存するものとする。
+\end{definition}
 
 \subsection{インターフェイス}
 
 \begin{definition}[PoV--$\rho$ インターフェイス]
-射 $R,S$ の評価情報を接続する PoV--$\rho$ インターフェイスとは、部分写像
+冗の射 $R,S$ の評価情報を接続する PoV--$\rho$ インターフェイスとは、部分写像
 \[
  \Phi_{R,S}:
  (\mathcal{V}\times\mathcal{L})^2
  \dashrightarrow
  \mathcal{V}\times\mathcal{L}
 \]
-であって、二つの評価文脈から合成後の視点数と残余を生成するものをいう。基本形を
+であって、二つの評価文脈から接続後の視点数と残余を生成するものをいう。冗の動的併置と整合する基本形を
 \[
  \Phi_{R,S}\bigl((n,\alpha),(m,\beta)\bigr)
  =\bigl(n+m,\alpha+\beta+\Delta_{R,S}(n,m)\bigr)
@@ -614,14 +604,17 @@ $p_R(x,y)$ は関係 $xRy$ を構成・検査するために必要な独立し�
 とする。$\Delta_{R,S}(n,m)\geq0$ は文脈干渉項である。
 \end{definition}
 
-インターフェイスは単なる数値の組ではなく、文脈間で何を保存し、何を残余へ送るかを定める規約である。$\Delta=0$ は独立な文脈の併置を、$\Delta>0$ は共有変数、競合制約、観測順序などによる干渉を表す。
+インターフェイスは冗の交わりを再定義するものではなく、冗に既に存在する干渉項を具体的な計算モデルでどのように測定し、次の状態へ渡すかを定める規約である。$\Delta=0$ は独立な文脈の併置を、$\Delta>0$ は共有変数、競合制約、観測順序などによる干渉を表す。
 
-\section{双方向演繹の代数化}
+\begin{assumption}[インターフェイスの整合性]
+$\Phi$ は冗の恒等射、合成および交わりと整合し、三つの文脈を順に接続する二通りの評価が一致するものとする。すなわち、定義される範囲で単位律と結合律を満たし、冗で計算された $\PoV$ と $\rho$ を保存する。
+\end{assumption}
 
-\subsection{動的併置}
+\section{冗の双方向演繹の計算的実現}
 
-\begin{definition}[交わりの動的評価]
-$R$ と $S$ の交わりを観測文脈の併置として評価し、
+\subsection{継承される演算}
+
+冗において、交わりは観測文脈の動的併置であり、逆関係は未来制約を現在の文脈へ引き戻す逆方向推論である。CRL はこれらを新たな演算として定義せず、次の既存の評価法則をそのまま用いる。
 \[
  \PoV(R\cap S)=\PoV(R)+\PoV(S),
 \]
@@ -629,103 +622,85 @@ $R$ と $S$ の交わりを観測文脈の併置として評価し、
  \rho(R\cap S)
  =\rho(R)+\rho(S)+\Delta_{R,S}
 \]
-とする。
-\end{definition}
-
-この式は寓における交わりの普遍的定義ではなく、CRL が採用する評価規約である。したがって $\Delta$ の選択はモデルの一部であり、具体例ごとに検証されなければならない。
-
-\subsection{逆関係と制約の引き戻し}
-
-\begin{definition}[逆方向評価]
-射 $R$ の逆関係について
 \[
  \PoV(R^\circ)=\PoV(R)
+ .
 \]
-とし、$R^\circ$ を終域側の制約を始域側へ引き戻す逆方向推論として解釈する。残余については一般に
-\[
- \rho(R^\circ)=\rho(R)+\Delta_R^\circ
-\]
-とし、$\Delta_R^\circ\geq0$ を逆方向化の追加費用とする。
-\end{definition}
 
-逆関係そのものは時間反転ではない。CRL における「逆方向の時間」とは、後段で判明した制約を前段の探索状態へ戻し、未展開の分岐を削除する操作的順序を指す。
+CRL に固有なのは、これらの抽象演算を状態推移 $\sem{R}$ とインターフェイス $\Phi$ によって実行可能な形へ移すことである。逆関係そのものを時間反転とはみなさず、後段で判明した制約を先行状態へ伝播して未展開の分岐を削除する操作的順序として実現する。
 
 \subsection{残余モジュラー定理}
 
-寓のモジュラー律は射の包含を与えるが、残余の大小はそれだけからは従わない。そこで次の計算意味論的仮定を分離する。
+冗の残余モジュラー定理は
+\[
+ RS\cap T\subseteq R(S\cap R^\circ T),
+ \qquad
+ \rho(RS\cap T)\geq\rho\bigl(R(S\cap R^\circ T)\bigr)
+\]
+を与える。CRL モデルでは、この抽象的な残余比較が実現残余 $\widehat{\rho}$ による具体的な探索費用の比較として保存されることを要求する。
 
 \begin{assumption}[局所制約による残余圧縮]
 任意の適合する射 $R,S,T$ に対して、未来制約 $T$ を $R^\circ T$ として先に引き戻す評価戦略は、事後的に $T$ と照合する戦略より残余を増加させないとする。すなわち
 \[
- \rho\bigl(R(S\cap R^\circ T)\bigr)
+ \widehat{\rho}\bigl(\sem{R(S\cap R^\circ T)}\bigr)
  \leq
- \rho(RS\cap T)
+ \widehat{\rho}\bigl(\sem{RS\cap T}\bigr)
 \]
 が成り立つ。
 \end{assumption}
 
-\begin{theorem}[残余モジュラー定理]
-仮定 2.1 および仮定 3.3 の下で、
+\begin{theorem}[残余モジュラー定理の CRL 保存]
+冗上の CRL 構造がインターフェイスの整合性と局所制約による残余圧縮を満たすならば、その状態推移の解釈において
 \[
- RS\cap T\leq R(S\cap R^\circ T),
+ \sem{RS\cap T}\subseteq\sem{R(S\cap R^\circ T)},
 \]
 \[
  \rho_{\mathrm{left}}\geq\rho_{\mathrm{right}}
 \]
 が成り立つ。ここで
 \[
- \rho_{\mathrm{left}}:=\rho(RS\cap T),
+ \rho_{\mathrm{left}}:=\widehat{\rho}\bigl(\sem{RS\cap T}\bigr),
  \qquad
- \rho_{\mathrm{right}}:=\rho\bigl(R(S\cap R^\circ T)\bigr)
+ \rho_{\mathrm{right}}:=\widehat{\rho}\bigl(\sem{R(S\cap R^\circ T)}\bigr)
 \]
 である。
 \end{theorem}
 
 \begin{proof}
-第一式は寓のモジュラー律である。第二式は仮定 3.3 の書き換えである。したがって、関係包含は寓の公理から、計算費用の比較は追加の圧縮仮定から、それぞれ独立に得られる。
+抽象的な包含と残余不等式は冗の残余モジュラー定理から継承される。状態推移の解釈は冗の演算を保存するため、第一式が得られる。PoV--$\rho$ インターフェイスは評価情報を保存し、局所制約による実現残余の圧縮を仮定しているため、第二式も具体的な CRL モデル上で成立する。
 \end{proof}
 
 \begin{remark}
-残余不等式を無条件の定理としないことが重要である。制約の引き戻し自体が高価なモデルや、局所化によって分岐が増えるモデルでは仮定 3.3 が成立しない可能性がある。
+抽象的な残余不等式は冗の定理であるが、特定の実装で測定した実行時間やメモリ量が同じ不等式を満たすとは限らない。制約の引き戻し自体が高価な場合には、その実装は上の圧縮仮定を満たす CRL モデルではない。
 \end{remark}
 
-\section{無記、最大不動点、外部指示}
+\section{冗から継承される無記と外部指示}
 
-\subsection{非停止評価の隔離}
-
-\begin{axiom}[無記と極限収束]
-評価列に沿って視点数が発散し
+CRL は、非停止評価に関する新たな公理や外部点を導入しない。冗の無記公理により、評価列に沿って
 \[
  \PoV\longrightarrow\infty
 \]
-となるとき、その評価を任意の通常値へ同一視せず、無記として残余空間へ隔離する。評価状態の完備束上に単調作用素 $F$ が与えられている場合、内部的な極限は最大不動点 $\nu F$ によって表す。
-\end{axiom}
-
-\begin{definition}[中道不動点]
-$L$ を完備束、$F:L\to L$ を単調作用素とする。最大不動点
+となる過程は任意の通常値へ同一視されず、無記として残余空間へ隔離される。完備束 $L$ 上の単調作用素 $F$ に対する内部表現は、冗で定義された中道不動点
 \[
  \nu F:=\bigvee\{x\in L\mid x\leq F(x)\}
 \]
-を中道不動点と呼ぶ。
-\end{definition}
-
-\begin{definition}[外部指示記号]
-$\dfix$ は $\nu F$ の値でも $L$ の追加要素でもなく、内部表現 $\nu F$ を介して、有限の視点数では決定できない外部を指示する記号である。この指示関係を
+であり、$\dfix$ はその値や $L$ の追加要素ではない。指示関係
 \[
  \dfix\rightsquigarrow\nu F
 \]
-と書く。
-\end{definition}
+も冗からそのまま継承する。
+
+CRL の役割は、この極限を証明探索の循環、無限分岐、資源制約下の未決定などの具体的な計算過程として解釈することにある。したがって、CRL の計算モデルが $\dfix$ を生成するとは、冗の外部指示を計算状態上で観測したことを意味し、新しい値を計算したことを意味しない。
 
 \begin{remark}[QRB との対応]
-CRL の $\dfix$ は、QRB における強制法の指示記号 $\dfix_{\Forc}$ および QRB の指示記号 $\dfix_{\QRB}$ と問題意識を共有する \cite{ChibaQRB2026}。これは $\nu F$、ジェネリック・フィルター、QRB の代表点を同一視する主張ではない。共通するのは、内部対象として値を追加する代わりに、内部から外部への到達を記録する文法である。
+CRL が用いる $\dfix$ は冗の指示記号そのものである。したがって QRB における強制法の指示記号 $\dfix_{\Forc}$ および QRB の指示記号 $\dfix_{\QRB}$ との比較も、冗で述べられた対応を継承する \cite{ChibaAmphigory2026,ChibaQRB2026}。CRL は $\nu F$、ジェネリック・フィルター、QRB の代表点の新たな同一視を主張しない。
 \end{remark}
 
 \section{エルブラン空間上の計算論的時間}
 
 \subsection{エルブラン・関係}
 
-一階シグネチャ $\Sigma$ のエルブラン宇宙を $H_\Sigma$ とする。論理プログラムのゴール、代入、制約集合を状態として含む集合を $\mathsf{State}(H_\Sigma)$ と書く。SLD 解像および制約論理プログラミングの標準的背景については \cite{Lloyd1987,JaffarLassez1987} を参照する。
+一階シグネチャ $\Sigma$ のエルブラン宇宙を $H_\Sigma$ とする。論理プログラムのゴール、代入、制約集合を状態として含む集合を $\mathsf{State}(H_\Sigma)$ と書く。SLD 導出および制約論理プログラミングの標準的背景については \cite{Lloyd1987,JaffarLassez1987} を参照する。
 
 \begin{definition}[エルブラン・関係]
 証明探索の一段階を表す CRL 射
@@ -747,7 +722,7 @@ CRL の $\dfix$ は、QRB における強制法の指示記号 $\dfix_{\Forc}$ �
 \end{proposition}
 
 \begin{proof}
-第一項は解像ステップの向き、第二項は失敗した後続状態から先行状態への制約移送に対応する。第三項は公理 4.1 を、循環または無限分岐を持つ評価列へ適用したものである。
+第一項は解像ステップの向き、第二項は失敗した後続状態から先行状態への制約移送に対応する。第三項は冗から継承した無記公理を、循環または無限分岐を持つ評価列へ適用したものである。
 \end{proof}
 
 \begin{example}[循環を含む経路探索]
@@ -782,20 +757,20 @@ $\dfix$ & 所定の計算予算と観測文脈では決定できないことの�
 
 大規模言語モデルにおいて、アテンション・ヘッド数、温度、コンテキスト長をそのまま $\PoV$ と置くことはしない。それらから推定される有効な仮説多様性を $\PoV_{\mathrm{eff}}$ の候補とする。同様に、$\rho$ を幻覚の度合いそのものとはせず、事実制約違反、校正誤差、棄却候補、計算費用を含む複合指標として設計する必要がある。
 
-この仮説を理論へ昇格させるには、具体的な推論アルゴリズムごとに $\epsilon_R$、$\Phi_{R,S}$、$\Delta$ を定義し、残余圧縮仮定が成立する条件を実験的・数学的に検証しなければならない。
+この仮説を理論へ昇格させるには、具体的な推論アルゴリズムごとに状態推移関係 $\sem{R}$、$\Phi_{R,S}$、$\Delta$ を定義し、残余圧縮仮定が成立する条件を実験的・数学的に検証しなければならない。
 
 \section{結論}
 
-本稿は、寓の射に視点数と継続残余を付加し、それらの受け渡しを PoV--$\rho$ インターフェイスとして組織する計算関係論理を提案した。静的な関係包含と動的な評価費用を区別することで、モジュラー律は寓の公理、残余不等式は圧縮仮定に由来することを明確にした。
+本稿は、冗を全面的な基礎とし、その射と評価推移を具体的な計算状態へ解釈する計算関係論理を提案した。評価空間、PoV 付きの射、交わり、逆関係、残余モジュラー定理、無記、最大不動点および外部指示は冗から継承し、CRL 内では再定義しなかった。CRL 固有の構造は、状態推移の解釈と PoV--$\rho$ インターフェイスである。
 
 CRL の中心的な特徴は次の三点である。
 \begin{enumerate}
- \item 交わりと逆関係を、文脈の併置と制約の引き戻しとして動的に評価する。
- \item 非停止過程を内部では最大不動点 $\nu F$ によって表し、その外部到達を値ではない記号 $\dfix$ で指示する。
- \item エルブラン探索、制約伝播、確率的推論を、視点数、残余、干渉という共通の語彙で比較する。
+ \item 冗の抽象的な射を、証明探索や制約伝播の状態推移関係として実現する。
+ \item 冗の $\PoV$、$\rho$ および干渉項を、PoV--$\rho$ インターフェイスによって計算文脈間で受け渡す。
+ \item 冗から継承した双方向演繹と外部指示を、エルブラン探索および確率的推論の共通語彙として用いる。
 \end{enumerate}
 
-今後の課題は、具体的モデルにおける $\Delta$ と $\rho$ の構成、合成に関する結合律、残余圧縮仮定の十分条件、および QRB の残余対象との比較写像を与えることである。これらが確立されれば、CRL は静的関係代数と動的計算意味論の間を接続する評価付き関係論理として位置づけられる。
+今後の課題は、具体的モデルにおける状態推移関係、$\Delta$ と $\rho$ の測定法、インターフェイスの単位律・結合律、残余圧縮仮定の十分条件を与えることである。QRB との比較は、冗で構成された対応を基礎として計算モデルへ持ち上げる必要がある。これらが確立されれば、CRL は冗の動的関係代数を具体的な計算意味論へ接続する論理体系として位置づけられる。
 
 \bibliographystyle{plain}
 \bibliography{../ref}
@@ -889,5 +864,160 @@ CRL の中心的な特徴は次の三点である。
   title  = {言語の外点：強制法と四重残余束による到達不能性の幾何学},
   note   = {Manuscript, 2026-07-19},
   year   = {2026}
+}
+
+
+@article{balmer,
+  author  = {Paul Balmer},
+  title   = {The Spectrum of Prime Ideals in Tensor Triangulated Categories},
+  journal = {Journal f{"u}r die reine und angewandte Mathematik},
+  volume  = {588},
+  pages   = {149--168},
+  year    = {2005}
+}
+
+@book{bell,
+  author    = {John L. Bell},
+  title     = {Boolean-Valued Models and Independence Proofs in Set Theory},
+  publisher = {Oxford University Press},
+  year      = {1985}
+}
+
+@article{cohen,
+  author  = {Paul J. Cohen},
+  title   = {The Independence of the Continuum Hypothesis},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {50},
+  pages   = {1143--1148},
+  year    = {1963}
+}
+
+@article{godel,
+  author  = {Kurt G{"o}del},
+  title   = {{"U}ber formal unentscheidbare S{"a}tze der Principia Mathematica und verwandter Systeme I},
+  journal = {Monatshefte f{"u}r Mathematik und Physik},
+  volume  = {38},
+  pages   = {173--198},
+  year    = {1931}
+}
+
+@book{jech,
+  author    = {Thomas Jech},
+  title     = {Set Theory: The Third Millennium Edition, Revised and Expanded},
+  publisher = {Springer},
+  year      = {2003}
+}
+
+@book{johnstone,
+  author    = {Peter T. Johnstone},
+  title     = {Sketches of an Elephant: A Topos Theory Compendium},
+  publisher = {Oxford University Press},
+  year      = {2002}
+}
+
+@book{kleene,
+  author    = {Stephen C. Kleene},
+  title     = {Introduction to Metamathematics},
+  publisher = {North-Holland},
+  year      = {1952}
+}
+
+@article{kripke,
+  author  = {Saul A. Kripke},
+  title   = {Outline of a Theory of Truth},
+  journal = {The Journal of Philosophy},
+  volume  = {72},
+  number  = {19},
+  pages   = {690--716},
+  year    = {1975}
+}
+
+@article{tarski,
+  author  = {Alfred Tarski},
+  title   = {Der Wahrheitsbegriff in den formalisierten Sprachen},
+  journal = {Studia Philosophica},
+  volume  = {1},
+  pages   = {261--405},
+  year    = {1936}
+}
+
+@book{FreydScedrov1990,
+  author    = {Peter J. Freyd and Andre Scedrov},
+  title     = {Categories, Allegories},
+  publisher = {North-Holland},
+  year      = {1990}
+}
+
+@misc{ChibaQRB2026,
+  author = {千葉将臣},
+  title  = {言語の外点：強制法と四重残余束による到達不能性の幾何学},
+  note   = {Manuscript, 2026-07-19},
+  year   = {2026}
+}
+
+@misc{ChibaAmphigory2026,
+  author = {千葉将臣},
+  title  = {冗（Amphigory）の基礎的定式化：視点数・継続残余・無記の関係代数},
+  note   = {Manuscript, 2026-07-07},
+  year   = {2026}
+}
+
+@book{MartinLof1984,
+  author    = {Per Martin-L{"o}f},
+  title     = {Intuitionistic Type Theory},
+  publisher = {Bibliopolis},
+  address   = {Naples},
+  year      = {1984},
+  note      = {Notes by Giovanni Sambin}
+}
+
+@article{Moggi1991,
+  author  = {Eugenio Moggi},
+  title   = {Notions of Computation and Monads},
+  journal = {Information and Computation},
+  volume  = {93},
+  number  = {1},
+  pages   = {55--92},
+  year    = {1991}
+}
+
+@article{Capretta2005,
+  author  = {Venanzio Capretta},
+  title   = {General Recursion via Coinductive Types},
+  journal = {Logical Methods in Computer Science},
+  volume  = {1},
+  number  = {2},
+  year    = {2005}
+}
+
+@book{Lloyd1987,
+  author    = {J. W. Lloyd},
+  title     = {Foundations of Logic Programming},
+  edition   = {2},
+  publisher = {Springer},
+  year      = {1987}
+}
+
+@inproceedings{JaffarLassez1987,
+  author    = {Joxan Jaffar and Jean-Louis Lassez},
+  title     = {Constraint Logic Programming},
+  booktitle = {Proceedings of the 14th ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
+  pages     = {111--119},
+  year      = {1987}
+}
+
+@book{Bishop2006,
+  author    = {Christopher M. Bishop},
+  title     = {Pattern Recognition and Machine Learning},
+  publisher = {Springer},
+  year      = {2006}
+}
+
+@inproceedings{Vaswani2017,
+  author    = {Ashish Vaswani and Noam Shazeer and Niki Parmar and Jakob Uszkoreit and Llion Jones and Aidan N. Gomez and Lukasz Kaiser and Illia Polosukhin},
+  title     = {Attention Is All You Need},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {30},
+  year      = {2017}
 }
 
