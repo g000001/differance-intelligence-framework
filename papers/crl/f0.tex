@@ -1,0 +1,296 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{example}[definition]{例}
+\newtheorem{remark}[definition]{注記}
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{conjecture}[definition]{予想}
+
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\Fzero}{F_{0}}
+\newcommand{\Fomega}{F_{0,\omega}}
+\newcommand{\PoV}{\operatorname{PoV}}
+\newcommand{\rad}{\operatorname{rad}}
+\newcommand{\Obs}{\mathrm{Obs}}
+\newcommand{\Ind}{\mathrm{Ind}_{\dfix}}
+\newcommand{\Res}{\mathrm{Res}}
+
+\title{指示のみで構成された数体系 \texorpdfstring{$F_0$}{F0}}
+\author{千葉将臣}
+\date{2026-07-23}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、値を直接構成する代わりに、演算上の役割と到達可能性を指示する四記号 $\{0,1,\infty,\dfix\}$ からなる体系 $\Fzero$ を提案する。$0$ は吸収と基底、$1$ は同一性、$\infty$ は発散と極限方向、$\dfix$ は内部演算から到達できない外部を指示する。$\dfix$ は通常の数値ではなく、四重残余束（QRB）における外点の文法を有限の指示代数へ移した診断記号である。演算を加法相と乗法相の相互作用として読み、特異入力に対して結果を無条件に数値化せず、残余の衝突を $\dfix$ として記録する。さらに、冗、計算関係論理、○依存型および QRB との継承関係を整理する。ABC 予想とコラッツ予想への議論は証明ではなく、必要な追加軸や不変量を探索するための診断仮説として提示する。
+\end{abstract}
+
+\section{導入：\texorpdfstring{$F_1$}{F1} から \texorpdfstring{$F_0$}{F0} へ}
+
+\subsection{絶対幾何との関係}
+
+「一元体」$F_1$ をめぐる絶対幾何は、整数の幾何を通常の体より基礎的な構造から記述しようとする研究計画であり、モノイド、$\Gamma$-集合、超環など複数の定式化を持つ。Connes--Consani の絶対代数幾何もその一つである \cite{ConnesConsani2020}。これらは豊かな幾何学的対象を構成する一方、「素数の場所を指し示す直観」と「その意味を担う形式的対象」とを同時に扱う。
+
+本稿は既存の $F_1$ 理論を否定するのではなく、さらに弱い前構造を問う。すなわち、対象の意味や値を先に与えず、同一性、吸収、発散、外部到達という四種類の指示だけから出発できるかを検討する。この指示体系を $\Fzero$ と呼ぶ。
+
+\subsection{基本方針}
+
+$\Fzero$ のプリミティブを次の四記号とする。
+
+\begin{center}
+\begin{tabular}{c l p{0.56\textwidth}}
+\toprule
+記号 & 名称 & 指示内容 \\
+\midrule
+$1$ & 単位指示 & 同一性および恒等操作 \\
+$0$ & 吸収指示 & 消去、基底および「無」 \\
+$\infty$ & 無限指示 & 発散、極限および拡大方向 \\
+$\dfix$ & 外点指示 & 内部到達不能性および外部依存 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+$\dfix$ の文法は、QRB において複数の比較操作の残余が同時に非自明となる外点領域から着想を得る \cite{ChibaQRB2026}。ただし $\Fzero$ は QRB の幾何を内部に再構成するものではない。QRB の外点を値として取り込まず、特異な演算が内部領域を越えたことを記録する指示記号として用いる。
+
+\section{\texorpdfstring{$F_0$}{F0} の構成}
+
+\subsection{指示プリミティブ}
+
+\begin{axiom}[指示の最小性]
+$\Fzero$ のプリミティブ集合を
+\[
+ \mathcal{I}_0:=\{0,1,\infty,\dfix\}
+\]
+とする。$1$ は同一性、$0$ は吸収と基底、$\infty$ は有限領域からの発散方向、$\dfix$ は体系内部から到達不能な外部を指示する。これらの役割のいずれかを削除すると、対応する診断を区別できないものとする。
+\end{axiom}
+
+\begin{axiom}[外点指示の非値性]
+$\dfix$ は通常の数値ではなく、演算の残余が外点領域へ到達したことを記録する指示記号である。特異入力 $\delta$ を持つ演算 $\mu$ に対する
+\[
+ \mu(-,\delta)\leadsto\dfix
+\]
+は、数値等式ではなく、対応する残余診断 $\mathrm{ORB}_{\mu}(\delta)$ が非自明であることを表す。
+\end{axiom}
+
+\begin{remark}[記号と値の区別]
+$0,1,\infty$ は既存の数体系における値と同じ記号を用いるが、$\Fzero$ では第一義的に操作上の役割を指示する。具体的な数体系への解釈を与えた場合にのみ、それぞれの通常値と対応づけられる。
+\end{remark}
+
+\subsection{演算の相転移}
+
+$\Fzero$ では、加法と乗法を単一の演算表へ直ちに固定せず、異なる相として扱う。
+
+\begin{definition}[加法相と乗法相]
+加法相とは位置、順序、差分などを拘束する評価文脈であり、乗法相とは独立した因子や指示チャンネルを結合する評価文脈である。両相を接続する際に失われる情報を継続残余 $\rho$ と呼ぶ。
+\end{definition}
+
+分配律は二相を接続するが、その接続が常に無残余であるとは仮定しない。相の競合を内部の値へ一意に還元できない場合、結果ではなく診断
+\[
+ \rho>0\quad\Longrightarrow\quad\mu(a,b)\leadsto\dfix
+\]
+を記録する。閾値および残余の具体的構成は $\Fzero$ のモデルごとに与えられなければならない。
+
+\section{四つのプリミティブと診断閉包}
+
+\subsection{段階的拡張}
+
+$\{0,1\}$ だけでは、$1/0$ のような逆操作の不在と、体系全体の破綻とを区別できない。$\infty$ を加えれば発散方向を記録できるが、$0\cdot\infty$ や $\infty-\infty$ のように、吸収と発散、または二つの発散方向が衝突する場合の文脈依存性は残る。$\dfix$ は、この未解消の衝突を任意の数値へ同一視せずに保存する。
+
+\begin{center}
+\begin{tabular}{c c p{0.52\textwidth}}
+\toprule
+式 & 指示結果 & 診断 \\
+\midrule
+$1/0$ & $\dfix$ & 除算に必要な逆元が内部に存在しない \\
+$0\cdot\infty$ & $\dfix$ & 吸収相と発散相の競合が文脈なしには解けない \\
+$\infty-\infty$ & $\dfix$ & 二つの極限方向の相対速度が指定されていない \\
+$\mu(\dfix,x)$ & $\dfix$ & 外部依存を解消するハンドラが与えられていない \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+これらは拡張実数における通常の等式ではない。左辺の操作が指定された文脈だけでは値を決定できないことを、右辺の指示記号で表している。
+
+\begin{definition}[指示的全域化]
+部分的な二項演算 $\mu$ に対し、指示的全域化 $\widehat{\mu}:\mathcal{I}_0^2\to\mathcal{I}_0$ を、内部規則が結果を決定する場合は対応する指示を返し、それ以外の場合は $\dfix$ を返す操作として定める。
+\end{definition}
+
+\begin{proposition}[診断閉包]
+指示的全域化された有限個の二項演算の下で、$\mathcal{I}_0$ は閉じている。
+\end{proposition}
+
+\begin{proof}
+定義により、内部規則が適用できる場合の結果は $0,1,\infty$ のいずれかへ解釈される。結果が決定できない場合、または入力に未処理の $\dfix$ が含まれる場合は $\dfix$ を返す。したがって出力は常に $\mathcal{I}_0$ に属する。
+\end{proof}
+
+\begin{remark}
+この命題は閉包を定義から得る基礎結果であり、$\Fzero$ が体、半環、超環などの既知の代数構造であることを意味しない。結合律、可換律、分配律およびハンドラの整合性は別途証明する必要がある。
+\end{remark}
+
+\section{ABC 予想への診断仮説}
+
+\subsection{加法相と乗法相}
+
+互いに素な正整数 $a,b,c$ が $a+b=c$ を満たすとき、ABC 予想は任意の $\varepsilon>0$ に対して有限個の例外を除き
+\[
+ c<\rad(abc)^{1+\varepsilon}
+\]
+が成り立つという形で述べられる。$\Fzero$ の観点では、$a+b=c$ は加法的拘束、$\rad(abc)$ は異なる素因数を抽出する乗法的指示として読める。
+
+\begin{conjecture}[相転移残余による解釈]
+ABC 型不等式に現れる誤差は、加法相から乗法相へ情報を移す際の残余 $\rho$ としてモデル化できる。適切な $\rho$ と高さ関数を構成できれば、ABC 予想を相間の情報損失に対する上界として再定式化できる。
+\end{conjecture}
+
+関数体では変数と微分が加法的変化を測る追加構造を与える。一方、整数環における対応物は自明ではない。本稿では、この差を「基礎軸」「高さまたは対数軸」「外部化軸」という三機能へ分解する診断図式を提案する。
+
+\[
+\begin{array}{c}
+\text{基礎軸：整数の加法・乗法}\\[2mm]
+\swarrow\quad\searrow\\[-1mm]
+\text{高さ軸：対数的測定}
+\qquad
+\text{外部化軸：未解消残余の指示}
+\end{array}
+\]
+
+\begin{remark}[主張の範囲]
+上の三軸図式は ABC 予想の証明でも、ABC 予想の ZFC からの独立性証明でもない。必要な残余、比較写像、モデルおよび不等式は未構成であり、現段階では研究上の診断仮説である。
+\end{remark}
+
+\section{コラッツ予想と \texorpdfstring{$F_{0,\omega}$}{F0-omega}}
+
+\subsection{反例集合の分類}
+
+コラッツ写像を
+\[
+ C(n)=
+ \begin{cases}
+ n/2,&n\equiv0\pmod 2,\\
+ 3n+1,&n\equiv1\pmod 2
+ \end{cases}
+\]
+とする。コラッツ予想の反例が存在すると仮定した場合、軌道は非自明周期へ入るか、非有界に振る舞うかのいずれかを含まなければならない。数値の通常の大小だけでは、奇数ステップの増大と偶数ステップの減少を同一の単調量で追跡しにくい。
+
+\begin{definition}[無限指示軸]
+$\Fomega$ とは、各反復段階に $\Fzero$ の指示情報を付し、評価列全体を追跡する形式的な無限軸である。これは現段階では完成した代数対象ではなく、反復系の残余列を記述するための記法とする。
+\end{definition}
+
+提案する研究方針は、個々の値の単調降下ではなく、仮想的な反例集合 $S_{\mathrm{bad}}$ が反復の下で保持しなければならない不変量を探すことである。候補には、$2$ 進付値、奇数ステップ間の停止時間、対数ドリフト、周期条件などが含まれる。
+
+\begin{conjecture}[動的残余の消滅]
+適切な測度と残余関数 $\rho_{\omega}$ が構成され、反例集合の像について一様な縮小
+\[
+ \rho_{\omega}\bigl(C(S_{\mathrm{bad}})\bigr)
+ \leq q\,\rho_{\omega}(S_{\mathrm{bad}}),
+ \qquad 0\leq q<1
+\]
+が証明できるならば、有限測度を持つ不変な反例集合は存在しない。
+\end{conjecture}
+
+\begin{proof}[条件付き帰結]
+$S_{\mathrm{bad}}$ が不変ならば、反復により
+\[
+ \rho_{\omega}(S_{\mathrm{bad}})
+ \leq q^n\rho_{\omega}(S_{\mathrm{bad}})
+\]
+を得る。$n\to\infty$ とすれば有限な残余は $0$ でなければならない。ただし、残余ゼロから集合が空であることを結論するには、$\rho_{\omega}$ の忠実性がさらに必要である。
+\end{proof}
+
+\begin{remark}[未解決部分]
+必要な一様縮小、測度の忠実性、非自明周期の排除はいずれも未証明である。特に「測度ゼロ」は「反例が存在しない」を一般には意味しない。したがって本節はコラッツ予想の証明ではなく、証明に必要な補題を明示する研究計画である。
+\end{remark}
+
+\section{三軸構造の機能的解釈}
+
+関数体 $k[t]$ では、定数体 $k$、変数 $t$ の幾何、微分 $d/dt$ という異なる機能を区別できる。整数論でこれらに類する操作を探す際、本稿は次の三機能を区別する。
+
+\begin{enumerate}
+ \item 基礎軸：整数の加法・乗法と論理的推論を担う。
+ \item 高さ軸：対数、高さ、付値などにより乗法的規模を比較する。
+ \item 外部化軸：内部の演算では解消できない残余と必要な理論拡大を指示する。
+\end{enumerate}
+
+これは空間の実次元を数える主張ではなく、証明で必要となる操作的自由度の分類である。$\{0,1\}$、$\{0,1,\infty\}$、$\{0,1,\infty,\dfix\}$ という段階は、それぞれ二値判断、発散方向の追加、外部依存の追加に対応する。
+
+\section{関連理論との位置づけ}
+
+\subsection{継承関係}
+
+本稿が想定する概念上の関係を次に示す。
+\[
+\begin{array}{c}
+\Fzero\ \text{（純粋指示体系）}\\
+\downarrow\ \text{指示の関係的解釈}\\
+\text{Allegory}\ \cite{FreydScedrov1990}\\
+\downarrow\ \text{動的評価構造}\\
+\text{Amphigory}\ \cite{ChibaAmphigory2026}\\
+\downarrow\ \text{計算的実現}\\
+\text{CRL}\ \cite{ChibaCRL2026}\\
+\downarrow\ \text{型理論的外部化}\\
+\text{EPMDTT}\ \cite{ChibaEPMDTT2026}
+\end{array}
+\qquad
+\begin{array}{c}
+\text{QRB}\ \cite{ChibaQRB2026}\\
+\updownarrow\\
+\text{外点と残余の幾何学}
+\end{array}
+\]
+
+この図は既に構成された関手列を主張するものではない。$\Fzero$ から各理論への具体的な対象写像、射写像、保存則を与えることは今後の課題である。
+
+\subsection{対応表}
+
+\begin{center}
+\begin{tabular}{c p{0.31\textwidth} p{0.42\textwidth}}
+\toprule
+$\Fzero$ & 関連構造 & 解釈 \\
+\midrule
+$0$ & 恒等性截断または残余の消滅 & 吸収、消去、基底 \\
+$1$ & 恒等関手 $\mathrm{Id}$ & 可逆性と単位の基準 \\
+$\infty$ & 非停止列、$\PoV\to\infty$ & 発散および極限方向 \\
+$\dfix$ & QRB 外点、○依存型の指示判断 & 外部到達と未解消依存 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+○依存型では、$\Fzero$ の外点指示に対応する判断を
+\[
+ \Gamma\vdash_T^{\mathcal M}p:A\rightsquigarrow\dfix
+\]
+と書き、証明障害を $\Obs_T(A)$、計算型を
+\[
+ \Ind(A)=A+\mathbf{1}
+\]
+として記録する \cite{ChibaEPMDTT2026}。ここでも $\dfix$ は $A$ の値ではない。
+
+\section{結論と今後の課題}
+
+本稿は、同一性、吸収、発散、外部到達を表す $\{0,1,\infty,\dfix\}$ からなる指示体系 $\Fzero$ を提案した。特異演算を任意の値へ押し込まず、未解消の残余を $\dfix$ として保存することで、部分演算を診断付きで全域化できる。ただし、得られた閉包は定義的な閉包であり、既知の数体系と同じ代数法則を自動的に満たすものではない。
+
+今後の主要課題は次の通りである。
+\begin{enumerate}
+ \item 文脈依存の演算表、残余関数およびハンドラを具体化し、結合律などの保存条件を示す。
+ \item $\Fomega$ を余帰納的または超限的な対象として定式化する。
+ \item $\Fzero$ から冗、CRL、○依存型、QRB への具体的な比較写像を構成する。
+ \item ABC 予想およびコラッツ予想への診断仮説について、必要な残余評価と中間補題を証明可能な形へ分解する。
+ \item 指示体系を機械化し、未定義性、外部依存、独立性候補を区別して記録する検査器を実装する。
+\end{enumerate}
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
