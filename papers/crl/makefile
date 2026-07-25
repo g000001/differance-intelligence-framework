@@ -5,6 +5,7 @@ LATEX_FLAGS = -interaction=nonstopmode
 
 # ソースファイルのリスト（指定された順番を維持）
 SOURCES = \
+	../logic/avyakata.tex \
 	../logic/qrb.tex \
 	../math/amphigory.tex \
 	crl.tex

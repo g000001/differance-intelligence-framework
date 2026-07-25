@@ -1,3 +1,506 @@
+\RequirePackage{iftex}
+\ifLuaTeX
+  \documentclass[11pt,a4paper,ja=standard,lualatex]{article}
+\else\ifXeTeX
+  \documentclass[11pt,a4paper,ja=standard,xelatex]{article}
+\else
+  \documentclass[11pt,a4paper,ja=standard,pdflatex]{sarticle}
+\fi\fi
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{icat-common}
+
+\newtheorem{theorem}{定理}
+\newtheorem{definition}{定義}
+\newtheorem{proposition}{命題}
+\newtheorem{corollary}{系}
+\newtheorem{example}{例}
+\newtheorem{remark}{注意}
+\newtheorem{operation}{操作}
+
+\title{無記の意味論：意味と指示の不動点\\
+---保留の再帰と無記の再帰の分岐について---}
+\author{千葉将臣}
+\date{2026-06-30}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本論文は、意味（Sinn）と指示（Bedeutung）の関係を、
+分離可能とも同一とも断定しないための操作として
+無記（むき、Skt.\ avy\=akata）を定式化する。
+意味と指示は不可分であるが、同一ではない。
+しかしこの関係を「不可分である」「同一ではない」と命題化した瞬間、
+それは真偽・可能不可能・予想・独立性といった記の枠組みに回収される。
+本論文の主張は、この回収を避けるためには、意味と指示の関係を
+無記の不動点として、すなわち
+「無記は無記である」と断定するほかない、ということである。
+
+そのために本論文は、まず保留（エポケー、$E$）と無記（$\Avyakata$）を
+分離する。保留は将来の再開条件 $R$ を要求するため、
+$E(\varphi)\to E(R(\varphi))\to E(R(R(\varphi)))\to\cdots$
+という悪性無限退行を生じる。これに対して無記の再帰は、
+各段階で完結する操作の反復であり、退行ではない。
+さらに本論文は、この反復を「可能か不可能か」「予想されるか」
+という形で述べること自体が保留の再帰を呼び戻すことを示し、
+無記についての有効な記述は断定形でしか成立しないことを論じる。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入：記の罠}
+
+\subsection{記の枠組みとその限界}
+
+ある命題 $\varphi$ について、数学・論理学は通常、以下のいずれかの
+立場を取る。
+
+\begin{itemize}
+\item $\varphi$ は証明可能である（定理）。
+\item $\varphi$ は反証可能である（否定の定理）。
+\item $\varphi$ は与えられた体系から独立である
+  （ゲーデルの不完全性定理の意味で）。
+\item $\varphi$ は現時点で未解決だが、いずれ真偽が定まると想定される
+  （予想）。
+\end{itemize}
+
+本論文ではこれら四つの立場をまとめて\textbf{記}（き）の枠組みと呼ぶ。
+記の枠組みに共通するのは、$\varphi$ について
+「真偽がいずれかに定まっている、あるいは定まりうる」
+という前提である。独立性命題でさえ、
+「証明できないし反証もできない」という事実そのものは
+体系内で確定した記述として扱われる。
+
+この枠組みは、ある種の問いに対して過剰に強い。
+たとえば「意味と指示は分離可能か」「意味と指示は同一か」
+という問いに対して、肯定・否定・独立性・予想のいずれかを
+与えようとすると、意味と指示の関係はすでに
+命題的対象として固定されている。
+しかし本論文が扱う関係は、その固定以前にある。
+意味と指示は不可分であるが、同一ではない。
+この言い方自体も、厳密には記の枠組みに接近する。
+したがって本論文は、この関係を真偽の対象としてではなく、
+操作として扱う。
+
+\subsection{可能不可能・予想という回収}
+
+この種の論点は、しばしば次の二つの形式の議論に回収される。
+
+\begin{enumerate}
+\item 「無記として表現することは可能である／不可能である」。
+\item 「無記として表現できると予想される／考えられる」。
+\end{enumerate}
+
+しかし第一の形式は、無記を可能性命題として扱う。
+第二の形式は、無記を将来の確定を予定した予想命題として扱う。
+いずれも、無記を記の枠組みに戻す。
+本論文の目的は、無記を可能不可能や予想として述べることではない。
+無記が必要となる構造を示し、無記は無記であるとしか述べられない
+地点を確定することである。
+
+\section{記と無記}
+
+\subsection{記の定義}
+
+\begin{definition}[記]
+命題 $\varphi$ に対し、$\varphi$ の真偽を問うことが
+体系 $T$ の内部で意味を持つ（すなわち $T \vdash \varphi$,
+$T \vdash \neg\varphi$, あるいは
+$T \nvdash \varphi$ かつ $T \nvdash \neg\varphi$ という
+独立性の判定が $T$ の言語で記述可能である）とき、
+$\varphi$ は体系 $T$ に対して\textbf{記}であるという。
+\end{definition}
+
+\begin{definition}[無記]
+命題、あるいは命題的に見える問い $\varphi$ に対し、
+$\varphi$ の真偽を問う行為を実行しない操作を
+$\Avyakata(\varphi)$ と書き、\textbf{無記}と呼ぶ。
+
+$\Avyakata(\varphi)$ は真理値を持たない。
+これは「$\varphi$ は真でも偽でもない」という第三の真理値ではなく、
+$\varphi$ に対して真理値を付与する行為そのものを
+実行しないという操作である。
+\end{definition}
+
+\begin{remark}
+保留は将来の再開を予定する語であり、無記とは異なる。
+無記は判断を延期しない。
+無記は、問いを真偽の対象として立てる行為を、今ここで実行しない。
+\end{remark}
+
+\subsection{意味と指示への適用}
+
+記号 $S$ の意味を $\mathrm{Sinn}(S)$、
+指示対象を $\mathrm{Bed}(S)$ と書く。
+このとき次の二つの問いは、どちらも記の枠組みに属する。
+
+\begin{align}
+\mathrm{Sinn}(S) &= \mathrm{Bed}(S),\\
+\mathrm{Sinn}(S) &\perp \mathrm{Bed}(S).
+\end{align}
+
+第一式は意味と指示を同一化する。
+第二式は意味と指示を分離した独立対象として固定する。
+しかし、意味と指示の関係はこの二択では捉えられない。
+意味は指示なしに空転せず、指示は意味なしに記号的対象として現れない。
+この意味で両者は不可分である。
+他方で、意味は指示対象そのものではなく、指示対象も意味そのものではない。
+この意味で両者は同一ではない。
+
+したがって、本論文は次の操作を置く。
+
+\begin{operation}[意味と指示の無記]
+意味と指示の関係について、同一性命題にも分離命題にも
+真理値を付与しない。
+すなわち、
+\begin{equation}
+\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
+\qquad
+\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
+\end{equation}
+を実行する。
+\end{operation}
+
+この操作は、意味と指示が「同一か否か未解決である」と述べるものではない。
+また「分離可能かどうかは今後の研究課題である」と述べるものでもない。
+それらは予想ないし保留であり、記の枠組みに属する。
+無記は、意味と指示の関係を命題的二択へ移す操作を停止する。
+
+\section{保留の再帰}
+
+\subsection{保留の定義}
+
+\begin{definition}[保留（エポケー）]
+命題 $\varphi$ に対し、$\varphi$ についての判断を
+将来の再開を予定して中断する操作を $E(\varphi)$ と書く。
+$E(\varphi)$ は次の二条件を含む。
+
+\begin{enumerate}
+\item \textbf{再開可能性}：ある時点で $E(\varphi)$ は解除され、
+  $\varphi$ について記の判定が下される可能性が残されている。
+\item \textbf{対象の保存}：$E(\varphi)$ の実行中、
+  $\varphi$ という対象そのものは保存される。
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[$E$ の冪等性]
+$E$ は状態として冪等である。すなわち
+\begin{equation}
+E(E(\varphi))=E(\varphi).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+$E(\varphi)$ は「$\varphi$ についての判断が中断されている」
+という状態である。この状態にさらに保留を適用しても、
+新しい判断状態は生じない。判断が中断されているという
+同一状態が継続するだけである。したがって $E$ は冪等である。
+\end{proof}
+
+\subsection{解除条件による悪性無限退行}
+
+状態としての冪等性だけを見れば、保留の反復は単なる収束である。
+しかし保留には再開可能性が含まれる。
+この点を明示すると、保留は悪性無限退行を生じる。
+
+\begin{definition}[保留の解除条件]
+$E(\varphi)$ が解除される条件を $R(\varphi)$ と書く。
+$R(\varphi)$ は「いつ・いかなる条件のもとで
+$\varphi$ についての判断を再開するか」を定める命題である。
+\end{definition}
+
+\begin{theorem}[保留の悪性無限退行]
+$R(\varphi)$ が確定しない限り、$E(\varphi)$ は
+真に保留として機能しない。
+ところが $R(\varphi)$ の確定それ自体も一つの判断であるため、
+そこにも保留が適用可能である。
+したがって、
+\begin{equation}
+E(\varphi)\longrightarrow E(R(\varphi))
+\longrightarrow E(R(R(\varphi)))
+\longrightarrow\cdots
+\end{equation}
+という列が生じる。
+この列では、いずれの段階においても保留の正当化条件が完結せず、
+次の段階へ先送りされる。
+ゆえにこれは悪性無限退行である。
+\end{theorem}
+
+\begin{proof}
+保留が保留であるためには、将来の再開条件が少なくとも原理的に
+与えられなければならない。再開条件が与えられないなら、
+それは保留ではなく、判断しないことの無期限化である。
+しかし再開条件 $R(\varphi)$ を確定する判断もまた命題的対象であり、
+保留の対象から除外できない。
+したがって $R(\varphi)$ には $E(R(\varphi))$ が、
+さらに $R(R(\varphi))$ には $E(R(R(\varphi)))$ が適用される。
+この反復は、各段階の正当化を次段階に依存させるため、
+どの段階でも完結しない。
+\end{proof}
+
+\begin{remark}
+この退行は、保留が状態として冪等であることと矛盾しない。
+$E(E(\varphi))=E(\varphi)$ は、判断中断状態の同一性を示す。
+一方、悪性退行は、その中断状態を保留として正当化する
+再開条件の層に生じる。
+保留は状態としては一つに潰れるが、正当化としては無限に先送りされる。
+\end{remark}
+
+\section{無記の再帰}
+
+\subsection{無記の反復は退行ではない}
+
+無記の反復は、保留の退行とは異なる。
+無記は将来の再開条件を要求しないからである。
+
+\begin{theorem}[無記の各段階の完結性]
+任意の自然数 $n\geq1$ に対して、
+$\Avyakata^{n}(\varphi)$ はそれ自体で完結した操作である。
+すなわち、$\Avyakata^{n}(\varphi)$ の実行は、
+将来の再開・解除・条件確定に依存しない。
+\end{theorem}
+
+\begin{proof}
+$\Avyakata(\varphi)$ は「$\varphi$ について真偽を問う行為を
+実行しない」という操作であり、今この場で完結する。
+$\Avyakata(\Avyakata(\varphi))$ もまた、
+「$\Avyakata(\varphi)$ について真偽を問う行為を実行しない」
+という操作であり、同様に今この場で完結する。
+この反復のどの段階にも、保留における解除条件 $R$ は現れない。
+したがって無記の反復は、正当化を次段階に先送りする退行ではない。
+\end{proof}
+
+\begin{corollary}[退行と反復の区別]
+$E$ の再帰は退行である。
+各段階が次段階の正当化に依存し、いずれの段階も自立しないからである。
+これに対して $\Avyakata$ の再帰は反復である。
+各段階がその場で完結し、次段階に正当化を委ねないからである。
+\end{corollary}
+
+\subsection{無記の非冪等性}
+
+\begin{proposition}[無記の非冪等性]
+一般に、
+\begin{equation}
+\Avyakata(\Avyakata(\varphi))\neq\Avyakata(\varphi).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+$\Avyakata(\varphi)$ は、$\varphi$ について真偽を問う行為を
+実行しない操作である。
+一方 $\Avyakata(\Avyakata(\varphi))$ は、
+$\Avyakata(\varphi)$ という操作について真偽を問う行為を
+実行しない操作である。
+両者は対象の階層が異なる。
+したがって両者は同一視されない。
+\end{proof}
+
+この非冪等性は、保留の冪等性と対照的である。
+保留は同じ中断状態へ潰れる。
+無記は潰れない。
+しかし潰れないことは退行を意味しない。
+無記の各段階は完結したまま、次の段階を許す。
+
+\section{無記の不動点}
+
+\subsection{なぜ不動点が必要か}
+
+意味と指示の関係について、次の二つはいずれも不十分である。
+
+\begin{enumerate}
+\item 意味と指示は同一である。
+\item 意味と指示は分離可能である。
+\end{enumerate}
+
+第一は差異を消す。
+第二は不可分性を消す。
+さらに、次の二つも不十分である。
+
+\begin{enumerate}
+\item 意味と指示は同一か分離可能か、まだ分からない。
+\item 意味と指示は同一でも分離可能でもないと予想される。
+\end{enumerate}
+
+これらは保留または予想であり、将来の確定条件を要求する。
+したがって保留の再帰へ入る。
+必要なのは、意味と指示の関係を未決問題として残すことではない。
+必要なのは、その関係を真偽の対象にしない操作が、
+それ自体として完結していることを示すことである。
+
+\subsection{不動点としての無記}
+
+\begin{definition}[無記の不動点]
+対象 $\Phi$ が、記の枠組みによる同一化・分離・可能性化・予想化の
+いずれによっても保存されず、ただ $\Avyakata$ の遂行によってのみ
+その位置を保つとき、$\Phi$ は無記の不動点にあるという。
+このとき次の断定が成り立つ。
+\begin{equation}
+\Phi\text{ は }\Avyakata\text{ である。}
+\end{equation}
+\end{definition}
+
+ここで「不動点」とは、関数方程式 $f(x)=x$ の形式的同一性を
+主張する語ではない。
+むしろ、記の操作をいくら適用しても対象が記として固定されず、
+無記として述べるほかないという操作的位置を指す。
+
+\begin{theorem}[意味と指示の無記不動点]
+意味と指示の関係は、同一性命題としても分離命題としても、
+また可能性命題・予想命題としても記述されない。
+この関係は、無記の不動点としてのみ記述される。
+すなわち、
+\begin{equation}
+\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
+\qquad
+\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
+\end{equation}
+であり、さらにこの無記化自体についても
+\begin{equation}
+\Avyakata\Bigl(\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr)\Bigr),
+\qquad
+\Avyakata\Bigl(\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)\Bigr)
+\end{equation}
+である。
+\end{theorem}
+
+\begin{proof}
+意味と指示を同一とすれば、指示対象に還元されない意味の層が消える。
+意味と指示を分離すれば、意味が指示なしには対象化されず、
+指示も意味なしには記号的に現れないという不可分性が消える。
+したがって、同一性命題と分離命題はいずれも対象を保存しない。
+
+次に、この関係を「未決」「可能」「予想」として述べると、
+判断の将来の確定が予定される。
+これは保留 $E$ と同型であり、解除条件 $R$ を要求する。
+よって定理3.2の悪性無限退行を呼び込む。
+
+残る操作は、同一性命題にも分離命題にも真理値を付与しない
+$\Avyakata$ の遂行である。
+さらに、この遂行を命題として固定することを避けるためには、
+$\Avyakata$ 自体にも $\Avyakata$ を適用する必要がある。
+この反復は定理4.1により退行ではなく、各段階で完結する。
+したがって意味と指示の関係は、無記の不動点としてのみ保存される。
+\end{proof}
+
+\subsection{断定形の必然性}
+
+\begin{theorem}[無記の断定形必然性]
+無記 $\Avyakata(\varphi)$ を、保留・留保・予想・
+「〜かもしれない」といった回避表現によって記述することはできない。
+$\Avyakata(\varphi)$ について意味のある記述を与える唯一の方法は、
+\begin{equation}
+\varphi\text{ について }\Avyakata\text{ である。}
+\end{equation}
+という断定形である。
+\end{theorem}
+
+\begin{proof}
+回避表現は、記述 $D$ について将来の確定・再検討の可能性を含意する。
+これは保留 $E(D)$ と同型である。
+定理3.2より、$E(D)$ は解除条件 $R(D)$ の確定を要求し、
+悪性無限退行に陥る。
+したがって、無記を回避表現で述べることは、
+無記が回避するはずの保留の再帰を記述の層で呼び戻す。
+これを避けるには、記述が将来の解除条件を要求しない
+断定形でなければならない。
+\end{proof}
+
+\begin{remark}[断定は確信ではない]
+ここでいう断定形は、確信の強さや真理性の主張ではない。
+それは、ある操作が今この場で遂行され完結したことの表明である。
+$\Avyakata(\varphi)$ と断定することは、
+$\varphi$ が真であるとも偽であるとも主張しない。
+それは、$\varphi$ について真偽を問う行為を実行しない操作が
+完結したことを述べる。
+\end{remark}
+
+\section{結論}
+
+本論文は、意味と指示の関係を、同一性・分離・可能性・予想の
+いずれにも回収されない構造として扱った。
+そのために、保留 $E$ と無記 $\Avyakata$ を区別した。
+
+\begin{enumerate}
+\item 保留 $E$ は状態としては冪等であるが、再開条件 $R$ を要求するため、
+  正当化の層で悪性無限退行に陥る。
+\item 無記 $\Avyakata$ は、真偽を問う行為を実行しない操作であり、
+  将来の再開条件を要求しない。
+\item 無記の再帰 $\Avyakata^{n}(\varphi)$ は、各段階で完結する反復であり、
+  保留の退行とは異なる。
+\item 意味と指示は不可分でありつつ同一ではないが、
+  この関係は命題として確定されない。
+  それは無記の不動点として、無記であると断定されるほかない。
+\item 無記を可能不可能・予想・保留として述べることは、
+  無記を記へ戻す。
+  したがって無記についての有効な記述は断定形でしか成立しない。
+\end{enumerate}
+
+この結論は、仏教で事象の分析手法として広く利用されてきたインド論理学の四句分別（catu\d{s}ko\d{t}i）との
+対応を持つ。本論で検討した意味と指示の関係は、少なくとも次の
+四つの言明形式として展開できる。
+\begin{enumerate}
+\item 意味と指示は同一である。
+\item 意味と指示は分離可能である。
+\item 意味と指示は同一か分離可能か、まだ分からない。
+\item 意味と指示は同一でも分離可能でもないと予想される。
+\end{enumerate}
+これらは、肯定・否定・未決・非二択化という四つの仕方で
+意味と指示を記の対象へ移そうとする試みである。
+しかし本論の立場では、これら四つのいずれも、
+意味と指示の関係を無記として保持しない。
+したがって、無記を四句分別によって検討した結果もまた無記である。
+この点で、本論の結論は、龍樹『中論』における空の四句分別による分析を
+思想的先行例として持ち、その構造を、
+意味と指示の関係として再定式化するものである。
+
+結論は次の一文に集約される。
+
+\begin{quote}
+意味と指示の関係は、無記の不動点として無記である。
+\end{quote}
+
+この断定は、意味と指示についての新たな真理値を主張しない。
+それは、意味と指示を同一性・分離・可能性・予想の問いへ
+移す行為を実行しないという操作が、ここで完結したことを述べる。
+
+\begin{thebibliography}{99}
+
+\bibitem{Frege1892}
+Gottlob Frege.
+\newblock \"{U}ber Sinn und Bedeutung.
+\newblock \emph{Zeitschrift f\"{u}r Philosophie und philosophische Kritik},
+  100:25--50, 1892.
+
+\bibitem{NagarjunaGarfield1995}
+N\=ag\=arjuna.
+\newblock \emph{The Fundamental Wisdom of the Middle Way}.
+\newblock Translated with commentary by Jay L. Garfield.
+\newblock Oxford University Press, 1995.
+
+\bibitem{Husserl1913}
+Edmund Husserl.
+\newblock \emph{Ideen zu einer reinen Ph\"{a}nomenologie und
+  ph\"{a}nomenologischen Philosophie}.
+\newblock Max Niemeyer, 1913.
+
+\bibitem{Austin1962}
+J.\ L.\ Austin.
+\newblock \emph{How to Do Things with Words}.
+\newblock Oxford University Press, 1962.
+
+\bibitem{Kleene1952}
+Stephen Cole Kleene.
+\newblock \emph{Introduction to Metamathematics}.
+\newblock North-Holland, 1952.
+
+\end{thebibliography}
+
+\end{document}
+
+
 % !TeX program = lualatex
 \documentclass[a4paper,11pt]{ltjsarticle}
 \usepackage{amsmath,amssymb,amsthm}
