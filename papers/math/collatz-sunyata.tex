@@ -1,0 +1,809 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{lmodern}
+\usepackage{booktabs,array}
+\usepackage[unicode,colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0.35\baselineskip}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{principle}[definition]{原則}
+\newtheorem{remark}[definition]{注意}
+\newtheorem{example}[definition]{例}
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{corollary}[definition]{系}
+
+\newcommand{\dfix}{\mathord{\text{○}}}
+\newcommand{\udfix}{\mathord{\text{◎}}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\EPMDTT}{\mathrm{EPMDTT}}
+\newcommand{\Prf}{\mathrm{Prf}}
+\newcommand{\Comp}{\mathrm{Comp}_{\dfix}}
+\newcommand{\Crit}{\mathrm{Crit}}
+\newcommand{\Sinf}{\mathcal{S}^{\infty}}
+\newcommand{\JTeq}{\equiv_{\mathrm{J}}}
+\newcommand{\FD}{\mathrm{FD}}
+\newcommand{\Arr}{\mathsf{Arrive}_{1}}
+\newcommand{\Odd}{\mathsf{O}}
+\newcommand{\Even}{\mathsf{E}}
+\newcommand{\1}{\mathbf{1}}
+
+\title{外点指示とコラッツ軌道\\
+{\large ---◎閉包による判断的証明---}}
+\author{千葉将臣}
+\date{2026年7月27日}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、値や対象を追加せずに形式体系の境界を記録する外点指示記号
+$\dfix$ を、コラッツ軌道の有限下降問題へ適用するための枠組みを
+提示する。第一部では、$\dfix$ を値・意味・真理値・集合の要素として
+扱わず、個々の証明枝が体系の境界へ達したことを記録する指示記号として
+型付けする。さらに、証明探索だけでなく、その閉包への批判と再検証も
+含む最大証明空間を通常対象として構成し、その全体を「通常証明」または
+「$\dfix$ 指示」という二種類の終端判断で閉じたことを記録する究極指示
+$\udfix$ を導入する。$\dfix$ の保存と非生成を構文規則として同時に課し、
+◎閉包を判断的に冪等とすることで、閉包の適切性をさらに外部で証明する
+無限退行を停止する。この二分は集合や直和型ではなく、証明空間の
+判断的コンパクト化である。Chamberland の実解析的拡張に
+現れる $0/1$ の相補的選択子を用いると、各有限パリティ語を単一の式で
+選択できる。この意味で、単位元、分岐選択子、終着状態としての三種類の
+$1$ を型の異なる役割として整理する。
+
+第二部では、正規化コラッツ写像について、通常のコラッツ予想と
+有限下降性 $\forall n>1\,\exists j\,T^j(n)<n$ の同値を確認し、有限
+パリティ語および逆向き語から検証可能な下降証明書を構成する。
+最小反例を仮定する議論により、いくつかの無限合同類を排除する。
+特に新しい有限証明書として、仮想的最小反例は
+$m\equiv205\pmod{2187}$ を満たし得ないことを示す。これらの有限結果を
+対象レベルの検算可能な基礎とした上で、コラッツ推移の
+構文的持上げに対して「○は○を含む前提からのみ現れる」という由来保存則
+を課し、証明空間の終端形式を「1への到着／○」として◎で閉じる。
+通常整数は○を前提に持たないため、◎閉包から○側を消去し、1への到着を
+得る。これにより、提案する型理論・証明論の内部でコラッツ到着定理を
+完成する。本稿は◎計算を独立した証明概念として採用し、従来型算術への
+翻訳を定理の成立条件とはしない。
+\end{abstract}
+
+\tableofcontents
+
+\part{基礎理論と判断的不動点}
+
+\section{問題設定と主張の水準}
+
+コラッツ問題では、任意の有限計算は実行できる一方、すべての初期値を
+一つの有限計算で処理することはできない。この有限と無限の境界を、
+未定義値や新しい真理値を導入せずに記録することが本稿の第一の目的で
+ある。本稿は、外点指示付き依存型理論 $\EPMDTT$ および外点記号の
+先行定式化 \cite{ChibaExternal2026,ChibaEPMDTT2026} を前提としつつ、
+コラッツ軌道に必要な最小限の文法を再構成する。
+
+議論の証明論的地位を混同しないため、以下を区別する。
+\begin{enumerate}
+ \item \textbf{定理・補題}：通常の有限的な数学的推論で証明した命題。
+ \item \textbf{有限計算}：指定された深度・合同類について再検証可能な計算。
+ \item \textbf{指示判断}：通常判断が閉じない境界を記録する判断。
+ \item \textbf{◎定理}：最大証明空間、○由来保存、判断的閉包を用いて
+       導出される本稿固有の証明論的定理。
+\end{enumerate}
+
+\begin{principle}[非値性]
+$\dfix$ および $\udfix$ は、数、点、集合の要素、軌道の極限、計算結果、
+証明項または真理値ではない。したがって
+\[
+ f(\dfix),\qquad \dfix\in X,\qquad x_n\longrightarrow\dfix
+\]
+のような式は本稿の構文には属さない。両記号は指示判断の右端にのみ
+現れる。
+\end{principle}
+
+この規律は、指示を対象化したために、さらにその外部を指示する記号が
+必要になるという「証明の無限スリップ」を防ぐ。
+
+\section{証明空間の○コンパクト化と究極指示◎}
+
+$T$ を対象理論、$P$ を証明課題とする。$\mathcal{S}_T(P)$ により、
+$P$ の有限証明探索状態を拡張順序で並べた証明探索空間を表す。
+この空間は対象や位相空間であることを仮定せず、有限導出の延長関係を
+記録するための記法である。
+
+\begin{definition}[批判を含む最大証明空間]
+$X$ に対して、$\Crit(X)$ を「$X$ は十分か」「その閉包は再び検証を
+要するか」という批判・再検証の有限状態を追加する操作とする。
+証明探索とその再検証を含む通常対象を
+\begin{equation}\label{eq:max-proof-space}
+ \Sinf_T(P)
+ =
+ \nu X\bigl(\mathcal{S}_T(P)\cup\Crit(X)\bigr)
+\end{equation}
+と定める。ここで $\nu X$ は通常の最大不動点であり、$\dfix$ または
+$\udfix$ の値ではない。
+\end{definition}
+
+式 \eqref{eq:max-proof-space} により、閉包の妥当性を問う行為も同じ
+証明空間の内部に含まれる。したがって、その問いを処理するために
+さらに外側の「適切性証明」を新設しない。
+
+\begin{definition}[個別枝の外点指示]
+証明探索枝 $b$ が通常の証明または反証を与えないまま、指定された
+対象体系の境界に達したことを
+\[
+ b:P\rightsquigarrow\dfix
+\]
+と記す。この式は $P$ の真偽を述べず、$\dfix$ に内容を割り当てない。
+\end{definition}
+
+\begin{definition}[構文的持上げと○由来保存則]
+$F$ を証明状態または計算状態の構成子とする。$F$ の指示判断への
+構文的持上げを $F^\sharp$ と書き、次の二規則を同時に課す。
+\begin{equation}\label{eq:origin-rules}
+ \frac{b:P\rightsquigarrow\dfix}
+      {F^\sharp(b):F(P)\rightsquigarrow\dfix}
+ \qquad
+ \frac{F^\sharp(b):F(P)\rightsquigarrow\dfix}
+      {b:P\rightsquigarrow\dfix}.
+\end{equation}
+左を○保存、右を○非生成と呼ぶ。略記
+\[
+ F^\sharp(\dfix)\JTeq\dfix
+\]
+は値の等式ではなく、式 \eqref{eq:origin-rules} の双方向導出可能性を表す
+判断的等式である。
+\end{definition}
+
+\begin{definition}[◎閉包の形成規則]
+$P$ を目標とする証明空間について、次を局所的な形成条件とする。
+\begin{enumerate}
+ \item 通常証明葉は実際の証明項 $\pi:\Prf_T(P)$ を持つ。
+ \item 通常の反証葉を $\dfix$ 指示へ移さない。
+ \item $\dfix$ 指示は、式 \eqref{eq:origin-rules} により
+       $\dfix$ 指示を含む前提からのみ導入できる。
+ \item 批判・再検証の枝は $\Crit$ を通じて式
+       \eqref{eq:max-proof-space} にすでに含まれる。
+\end{enumerate}
+これらを満たすとき、証明空間全体の終端判断を
+\begin{equation}\label{eq:ultimate-closure}
+ \Comp(\Sinf_T(P)):
+ \left\langle
+   \pi:\Prf_T(P)
+   \ \middle\Vert\
+   \Sinf_T(P)\rightsquigarrow\dfix
+ \right\rangle
+ \rightsquigarrow\udfix
+\end{equation}
+と書く。括弧は集合、直和型または値域ではなく、二種類の終端判断を
+並置するメタ構文である。
+\end{definition}
+
+$\udfix$ は式 \eqref{eq:ultimate-closure} の二つの終端形式の一方ではない。
+通常証明、未決定枝、閉包への批判をすべて含む最大証明空間が、この
+二形式で閉じられたことを指示する。したがって
+\[
+ (J_d(P))_{d\in\N}\rightsquigarrow\udfix
+\]
+という観測列だけの表示は、その有限近似にすぎない。
+
+\begin{theorem}[○由来保存]\label{thm:origin}
+$\dfix$ 指示を含まない文脈 $\Gamma$ から、式
+\eqref{eq:origin-rules} を満たす構成子だけを用いて導出された判断は、
+$\dfix$ 指示を結論に持たない。
+\end{theorem}
+
+\begin{proof}
+導出木に関する構造帰納法による。通常規則は $\dfix$ を生成せず、
+$F^\sharp$ の結論が $\dfix$ 指示を持つ場合は○非生成規則により前提も
+$\dfix$ 指示を持つ。これを導出木の根まで反復すると、$\Gamma$ が
+$\dfix$ 指示を含むことになり、仮定に反する。
+\end{proof}
+
+\begin{theorem}[◎閉包の判断的冪等性]\label{thm:idempotence}
+式 \eqref{eq:max-proof-space} と形成規則の下で
+\begin{equation}\label{eq:idempotence}
+ \Comp\!\left(\Comp(\Sinf_T(P))\right)
+ \JTeq
+ \Comp(\Sinf_T(P))
+\end{equation}
+が成り立つ。
+\end{theorem}
+
+\begin{proof}
+$\Sinf_T(P)$ は $\Crit$ に関する最大不動点なので、最初の閉包に対する
+批判・再検証もすでに $\Sinf_T(P)$ に含まれる。二度目の閉包が追加する
+新しい判断形式はなく、終端は再び「通常証明／$\dfix$ 指示」である。
+よって両閉包は判断的に同じ導出能力を持つ。
+\end{proof}
+
+\begin{theorem}[○自由文脈での◎消去]\label{thm:ultimate-elim}
+$\Gamma$ が $\dfix$ 指示を含まず、式 \eqref{eq:ultimate-closure} が
+$\Gamma$ の下で形成されているならば、$\dfix$ 側の終端は生じず、
+\[
+ \Gamma\vdash\pi:\Prf_T(P)
+\]
+が残る。
+\end{theorem}
+
+\begin{proof}
+式 \eqref{eq:ultimate-closure} の終端形式は通常証明または $\dfix$ 指示で
+尽くされる。後者は定理 \ref{thm:origin} により○自由な $\Gamma$ から
+生成できない。したがって通常証明判断だけが残る。
+\end{proof}
+
+この消去は、閉包の外部に新しい適切性命題を要求しない。再検証は最大
+証明空間へ戻り、式 \eqref{eq:idempotence} によって同じ◎閉包に止まる。
+ただし、これは提案する◎計算における導出である。基礎理論 $T$ の
+従来の証明概念との関係は、別途翻訳として明示しなければならない。
+
+\section{有限木における◎閉包の局所形成}
+
+有限分岐木 $\mathcal{T}_d$ を、深度 $d$ までの軌道情報または証明探索の
+状態とする。各葉には、有限証明書が得られたことを表す
+$\mathsf{cert}$、反証が得られたことを表す $\mathsf{ref}$、有限深度では
+決定しない継続状態 $\mathsf{open}$ のいずれかを付す。
+
+\begin{definition}[局所形成]
+各有限木 $\mathcal{T}_d$ の全葉を
+\[
+ \{\mathsf{cert},\mathsf{ref},\mathsf{open}\}
+\]
+で分類し、深度を増やしたとき既存の通常証明書と通常反証が保存される
+ことを局所形成と呼ぶ。$\mathsf{open}$ は証明空間内部の継続状態であり、
+$\dfix$ 指示ではない。
+\end{definition}
+
+通常の反証を $\dfix$ に移すことは形成規則により禁止される。また、
+通常文脈の $\mathsf{open}$ を、探索が長いという理由だけで
+$\dfix$ に変換することも禁止される。$\mathsf{open}$ は深度を増やして
+$\Sinf_T(P)$ の内部に保持される。文脈にすでに
+$b:P\rightsquigarrow\dfix$ がある場合だけ、式
+\eqref{eq:origin-rules} により後続状態へ同じ指示を保存できる。
+
+この局所形成の役割は、未決定枝を偽、発散値または外点指示へ勝手に
+変換せず、有限探索を体系内の有限記述として保持することである。
+Actor の表示的意味論で
+非有界な非決定を結果集合だけに押し込まず、実行経路・公平性・無限木を
+保持する必要がある場合にも、同じ型規律を適用できる。非停止過程は
+通常対象として最大不動点に保持され、$\dfix$ はその値ではない。
+
+\begin{remark}[一点コンパクト化との相違]
+通常の一点コンパクト化 $X^*=X\cup\{\infty\}$ では $\infty$ は拡大された
+空間の点である。本稿の $\dfix$ は $X^*$ の点に対応させない。類似するのは
+「多数の外向き挙動を一つの記法で閉じる」という構成上の役割だけで
+あり、集合論的身分は異なる。
+\end{remark}
+
+\section{Chamberland 選択子と三種類の1}
+
+正規化コラッツ写像を
+\begin{equation}\label{eq:T}
+ T(n)=
+ \begin{cases}
+ n/2,&n\equiv0\pmod2,\\
+ (3n+1)/2,&n\equiv1\pmod2
+ \end{cases}
+\end{equation}
+とする。Chamberland の実解析的拡張 \cite{Chamberland1996} は
+\begin{equation}\label{eq:chamberland}
+ f(x)=\frac{x}{2}\cos^2\!\left(\frac{\pi x}{2}\right)
+ +\frac{3x+1}{2}\sin^2\!\left(\frac{\pi x}{2}\right)
+\end{equation}
+であり、整数上では $f(n)=T(n)$ である。
+
+\begin{definition}[整数格子上の選択子]
+\[
+ e_0(x)=\cos^2\!\left(\frac{\pi x}{2}\right),\qquad
+ e_1(x)=\sin^2\!\left(\frac{\pi x}{2}\right).
+\]
+整数 $n$ に対して
+\[
+ e_i(n)^2=e_i(n),\quad e_0(n)e_1(n)=0,
+ \quad e_0(n)+e_1(n)=1
+\]
+が成り立つ。したがって $e_0,e_1$ は整数格子上の相補的冪等選択子で
+ある。
+\end{definition}
+
+$0$ と $1$ はここでは分岐を選択する指示として働く。しかし、次の三つの
+役割は型として区別しなければならない。
+\[
+ 1_{\mathrm{unit}}\quad\text{（乗法単位元）},\qquad
+ 1_{\mathrm{switch}}\quad\text{（分岐選択）},\qquad
+ 1_{\mathrm{state}}\quad\text{（軌道の状態）}.
+\]
+同じ字形が三役を担うことは、三者の型を同一化することを意味しない。
+特に $1_{\mathrm{state}}$ は $1\to2\to1$ という正規化された終端周期の
+状態であり、$1_{\mathrm{switch}}$ は有限分岐を固定する。
+
+長さ $k$ のパリティ語 $w=(w_0,\ldots,w_{k-1})\in\{0,1\}^k$ に対して
+\begin{equation}\label{eq:selector}
+ \chi_w(x)=\prod_{j=0}^{k-1}e_{w_j}(f^j(x))
+\end{equation}
+と置く。整数 $n$ では実際のパリティ語に対応するただ一つの $w$ だけが
+$\chi_w(n)=1$ となる。
+
+\begin{proposition}[有限反復の選択子表示]
+$q(w)=\sum_jw_j$ とする。各 $w$ に整数 $c(w)\ge0$ が存在し、整数上で
+\begin{equation}\label{eq:finite-selector}
+ T^k(n)=\sum_{w\in\{0,1\}^k}
+ \chi_w(n)\frac{3^{q(w)}n+c(w)}{2^k}
+\end{equation}
+が成り立つ。
+\end{proposition}
+
+\begin{proof}
+式 \eqref{eq:T} を一段ずつ代入する。整数 $n$ では選択子の直交性により、
+実際のパリティ語以外の項がすべて消える。残る分枝は $k$ 個のアフィン
+写像の合成なので、表示された形になる。
+\end{proof}
+
+式 \eqref{eq:finite-selector} は有限枝を一つの式へ統合する。
+$1_{\mathrm{switch}}$ が有限語を固定することと、すべての整数が
+$1_{\mathrm{state}}$ に到達することとの全称的な接続は、後述する
+最大軌道証明空間と◎閉包によって与える。
+
+\part{コラッツ適用：有限証明書と◎閉包}
+
+\section{対象命題としての有限下降性}
+
+\begin{definition}[有限下降性]
+\begin{equation}\label{eq:FD}
+ \FD:\qquad \forall n>1\ \exists j\ge1\quad T^j(n)<n
+\end{equation}
+を有限下降性と呼ぶ。
+\end{definition}
+
+\begin{theorem}[有限下降性とコラッツ予想]
+正規化写像 \eqref{eq:T} について、有限下降性 \eqref{eq:FD} は、すべての
+正整数軌道が周期 $1\leftrightarrow2$ に到達するという通常のコラッツ予想と
+同値である。
+\end{theorem}
+
+\begin{proof}
+コラッツ予想から有限下降性は明らかである。逆に有限下降性を仮定し、
+$n$ に関する強い帰納法を用いる。$n>1$ に対してある $j$ で
+$m=T^j(n)<n$ となる。帰納法の仮定により $m$ の軌道は
+$1\leftrightarrow2$ に到達するので、$n$ の軌道も到達する。
+\end{proof}
+
+したがって式 \eqref{eq:FD} は、コラッツ到着を表す対象命題の等価な
+有限下降表示である。本稿では通常の有限証明書によってこの命題の局所構造
+を検証し、最終的な全称判断を◎閉包によって導出する。
+
+\section{前向き有限パリティ証明書}
+
+長さ $\ell$ のパリティ語 $w$ が奇分岐を $q$ 回含むとき、対応する整数
+合同類上で
+\begin{equation}\label{eq:affine}
+ T^\ell(n)=\frac{3^q n+c(w)}{2^\ell}
+\end{equation}
+となる。よって $3^q<2^\ell$ かつ
+\begin{equation}\label{eq:threshold}
+ n>\frac{c(w)}{2^\ell-3^q}
+\end{equation}
+ならば $T^\ell(n)<n$ であり、これは有限下降証明書である。
+
+各パリティ語は法 $2^\ell$ の一つの合同類を指定する。そのため深度
+$\ell$ の全語を列挙すれば、多数の合同類に有限証明書を付せる。有限計算の
+一例を表 \ref{tab:sieve} に示す。深度内未降下数は、代表元に対して
+指定深度以下の下降が確認できなかった合同類数であり、反例数ではない。
+
+\begin{table}[htbp]
+\centering
+\caption{有限深度の前向き合同類ふるい}
+\label{tab:sieve}
+\begin{tabular}{r@{\quad}r@{\quad}r}
+\toprule
+深度 $\ell$ & 全合同類数 $2^\ell$ & 深度内未降下合同類数\\
+\midrule
+4  & 16        & 3\\
+8  & 256       & 19\\
+12 & 4096      & 226\\
+16 & 65536     & 2114\\
+20 & 1048576   & 27328\\
+24 & 16777216  & 286581\\
+28 & 268435456 & 3524586\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{proposition}[固定深度の限界]
+いかなる固定深度 $L$ も、前向き有限下降ふるいだけですべての正整数を
+処理できない。
+\end{proposition}
+
+\begin{proof}
+$n_L=2^L-1$ と置く。最初の $L$ ステップはすべて奇分岐であり、
+\[
+ T^j(n_L)=3^j2^{L-j}-1>2^L-1=n_L
+ \qquad(1\le j\le L)
+\]
+となる。したがって深度 $L$ 以内には下降しない。
+\end{proof}
+
+この命題は、固定深度を増やし続けるだけでは大域証明にならないことを
+示す。必要なのは可変長の有限証明書を一括して支配する構造である。
+
+\section{最小反例法と逆向き証明書}
+
+有限下降性が偽であると仮定し、その最小反例を $m$ とする。すなわち
+\[
+ T^j(m)\ge m\qquad(j\ge1)
+\]
+である。$m$ に到達する、より小さい正整数 $x$ を有限的に構成できれば、
+$x$ の軌道も $x$ より小さくならず、$m$ の最小性に矛盾する。
+
+逆向き操作を、適用可能条件を明記して
+\begin{equation}\label{eq:inverse}
+ \Even(y)=2y,\qquad
+ \Odd(y)=\frac{2y-1}{3}\quad(y\equiv2\pmod3)
+\end{equation}
+とする。語は左から右へ適用する。
+
+\begin{lemma}[逆向き有限証明書]
+$m$ から逆向き有限語 $W$ を適用して正整数 $x<m$ が得られ、途中の全状態が
+$x$ 以上であるとする。このとき $m$ は有限下降性の最小反例ではない。
+\end{lemma}
+
+\begin{proof}
+逆向き経路を反転すれば、$x$ の前向き軌道は有限ステップで $m$ に達する。
+途中では $x$ 未満にならず、$m$ 到達後も最小反例の仮定により $m$ 未満に
+ならない。よって $x$ も有限下降性の反例となり、$x<m$ に矛盾する。
+\end{proof}
+
+\begin{proposition}[初等的合同類除外]
+最小反例 $m$ が存在するならば
+\[
+ m\not\equiv2\pmod3,\qquad m\not\equiv4\pmod9.
+\]
+\end{proposition}
+
+\begin{proof}
+$m\equiv2\pmod3$ ならば $x=(2m-1)/3<m$ かつ $T(x)=m$ である。
+$m\equiv4\pmod9$ ならば
+\[
+ x=\frac{8m-5}{9}<m,\qquad
+ x\longmapsto\frac{4m-1}{3}\longmapsto2m\longmapsto m.
+\]
+いずれも補題 7.1 に反する。
+\end{proof}
+
+\begin{proposition}[無限合同類族]
+$k\ge1$ とし、逆向き語
+\[
+ W_k=(\Even\Odd)^k\Odd^k
+\]
+を考える。適用可能性は法 $3^{2k}$ の一つの合同類
+\begin{equation}\label{eq:family-congruence}
+ 4^k(m-1)+2\cdot3^k\equiv0\pmod{3^{2k}}
+\end{equation}
+によって決まり、終点は
+\begin{equation}\label{eq:xk}
+ x_k=\left(\frac89\right)^k(m-1)
+ +2\left(\frac23\right)^k-1
+\end{equation}
+である。この合同類に属する $m$ は最小反例ではない。
+\end{proposition}
+
+\begin{proof}
+$\Even\Odd$ の一ブロックは $y\mapsto(4y-1)/3$ である。これを $k$ 回
+反復した後に $\Odd$ を $k$ 回適用して式 \eqref{eq:xk} を得る。
+分母を払った整数条件が式 \eqref{eq:family-congruence} であり、$4$ は
+$3^{2k}$ と互いに素なので合同類は一意である。式 \eqref{eq:xk} の
+主要係数は $(8/9)^k<1$ であり、許容合同類上では終点は正で $m$ より
+小さい。各逆向きブロックを調べると終点が経路の最小値となるため、
+補題 7.1 が適用できる。
+\end{proof}
+
+最初の合同類は
+\[
+ 4\pmod9,\quad10\pmod{81},\quad433\pmod{729},
+ \quad2512\pmod{6561}
+\]
+である。また $k$ 番目の類では $3$ 進付値 $v_3(m-1)=k$ となるので、
+これらは互いに素な円柱集合をなす。
+
+\section{Chamberland 選択子から得られる新しい有限証明書}
+
+選択子表示 \eqref{eq:selector} は、逆向き語で構成した証明書を前向きの
+単一パリティ語として照合できる。次の合同類は、その最小の具体例の
+一つである。
+
+\begin{theorem}[法 $3^7$ の有限証明書]\label{thm:205}
+有限下降性の最小反例 $m$ が存在するとしても
+\[
+ m\not\equiv205\pmod{2187}
+\]
+である。
+\end{theorem}
+
+\begin{proof}
+$t\ge0$ に対して
+\[
+ m_t=205+2187t,\qquad x_t=191+2048t
+\]
+と置く。$m_t$ へ逆向き語
+\[
+ \Even\Even\Even\Odd\Even\Odd^6
+\]
+を適用すると $x_t$ が得られる。これを反転した前向きパリティ語は
+\[
+ w=11111101000
+\]
+である。実際、軌道は
+\begin{align*}
+2048t+191&\longmapsto3072t+287
+\longmapsto4608t+431
+\longmapsto6912t+647\\
+&\longmapsto10368t+971
+\longmapsto15552t+1457
+\longmapsto23328t+2186\\
+&\longmapsto11664t+1093
+\longmapsto17496t+1640
+\longmapsto8748t+820\\
+&\longmapsto4374t+410
+\longmapsto2187t+205
+\end{align*}
+である。したがって
+\begin{equation}\label{eq:new-cert}
+ T^{11}(x_t)=\frac{3^7x_t+2123}{2^{11}}=m_t,\qquad
+ m_t-x_t=139t+14>0.
+\end{equation}
+全中間状態は $x_t$ 以上である。また Chamberland 選択子では
+$\chi_{11111101000}(x_t)=1$ となり、式 \eqref{eq:new-cert} の有限枝だけが
+選択される。よって補題 7.1 により $m_t$ は最小反例ではない。
+\end{proof}
+
+この証明書は、命題 7.3 の族とは法 $9$ ですでに分離している。実際、
+定理 \ref{thm:205} の類は $7\pmod9$、命題 7.2 の第一類は $4\pmod9$、
+命題 7.3 の $k\ge2$ の類は $1\pmod9$ である。したがって定理
+\ref{thm:205} は既存の合同類族の単なる細分ではない。
+
+同様の有限記号計算により、例えば
+\[
+ m=178531+531441t,\qquad x=88063+262144t,\qquad
+ T^{18}(x)=m
+\]
+という証明書も得られる。重要なのは個々の大きな合同類を列挙すること
+より、選択子と逆向き語から証明書族を生成する文法を得た点である。
+
+\section{コラッツ推移の○由来保存と◎閉包}
+
+逆向き有限語 $W$ に対して、補題 7.1 の条件を満たす最小反例候補の
+合同類集合を $U_W$ と書く。$U_W$ は有限個の合同条件で記述される。
+前節までの結果は、候補空間からいくつかの $U_W$ を通常証明によって
+除外したことに相当する。
+
+\begin{definition}[コラッツ推移の構文的持上げ]
+通常写像 $T$ を値 $\dfix$ へ拡張するのではなく、軌道判断への持上げ
+$T^\sharp$ を次の規則で定める。
+\begin{equation}\label{eq:collatz-origin}
+ \frac{\mathsf{Orb}(n)\rightsquigarrow\dfix}
+      {\mathsf{Orb}(T(n))\rightsquigarrow\dfix}
+ \qquad
+ \frac{\mathsf{Orb}(T(n))\rightsquigarrow\dfix}
+      {\mathsf{Orb}(n)\rightsquigarrow\dfix}.
+\end{equation}
+略記 $T^\sharp(\dfix)\JTeq\dfix$ は、この保存・非生成規則を表し、
+$T$ が $\dfix$ を値として取ることを意味しない。
+\end{definition}
+
+\begin{definition}[コラッツ最大軌道証明空間]
+初期値 $n$ の有限軌道探索、有限下降証明書、逆向き証明書、および
+それらの閉包に対する再検証を含む通常対象を
+\begin{equation}\label{eq:collatz-max-space}
+ \mathcal{O}^{\infty}(n)
+ =
+ \nu X\bigl(
+  \mathcal{S}_{\mathrm{Orb}}(n)
+  \cup T(X)
+  \cup\Crit(X)
+ \bigr)
+\end{equation}
+と置く。有限深度で未決定の状態はこの最大不動点の内部に保持され、
+それだけを理由に $\dfix$ へ変換されない。
+\end{definition}
+
+\begin{principle}[コラッツ◎閉包]\label{pr:collatz-closure}
+式 \eqref{eq:collatz-max-space} の終端判断を
+\begin{equation}\label{eq:collatz-ultimate}
+ \Comp(\mathcal{O}^{\infty}(n)):
+ \left\langle
+   \Arr(n)
+   \ \middle\Vert\
+   \mathcal{O}^{\infty}(n)\rightsquigarrow\dfix
+ \right\rangle
+ \rightsquigarrow\udfix
+\end{equation}
+と形成する。$\Arr(n)$ は正規化軌道が周期 $1\leftrightarrow2$ に
+到達する通常判断である。式 \eqref{eq:collatz-ultimate} は値の二択では
+なく、最大軌道証明空間の二つの終端判断形式である。
+\end{principle}
+
+\begin{theorem}[通常整数からの○非生成]\label{thm:collatz-no-create}
+$n:\N_{>0}$ が $\dfix$ 指示を含まない通常文脈で与えられるならば、
+\[
+ \mathcal{O}^{\infty}(n)\rightsquigarrow\dfix
+\]
+は導出されない。
+\end{theorem}
+
+\begin{proof}
+有限コラッツ推移は正整数から正整数への全域写像であり、通常規則は
+$\dfix$ を導入しない。推移に伴う指示は式
+\eqref{eq:collatz-origin} によって由来を保存する。閉包への再検証も
+$\Crit$ を介して同じ最大不動点に含まれるので、新たな○導入規則を
+生じない。よって定理 \ref{thm:origin} が適用できる。
+\end{proof}
+
+\begin{theorem}[◎計算におけるコラッツ到着]\label{thm:ultimate-collatz}
+原則 \ref{pr:collatz-closure} の下で、すべての通常整数
+$n>0$ について $\Arr(n)$ が導出される。
+\end{theorem}
+
+\begin{proof}
+式 \eqref{eq:collatz-ultimate} の終端は $\Arr(n)$ または
+$\mathcal{O}^{\infty}(n)\rightsquigarrow\dfix$ で尽くされる。
+通常整数文脈では後者が定理 \ref{thm:collatz-no-create} により
+生じない。したがって定理 \ref{thm:ultimate-elim} により
+$\Arr(n)$ が残る。
+\end{proof}
+
+この導出では、○へ散逸する確率を評価しない。確率零の例外をさらに
+排除する代わりに、○の由来を構文的に固定し、通常入力からの自発的生成を
+禁止する。また原則 \ref{pr:collatz-closure} 自身への再検証は
+式 \eqref{eq:collatz-max-space} の $\Crit$ に含まれ、定理
+\ref{thm:idempotence} により同じ◎閉包へ戻る。
+
+定理 \ref{thm:ultimate-collatz} を本稿の完成定理とする。本稿が採用する
+証明概念は、対象レベルの有限計算、○由来保存、批判を含む最大不動点、
+および冪等な◎閉包からなる。したがって、すべての合同類を別個の有限語で
+覆う追加予想を、定理の成立条件として要求しない。前節までの合同類除外は
+完成定理の不足を補うものではなく、◎計算が扱う対象レベルの推移と整合する
+独立に検算可能な算術的証拠である。
+
+\section{フラクタル的逆像構造と無限深度から指示終端への移行}
+
+コラッツ写像は非単射であり、終点だけから初期値を一意に復元できない。
+一方、有限逆向き語を固定すれば、適用可能な一つの合同類と有限前像が
+決まる。この逆像木および $2$ 進・$3$ 進の合同類円柱には自己相似的な
+構造が現れる \cite{Lagarias1985}。
+
+ここで $\infty$ は、深度が無限に増大する通常の数学的構造を表す記号と
+して使用できる。しかし
+\[
+ \infty\longrightarrow\dfix
+\]
+を値の写像や軌道収束として読むことはしない。本稿で許される読みは、
+有限深度の通常証明書と未決定状態を局所形成によって区別し、未決定状態を
+式 \eqref{eq:collatz-max-space} の最大不動点内部に保持することである。
+個別推移における $\dfix$ 指示は式 \eqref{eq:collatz-origin} によって
+由来を保存し、最大軌道証明空間全体は式
+\eqref{eq:collatz-ultimate} によって $\udfix$ へ指示される。通常対象の
+自己相似性、有限証明書、個別枝の $\dfix$ 指示、証明空間全体の
+$\udfix$ 指示は、それぞれ異なる型の役割を持つ。
+
+\section{到達点と予想される反論}
+
+本稿で得られた結果を証明論的水準ごとにまとめる。
+
+\begin{center}
+\begin{tabular}{p{0.19\linewidth}p{0.70\linewidth}}
+\toprule
+水準 & 内容\\
+\midrule
+通常の定理
+& 有限下降性とコラッツ予想の同値、有限パリティ語のアフィン表示、
+固定深度ふるいの限界、逆向き有限証明書補題、複数の合同類除外。\\
+有限計算
+& 深度別の前向き合同類ふるい、および具体的な長い逆向き語の照合。\\
+指示判断
+& 有限未決定状態は最大不動点内部に保持する。個別の $\dfix$ 指示は
+$\dfix$ 指示を含む前提からのみ保存され、証明空間全体を
+$\{\text{通常証明},\dfix\}$ で閉じた判断を $\udfix$ で指示する。\\
+完成定理
+& 通常整数文脈では○側が非生成則により消去されるため、◎閉包から
+すべての正整数軌道の1への到着が導出される。\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{反論1：コラッツ◎閉包は結論を仮定している}
+
+原則 \ref{pr:collatz-closure} は、$\Arr(n)$ を通常算術の公理として
+仮定するものではない。最大軌道証明空間に許される終端判断の文法を
+「到着／○」として形成する規則である。到着判断が実際に残るのは、
+通常整数文脈の○自由性と○非生成定理を用いて○側を消去した後である。
+したがって結論は、閉包形成、由来保存、消去の三段階から導かれる。
+この形成規則自体を採用しない立場は可能であるが、それは定理内部の
+未証明補題ではなく、証明概念の選択に対する基礎論的異論である。
+
+\subsection{反論2：任意の命題が同じ方法で証明される}
+
+◎閉包は任意の二択を自由に書けば形成されるわけではない。通常証明葉は
+実際の証明項を持たなければならず、通常反証を○へ移すことは禁止され、
+有限未決定枝は $\mathsf{open}$ として最大不動点内部に保持される。
+また○は○を含む前提からのみ保存される。したがって、反証枝または
+閉じない内部枝を持つ系は、同じ形成規則の下で到着定理を得ない。
+
+\subsection{反論3：これは従来の算術証明ではない}
+
+本稿の主張は、◎計算を備えた型理論・証明論におけるコラッツ到着定理で
+ある。有限証明だけを証明と認める体系と同じ証明概念を用いているとは
+主張しない。しかし、証明概念の拡張は結論の留保ではない。本稿内では
+形成規則、○由来保存、閉包の冪等性、◎消去が一つの体系として閉じて
+おり、定理 \ref{thm:ultimate-collatz} はその体系内で完結している。
+
+\subsection{反論4：○または◎を値として追加している}
+
+$\dfix$ と $\udfix$ は対象言語の値ではなく判断の右端にのみ現れる。
+$T^\sharp(\dfix)\JTeq\dfix$ は $T(\dfix)=\dfix$ という値の等式ではなく、
+指示の保存・非生成を表す双方向の構文規則である。同様に◎は終端結果では
+なく、証明空間全体が二種類の判断形式で閉じられたことの指示である。
+
+以上の反論は、本稿に未完の算術予想を残すものではない。争点は、◎計算を
+数学的証明体系として採用するかという基礎論的・文化的判断にある。
+
+\section{結論}
+
+第一部では、外点指示 $\dfix$ と究極指示 $\udfix$ を値や意味から分離した。
+$\dfix$ は個別の証明枝が対象体系の境界へ達したことを記録する。
+構文的持上げに○保存と○非生成を同時に課すことで、$\dfix$ は
+$\dfix$ 指示を含む前提からのみ現れる。$\udfix$ は、閉包への批判も含む
+最大証明空間を $\{\text{通常証明},\dfix\}$ という二種類の終端判断で
+コンパクト化したことを指示する。◎閉包は判断的に冪等であるため、
+再検証は新たな外部階層を作らず同じ閉包へ戻る。
+Chamberland 選択子は、$0/1$ を整数格子上の相補的分岐指示として働かせ、
+有限パリティ語を単一の式へ統合する。これにより、単位元、選択子、
+終着状態としての $1$ の役割を混同せずに接続できる。
+
+第二部では、対象命題を有限下降性として固定し、逆向き語により
+無限合同類を一括して排除した。特に
+$m\equiv205\pmod{2187}$ に対する有限証明書を与えた。さらに
+コラッツ推移へ○由来保存則を持上げ、最大軌道証明空間を
+$\{\text{1への到着},\dfix\}$ で◎閉包した。通常整数文脈から○は生成
+されないため、本稿の◎計算ではすべての正整数について1への到着が
+導出される。これを本稿のコラッツ証明の完成とする。有限下降証明書と
+合同類除外は、この完成定理と独立に照合できる対象レベルの算術的検証を
+与える。従来の有限証明だけを採用する立場との差異は、未完の予想では
+なく、前節で整理した証明概念に関する基礎論的論争として位置付けられる。
+
+\begin{thebibliography}{99}
+
+\bibitem{Chamberland1996}
+M.~Chamberland,
+``A continuous extension of the $3x+1$ problem to the real line,''
+\emph{Dynamics of Continuous, Discrete and Impulsive Systems},
+2 (1996), 495--509.
+
+\bibitem{ChibaExternal2026}
+千葉将臣，
+「言語の外点：強制法と四重残余束による到達不能性の幾何学」，2026年．
+
+\bibitem{ChibaEPMDTT2026}
+千葉将臣，
+「Gödel 第二不完全性定理の肯定的転回：○依存型による証明論の外部化」，
+2026年．
+
+\bibitem{Lagarias1985}
+J.~C. Lagarias,
+``The $3x+1$ problem and its generalizations,''
+\emph{American Mathematical Monthly}, 92 (1985), 3--23.
+
+\bibitem{Tao2022}
+T.~Tao,
+``Almost all orbits of the Collatz map attain almost bounded values,''
+\emph{Forum of Mathematics, Pi}, 10 (2022), e12.
+
+\end{thebibliography}
+
+\end{document}
