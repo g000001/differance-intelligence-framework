@@ -1,0 +1,717 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{icat-common}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{example}[definition]{例}
+\newtheorem{remark}[definition]{注記}
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+
+\newcommand{\Fzero}{F_{0}}
+\newcommand{\Phase}{\Pi}
+\newcommand{\Pobj}{P_{\mathrm{obj}}}
+\newcommand{\Pobs}{P_{\mathrm{obs}}}
+\newcommand{\ofix}{\bigcirc^{\mathrm{fix}}}
+\newcommand{\oobs}{\bigcirc^{\mathrm{obs}}}
+\newcommand{\oobj}{\bigcirc^{\mathrm{obj}}}
+\newcommand{\iobs}{\infty^{\mathrm{obs}}}
+\newcommand{\iobj}{\infty^{\mathrm{obj}}}
+\newcommand{\oax}{\bigcirc^{\mathrm{ax}}}
+\newcommand{\ocomp}{\bigcirc^{\mathrm{comp}}}
+\newcommand{\Observe}{\mathsf{Observe}}
+\newcommand{\Residual}{\rho_{\mathrm{obs}}}
+
+\title{\texorpdfstring{$F_0$}{F0}によるメタ体系の相分類\\
+{\large ---観測者を含む非全体化的メタ分析---}}
+\author{千葉将臣}
+\date{2026-07-28}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、指示体系 $F_0=\{1,0,\infty,\bigcirc\}$ を、思想・形式体系・工学的体系を比較するメタ分析へ拡張する。分類対象がどの記号を用いるかだけでなく、その分類を行う分析者または観測者自身が体系のどこに位置するかを記録するため、$F_0$ を対象評価層 $\{1,0\}$ と観測者反省層 $\{\infty,\bigcirc\}$ に分ける。体系 $T$ の相プロファイルを、対象相、観測者相、観測者位置、外点処理、相遷移の五成分からなる $\Phase(T)$ として定義し、さらに観測者 $O$ と文脈 $c$ に相対化された運用プロファイル $\Phase_O(T;c)$ を導入する。観測は対象を分類するだけでなく、観測者を $O'$ へ更新し、未確定部分を残余 $\Residual$ として返す。数学的運用例として、証明による二値出力の純化、直観主義における構成反復 $\infty$、逆数学における公理境界 $\oax$、計算的逆数学における計算可能性境界 $\ocomp$ を区別する。さらに、顕現論、界論、空論を、観測者による対象生成、境界生成演算の反復、カット消去後の保存状態という循環の三断面として分析する。$F_0$ メタ分析は四値論理ではなく、自己を含みつつ自己を完全には閉じない体系を比較・運用するための非全体化的な相分類である。
+\end{abstract}
+
+\section{導入}
+
+\subsection{問題設定}
+
+$F_0$ は、$0,1,\infty,\dfix$ を通常の値としてではなく、吸収、同一性、発散、外部到達を示す指示として組織する体系である \cite{ChibaF02026}。これをメタ分析に用いるとき、単に「ある理論が四記号のどれを含むか」を数えるだけでは不十分である。理論の真理値、未定義性、無限反復を記述している観測者が、対象理論の内部にいるのか、外部に固定されているのか、上位のメタ体系へ移動し続けるのかを同時に問わなければならない。
+
+本稿では $F_0$ の構成を
+\[
+ \Fzero
+ =
+ \underbrace{\{1,0\}}_{\text{対象評価層}}
+ +
+ \underbrace{\{\infty,\dfix\}}_{\text{観測者反省層}}
+\]
+と読む。$1$ と $0$ は対象の成立と不成立を、$\infty$ は観測行為の反復およびメタ体系の階層化を、$\dfix$ は観測者を含む体系を最終的に全体化できない境界を指示する。
+
+\begin{proposition}[$F_0$ の自己包含原則]
+$F_0$ メタ分析は分析者自身を分析対象から排除しない。ただし、分析者の内部化が生む再観測を $\infty$、その反復を単一の最終観測者へ閉じられないことを $\dfix$ として保持する。したがって $F_0$ は自己を含むが、自己を完全には閉じない。
+\end{proposition}
+
+\begin{proof}
+観測者を体系内の一対象として固定すると、その対象化を行った観測作用が体系外に残る。この作用をさらに対象化すれば同じ操作が反復されるため、過程は $\infty$ として記録される。反復全体を観測する最終視点を仮定すれば、同じ理由でその視点を観測する作用が外部に残る。よって最終視点は値として構成せず、その不在を $\dfix$ によって指示する。
+\end{proof}
+
+\subsection{本稿の射程}
+
+以下の分類は、各思想や理論が自ら $F_0$ の語彙を採用しているという歴史的主張ではない。既存の体系を同一の観測者記法へ翻訳した比較モデルである。とりわけ、仏教思想、老荘思想、否定神学などとの対応は構造上の比較に限定し、教義的同一視を行わない。
+
+\section{相プロファイル}
+
+\subsection{基本定義}
+
+\begin{definition}[$F_0$ 相プロファイル]
+体系または思想 $T$ の $F_0$ 相プロファイルを
+\[
+ \Phase(T)
+ =
+ \left\langle
+ \Pobj(T)\mid\Pobs(T);
+ \iota_T,\chi_T,\tau_T
+ \right\rangle
+\]
+と定める。各成分は次を表す。
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.25\textwidth} p{0.61\textwidth}}
+\toprule
+成分 & 意味 \\
+\midrule
+$\Pobj(T)\subseteq\{1,0\}$ & 対象を肯定または否定する評価相 \\
+$\Pobs(T)\subseteq\{\infty,\dfix\}$ & 観測者の再帰と全体化境界を扱う相 \\
+$\iota_T$ & 観測者が体系に占める位置 \\
+$\chi_T$ & $\dfix$ に相当する境界の処理方式 \\
+$\tau_T$ & 対象相と観測者相の間の遷移関係 \\
+\bottomrule
+\end{tabular}
+\end{center}
+記号 $\mid$ の左側を対象層、右側を観測者層と呼ぶ。
+\end{definition}
+
+\subsection{観測者・文脈相対のプロファイル}
+
+\begin{definition}[運用相プロファイル]
+観測者 $O$ が文脈 $c$ の下で体系 $T$ を分析して得る相プロファイルを
+\[
+ \Phase_O(T;c)
+ =
+ \left\langle
+ \Pobj^{O,c}(T)\mid\Pobs^{O,c}(T);
+ \iota_{O,T,c},\chi_{O,T,c},\tau_{O,T,c}
+ \right\rangle
+\]
+と定める。静的プロファイル $\Phase(T)$ は、観測者と文脈の差を捨象した略記である。
+\end{definition}
+
+同一の体系であっても、証明可能性を調べる場合、計算可能実現を調べる場合、歴史的思想として比較する場合では観測対象と境界処理が異なる。したがって $\Phase(T)$ を体系に内在する唯一のラベルとみなさず、$O$ と $c$ に相対化された観測結果と読む。
+
+\begin{definition}[$F_0$ 観測遷移]
+観測行為 $a$ を
+\[
+ \Observe_a:
+ (T,O,c)
+ \longmapsto
+ \bigl(\Phase_O(T;c),O',\Residual\bigr)
+\]
+と定める。$O'$ は観測後の観測者状態、$\Residual$ は選択した規則では確定できなかった判断、未検証の前提、水準混同の疑いを保持する観測残余である。
+\end{definition}
+
+\begin{proposition}[観測の非中立性]
+一般に $O'=O$ は仮定できない。観測者は、対象体系の境界を発見することによって、自身が外部固定、階層化、操作的包含、反省的包含のいずれに位置していたかを更新される。
+\end{proposition}
+
+\begin{proof}
+例えば外部固定された観測者が、自身の判定規則も分析対象に含めれば、その位置は $\mathrm{ext}$ から $\mathrm{ref}$ へ変化する。また、対象体系では決定できない判断を上位体系へ送れば $\mathrm{str}$ へ変化する。したがって観測は対象だけの写像ではなく、観測者状態を含む遷移である。
+\end{proof}
+
+\subsection{観測者の位置}
+
+\begin{definition}[観測者位置]
+$\iota_T$ の基本類型を次で与える。
+\begin{center}
+\begin{tabular}{c l p{0.57\textwidth}}
+\toprule
+記号 & 名称 & 意味 \\
+\midrule
+$\mathrm{ext}$ & 外部固定 & 観測者を体系外に置き、その位置を分析しない \\
+$\mathrm{str}$ & 階層化 & 対象、メタ、メタメタ体系へ観測者を移す \\
+$\mathrm{ref}$ & 反省的包含 & 観測者の作用そのものを体系内で記録する \\
+$\mathrm{op}$ & 操作的包含 & 観測者を評価、例外処理、運用操作として実装する \\
+$\mathrm{gen}$ & 構成的包含 & 観測行為そのものが対象と境界を生成する \\
+$\mathrm{lim}$ & 極限消去 & 観測者を極限操作で消去し、消去後の不動点を記録する \\
+$\mathrm{dep}$ & 縁起的包含 & 観測者、対象、観測関係を相互依存的に成立させ、いずれも基体としない \\
+\bottomrule
+\end{tabular}
+\end{center}
+複数の位置を併せ持つ場合は、例えば $(\mathrm{op},\mathrm{ref})$ のように組で表す。
+\end{definition}
+
+反省的包含は、観測者を通常の一対象として完全に閉じ込めることではない。自己対象化による反復を $\infty$、その全体化不能性を $\dfix$ として残すことによって初めて、観測者の作用を消去せずに記録できる。
+
+\subsection{外点の処理方式}
+
+\begin{definition}[外点処理]
+$\chi_T$ の基本類型を次で与える。
+\begin{center}
+\begin{tabular}{c l p{0.56\textwidth}}
+\toprule
+記号 & 名称 & 意味 \\
+\midrule
+$\chi_{\varnothing}$ & 排除 & $\dfix$ を語彙から除外する \\
+$\chi_{\mathrm{lat}}$ & 潜在 & 沈黙、未定義性、発散として痕跡だけを残す \\
+$\chi_{\mathrm{ext}}$ & 外部化 & 境界を次のメタ体系へ送る \\
+$\chi_{\mathrm{mark}}$ & 指示化 & 値ではない境界マーカーとして記録する \\
+$\chi_{\mathrm{int}}$ & 内部化 & 例外値、エラー、特殊状態として実装する \\
+$\chi_{\mathrm{fix}}$ & 不動点化 & カット消去後の内部的保存状態として表す \\
+$\chi_{\mathrm{deess}}$ & 脱実体化 & 観測者、対象、不動点のいずれにも自性を帰属させない \\
+$\chi_{\Avyakata}$ & 無記 & 真偽を問う行為を実行しない操作として断定する \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{definition}
+
+無記は未決定値や外点そのものではない。無記 $\Avyakata$ は真偽判定を遂行しない操作であり、将来の再開を要求する保留とも区別される \cite{ChibaAvyakata2026}。これに対して $\chi_{\mathrm{mark}}$ は、体系内部から到達できない構造的境界の存在を指示する。
+
+\section{同形記号の水準分離}
+
+\begin{definition}[対象、観測者、不動点の添字]
+同じ $\infty$ または $\dfix$ で書かれ得る状態を次のように区別する。
+\begin{enumerate}
+ \item $\iobj$：拡張実数や浮動小数点の値としての無限大。
+ \item $\iobs$：観測、意味論、メタ体系の無限反復。
+ \item $\oobj$：NaN、例外、失敗状態などの内部マーカー。
+ \item $\oobs$：体系全体を観測する最終視点の不在を示す外点指示。
+ \item $\ofix$：境界またはカットを消去した後に残る内部的不動点。
+ \item $\oax$：選択した基礎体系から定理へ到達するために不足する公理原理の境界。
+ \item $\ocomp$：指定された計算可能実現または計算可能含意では到達できない境界。
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[三種の $\dfix$ の非同一性]
+一般に
+\[
+ \oobj\neq\ofix\neq\oobs
+\]
+である。第一は体系内部で操作可能な特殊状態、第二は体系内部の保存または収束状態、第三は体系を全体化する最終観測者の不在を表す。
+\end{proposition}
+
+\begin{proof}
+$\oobj$ はデータまたは項として表現され、内部規則の入力となり得る。$\ofix$ は反復または消去の収束先であり、内部の恒等規則を担う。これに対し $\oobs$ は内部対象ではなく、内部対象とその観測者を一括して閉じる視点が構成できないことの指示である。したがって三者の型と操作可能性は異なる。
+\end{proof}
+
+この分離により、四種類の特殊値を実装した工学的体系と、観測者自身を含む $F_0$ 的メタ体系とを区別できる。
+
+\section{基本類型}
+
+\subsection{全肯定型と二値閉包型}
+
+全肯定型を
+\[
+ \Phase(T)=
+ \langle\{1\}\mid\varnothing;
+ \mathrm{ext},\chi_{\varnothing},\varnothing\rangle
+\]
+とする。これは否定、自己反省、境界を明示せず、成立の側だけを採る理念型である。多面的判断を持つ思想を直ちにこの型へ同一視してはならない。
+
+二値閉包型を
+\[
+ \Phase(T)=
+ \langle\{1,0\}\mid\varnothing;
+ \mathrm{ext},\chi_{\varnothing},\varnothing\rangle
+\]
+とする。この型は対象を肯定と否定へ閉じ、観測者、無限反復、体系境界を形式体系の外へ固定する。ニヒリズムは $\{1,0\}$ そのものではなく、肯定可能性を否定へ吸収する偏った遷移
+\[
+ 1\longrightarrow0
+\]
+として記述する方が精密である。
+
+\subsection{スパイラル型}
+
+\begin{definition}[スパイラリズム]
+対象層の限界に達するたび、観測者を上位メタ体系へ移す型を
+\[
+ \Phase(T)=
+ \left\langle
+ \{1,0\}\mid\{\infty\};
+ \mathrm{str},\chi_{\mathrm{ext}},
+ T_0\to T_1\to T_2\to\cdots
+ \right\rangle
+\]
+と書き、スパイラル型と呼ぶ。
+\end{definition}
+
+これは単純な循環ではない。対象を記述する観測者の位置が各段階で一つ上へ移動する。Kripke 型真理理論を対象言語とメタ言語の階層として運用する場合、Grothendieck 宇宙を上位宇宙へ入れ子化する場合、体系の無矛盾性を上位体系で検証し続ける場合などが候補となる。Kripke の最小不動点構成自体は単調作用素による明確な数学的構成であるが、未接地性を語る言語をさらに内部化すると、新たな記述階層を要求し得る \cite{kripke}。
+
+各段階で $\dfix$ は消滅せず、
+\[
+ \bigcirc_n\rightsquigarrow T_{n+1}
+\]
+として次の外部へ送られる。
+
+\subsection{潜在外点型、外点指示型、無記型}
+
+潜在外点型を
+\[
+ \Phase(T)=
+ \langle\{1,0\}\mid\{\infty,\dfix\};
+ \mathrm{str},\chi_{\mathrm{lat}},\tau_{\mathrm{silent}}\rangle
+\]
+とする。再帰、部分性、発散を扱う一方、外点へ積極的な対象言語を与えない。Kleene 的再帰論をこの型として読む場合、これは歴史的帰属ではなく、未定義性の痕跡を $F_0$ から読み直す解釈である \cite{kleene}。
+
+外点指示型を
+\[
+ \Phase(T)=
+ \langle\{1,0\}\mid\{\infty,\dfix\};
+ \mathrm{ref},\chi_{\mathrm{mark}},
+ \mathrm{internal}\rightsquigarrow\dfix\rangle
+\]
+とする。QRB、○依存型、$F_0$ の外点診断は、この型の候補である \cite{ChibaQRB2026,ChibaEPMDTT2026,ChibaF02026}。
+
+無記型を
+\[
+ \Phase(T)=
+ \left\langle
+ \{1,0\}\mid\{\infty,\dfix\};
+ \mathrm{ref},\chi_{\Avyakata},
+ \mathrm{question}\mapsto\mathrm{non\text{-}performance}
+ \right\rangle
+\]
+とする。無記は境界を第三真理値として内部化せず、その問いについて真偽判定を遂行しない。したがって外点指示と無記は併用できるが同一ではない。
+
+\section{既存体系の試験的分類}
+
+表\ref{tab:profiles}は、代表的な体系を $F_0$ の相プロファイルへ試験的に翻訳したものである。同一体系でも解釈または運用方法によって異なるプロファイルを持ち得る。
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{$F_0$ による試験的相分類}
+\label{tab:profiles}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.21\textwidth} >{\raggedright\arraybackslash}p{0.38\textwidth} >{\raggedright\arraybackslash}p{0.31\textwidth}}
+\toprule
+体系 & 相プロファイルの主要部 & 観測者と境界の扱い \\
+\midrule
+古典的二値論理 & $\{1,0\}\mid\varnothing$; $\mathrm{ext}$ & 意味論者を対象理論外に固定 \\
+階層的形式主義 & $\{1,0\}\mid\{\infty\}$; $\mathrm{str}$ & 無矛盾性の窓を上位体系へ移す \\
+Brouwer 的構成主義 & $\{1,0\}\mid\{\infty\}$; $\mathrm{op}$ & 可能無限を構成行為として扱う \\
+直観主義論理の証明運用 & $\{1,0\}\mid\{\infty\}$; $\mathrm{op}$ & 構成探索を反復し、完了した構成だけを出力 \\
+標準的逆数学 & $\{1,0\}\mid\{\infty,\oax\}$; $\mathrm{ref}$ & 定理から必要な公理原理を逆算 \\
+計算的逆数学 & $\{1,0\}\mid\{\infty,\ocomp\}$; $(\mathrm{op},\mathrm{ref})$ & 計算可能含意と $\omega$-モデルによる境界分析 \\
+Kripke 型真理理論 & $\{1,0\}\mid\{\infty,\dfix\}$; $\mathrm{str}$ & 不動点をメタ理論から観測 \\
+Kleene 的再帰論 & $\{1,0\}\mid\{\infty,\dfix\}$; $\chi_{\mathrm{lat}}$ & 未定義性に外点の痕跡を読む \\
+矛盾耐性直接論理 & $\{1,0\}\mid\{\dfix\}$; $\mathrm{op}$ & 爆発を抑え、矛盾を運用規則で扱う \\
+制限圏・部分性モナド & $\{1,0\}\mid\{\oobj\}$; $\mathrm{op}$ & 定義域または計算効果として内部表現 \\
+前期 Wittgenstein 的限界 & $\{1,0\}\mid\{\oobs\}$; $\mathrm{ext}$ & 語り得る領域の外に境界を固定 \\
+否定神学 & $\{0\}\mid\{\oobs\}$; $\chi_{\mathrm{mark}}$ & 否定を通じて外部を指示 \\
+老荘的発生論 & $\varnothing\mid\{\dfix\}$; $\mathrm{ref}$ & 根源から $\{1,0,\infty\}$ への分化として読む \\
+一般システム論的機械化 & $\{1,0\}\mid\{\infty,\dfix\}$; $\mathrm{str}$ & 自己観測を階層化する \\
+顕現論 & $\{1,0\}\mid\{\infty,\dfix\}$; $\mathrm{gen}$ & 知覚が対象と境界を生成 \\
+界論 & $\{1,0\}\mid\{\infty,\dfix\}$; $(\mathrm{op},\mathrm{ref})$ & 境界生成演算を体系内に保持 \\
+空論 & $\{1\}\mid\{\ofix\}$; $\mathrm{lim}$ & カット消去後の内部保存状態 \\
+中観的空思想 & $\{1,0\}_{\mathrm{conv}}\mid\{\oobs\}$; $\mathrm{dep}$ & 観測者、対象、$\ofix$ をともに脱実体化 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+この表は異なる伝統を単一の尺度で優劣評価するものではない。比較の焦点は、対象へ何を帰属させるかではなく、その帰属を行う観測者の位置と境界処理である。
+
+\section{数学的記述体系の運用分析}
+
+\subsection{証明による二値出力の純化}
+
+数学的記述体系では、対象命題 $\varphi$ に対する確定出力を、原則として証明と反証の二方向へ限定する。理論 $T$ と観測者 $O$ に対する判断操作を
+\[
+ \delta_{T,O}(\varphi)
+ =
+ \begin{cases}
+  1,&T\vdash_O\varphi,\\
+  0,&T\vdash_O\neg\varphi,\\
+  \Residual(\varphi),&
+  T\nvdash_O\varphi\text{ かつ }T\nvdash_O\neg\varphi
+ \end{cases}
+\]
+と書く。
+
+\begin{definition}[二値出力の純化]
+証明運用における $\{1,0\}$ の純化とは、すべての命題が決定可能であることではない。確定していない命題を第三の真理値へ変換せず、$\Residual$ として観測者側に保持し、確定出力だけを $1$ または $0$ に制限することをいう。
+\end{definition}
+
+したがって
+\[
+ T\nvdash\varphi
+\]
+だけから $\delta_{T,O}(\varphi)=0$ は従わない。また、残余が直ちに $\infty$ または $\dfix$ であるとも限らない。探索反復、必要公理、計算可能性など、障害の由来を観測して初めて対応する相へ分類する。
+
+\begin{proposition}[証明の観測者的役割]
+証明は対象層へ新しい第三値を加える操作ではなく、観測残余から検証可能な経路を抽出し、確定結果を $\{1,0\}$ へ戻す観測者側の純化操作として解釈できる。
+\end{proposition}
+
+\subsection{直観主義論理：\texorpdfstring{$\infty$}{infinity} の構成的運用}
+
+直観主義論理では、命題の肯定は構成または証明項の提示に依存する。Curry--Howard 的な読解では、$a:A$ が与えられたときに命題 $A$ が確定する \cite{MartinLof1984}。その運用プロファイルを
+\[
+ \Phase_O(\mathrm{Int};\mathrm{construction})
+ =
+ \left\langle
+ \{1,0\}\mid\{\infty\};
+ \mathrm{op},\chi_{\mathrm{lat}},
+ \tau_{\mathrm{construction}}
+ \right\rangle
+\]
+と書く。
+
+ここで $\infty$ は命題の第三真理値ではなく、構成候補の生成、証明探索、近似の更新を反復できるという観測者側の操作相である。
+\[
+ \infty^{\mathrm{obs}}
+ \xrightarrow{\text{有限構成の完成}}
+ 1,
+ \qquad
+ \infty^{\mathrm{obs}}
+ \xrightarrow{\text{矛盾構成の完成}}
+ 0.
+\]
+構成が完了しない場合、結果は $\infty$ という値になるのではなく、探索が開いたまま $\Residual$ に残る。したがって直観主義の特徴は、$\infty$ を操作しつつ、完了した判断の出力純度を $\{1,0\}$ に保つ点にある。
+
+\subsection{標準的逆数学：公理境界の逆算}
+
+逆数学は、通常数学の定理 $\varphi$ を証明するために必要な集合存在公理または部分体系を、弱い基礎体系 $B$ 上で特定する研究計画である \cite{Simpson2009}。典型的には原理 $A$ に対して
+\[
+ B\vdash A\rightarrow\varphi,
+ \qquad
+ B\vdash\varphi\rightarrow A
+\]
+を示し、
+\[
+ B\vdash\varphi\leftrightarrow A
+\]
+を得る。
+
+この操作を
+\[
+ \Phase_O(\mathrm{RM};B)
+ =
+ \left\langle
+ \{1,0\}\mid\{\infty,\oax\};
+ \mathrm{ref},\chi_{\mathrm{mark}},
+ \tau_{\mathrm{reverse}}
+ \right\rangle
+\]
+と表す。$\infty$ は候補体系と証明変換を探索する反復、$\oax$ は基礎体系 $B$ 単独では越えられない相対的な公理境界である。ここで $\oax$ は「計算不能」を意味せず、$B$ に対して不足している原理を指示する。
+
+\begin{proposition}[逆数学の反省的運用]
+通常の証明が公理から定理へ進むのに対し、逆数学の観測者は完成した定理から証明資源を逆向きに分析する。したがって逆数学は対象命題の真偽判定だけでなく、証明行為自身の公理依存を対象化する $\mathrm{ref}$ 型の運用である。
+\end{proposition}
+
+\subsection{計算的逆数学：計算可能性境界の分離}
+
+計算的逆数学は、標準的逆数学の含意をそのまま用いる代わりに、$\omega$-モデルや計算可能含意を重視して原理間の関係を分析する立場である。ただし計算可能含意は標準的な証明論的含意と同一ではなく、基礎論的正当化を保存しない場合があることが指摘されている \cite{Eastaugh2018}。
+
+そこで計算的逆数学のプロファイルを標準的逆数学から分離し、
+\[
+ \Phase_O(\mathrm{CRM};\mathrm{comp})
+ =
+ \left\langle
+ \{1,0\}\mid\{\infty,\ocomp\};
+ (\mathrm{op},\mathrm{ref}),
+ \chi_{\mathrm{mark}},
+ \tau_{\mathrm{computable}}
+ \right\rangle
+\]
+と書く。$\ocomp$ は指定された計算可能実現からの到達不能性を表し、$\oax$ とは区別される。
+\[
+ \oax
+ =\text{基礎体系に不足する公理原理},
+ \qquad
+ \ocomp
+ =\text{計算可能実現に不足する計算資源}.
+\]
+この区別により、「証明できない」「基礎体系から導けない」「計算可能に実現できない」を同じ $\dfix$ へ潰さず、観測者側の異なる診断として保持できる。
+
+\section{顕現論・界論・空論}
+
+\subsection{三体系を結ぶサイクル}
+
+顕現論、界論、空論は、三つの独立体系としてだけでなく、観測者を含む一つの循環の異なる断面として読める。
+\[
+ \ofix
+ \xrightarrow{\text{知覚・境界生成}}
+ \{1,0\}
+ \xrightarrow{\text{再帰的区分}}
+ \iobs
+ \xrightarrow{\text{消去・収束}}
+ \ofix.
+\]
+このサイクルでは、既成の対象を観測者が後から評価するのではない。観測行為が境界を生成し、その境界によって対象相 $\{1,0\}$ が顕現する。
+
+\begin{remark}[資料中の $\dfix$ の多義性]
+顕現論・界論・空論の資料では、$\dfix$ が、顕現以前の全体性、直接知覚不能性、中道不動点、大域的カット消去後の保存状態、観測者消去後の極限を表す。これらを $F_0$ の観測者境界 $\oobs$ と一括すると、内部的不動点と最終観測者の不在が混同される。以下では前者を $\ofix$、後者を $\oobs$ と書き分ける。
+\end{remark}
+
+\subsection{顕現論：観測者による対象生成}
+
+顕現論では、世界全体は直接知覚されず、知覚は「ある」と「ない」の境界を生成する射影操作として働く。観測者は既成対象を受動的に読む外部者ではなく、対象が現れる条件を構成する作用である。そのプロファイルを
+\[
+ \Phase(\mathrm{Aletheics})
+ =
+ \left\langle
+ \{1,0\}\mid\{\infty,\dfix\};
+ \mathrm{gen},
+ \{\chi_{\Avyakata},\chi_{\mathrm{mark}}\},
+ \tau_{\mathrm{projection}}
+ \right\rangle
+\]
+と表す。
+
+相遷移は
+\[
+ \text{直接知覚不能な全体}
+ \xrightarrow{\text{知覚}}
+ \text{境界}
+ \xrightarrow{\text{二分}}
+ \{1,0\}
+ \xrightarrow{\text{再帰}}
+ \infty
+\]
+である。「ない」を直接対象化しないことは $\chi_{\Avyakata}$、知覚可能領域の外を指すことは $\chi_{\mathrm{mark}}$ に対応する。したがって顕現論では、$1$ と $0$ は世界の原初的属性ではなく、境界生成後に現れる二次的な相である。
+
+\subsection{界論：観測者の演算子化}
+
+界論では、観測者は人格的主体ではなく、境界を生成するメタ否定演算子 $\metanegation$ として体系内に実装される。境界生成が反復され、四句分別的な証明木が成長し、所定の消去によって $\ofix$ へ戻る。そのプロファイルを
+\[
+ \Phase(\mathrm{Boundary})
+ =
+ \left\langle
+ \{1,0\}\mid\{\infty,\dfix\};
+ (\mathrm{op},\mathrm{ref}),
+ \{\chi_{\mathrm{mark}},\chi_{\mathrm{fix}}\},
+ \tau_{\metanegation}
+ \right\rangle
+\]
+とする。
+\[
+ \ofix
+ \xrightarrow{\metanegation}
+ A
+ \xrightarrow{\metanegation^2,\metanegation^3}
+ \text{境界の肥大化}
+ \xrightarrow{\metanegation^4/\text{消去}}
+ \ofix.
+\]
+
+界論は観測者を排除せず、$\metanegation$ の作用として保持する。この意味で操作的包含と反省的包含の複合型である。ただし
+\[
+ \metanegation^4 A\sim_{\mathrm{mid}}\dfix,
+ \qquad
+ \dfix\vdash\dfix
+\]
+に現れる $\dfix$ は体系内部の収束先であり、$F_0$ の外点指示よりも $\ofix$ と読む方が精密である。
+
+\subsection{空論：観測者消去後の保存状態}
+
+空論は、境界生成以前または大域的カット消去後の状態を
+\[
+ \ofix\vdash\ofix
+\]
+という恒等的真理保存として記述する。この断面では対象間の差異と推論の横棒が消去されるため、対象評価層は $\{1\}$ に縮退する。
+\[
+ \Phase(\mathrm{Sunyata})
+ =
+ \left\langle
+ \{1\}\mid\{\ofix\};
+ \mathrm{lim},\chi_{\mathrm{fix}},
+ \tau_{\mathrm{cut\text{-}free}}
+ \right\rangle.
+\]
+ここで $1$ は個別命題の全肯定ではなく、入力と出力の差異を生まない保存を表す。したがって同じ $\{1\}$ を持つ全肯定型とは観測者プロファイルが異なる。
+
+「観測者が完全に消えた」という記述自体は、その消去を確認するメタ観測者を暗黙に要求する。$F_0$ はこの痕跡を $\oobs$ として保持する。ゆえに空論を完全に閉じた観測者不在の体系とせず、
+\[
+ \ofix\parallel\oobs
+\]
+という二重構造として読む。
+
+\subsection{仏教的空思想：不動点自身の空性化}
+
+仏教的空思想、とりわけ中観を $F_0$ から解釈する場合、それは空論における観測者不在性を単に量的に強めたものではない。中観の空は、対象と観測者に固定的な自性を認めないだけでなく、空そのものを究極的な実体または基体として立てることも拒む。いわゆる「空の空」は、空を新たな存在者へ置き換えることではなく、空という記述も縁起的な働きの外にないことを示す \cite{Garfield1995,Westerhoff2009}。
+
+この差異を $F_0$ 上で表すため、空論の内部的不動点
+\[
+ \ofix\vdash\ofix
+\]
+に対して、さらに脱実体化操作
+\[
+ \chi_{\mathrm{deess}}(\ofix)
+ :
+ \neg\operatorname{Svabhava}(\ofix)
+\]
+を適用する。これは $\ofix$ を別の値へ写す演算ではない。$\ofix$ が恒等的保存を担うことと、$\ofix$ が独立自存する実体であることを分離し、後者のみを拒む型付け条件である。
+
+中観的空思想の試験的プロファイルを
+\[
+ \Phase(\mathrm{Madhyamaka})
+ =
+ \left\langle
+ \{1,0\}_{\mathrm{conv}}
+ \mid
+ \{\oobs\};
+ \mathrm{dep},
+ \{\chi_{\mathrm{deess}},\chi_{\Avyakata}\},
+ \tau_{\mathrm{dependent}}
+ \right\rangle
+\]
+と書く。添字 $\mathrm{conv}$ は、慣習的な水準では肯定と否定の判断が機能し続けることを示す。$\mathrm{dep}$ は観測者を消滅させるのではなく、観測者、対象、観測関係を相互依存的な成立として記録する。$\chi_{\mathrm{deess}}$ はそれらのいずれも最終基体とせず、$\chi_{\Avyakata}$ は最終的自性を要求する問いを新たな真理値へ閉じない。
+
+\begin{proposition}[空論と空思想の差異]
+空論と中観的空思想の関係は
+\[
+ \text{空論}:
+ \quad
+ \text{観測者と境界の消去}
+ \longrightarrow
+ \ofix,
+\]
+\[
+ \text{中観的空思想}:
+ \quad
+ \ofix
+ \xrightarrow{\chi_{\mathrm{deess}}}
+ \neg\operatorname{Svabhava}(\ofix)
+\]
+と区別される。後者は前者の不動点を破壊するのではなく、その不動点を自性ある最終実体として読むことを禁止する。
+\end{proposition}
+
+\begin{proof}
+空論の $\ofix\vdash\ofix$ は、境界とカットを除いた後にも保存される内部規則を与える。しかし、この保存則を体系の最終基体と解釈すれば、観測者消去後に新たな絶対項を置くことになる。中観的読解では、保存則の操作的有効性は認めても、その担い手へ独立自存性を帰属させない。したがって保存と自性を分離する $\chi_{\mathrm{deess}}$ が必要となる。
+\end{proof}
+
+\begin{remark}[無記との相違]
+脱実体化と無記も同一ではない。$\chi_{\mathrm{deess}}$ は「自性を持たない」という関係的構造を記述するのに対し、$\chi_{\Avyakata}$ は所定の真偽判定を遂行しない操作である。中観的空思想をすべて無記へ還元せず、構造的な空性化と問いの不遂行を別成分として保持する必要がある。
+\end{remark}
+
+\begin{proposition}[顕現・界・空の相循環]
+三体系は
+\[
+ \boxed{
+ \text{空論（保存）}
+ \xrightarrow{\text{知覚}}
+ \text{顕現論（生成）}
+ \xrightarrow{\text{境界反復}}
+ \text{界論（運動）}
+ \xrightarrow{\text{消去}}
+ \text{空論（保存）}}
+\]
+という相循環の三断面として整理できる。
+\end{proposition}
+
+\begin{proof}
+空論は差異生成以前または消去後の保存状態を与える。知覚作用がこの状態へ境界を導入すると、成立と不成立の対象相が顕現する。境界生成を演算子として反復すると界論の動的証明木が生じる。大域的消去はこの証明木の境界とカットを除き、再び内部的保存状態へ戻す。よって三体系は保存、生成、運動、消去からなる循環を形成する。
+\end{proof}
+
+\section{工学的内部化との区別}
+
+\subsection{IEEE 754}
+
+IEEE 754 は有限値、符号付きゼロ、無限大、NaN を対象内部のデータとして実装する。拡張された対象相を明示して
+\[
+ \Phase_{\mathrm{eng}}(\mathrm{IEEE754})
+ =
+ \left\langle
+ \{1,0,\iobj,\oobj\}\mid\varnothing;
+ \mathrm{ext},\chi_{\mathrm{int}},\tau_{\mathrm{arith}}
+ \right\rangle
+\]
+と読む。NaN は $\dfix$ の工学的類例になり得るが、表現可能なビットパターンであり、観測者境界 $\oobs$ ではない。したがって四種の対象状態を実装しても、それだけでは観測者を含む $F_0$ メタ体系にならない。
+
+\subsection{例外処理と単純機械}
+
+Let-it-Crash 型の例外処理は
+\[
+ \Phase_{\mathrm{eng}}(T)
+ =
+ \langle\{1,0,\oobj\}\mid\varnothing;
+ \mathrm{op},\chi_{\mathrm{int}},
+ \mathrm{failure}\to\mathrm{supervision}\rangle
+\]
+と表せる。失敗を局所的に許容し、監督機構へ移すが、監督者を誰が監督するかまで問わない限り、$\iobs$ と $\oobs$ は現れない。
+
+単純な規則系では、規則と初期条件を選ぶ観測者が体系外に残る。軌道が複雑であることと観測者が内部化されていることは別である。$F_0$ 分析は、計算の複雑性と規則選択者の位置を分離する。
+
+\section{\texorpdfstring{$F_0$}{F0} 観測プロトコル}
+
+\begin{definition}[$F_0$ メタ分析手順]
+観測者 $O$ は文脈 $c$ を明示し、体系 $T$ を次の順に検査する。
+\begin{enumerate}
+ \item \textbf{文脈指定}：証明可能性、構成可能性、公理強度、計算可能性など、何を観測するかを固定する。
+ \item \textbf{対象判定}：何を成立 $1$、不成立 $0$ とするか。
+ \item \textbf{未完了過程}：停止しない計算、意味論的反復、宇宙階層を認めるか。
+ \item \textbf{観測者位置}：判定者は体系外、上位体系、内部操作のいずれか。
+ \item \textbf{再観測}：観測者自身を観測すると同じ構造が反復するか。
+ \item \textbf{境界処理}：閉じなさを排除、潜在化、外部化、指示化、内部化、不動点化、無記化のどれで扱うか。
+ \item \textbf{水準混同検査}：内部例外値、不動点、観測者境界を混同していないか。
+ \item \textbf{全体化検査}：自己を完全に記述できる最終視点を暗黙に仮定していないか。
+ \item \textbf{観測者更新}：分析後の位置 $O'$ と未確定部分 $\Residual$ を記録する。
+\end{enumerate}
+\end{definition}
+
+この手順により、同じ $\{1,0,\infty,\dfix\}$ を用いる二体系でも、それを値として実装するのか、メタ階層へ外部化するのか、観測作用として内部に記録するのか、内部的不動点へ収束させるのか、無記として判断行為を完結させるのかを区別できる。運用結果は
+\[
+ (T,O,c)
+ \xrightarrow{\Observe}
+ \bigl(\Phase_O(T;c),O',\Residual\bigr)
+\]
+として保存する。
+
+\section{中心命題と形式化課題}
+
+\begin{theorem}[$F_0$ メタ分析原理]
+メタ体系の差異は、対象へどの真理値を与えるかだけでは決まらない。その真理値を与える観測者をどこに置き、観測者の再帰 $\infty$ と自己全体化不能の境界 $\dfix$ をどのように処理するかによって分類される。
+\end{theorem}
+
+したがって $F_0$ は四値論理ではない。そのメタ分析的構成は
+\[
+ \text{対象評価}
+ +
+ \text{観測者の自己反省}
+ +
+ \text{自己全体化不能性の指示}
+\]
+であり、非全体化的な自己包含メタ理論である。
+
+今後の形式化には次が必要である。
+\begin{enumerate}
+ \item $\Phase(T)$ の同値関係を定め、表記に依存しない分類を与える。
+ \item 相遷移 $\tau_T$ を有向グラフまたは圏として定式化する。
+ \item 観測者位置の変更を忘却、持ち上げ、外部化などの写像として表す。
+ \item $\chi_{\mathrm{mark}}$、$\chi_{\mathrm{fix}}$、$\chi_{\mathrm{deess}}$、$\chi_{\Avyakata}$ の型を分離する。
+ \item 同一体系が文脈に応じて複数のプロファイルを持つ場合の添字を導入する。
+ \item $\ofix$ と $\oobs$ の関係を形式化する。
+ \item 顕現論・界論・空論の循環を相プロファイル間の遷移圏として構成する。
+ \item 空論から中観的空思想への移行を、不動点の消去ではなく不動点への自性帰属を禁止する型制約として定式化する。
+ \item 観測者更新 $O\to O'$ と観測残余 $\Residual$ の合成規則を与える。
+ \item $\oax$ と $\ocomp$ の比較写像を構成し、公理的非導出と計算可能非実現を分離する。
+\end{enumerate}
+
+\section{結論}
+
+本稿は、$F_0$ を対象の四状態を並べる分類ではなく、観測者自身の位置を含む相プロファイルとして再構成した。対象評価層 $\{1,0\}$ と観測者反省層 $\{\infty,\dfix\}$ を分離し、観測者位置 $\iota$、外点処理 $\chi$、相遷移 $\tau$ を加えることで、二値閉包、スパイラル型階層、潜在外点、外点指示、無記、工学的例外処理を区別した。さらに静的分類 $\Phase(T)$ を運用プロファイル $\Phase_O(T;c)$ へ拡張し、観測が観測者を $O'$ へ更新し、未確定部分を $\Residual$ として返すことを定式化した。
+
+数学的記述体系への適用では、証明が確定出力を $\{1,0\}$ に純化し、未確定部分を第三値ではなく観測残余として保持することを示した。直観主義論理は構成反復として $\infty$ を操作し、標準的逆数学は公理境界 $\oax$ を、計算的逆数学は計算可能性境界 $\ocomp$ を扱う。この分離により、非導出、未完了、計算不能を一つの外点へ同一視しない運用が得られる。
+
+顕現論・界論・空論の分析は、観測者が対象を生成し、境界を反復させ、消去後に保存状態へ戻る循環を示した。同時に、資料中で同じ $\dfix$ によって表されていた内部的不動点と観測者境界を、それぞれ $\ofix$ と $\oobs$ に分ける必要を明らかにした。さらに中観的空思想を、$\ofix$ を破棄する体系ではなく、$\ofix$ への自性帰属を脱実体化する二階の操作として位置づけた。この区別を保持する限り、$F_0$ は観測者を体系へ含めながら、その観測者または内部的不動点を絶対的な最終基体へ固定しないメタ分析として機能する。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
