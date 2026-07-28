@@ -1,0 +1,400 @@
+% !TeX program = lualatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+\usepackage{icat-common}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{example}[definition]{例}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{operation}[definition]{操作}
+\theoremstyle{definition}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{corollary}[definition]{系}
+
+\newcommand{\Epoch}{E}
+\newcommand{\Resume}{R}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\Ground}{\mathrm{Gr}}
+\newcommand{\Meta}{\mathcal{M}}
+\newcommand{\Lang}{\mathcal{L}}
+\newcommand{\Ind}{\mathrm{Ind}_{\dfix}}
+\newcommand{\Obs}{\mathrm{Obs}}
+\newcommand{\Con}{\mathrm{Con}}
+
+\title{クリプキ最小不動点におけるリベンジ問題の無記的解消：\\
+---断定形による保留の退行の遮断---}
+\author{千葉将臣}
+\date{2026-07-25}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Kripke の部分的真理理論は、強 Kleene 評価に基づく単調作用素の最小不動点によって、接地された文と未接地文を区別する。しかし未接地文について「真でも偽でもない」「不確定である」と述べる語彙を対象言語へ取り込むと、その新しい意味論的状態を利用した強化された嘘つき文が構成され得る。これがリベンジ問題の基本形である。本稿は、判断を将来の再開条件とともに中断する保留 $\Epoch$ と、真偽を問う行為を実行しない操作 $\Avyakata$（無記）とを区別し、リベンジ退行を保留の再開条件の反復として診断する。未接地文への応答を対象言語内の新しい真理値述語ではなく、メタ言語上の語用論的操作 $\Avyakata$ として遂行する限り、その応答自体は標準的な対角化の新しい述語を供給しない。ただし、$\Avyakata$ を統語論的述語として再符号化できないことまでは示されず、真理論一般のリベンジ問題が解決されたとも主張しない。得られるのは、Kripke 最小不動点の構成を変更せず、その結果の記述が新たなリベンジを誘発しないための条件付き遮断原理である。最後に、外点指示 $\dfix$ と記述選択 $\Avyakata$ を区別し、QRB、○依存型および $F_0$ に対する含意を整理する。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入}
+
+\subsection{リベンジ問題の所在}
+
+Kripke の真理理論は、真理述語を含む言語に対して部分解釈を段階的に拡張し、強 Kleene 評価の最小不動点を構成する \cite{kripke}。この構成では、有限または超限的な評価段階で真偽が安定する文を接地された文として扱い、嘘つき文のような循環的文を未接地のまま残す。したがって矛盾を導く代わりに真理値ギャップを許す。
+
+ところが、未接地文の状態を表す述語を同じ対象言語へ追加できるならば、その述語を用いて新しい自己言及文を形成できる。ある解決策が嘘つき文へ割り当てた意味論的状態を、次の文が再び否定的に参照するという現象がリベンジ問題である \cite{Beall2007}。問題は最小不動点の存在ではなく、その外側から与えた意味論的分類をどこまで同じ言語に内在化できるかにある。
+
+\subsection{本稿の提案と射程}
+
+本稿は、未接地文への応答に二種類あると考える。第一は「現時点では不確定だが、より強い資源によって再評価する」とする保留 $\Epoch$ である。第二は「この文について真偽を問う行為をここでは実行しない」とする無記 $\Avyakata$ である。無記の定義、保留との区別、および両者の再帰構造は \cite{ChibaAvyakata2026} を継承する。
+
+本稿の中心的主張は条件付きである。$\Avyakata$ を対象言語の新しい真理値や意味論的述語として追加せず、メタ言語上の語用論的操作として保つ限り、$\Avyakata$ による応答は標準的なリベンジ文へ新しい対角化述語を供給しない。これは Kripke の不動点を変更する意味論的解決ではなく、リベンジを再生産する記述操作を遮断する提案である。
+
+\section{Kripke 構成と未接地性}
+
+\subsection{強 Kleene 評価と真理ジャンプ}
+
+$\Lang_{\Tr}$ を算術的基礎言語 $\Lang$ に真理述語 $\Tr$ を加えた言語とする。文の Gödel 数を $\ulcorner\varphi\urcorner$ と書く。
+
+\begin{definition}[部分解釈]
+$\Lang_{\Tr}$ の部分解釈とは、互いに素な文コードの集合の対
+\[
+ I=(T_I,F_I),\qquad T_I\cap F_I=\varnothing
+\]
+である。$T_I$ は真と評価された文、$F_I$ は偽と評価された文を表し、それ以外の文は未定義とする。部分解釈の情報順序を
+\[
+ I\sqsubseteq J
+ \quad\Longleftrightarrow\quad
+ T_I\subseteq T_J\ \land\ F_I\subseteq F_J
+\]
+と定める。
+\end{definition}
+
+\begin{definition}[Kripke 作用素]
+強 Kleene 評価 $\models_{\mathrm{SK}}$ に基づく真理ジャンプ $\Phi$ を
+\[
+ \Phi(I)=
+ \left(
+ \{\ulcorner\varphi\urcorner\mid I\models_{\mathrm{SK}}\varphi\},
+ \{\ulcorner\varphi\urcorner\mid I\models_{\mathrm{SK}}\neg\varphi\}
+ \right)
+\]
+と定める。真理原子については
+\[
+ I\models_{\mathrm{SK}}\Tr(\ulcorner\varphi\urcorner)
+ \quad\Longleftrightarrow\quad
+ \ulcorner\varphi\urcorner\in T_I
+\]
+とする。
+\end{definition}
+
+\begin{proposition}[最小不動点]
+$\Phi$ は情報順序 $\sqsubseteq$ に関して単調である。したがって空の部分解釈から超限反復
+\[
+ I_0=(\varnothing,\varnothing),\qquad
+ I_{\alpha+1}=\Phi(I_\alpha),\qquad
+ I_\lambda=\bigsqcup_{\beta<\lambda}I_\beta
+\]
+を行うと、ある閉包順序数 $\alpha_0$ で最小不動点
+\[
+ I^*=I_{\alpha_0}=(T^*,F^*)
+\]
+を得る。
+\end{proposition}
+
+\begin{proof}
+強 Kleene 結合子は既に得られた情報を失わず、真理原子の評価も $T_I,F_I$ の拡大に関して単調である。このため $I\sqsubseteq J$ ならば $\Phi(I)\sqsubseteq\Phi(J)$ である。最小不動点は単調作用素の標準的な超限反復から得られる \cite{kripke,kleene}。
+\end{proof}
+
+\begin{definition}[接地性]
+\[
+ \ulcorner\varphi\urcorner\in T^*\cup F^*
+\]
+である文 $\varphi$ を接地された文と呼ぶ。これに属さない文を未接地文と呼ぶ。
+\end{definition}
+
+対角線補題により、例えば
+\[
+ \Lang_{\Tr}\vdash
+ \lambda\leftrightarrow
+ \neg\Tr(\ulcorner\lambda\urcorner)
+\]
+を満たす嘘つき文 $\lambda$ を構成できる。Kripke の最小不動点では $\lambda$ は一般に $T^*$ にも $F^*$ にも入らず、未接地となる。
+
+\subsection{リベンジを可能にする内在化}
+
+メタ言語では
+\[
+ \ulcorner\lambda\urcorner\notin T^*\cup F^*
+\]
+と記述できる。しかし「未接地である」「確定していない」などを表す述語 $U(x)$ を対象言語に追加し、その意味論的状態を同じ言語で自由に表現できるようにすると、$U$ を参照する新たな自己言及文を構成できる。したがって、リベンジの発生には少なくとも次の二条件が関わる。
+
+\begin{enumerate}
+ \item 元の解決が残した意味論的状態を分類する語彙がある。
+ \item その語彙が対角化可能な対象言語の述語として内在化される。
+\end{enumerate}
+
+単にメタ理論から未接地性を証明することと、その分類述語を対象言語へ無制限に加えることは同じではない。本稿はこの差を利用する。
+
+\section{保留によるリベンジ退行の診断}
+
+\subsection{保留と無記}
+
+\begin{definition}[保留]
+命題的問い $\varphi$ について、将来の再開条件 $\Resume(\varphi)$ を残したまま判断を中断する操作を
+\[
+ \Epoch(\varphi)
+\]
+と書く。保留は問いを対象として保存し、条件が整えば真偽判定へ戻ることを予定する。
+\end{definition}
+
+\begin{definition}[無記]
+命題的問い $\varphi$ の真偽を問う行為を実行しない操作を
+\[
+ \Avyakata(\varphi)
+\]
+と書く。$\Avyakata(\varphi)$ は「$\varphi$ は真でも偽でもない」という第三真理値ではなく、真理値を付与する行為を遂行しない操作である \cite{ChibaAvyakata2026}。
+\end{definition}
+
+\subsection{保留的記述という解釈仮説}
+
+未接地文について「現在の体系では不確定だが、より強い意味論的資源によって再評価される」と述べる場合、その記述は
+\[
+ \Epoch\bigl(\ulcorner\lambda\urcorner\in T^*\bigr)
+\]
+の形を持つ。この同定は、真理値ギャップを採用するすべての理論に自動的に当てはまるわけではない。ギャップを最終的な意味論的状態として採用する理論は、将来の再開を予定しないからである。本稿が $\Epoch$ 型と呼ぶのは、ギャップの記述がより強い言語による将来の解消要求を伴う場合に限られる。
+
+\begin{assumption}[再開要求]
+未接地性の記述が、未接地文の真理値を確定する拡張言語の構成を再開条件として要求すると仮定する。すなわち
+\[
+ \Resume\bigl(\ulcorner\lambda\urcorner\in T^*\bigr)
+ =\text{「対応する意味論的状態を表現する言語を構成する」}
+\]
+とする。
+\end{assumption}
+
+\begin{theorem}[リベンジ退行の保留退行への還元]
+再開要求の仮定の下で、各拡張言語がその意味論的状態を対象言語内で表現し、対角化に閉じているならば、未接地性の保留的記述は
+\[
+ \Epoch(\varphi)
+ \longrightarrow\Epoch(\Resume(\varphi))
+ \longrightarrow\Epoch(\Resume^2(\varphi))
+ \longrightarrow\cdots
+\]
+という再開条件の退行を生じる。
+\end{theorem}
+
+\begin{proof}
+最初の保留を解除するには、未接地性を表現する拡張言語 $\Lang^{(1)}$ が必要となる。$\Lang^{(1)}$ がその新しい意味論的状態を表す述語を持ち、対角化に閉じているならば、その述語を用いた新しいリベンジ文を構成できる。その文の状態を確定するには $\Lang^{(2)}$ が要求され、同じ条件の下で過程が反復される。各段階の完結が次段階の意味論的資源に依存するため、これは \cite{ChibaAvyakata2026} における保留の悪性退行と同型である。
+\end{proof}
+
+\begin{remark}
+この定理は、Kripke 理論そのものが必ず「将来の解消」を約束すると主張しない。リベンジ退行を生むのは、未接地性を対象言語へ内在化し続け、各段階で全面的な意味論的閉包を要求する追加方針である。
+\end{remark}
+
+\section{無記による標準的リベンジ経路の遮断}
+
+\subsection{未接地文への無記的応答}
+
+\begin{operation}[未接地性への無記]
+メタ理論 $\Meta$ において
+\[
+ \Meta\vdash
+ \ulcorner\varphi\urcorner\notin T^*\cup F^*
+\]
+が確認されたとき、対象言語に新しい真理値を付加する代わりに
+\[
+ \Avyakata\bigl(\Tr(\ulcorner\varphi\urcorner)\bigr)
+\]
+を遂行する。これは「$\varphi$ の真理値は将来確定する」と述べる操作ではなく、現在の評価文脈で真偽付与を実行しない操作である。
+\end{operation}
+
+\begin{remark}[遂行性の位置づけ]
+この操作は Austin の遂行的発話との類比を持つ \cite{Austin1962}。ただし、Austin の理論から形式的なリベンジ耐性が直接従うとは主張しない。本稿では $\Avyakata$ の統語論的身分を対象言語の平叙文ではなく、メタ言語における評価方針の実行として規定する。
+\end{remark}
+
+\subsection{条件付き遮断定理}
+
+\begin{assumption}[非内在化条件]
+$\Avyakata$ は $\Lang_{\Tr}$ の論理式形成子でも、一変数述語でも、真理値でもないとする。また、$\Lang_{\Tr}$ に「$x$ は $\Avyakata$ である」と表す述語を追加しない。
+\end{assumption}
+
+\begin{theorem}[標準的リベンジ経路の遮断]
+非内在化条件の下で、
+\[
+ \Avyakata\bigl(\Tr(\ulcorner\lambda\urcorner)\bigr)
+\]
+という操作は、$\Lang_{\Tr}$ の対角線補題へ代入可能な新しい一変数論理式を供給しない。したがって、この操作だけを根拠として「自分は $\Avyakata$ ではない」と述べる標準的なリベンジ文を $\Lang_{\Tr}$ 内に構成することはできない。
+\end{theorem}
+
+\begin{proof}
+対角線補題は対象言語の一変数論理式 $\psi(x)$ を入力として文 $\theta$ を生成する。非内在化条件により、$\Avyakata$ は対象言語の論理式を形成せず、「$x$ が $\Avyakata$ の状態にある」という $\psi(x)$ も $\Lang_{\Tr}$ には存在しない。したがって $\Avyakata$ の遂行を直接固定点化するための統語論的入力がなく、当該経路の対角化は開始されない。
+\end{proof}
+
+\begin{corollary}[再開条件の不在]
+非内在化条件の下では、$\Avyakata(\varphi)$ の正当化のために拡張言語 $\Lang^{(1)}$ を構成することは要求されない。
+\end{corollary}
+
+\begin{proof}
+$\Avyakata$ は将来の解除条件を含まない。その操作は当該評価行為を実行しないことで完結し、保留 $\Epoch$ の再開条件 $\Resume$ を生成しない。
+\end{proof}
+
+\subsection{疑似リベンジと範疇の分離}
+
+次のような表現を考えたくなる。
+\[
+ \mu\leftrightarrow
+ \text{「$\mu$ は $\Avyakata$ の対象ではない」}.
+\]
+しかし右辺が対象言語の述語でない限り、これは $\Lang_{\Tr}$ の閉文ではない。形式的な文として構成するには、結局「$x$ は $\Avyakata$ の対象である」という述語 $A(x)$ を導入しなければならない。
+
+\begin{proposition}[疑似リベンジの分岐]
+疑似リベンジ $\mu$ について、次の二場合が分かれる。
+\begin{enumerate}
+ \item $\Avyakata$ をメタ言語上の操作として保つ場合、$\mu$ は対象言語の文として形成されない。
+ \item $\Avyakata$ を対象言語の述語 $A(x)$ として符号化する場合、対角化は可能になり得るが、得られる問題は非内在化条件を放棄した新しい真理理論の問題である。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+第一の場合は形成規則の不足による。第二の場合は対角線補題を $\neg A(x)$ などへ適用できる可能性が生じる。このとき $A$ の外延、合成性、真理述語との相互作用を別途定めなければならず、元の $\Avyakata$ 操作を単に記述しただけではない。
+\end{proof}
+
+\section{限界と未証明部分}
+
+\subsection{示されたこと}
+
+本稿が示したのは、未接地文への応答を非内在化された語用論的操作として維持すれば、その応答自体は標準的な対角化述語にならない、という条件付き結果である。次の事柄は示していない。
+
+\begin{enumerate}
+ \item Kripke 作用素 $\Phi$、最小不動点 $I^*$、未接地文の集合が変更または消去されること。
+ \item 真理値ギャップに基づく既存の真理理論がすべて保留 $\Epoch$ 型であること。
+ \item $\Avyakata$ を模倣するあらゆる統語論的述語の構成が不可能であること。
+ \item 改訂理論、超評価主義、弁証法主義、非整合的真理論などにおける全リベンジ問題が解決されること。
+\end{enumerate}
+
+\begin{remark}[定理の語用論的性格]
+本稿の遮断は、表現力を無制限に保ったまま意味論的閉包を達成する定理ではない。$\Avyakata$ を対象言語へ内在化しないという型または水準の制約によって、特定の自己言及経路を遮断する。この代償を明示することが必要である。
+\end{remark}
+
+\subsection{統語論的模倣の問題}
+
+対角線補題は、意味論的に真理値を持つ述語だけでなく、対象理論で表現可能な任意の一変数論理式へ適用できる。そのため、証明探索の停止性、評価規則の適用履歴、話者の応答方針などを算術化し、それを $\Avyakata$ の模倣とみなす試みは排除されていない。
+
+\begin{proposition}[頑健性に必要な追加条件]
+より強いリベンジ耐性を得るには、少なくとも次のいずれかが必要である。
+\begin{enumerate}
+ \item $\Avyakata$ とその統語論的符号化の間に表現不可能性定理を与える。
+ \item 型、言語階層または利用規則によって、符号化された述語を真理述語の対角化領域から分離する。
+ \item 符号化された疑似 $\Avyakata$ へ新たな意味論を与え、そのリベンジ文に対する閉包定理を証明する。
+\end{enumerate}
+\end{proposition}
+
+現段階ではこれらのいずれも構成されていない。したがって「$\Avyakata$ はあらゆるリベンジに対して無条件に安全である」という強い主張は採用しない。
+
+\subsection{決定不能性との区別}
+
+未接地性は、必ずしもメタ理論における決定不能性ではない。メタ理論は $I^*$ を解析し、特定の文が $T^*\cup F^*$ に属さないことを証明し得る。したがって
+\[
+ \Avyakata\bigl(\Tr(\ulcorner\lambda\urcorner)\bigr)
+\]
+は「$\lambda$ の未接地性が分からない」という意味ではない。メタ理論上で分類された文について、対象言語内の真偽付与を実行しないという記述選択を表す。
+
+\section{Tarski 階層と窓の連鎖}
+
+Tarski の真理定義不可能性定理は、十分に豊かな言語が自らの真理述語を内部で定義することに制限を与える \cite{tarski}。通常は対象言語 $T_n$ と、それについて語るメタ言語 $T_{n+1}$ を区別し、真理述語の階層を形成する。
+
+\begin{proposition}[無記と階層の両立]
+$T_n$ の内部で全面的な真理判定を遂行しないという操作
+\[
+ \Avyakata\bigl(\text{$T_n$ の全閉文に内部真理を付与する}
+ \bigr)
+\]
+は、$T_{n+1}$ が $T_n$ の文に対する真理定義を構成することと両立する。
+\end{proposition}
+
+\begin{proof}
+$\Avyakata$ は $T_n$ における評価行為を実行しないことを記録するだけであり、異なる理論 $T_{n+1}$ における定義行為を禁止しない。対象水準とメタ水準を区別すれば両者は競合しない。
+\end{proof}
+
+これは○依存型における窓の連鎖
+\[
+ \Con(T_n)\rightsquigarrow\dfix_n,
+ \qquad
+ T_{n+1}\vdash\Con(T_n)
+\]
+とも比較できる \cite{ChibaEPMDTT2026}。ただし $\dfix_n$ は $T_n$ の内部到達不能性を記録し、$\Avyakata$ は特定の評価行為を遂行しないという選択を表すため、両者を同一視しない。
+
+\section{外点指示と記述選択の分離}
+
+\subsection{二種類の操作}
+
+\begin{definition}[相対的到達不能型]
+体系 $T$ の内部では対象、証明または値へ到達できず、その境界がメタ理論から確認される場合、その内部到達不能性を外点指示
+\[
+ A\rightsquigarrow\dfix
+\]
+で記録する。$\dfix$ は到達先の値ではなく、理論境界のマーカーである \cite{ChibaQRB2026,ChibaEPMDTT2026}。
+\end{definition}
+
+\begin{definition}[記述選択型]
+メタ理論では対象の意味論的状態が確認されているが、その状態を対象言語の真理値述語として内在化しないという操作を
+\[
+ \Avyakata(\varphi)
+\]
+で記録する。
+\end{definition}
+
+\begin{proposition}[記号分離の必要性]
+$\dfix$ と $\Avyakata$ は同じ記号で表すべきではない。前者は対象体系に相対的な到達可能性の境界、後者は評価行為に関する語用論的選択を表す。
+\end{proposition}
+
+\begin{proof}
+$\dfix$ は「対象体系からは通常の値または証明が得られない」という構造的情報を保持する。これに対して $\Avyakata$ は、メタ理論で既に分類可能な対象についても遂行できる。両者を同一視すると、記述方針を変えただけで理論的到達不能性が解消されたかのような誤読を生む。
+\end{proof}
+
+\subsection{○依存型への含意}
+
+○依存型の弱い指示判断
+\[
+ \Gamma\vdash_T^{\Meta}p:A\rightsquigarrow\dfix
+\]
+は、$T$ の内部証明を与えずに証明障害 $p:\Obs_T(A)$ を記録する \cite{ChibaEPMDTT2026}。この判断は原則として $\dfix$ 型である。一方、メタ理論が障害を完全に分類した後、その分類を対象言語の真理値へ持ち込まないという追加方針は $\Avyakata$ 型である。
+
+したがって証明探索の発散がメタ理論で証明されたという事実だけで、指示判断が自動的に $\Avyakata$ へ変わるわけではない。証明不在の記録と、その事実をどの語彙で述べるかは別の水準に属する。
+
+\subsection{\texorpdfstring{$F_0$}{F0} への含意}
+
+$F_0$ の
+\[
+ 1/0\leadsto\dfix
+\]
+は、除算結果として新しい数値を与えるのではなく、指定された内部演算で逆元が得られないことを診断する \cite{ChibaF02026}。これは通常、相対的到達不能型の $\dfix$ と読むのが自然である。
+
+その診断がメタ理論で確定していることは、直ちに $\Avyakata$ であることを意味しない。$\Avyakata$ が関与するのは、その後に「未定義」「不定」「外点」といった分類を対象言語の新しい真理値として導入するか否かを選ぶ段階である。この区別により、演算診断と記述方針を分離できる。
+
+\section{結論}
+
+本稿の結果は次のようにまとめられる。
+
+\begin{enumerate}
+ \item Kripke の最小不動点は接地文と未接地文を区別するが、意味論的状態を対象言語へ内在化するとリベンジ文の形成条件が生じる。
+ \item 未接地性の記述が将来の意味論的閉包を要求する場合、その記述は保留 $\Epoch$ として再開条件の悪性退行を生じる。
+ \item $\Avyakata$ を対象言語の述語ではなく、メタ言語上の評価行為として保つ限り、標準的な対角線補題へ代入できる新述語は供給されない。
+ \item この結果は非内在化条件に依存し、$\Avyakata$ のあらゆる統語論的模倣を排除するものではない。したがって真理論一般のリベンジ問題の無条件な解決ではない。
+ \item 外点指示 $\dfix$ と記述選択 $\Avyakata$ は異なる水準に属する。前者は理論内部の到達境界、後者は真偽付与を遂行しない語用論的操作を記録する。
+\end{enumerate}
+
+以上により、「無記的解消」とは未接地性を消去することではなく、未接地性への応答を新しい真理値述語へ変換しないことで、特定のリベンジ経路を完結的に遮断することを意味する。残る課題は $\Avyakata$ の統語論的模倣に対する表現不可能性または型分離の定理を構成することであり、この課題が解かれるまでは本稿の結果を条件付き遮断として扱う。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
