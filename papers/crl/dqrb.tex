@@ -1,0 +1,712 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{icat-common}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{conjecture}[definition]{予想}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{example}[definition]{例}
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+
+\newcommand{\Diff}{\mathbf{Diff}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\DQRB}{\mathrm{DQRB}}
+\newcommand{\Res}{\mathrm{Res}}
+\newcommand{\DRes}{\mathrm{DRes}}
+\newcommand{\Obs}{\mathrm{Obs}}
+\newcommand{\Ext}{\mathrm{Ext}}
+\newcommand{\Ind}{\mathbf{Ind}_{\dfix}}
+\newcommand{\IndD}{\mathbf{Ind}^{\DQRB}_{\dfix}}
+\newcommand{\Spc}{\mathrm{Spc}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\cofib}{\operatorname{cofib}}
+\newcommand{\Id}{\operatorname{Id}}
+\newcommand{\Open}{\operatorname{Open}}
+\newcommand{\OpenD}{\operatorname{Open}_{D}}
+\newcommand{\HdR}{H_{\mathrm{dR}}}
+\newcommand{\HCdR}{\mathbb H_{\check{C}\mathrm{dR}}}
+\newcommand{\Shape}{\operatorname{Shape}}
+\newcommand{\Meta}{\mathcal M}
+\newcommand{\Unit}{\mathbf 1}
+\newcommand{\Forc}{\mathrm{Forc}}
+\newcommand{\Bool}{\mathbb B}
+
+\title{可微分四重残余束\\
+{\large ---Diffeological QRB の自己診断構造と外点指示型理論への応用---}}
+\author{千葉将臣}
+\date{2026-07-30}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+四重残余束（QRB）は、同一性截断、二重否定層化、随伴単位、自己参照比較という四つの比較写像が同時に非可逆となる領域を、残余対象の台の共通部分として検出する。本稿は、この点ごとの自己診断を、障害がパラメータに沿ってどのように変化するかまで記述する\textbf{可微分四重残余束}（Diffeological QRB; DQRB）へ拡張する。
+
+ただし、抽象的な三角圏の残余対象が自動的に可微分空間になるわけではない。そこで、QRBデータに加えて、残余対象の可微分実現、外点候補領域上のdiffeology、および台との適合条件を\textbf{可微分診断データ}として明示する。この追加データの下で、通常のQRBを忘却した点的診断として回収しつつ、滑らかなプロット、経路、D-位相、微分形式、de Rhamおよび\v{C}ech--de Rham型の障害を用いて、四重崩壊の連続変形、局所安定性、分岐および特異層を区別できることを示す。したがってdiffeologyはQRBの判定条件を置換するのではなく、その障害の変動様式を精密化する。
+
+さらに、DQRBの構成条件そのものをdiffeology側へ反射させる\textbf{逆診断}を導入する。これは、残余の可微分実現、代数的支持とD-位相的支持の整合、de Rham情報と層・stack情報の比較、および候補領域からの指示点選択という四つの接続条件を検査する。逆診断はdiffeology一般の欠陥を主張するものではなく、diffeologyがQRBの外点診断を担うために必要な追加構造を特定する。
+
+応用として、外点指示付き依存型理論（EPMDTT）の証明障害型をDQRBの局所診断証拠によって意味論化する構想を与える。単なる効果型 $\Ind(A)=A+\Unit$ は外点マーカーの構文的隔離を表すが、その幾何学的由来までは定めない。DQRBを先行させることで、弱い指示判断を四比較の非可逆性と微分的障害証拠に結びつけ、無記と外点指示を区別できる。他方、強制法の指示写像、\v{C}ech--de Rham障害類、型理論的指示補題の間の対応は自動的には得られない。本稿はこれらを明示的な比較写像と健全性条件を要する予想として定式化し、Diffeological EPMDTTへ至る段階的な構築計画を提示する。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入}
+
+\subsection{QRBの自己診断とその不足}
+
+QRBは、形式体系の外部を新しい内部値として定義する代わりに、体系内の複数の比較操作が同時に可逆性を失う場所を診断する。安定テンソル三角圏 $\mathcal C$ の対象 $X$ に対し、四つの自己関手 $M_i$ と自然変換
+\begin{equation}
+ M_i:\mathcal C\longrightarrow\mathcal C,
+ \qquad
+ \eta_i:\Id_{\mathcal C}\Longrightarrow M_i,
+ \qquad
+ i\in I:=\{S,N,SN,NS\}
+ \label{eq:qrb-comparisons}
+\end{equation}
+を置き、残余対象を
+\begin{equation}
+ \Res_i(X)=\cofib\bigl(\eta_i(X):X\to M_iX\bigr)
+ \label{eq:residual}
+\end{equation}
+とする。四つの台の共通部分
+\begin{equation}
+ \mathcal O_X=
+ \bigcap_{i\in I}\supp\bigl(\Res_i(X)\bigr)
+ \subseteq \Spc(\mathcal C^c)
+ \label{eq:qrb-locus}
+\end{equation}
+は、四比較が同時に非同型となる外点候補領域を与える\cite{ChibaQRB2026,balmer}。
+
+この構成は自己診断的である。すなわち、外部をあらかじめ対象として仮定せず、内部操作が残す四種類の差から境界を検出する。しかし式\eqref{eq:qrb-locus}だけが与えるのは、各点が障害領域に属するか否かという台の情報である。障害点がパラメータに沿ってどのように接続されるか、どの変形が許されるか、どの特異性が局所的に安定かは、それだけでは決まらない。
+
+本稿の目的は、この不足をdiffeologyによって補うことである。Diffeologyは、ユークリッド開集合からのプロットによって滑らかさを定めるため、商空間、特異空間、無限次元空間にも微分的構造を与えられる\cite{IglesiasZemmour2025Why,Kihara2018,ChristensenWu2014}。その圏は完備、余完備かつデカルト閉であり、写像空間や商を同じ圏内で扱える。この柔軟性は、QRBの外点候補領域を単なる点集合ではなく、診断が変化する可微分パラメータ空間として扱う動機を与える。
+
+\subsection{中心的主張}
+
+本稿の主張は次の六点である。
+\begin{enumerate}
+ \item DQRBは、QRBに可微分診断データを追加した構造であり、任意のQRBから自動的に得られるものではない。
+ \item DQRBの忘却像は通常のQRB外点候補領域を回収する。したがってdiffeologyは四重残余判定を変更せず、その局所変動を精密化する。
+ \item 滑らかなプロット、経路、D-位相および微分的コホモロジーを用いることで、障害の持続、分岐、消滅、局所的な同値類を診断項目として追加できる。
+ \item Diffeological EPMDTTでは、外点マーカーを単なる $A+\Unit$ の右成分としてではなく、DQRB上の局所診断証拠を伴う指示として意味論化できる。
+ \item \v{C}ech--de Rham障害から強制法の指示写像または型理論的指示補題が自動的に従うわけではない。これらには比較写像、自然性および健全性の証明が別途必要である。
+ \item DQRBの構成は、diffeology側の実現・支持・コホモロジー・点選択の接続条件を逆向きに診断する。
+\end{enumerate}
+
+\subsection{非主張}
+
+本稿は、Balmerスペクトルが標準的なdiffeologyを一意にもつとは主張しない。また、余ファイバー $\Res_i(X)$ 自体を、実現関手なしに可微分空間と同一視しない。さらに、de Rhamまたは\v{C}ech--de Rhamコホモロジーの非自明性を、証明不能性、強制関係、あるいは外点の存在と無条件に同値とはしない。以下で定理として述べるのは、明示した追加データと適合条件の下で成立する構造保存である。EPMDTTおよび強制法との接続は、未構成の部分を予想として区別する。
+
+\section{Diffeologyの形式的準備}
+
+\subsection{プロットと滑らかな写像}
+
+\begin{definition}[Diffeological space]
+集合 $Y$ 上のdiffeology $\mathcal D_Y$ とは、各ユークリッド開集合 $U\subseteq\mathbb R^n$ からの写像 $p:U\to Y$ の族であって、次を満たすものである。
+\begin{enumerate}
+ \item 定値写像はプロットである。
+ \item $p:U\to Y$ がプロットで $f:V\to U$ が通常の滑らかな写像なら、$p\circ f$ もプロットである。
+ \item 写像 $p:U\to Y$ が開被覆上で局所的にプロットなら、$p$ はプロットである。
+\end{enumerate}
+組 $(Y,\mathcal D_Y)$ をdiffeological spaceと呼ぶ。
+\end{definition}
+
+写像 $g:Y\to Z$ が滑らかであるとは、任意のプロット $p:U\to Y$ に対して $g\circ p$ が $Z$ のプロットとなることをいう。Diffeological spacesと滑らかな写像の圏を $\Diff$ と書く\cite{IglesiasZemmour2025Why}。
+
+\begin{definition}[D-位相]
+Diffeological space $Y$ の部分集合 $V\subseteq Y$ がD-開であるとは、任意のプロット $p:U\to Y$ に対して $p^{-1}(V)$ が $U$ で開となることをいう。D-開集合の成す束を $\OpenD(Y)$ と書く。
+\end{definition}
+
+D-位相はdiffeologyから派生するが、diffeology全体を決定するとは限らない。したがって、同じ位相空間上でも許されるプロットが異なれば異なる診断幾何を持ち得る。
+
+\subsection{部分空間、商および写像空間}
+
+包含 $A\subseteq Y$ には、$Y$ のプロットで局所的に因子化する写像をプロットとする部分diffeologyが入る。全射 $q:Y\twoheadrightarrow Q$ には、局所的に $q\circ p$ として持ち上がる写像をプロットとする商diffeologyが入る。特異な軌道空間や通常の多様体にならない商を直接扱えることは、diffeologyの主要な利点である\cite{IglesiasZemmour2025Why}。
+
+また $C^\infty(Y,Z)$ には、評価写像
+\begin{equation}
+ U\times Y\longrightarrow Z,
+ \qquad (u,y)\longmapsto P(u)(y)
+\end{equation}
+が滑らかとなる $P:U\to C^\infty(Y,Z)$ をプロットとする汎関数diffeologyが入る。これにより $\Diff$ はデカルト閉となる。DQRBでは、診断規則や文脈変換そのものを可微分に変化する対象として扱う際にこの性質を用いる。
+
+\subsection{微分形式とコホモロジー}
+
+Diffeological $k$-形式 $\omega$ は、各プロット $p:U\to Y$ に通常の微分形式 $\omega_p\in\Omega^k(U)$ を割り当て、滑らかな前合成に関して
+\begin{equation}
+ \omega_{p\circ f}=f^*\omega_p
+ \label{eq:diffeological-form}
+\end{equation}
+を満たす族として定義される。外微分はプロットごとに定義され、de Rham複体 $\Omega^*(Y)$ とコホモロジー $\HdR^*(Y)$ を得る。
+
+一方、diffeological spaceを滑らかなサイト上の層または単体的前層として扱えば、\v{C}echコホモロジー、$\infty$-stackコホモロジー、束と接続の分類を考えられる\cite{Minichiello2024Bundles,Clough2023,Pavlov2024}。ただし、diffeological de Rhamコホモロジーと他のコホモロジーが常に一致するわけではない。その不一致自体を測る\v{C}ech--de Rham障害が研究されている\cite{Minichiello2024Obstruction}。本稿ではこの不一致を欠陥ではなく、外点候補領域の診断情報になり得るものとして扱う。
+
+\section{QRBからDQRBへ}
+
+\subsection{可微分診断データ}
+
+式\eqref{eq:residual}の $\Res_i(X)$ は $\mathcal C$ の対象であり、集合でも可微分空間でもない。したがって、DQRBを定義するには圏を越える実現データが必要である。
+
+\begin{definition}[可微分診断データ]
+QRBデータ $(\mathcal C,X,(M_i,\eta_i)_{i\in I})$ に対する可微分診断データとは、次の組
+\begin{equation}
+ \mathfrak D_X=
+ \bigl(\mathcal R,\mathcal D_X,
+ (\rho_i)_{i\in I}\bigr)
+ \label{eq:diagnostic-data}
+\end{equation}
+である。
+\begin{enumerate}
+ \item $\mathcal R$ は、少なくとも $X,M_iX,\Res_i(X)$ を含む部分圏から $\Diff$ または滑らかな高次層の圏への実現関手である。
+ \item $\mathcal D_X$ は、集合 $\mathcal O_X$ 上に選ばれたdiffeologyである。
+ \item $\rho_i:\mathcal O_X\to |\mathcal R\Res_i(X)|$ は、各点における $i$ 番目の残余の局所診断値を与える滑らかな写像である。
+ \item $\rho_i$ は台と適合し、$\mathfrak p\in\mathcal O_X$ では $\eta_i(X)_{\mathfrak p}$ の非可逆性を検出する。
+\end{enumerate}
+ここで $|{-}|$ は実現対象の基礎集合を表す。
+\end{definition}
+
+実現 $\mathcal R$ は一意である必要はない。例えば、残余対象のモジュライ、写像空間、局所化のパラメータ空間、あるいはスペクトル上の障害層を実現対象として選び得る。重要なのは、どの実現を用いたかをQRB本体と混同しないことである。
+
+\begin{remark}[最小構成]
+残余対象全体の実現が困難な場合には、$\mathcal O_X$ にdiffeologyを入れ、四つの非可逆性述語だけを局所定数な診断ラベルとして持たせる最小構成も可能である。この場合にも経路とD-位相は得られるが、微分形式やコホモロジーがQRBの残余を忠実に反映するためには追加の実現条件が必要である。
+\end{remark}
+
+\subsection{可微分四重残余束}
+
+\begin{definition}[Diffeological residual]
+可微分診断データの下で、$i$ 番目の可微分残余を
+\begin{equation}
+ \DRes_i(X):=\mathcal R\bigl(\Res_i(X)\bigr)
+ \end{equation}
+と定める。
+\end{definition}
+
+\begin{definition}[Diffeological QRB]
+対象 $X$ のDiffeological QRBを
+\begin{equation}
+ \DQRB_{\mathfrak D}(X)
+ :=
+ \bigl(
+   (\mathcal O_X,\mathcal D_X),
+   (\DRes_i(X),\rho_i)_{i\in I}
+ \bigr)
+ \label{eq:dqrb}
+\end{equation}
+と定義する。$(\mathcal O_X,\mathcal D_X)$ を\textbf{可微分外点候補領域}と呼び、
+\begin{equation}
+ \dfix_{\DQRB}:1\longrightarrow(\mathcal O_X,\mathcal D_X)
+ \label{eq:selected-point}
+\end{equation}
+という点の選択が追加されたとき、これを\textbf{点付きDQRB}と呼ぶ。
+\end{definition}
+
+式\eqref{eq:selected-point}は、候補領域から現実の指示点を選ぶ追加データである。Diffeologyは点選択を自動化しない。この点は、通常のQRBにおいて $\mathcal O_X$ と外点代表 $\xi_G$ を区別したことと同じである。
+
+\begin{proposition}[QRBの回収]
+DQRBからdiffeology、実現および診断写像を忘却すると、基礎集合として通常のQRB外点候補領域 $\mathcal O_X$ が回収される。特に、DQRBの存在だけによって新しい外点が追加されることはない。
+\end{proposition}
+
+\begin{proof}
+定義\eqref{eq:dqrb}の基礎集合は式\eqref{eq:qrb-locus}で定めた $\mathcal O_X$ である。追加されたのは、その上のプロット族と残余実現への写像であり、所属条件 $\mathfrak p\in\bigcap_i\supp(\Res_i(X))$ は変更されない。
+\end{proof}
+
+\begin{proposition}[診断健全性]
+各 $\rho_i$ が零対象または同型を反映し、台との適合条件を満たすとする。このとき、$\mathfrak p\in\mathcal O_X$ における四つの非自明な診断値は、四つの局所化比較写像 $\eta_i(X)_{\mathfrak p}$ が同時に非同型であることを健全に反映する。
+\end{proposition}
+
+\begin{proof}
+$\mathfrak p\in\mathcal O_X$ なら、各 $i$ について $\mathfrak p\in\supp(\Res_i(X))$ である。安定圏において比較写像の余ファイバーが局所的に零でないことは、比較写像が局所的に同型でないことを意味する。$\rho_i$ の反映性により、その非自明性は可微分実現上でも失われない。
+\end{proof}
+
+\subsection{自己診断性の可微分的強化}
+
+通常のQRBは「どこで四重崩壊が起きるか」を検出する。DQRBはさらに「四重崩壊がどのように変化するか」を記述する。
+
+\begin{definition}[診断プロット]
+ユークリッド開集合 $U$ からのプロット
+\begin{equation}
+ p:U\longrightarrow\mathcal O_X
+ \end{equation}
+をDQRBの診断プロットと呼ぶ。その四重診断プロフィールは
+\begin{equation}
+ \boldsymbol\rho_p
+ :=(\rho_S\circ p,\rho_N\circ p,
+ \rho_{SN}\circ p,\rho_{NS}\circ p)
+ \label{eq:profile}
+\end{equation}
+である。
+\end{definition}
+
+診断プロットは、外点候補の族を一つの滑らかな観測として束ねる。特に $U=(-\epsilon,\epsilon)$ の場合、$p$ は障害の局所変形を、$U=[0,1]$ に滑らかに延長できる場合には診断経路を表す。
+
+\begin{definition}[可微分的持続性]
+点 $\mathfrak p=p(0)$ における $i$ 番目の障害がプロット $p$ に沿って持続するとは、$0$ の近傍 $V\subseteq U$ が存在し、すべての $u\in V$ で $\rho_i(p(u))$ が非自明であることをいう。四つすべてについて持続するとき、四重障害は $p$ に沿って持続するという。
+\end{definition}
+
+\begin{proposition}[D-開性による局所安定性]
+各 $i$ の非自明診断領域
+\begin{equation}
+ U_i=\{\mathfrak p\in\mathcal O_X
+ \mid \rho_i(\mathfrak p)\text{ が非自明}\}
+ \end{equation}
+がD-開であるとする。このとき、$\bigcap_iU_i$ の各点における四重障害は、すべての診断プロットに沿って局所的に持続する。
+\end{proposition}
+
+\begin{proof}
+$\mathfrak p=p(0)\in\bigcap_iU_i$ とする。各 $U_i$ はD-開なので $p^{-1}(U_i)$ は $0$ の開近傍である。有限個の交差 $\bigcap_i p^{-1}(U_i)$ も $0$ の開近傍であり、その上で四診断がすべて非自明である。
+\end{proof}
+
+この命題は、QRBの自己診断がdiffeologyによって強化される最小の意味を与える。すなわち、点的な同時非可逆性に加え、その判定が許容された滑らかな摂動に対して安定か否かを区別できる。
+
+\subsection{微分的障害類}
+
+可微分外点候補領域上の閉形式
+\begin{equation}
+ \omega_i\in\Omega^{k_i}(\mathcal O_X),
+ \qquad d\omega_i=0
+ \end{equation}
+を、$i$ 番目の残余変動から自然に構成できたとする。そのコホモロジー類
+\begin{equation}
+ [\omega_i]\in\HdR^{k_i}(\mathcal O_X)
+ \end{equation}
+は、局所診断値を一周しても消去できない大域的な障害を表す候補となる。ただし、$[\omega_i]\neq0$ と $\Res_i(X)\neq0$ は一般には別の条件である。前者を後者の診断と呼ぶには、残余実現から形式を構成する自然変換が必要である。
+
+\begin{definition}[微分的QRB障害証拠]
+DQRBにおける微分的障害証拠とは、次のデータの組である。
+\begin{equation}
+ o=(\mathfrak p,(w_i)_{i\in I},\alpha),
+ \label{eq:differential-witness}
+\end{equation}
+ここで $\mathfrak p\in\mathcal O_X$、$w_i$ は $\eta_i(X)_{\mathfrak p}$ の非可逆性の証拠、$\alpha$ は $\mathfrak p$ のD-開近傍上のde Rham、\v{C}ech、または$\infty$-stackコホモロジーの指定された障害類である。$\alpha$ は任意項であり、点的QRB診断だけを用いる場合には省略できる。
+\end{definition}
+
+\v{C}ech--de Rham写像が同型でないことを測る障害は、通常のde Rham形式だけでは見えない滑らかな貼合せ情報を含み得る\cite{Minichiello2024Obstruction}。したがってDQRBでは、これを「四重崩壊そのもの」ではなく、崩壊領域上の局所データが大域的診断へ貼り合わさらないことを測る二次診断として位置づける。
+
+\section{特異層と商表示}
+
+\subsection{Klein型の診断層}
+
+Diffeological space $Y$ の局所微分同相の擬群が作用するとき、その軌道によって局所的な特異性を分類する考え方がある\cite{IglesiasZemmour2025Why}。DQRBにこの構図を用いるには、外点候補領域上の許容される診断座標変換を指定しなければならない。
+
+\begin{definition}[診断擬群]
+$\mathcal G_X$ を $(\mathcal O_X,\mathcal D_X)$ のD-開部分間の局所微分同相からなる擬群であって、各診断写像 $\rho_i$ を同型の範囲で保存するものとする。$\mathcal G_X$ の軌道をDQRBの\textbf{Klein型診断層}と呼ぶ。
+\end{definition}
+
+同じ層に属する点は、四残余の変動が局所座標変換によって同じ診断形を持つ。これは単に台が一致するというより強い局所同値である。ただし、$\mathcal G_X$ はQRBから自動的に定まらず、実現データまたは応用領域から与えられる。
+
+\subsection{商diffeologyとquasifold構想}
+
+理論拡大、モデル変更、観測文脈の変更がdiffeological groupoid
+\begin{equation}
+ \mathcal G_1\rightrightarrows\mathcal G_0
+ \end{equation}
+としてDQRB診断空間へ作用する場合、軌道空間には商diffeologyが入る。このとき、窓の連鎖を単なる離散列ではなく、診断状態の軌道と安定化群を持つ商幾何として扱える。
+
+ただし、商がorbifoldまたはquasifoldとなるためには、局所モデル、作用の離散性、適切性などの追加条件が必要である。本稿では一般のDQRBをquasifoldと呼ばず、次の条件付き構想に留める。
+
+\begin{conjecture}[QRB商層化]
+理論拡大の圏がDQRB上の滑らかなgroupoid作用として実現され、その局所作用が適切なquasifold条件を満たすならば、外点候補領域の理論間同値類は商diffeologyを持つ特異層として表現できる。
+\end{conjecture}
+
+\section{Diffeological EPMDTT}
+
+\subsection{構文先行型の限界}
+
+EPMDTTは、対象理論 $T$ とメタ理論 $\Meta$ を区別し、通常判断
+\begin{equation}
+ \Gamma\vdash_T a:A
+\end{equation}
+に加えて、証明障害を記録する弱い指示判断
+\begin{equation}
+ \Gamma\vdash_T^{\Meta}o:A\rightsquigarrow\dfix
+ \label{eq:weak-indication}
+\end{equation}
+を導入する。計算効果として
+\begin{equation}
+ \Ind(A)=A+\Unit
+ \label{eq:indication-monad}
+\end{equation}
+を用いるが、右成分は $A$ の値ではなく、外部依存のマーカーである\cite{ChibaEPMDTT2026}。
+
+式\eqref{eq:indication-monad}を $\Diff$ で解釈すれば、基礎的には余積 $A\sqcup\Unit$ が得られる。この構成はマーカーを通常値から隔離するためには十分であるが、なぜそのマーカーが生じたか、四つのどの比較がどの近傍で崩壊したかを決定しない。したがって問題は $A+\Unit$ が誤っていることではなく、幾何学的診断を単独では含まないことである。
+
+\subsection{DQRB障害型}
+
+命題または型 $A$ にQRB対象 $X_A$ と可微分診断データ $\mathfrak D_A$ を対応させられるとする。
+
+\begin{definition}[Diffeological proof-obstruction type]
+$A$ のDQRB証明障害型を概略
+\begin{equation}
+ \Obs_T^{\DQRB}(A)
+ :=
+ \sum_{\mathfrak p:\mathcal O_{X_A}}
+ \prod_{i\in I}
+ \mathsf{NonIso}\bigl(\eta_i(X_A)_{\mathfrak p}\bigr)
+ \times \mathsf{DiffObs}_A(\mathfrak p)
+ \label{eq:dqrb-obstruction-type}
+\end{equation}
+と定める。$\mathsf{DiffObs}_A(\mathfrak p)$ は、選択したD-開近傍、診断プロット、微分形式またはコホモロジー障害を記録する型であり、最小構成では単位型としてよい。
+\end{definition}
+
+この定義により、弱い指示判断を
+\begin{equation}
+ \frac{\Meta\vdash o:\Obs_T^{\DQRB}(A)}
+ {\Gamma\vdash_T^{\Meta}
+   \mathsf{mark}_{\DQRB}(o):A\rightsquigarrow\dfix}
+ \quad(\dfix\text{-DQRB導入})
+ \label{eq:dqrb-intro}
+\end{equation}
+と精密化できる。ここで $o$ は $A$ の証明項ではなく、四重残余とその可微分的変動の診断証拠である。
+
+\begin{remark}[強い指示判断]
+DQRB障害証拠は内部証明の不在または境界を診断するが、外部実現を自動的には与えない。強い指示判断には従来通り
+\begin{equation}
+ e:\Ext_T(A)
+\end{equation}
+が追加で必要である。したがって、微分的障害類の存在を $A$ の外部真理と同一視してはならない。
+\end{remark}
+
+\subsection{無記と外点指示の分離}
+
+真偽判断を実行しない語用論的操作としての無記と、内部比較の崩壊を証拠付きで記録する外点指示は異なる。DQRBを用いると、その違いを次のように表せる。
+
+\begin{center}
+\begin{tabular}{p{0.22\textwidth} p{0.33\textwidth} p{0.34\textwidth}}
+\toprule
+操作 & 必要な証拠 & 意味 \\
+\midrule
+無記 & 真偽判定を開始しないという選択 & 記述・判断行為の非実行 \\
+外点指示 & $o:\Obs_T^{\DQRB}(A)$ & 四比較の同時非可逆性とその局所診断 \\
+外部実現 & さらに $e:\Ext_T(A)$ & 指示先における実現可能性 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+したがって「値が与えられない」という外見だけで両者を同一視しない。無記には四重崩壊の証拠を要求せず、外点指示にはそれを要求する。
+
+\subsection{忘却と保守性}
+
+DQRB証拠を消去し、$\mathsf{mark}_{\DQRB}(o)$ を $A+\Unit$ の右成分 $\mathsf{inr}(*)$ へ送る翻訳
+\begin{equation}
+ |{-}|:\IndD(A)\longrightarrow A+\Unit
+ \label{eq:erasure}
+\end{equation}
+を考える。
+
+\begin{proposition}[幾何学的注釈の消去]
+Diffeological EPMDTTの新しい導入規則が式\eqref{eq:dqrb-intro}に限定され、DQRB証拠から $A$ の項を生成する内部消去規則を持たないならば、式\eqref{eq:erasure}は各DQRBマーカーを通常のEPMDTTマーカーへ送る。したがってDQRB層は、通常の対象判断に対して幾何学的注釈として振る舞う。
+\end{proposition}
+
+完全な保守性定理には、置換、弱化、依存和・依存積およびハンドラに対する翻訳保存を証明する必要がある。本稿の命題は、そのための必要な設計条件を述べるものである。
+
+\section{指示写像とコホモロジー障害}
+
+\subsection{D-開集合への指示写像}
+
+強制法とQRBの比較には、完備ブール代数 $\Bool$ から外点候補領域の開集合への写像が必要であった。DQRBではこれをD-位相へ精密化する。
+
+\begin{assumption}[可微分指示データ]
+次のデータが与えられているとする。
+\begin{enumerate}
+ \item 完備ブール代数 $\Bool$。
+ \item フレーム準同型
+ \begin{equation}
+  \Theta_D:\Bool\longrightarrow\OpenD(\mathcal O_X)。
+  \label{eq:theta-d}
+ \end{equation}
+ \item 選択点 $\xi_G\in\mathcal O_X$ であって、すべての $b\in\Bool$ について
+ \begin{equation}
+  b\in G
+  \quad\Longleftrightarrow\quad
+  \xi_G\in\Theta_D(b)
+  \label{eq:forcing-membership}
+ \end{equation}
+ を満たすもの。
+\end{enumerate}
+\end{assumption}
+
+\begin{proposition}[可微分指示原理]
+仮定7.1の下で、強制条件のジェネリック・フィルターへの所属は、点付きDQRBのD-開近傍への所属として表現される。
+\end{proposition}
+
+\begin{proof}
+式\eqref{eq:forcing-membership}そのものである。Diffeologyの役割は、$\Theta_D(b)$ を単なる開集合ではなく、すべての診断プロットによって検査されるD-開近傍として与えることにある。
+\end{proof}
+
+この命題は $\Theta_D$ の存在を証明しない。特定のQRB、強制半順序および可微分実現について式\eqref{eq:theta-d}を構成することが、依然として主要問題である。
+
+\subsection{障害類から指示写像へ}
+
+\v{C}ech--de Rham障害は、de Rham型と層・stack型のコホモロジーの比較が同型でない度合いを測る\cite{Minichiello2024Obstruction}。しかし、コホモロジー類は一般に開集合そのものではない。障害類から $\Theta_D$ を作るには、少なくとも支持を取る操作
+\begin{equation}
+ \mathsf{Supp}_{\mathrm{diff}}:
+ \mathcal H_X\longrightarrow\OpenD(\mathcal O_X)
+ \label{eq:diff-support}
+\end{equation}
+と、ブール値を障害類へ送る写像
+\begin{equation}
+ \chi:\Bool\longrightarrow\mathcal H_X
+ \label{eq:characteristic-obstruction}
+\end{equation}
+が必要である。ここで $\mathcal H_X$ は選択したde Rham、\v{C}ech--de Rhamまたは$\infty$-stack障害類の束である。
+
+\begin{conjecture}[Diffeological indication lemma]
+具体的なQRB実現について、式\eqref{eq:diff-support}と式\eqref{eq:characteristic-obstruction}が構成され、合成
+\begin{equation}
+ \Theta_D=
+ \mathsf{Supp}_{\mathrm{diff}}\circ\chi
+ \end{equation}
+がフレーム準同型となり、選択点 $\xi_G$ が式\eqref{eq:forcing-membership}を満たすならば、強制関係、DQRB障害型およびEPMDTT指示判断の間に健全な比較が成立する。
+\end{conjecture}
+
+この予想は、コホモロジー障害があるというだけでは足りないことを明示している。必要なのは、論理結合と開集合演算を保存する支持写像、および強制法側のブール値と障害類を結ぶ自然な対応である。
+
+\section{文脈変換、時間および窓の連鎖}
+
+\subsection{可微分な文脈変換}
+
+観測文脈の変更を関手 $K:\mathcal C\to\mathcal D$ とし、QRBデータが $K$ に沿って輸送されるとする。DQRBでは、さらに外点候補領域間の滑らかな写像
+\begin{equation}
+ K_{\mathcal O}:\mathcal O_X^{D}\longrightarrow
+ \mathcal O_{KX}^{D}
+ \label{eq:smooth-context-change}
+\end{equation}
+と、各残余診断を比較する自然変換が必要である。
+
+\begin{definition}[滑らかなQRB文脈変換]
+式\eqref{eq:smooth-context-change}が滑らかであり、各 $i\in I$ について図式
+\begin{equation}
+ \begin{array}{ccc}
+ \mathcal O_X^D & \xrightarrow{\rho_i} & \DRes_i(X)\\
+ {\scriptstyle K_{\mathcal O}}\downarrow &&
+ \downarrow{\scriptstyle\kappa_i}\\
+ \mathcal O_{KX}^D & \xrightarrow{\rho_i'} & \DRes_i(KX)
+ \end{array}
+ \label{eq:diagnostic-naturality}
+\end{equation}
+が可換であるとき、$K$ は滑らかなQRB文脈変換であるという。
+\end{definition}
+
+ここで $\kappa_i$ の構成は、$M_i$ と $K$ またはカン拡張との分配則に依存する。したがって、文脈変更がQRB診断を保存することは一般には自動的でない。
+
+\subsection{四つの時間の分離}
+
+DQRBを動的に読む場合、少なくとも次の四種類の時間を区別する必要がある。
+\begin{enumerate}
+ \item \textbf{対象時間}：対象または意味状態 $X_t$ の変化。
+ \item \textbf{文脈時間}：観測文脈や理論 $K_t$ の変更。
+ \item \textbf{診断時間}：プロット $p:t\mapsto\mathfrak p_t\in\mathcal O_{X_t}$ に沿う障害プロフィールの変化。
+ \item \textbf{指示時間}：どの診断点を現実の「いま」として選ぶかを与える切断 $\sigma(t)=\dfix_t$。
+\end{enumerate}
+
+これらを一つのパス変数へ潰すと、対象が変化したのか、文脈が変化したのか、診断値だけが変化したのか、指示点が移ったのかを区別できない。Diffeologyは各方向にプロットを入れるが、それらを同一視しない。総空間を
+\begin{equation}
+ \pi:\mathfrak O\longrightarrow\mathcal T_{\mathrm{obj}}
+ \times\mathcal T_{\mathrm{ctx}}
+ \end{equation}
+とし、そのファイバーに診断空間を置き、指示時間を切断
+\begin{equation}
+ \sigma:\mathcal T_{\mathrm{ref}}\longrightarrow\mathfrak O
+ \end{equation}
+として表す構成が候補となる。
+
+\subsection{窓の連鎖}
+
+EPMDTTのメタ理論階層
+\begin{equation}
+ T_0\longrightarrow T_1\longrightarrow T_2\longrightarrow\cdots
+\end{equation}
+に対し、各段階でDQRBを構成できるなら
+\begin{equation}
+ \mathcal O_{X_0}^{D}
+ \longrightarrow\mathcal O_{X_1}^{D}
+ \longrightarrow\mathcal O_{X_2}^{D}
+ \longrightarrow\cdots
+ \label{eq:diffeological-windows}
+\end{equation}
+という滑らかな窓の連鎖を考えられる。各射は、前段階の外点指示を次段階で診断対象として内部化する。
+
+式\eqref{eq:diffeological-windows}は階層を停止させない。むしろ、各段階で何が保存され、どの新しい残余が発生したかを経路として追跡する。groupoid表示が存在する場合には、この連鎖の一部を軌道または商層として圧縮できるが、現実の指示点の選択は依然として追加の切断である。
+
+\section{DQRBによるdiffeologyの逆診断}
+
+\subsection{適用対象から診断媒体への反射}
+
+DQRBでは、diffeologyはQRBが検出した四重障害の変動を記述する媒体として導入された。しかし実際に構成を進めると、QRB側のデータをdiffeologyへ移す各接続点に、追加の比較条件が必要となる。したがってDQRBはQRBを可微分化するだけでなく、選択されたdiffeological意味論が外点診断を忠実に担えるかを検査する。
+
+ここでいう\textbf{逆診断}とは、DQRBの成立条件をdiffeology側へ反射させ、どの接続が未構成または非可逆であるかを記録することである。これはdiffeology一般に対する否定的評価ではない。同じdiffeological spaceでも、QRB実現の選択、支持写像、コホモロジー比較および点付きデータによって診断能力が変わるためである。
+
+\subsection{四つの接続条件}
+
+\begin{definition}[DQRB接続条件]
+QRB対象 $X$ と可微分診断データ $\mathfrak D_X$ に対し、次の四条件を考える。
+\begin{enumerate}
+ \item \textbf{実現条件} $C_{\mathrm{real}}$：実現 $\mathcal R$ が、少なくとも四残余の零性および比較写像の可逆性を反映する。
+ \item \textbf{支持条件} $C_{\mathrm{supp}}$：代数的支持 $\supp(\Res_i(X))$ と、可微分診断値の非自明領域またはそのD-位相的支持を結ぶ自然な比較が存在する。
+ \item \textbf{コホモロジー条件} $C_{\mathrm{coh}}$：de Rham、\v{C}ech--de Rhamおよび層・stack型コホモロジーの間の比較写像が指定され、その非可逆性の意味が明示される。
+ \item \textbf{指示条件} $C_{\mathrm{ref}}$：候補領域 $\mathcal O_X^D$ の非空性が示され、点
+ \begin{equation}
+  \xi:1\longrightarrow\mathcal O_X^D
+ \end{equation}
+ と、必要な外部対象または使用状況との対応が追加される。
+\end{enumerate}
+\end{definition}
+
+実現条件は抽象的残余を滑らかなデータとして失わないための条件である。支持条件は「残余が非零である場所」と「可微分診断が非自明である場所」を混同しないために必要となる。コホモロジー条件は、異なるコホモロジー理論の不一致を、単なる失敗ではなく二次診断へ変える。指示条件は、空間の記述と現実的な点選択を分離する。
+
+\subsection{逆診断プロフィール}
+
+\begin{definition}[diffeology逆診断プロフィール]
+各接続条件の成否を
+\begin{equation}
+ \delta_j(X,\mathfrak D_X)=
+ \begin{cases}
+  0,&C_j\text{ が検証されている},\\
+  1,&C_j\text{ が未構成または成立しない}
+ \end{cases}
+ \qquad
+ (j\in\{\mathrm{real},\mathrm{supp},
+ \mathrm{coh},\mathrm{ref}\})
+\end{equation}
+とし、
+\begin{equation}
+ \operatorname{InvDiag}_{\Diff}(X,\mathfrak D_X)
+ :=
+ (\delta_{\mathrm{real}},\delta_{\mathrm{supp}},
+  \delta_{\mathrm{coh}},\delta_{\mathrm{ref}})
+ \in\{0,1\}^4
+ \label{eq:inverse-profile}
+\end{equation}
+をdiffeology逆診断プロフィールと呼ぶ。
+\end{definition}
+
+このプロフィールは、現段階では接続条件の監査記録であり、QRBの四残余対象ではない。各 $\delta_j$ を余ファイバー、台または障害層として対象化できた場合に限り、二次的な残余体系として束ねられる。
+
+\begin{proposition}[逆診断の射程]
+式\eqref{eq:inverse-profile}が $(0,0,0,0)$ であれば、選択されたdiffeological意味論は、四残余の点的検出、支持の比較、コホモロジー的二次診断および点付き指示に必要なデータを備える。いずれかの成分が $1$ であれば、その成分はDQRBからEPMDTTまたは強制法へ進む際の未解決な接続箇所を特定する。
+\end{proposition}
+
+\begin{proof}
+前半は四接続条件の定義による。後半では、実現条件の失敗は残余情報の喪失、支持条件の失敗は障害領域の不一致、コホモロジー条件の失敗は局所・大域比較の未確定、指示条件の失敗は候補領域と点付き外部実現の断絶をそれぞれ示す。
+\end{proof}
+
+\subsection{QRB四残余との非同一性}
+
+QRBの四残余
+\begin{equation}
+ \Res_S,\quad\Res_N,\quad
+ \Res_{SN},\quad\Res_{NS}
+\end{equation}
+は、同一性、二重否定、随伴、自己参照という体系内部の四比較を測る。これに対し逆診断の四条件は、QRBとdiffeologyを結ぶ\textbf{意味論的インターフェース}を測る。したがって両者を項数の一致だけで対応させてはならない。
+
+ただし、各QRB残余が可微分実現、支持比較、コホモロジー比較、点選択の各段階を通過するため、逆診断は四残余すべてへ横断的に作用する。この関係は
+\begin{equation}
+ \{\Res_i(X)\}_{i\in I}
+ \quad\xrightarrow{\text{可微分意味論}}\quad
+ \{C_{\mathrm{real}},C_{\mathrm{supp}},
+ C_{\mathrm{coh}},C_{\mathrm{ref}}\}
+\end{equation}
+という二層の診断として読むべきである。
+
+\subsection{自己診断の反射性}
+
+QRBは内部操作の崩壊から外点候補を診断する。DQRBはその診断を滑らかな空間上で変化させる。そして逆診断は、その滑らかな表現が元のQRB診断をどこまで保持したかを再び検査する。したがって
+\begin{equation}
+ \text{対象の診断}
+ \longrightarrow
+ \text{可微分的精密化}
+ \longrightarrow
+ \text{診断媒体の逆診断}
+ \label{eq:reflexive-diagnosis}
+\end{equation}
+という反射的循環が生じる。
+
+この循環は無限後退を直ちに意味しない。各段階で検査対象が、体系内部の比較、障害の滑らかな変動、意味論的接続条件へと型分けされているからである。逆診断の役割は、未構成部分を外点という一語で覆い隠さず、次に証明または構成すべき比較写像を明示することにある。
+
+\section{構築計画}
+
+\subsection{第一段階：具体的DQRBモデル}
+
+最初に必要なのは、抽象的定義ではなく一つの完全な例である。次のデータを同時に構成する。
+\begin{enumerate}
+ \item 安定テンソル三角圏 $\mathcal C$ とコンパクト対象 $X$。
+ \item 四比較 $(M_i,\eta_i)$ と残余 $\Res_i(X)$。
+ \item 非空な共通台 $\mathcal O_X$。
+ \item 残余の可微分実現 $\mathcal R$ と $\mathcal O_X$ 上の生成プロット。
+ \item 診断写像 $\rho_i$ の台適合性と反映性。
+\end{enumerate}
+
+候補として、パラメータ付き複体、表現圏、微分付き層の導来圏など、残余のモジュライが既に滑らかな前層として現れる状況が適している。抽象的Balmerスペクトルに後から任意のdiffeologyを置くより、可微分パラメータ空間からスペクトルへの写像を先に構成する方が診断の意味を保ちやすい。
+
+\subsection{第二段階：障害層と指示写像}
+
+具体例の上で、各D-開集合 $U\subseteq\mathcal O_X$ に障害群を割り当てる前層
+\begin{equation}
+ U\longmapsto\mathcal H_X(U)
+ \end{equation}
+を構成する。必要に応じて層化または高次stack化し、局所障害の貼合せと高次自己同型を保持する。その後、障害類の支持がD-開集合を与える条件を調べ、式\eqref{eq:diff-support}を構成する。
+
+\subsection{第三段階：Diffeological EPMDTT}
+
+命題 $A$ をDQRB対象 $X_A$ へ送る翻訳
+\begin{equation}
+ \mathcal J_T:A\longmapsto X_A
+ \end{equation}
+を定め、置換、弱化および型形成に関して自然であることを示す。次に式\eqref{eq:dqrb-obstruction-type}を正式な依存型として構成し、DQRB導入規則の安定性、幾何学的注釈の消去、通常判断に対する保守性を証明する。
+
+最後に、強制法を含む具体例について $\Theta_D$ と比較点 $\xi_G$ を構成する。この段階で初めて、型理論的指示補題を予想から定理へ移せる。
+
+\section{検証可能な主張と研究仮説}
+
+本稿の構成を、現段階で証明される部分と今後の仮説に分ける。
+
+\begin{center}
+\begin{tabular}{p{0.32\textwidth} p{0.26\textwidth} p{0.31\textwidth}}
+\toprule
+項目 & 状態 & 必要条件 \\
+\midrule
+QRB外点候補の回収 & 定義から成立 & 同じ基礎集合 $\mathcal O_X$ \\
+診断の局所持続性 & 条件付き命題 & 非自明領域のD-開性 \\
+微分形式による二次診断 & 構成可能 & 残余から形式への自然変換 \\
+Klein型層化 & 条件付き定義 & 診断保存擬群 \\
+quasifold表示 & 研究仮説 & 適切な局所群作用 \\
+DQRB障害型 & 意味論的提案 & $A\mapsto X_A$ の自然な翻訳 \\
+EPMDTT保守性 & 未証明 & 全型規則に対する消去保存 \\
+$\Theta_D$ の構成 & 未構成 & ブール値、障害類、D-開支持の比較 \\
+型理論的指示補題 & 予想 & $\Theta_D$ と外部実現の健全性 \\
+逆診断プロフィール & 定義 & 四接続条件の成否判定 \\
+二次的残余体系 & 未構成 & 接続障害の余ファイバーまたは障害層 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+この区別により、diffeologyの既存理論が保証する一般的な可微分・ホモトピー・stack構造と、QRBおよびEPMDTTに固有の比較写像を混同しない。
+
+\section{結論}
+
+本稿は、QRBの自己診断性を可微分的に拡張するDiffeological QRBを定式化した。QRBは四つの比較写像の余ファイバーの共通台によって、四重崩壊が起きる点を検出する。DQRBは、その外点候補領域にdiffeologyを与え、残余の可微分実現と診断写像を追加する。これにより、障害の有無だけでなく、滑らかな摂動に対する持続、診断経路、D-開近傍、微分形式、コホモロジー障害および局所対称性を記述できる。したがって自己診断性の強化とは、外点をより強く存在させることではなく、検出された障害の変動と安定性を内部の診断対象として増やすことである。
+
+さらにDQRBの構成条件をdiffeology側へ反射させ、実現、支持、コホモロジー、指示点選択という四つの接続条件を逆診断プロフィールとして整理した。これによってDQRBは、QRBをdiffeologyで精密化する構成であると同時に、選択されたdiffeological意味論がQRB診断を忠実に担えるかを検査する装置となる。この四条件はQRBの元の四残余とは異なる水準にあり、意味論的インターフェースの監査項目である。
+
+Diffeological EPMDTTへの応用では、$A+\Unit$ による外点マーカーを保持しつつ、その導入証拠をDQRB障害型へ精密化した。これにより、無記、弱い外点指示、強い外部実現を異なる判断として維持できる。DQRB証拠は $A$ の項ではなく、四比較の局所的非可逆性と、その可微分的変動を記録する注釈である。
+
+一方、DQRBから強制法の指示写像や型理論的指示補題が直ちに得られるわけではない。\v{C}ech--de Rham障害を利用するには、障害類のD-開支持、ブール値から障害類への写像、選択点における所属関係を構成しなければならない。この未構成部分を明示したことにより、Diffeological QRBを先に構築し、その上でDiffeological EPMDTTを意味論化するボトムアップ経路が、検証可能な研究計画として定まる。
+
+今後の第一課題は、非空な外点候補領域と忠実な可微分実現を持つ具体的DQRB例を一つ完成させることである。第二に、その障害層から可微分指示写像 $\Theta_D$ を構成する。第三に、DQRB障害型の置換安定性と消去翻訳を証明する。第四に、対象時間、文脈時間、診断時間、指示時間を分離したファイブレーションまたは高次stackモデルを構成する。これらが成立したとき、QRBの点的自己診断は、外点指示型理論を支える動的かつ特異幾何学的な診断基盤へ発展する。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}

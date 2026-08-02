@@ -1,0 +1,840 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{icat-common}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{conjecture}[definition]{予想}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{example}[definition]{例}
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{corollary}[definition]{系}
+
+\newcommand{\DEPMDTT}{\mathrm{D}\text{-}\mathrm{EPMDTT}}
+\newcommand{\EPMDTT}{\mathrm{EPMDTT}}
+\newcommand{\DQRB}{\mathrm{DQRB}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\Diff}{\mathbf{Diff}}
+\newcommand{\Ctx}{\mathbf{Ctx}}
+\newcommand{\Obs}{\mathrm{Obs}}
+\newcommand{\DObs}{\mathrm{DObs}}
+\newcommand{\Ext}{\mathrm{Ext}}
+\newcommand{\Prf}{\mathrm{Prf}}
+\newcommand{\Con}{\mathrm{Con}}
+\newcommand{\Res}{\mathrm{Res}}
+\newcommand{\Spc}{\mathrm{Spc}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\cofib}{\operatorname{cofib}}
+\newcommand{\Id}{\operatorname{Id}}
+\newcommand{\OpenD}{\operatorname{Open}_{D}}
+\newcommand{\Meta}{\mathcal M}
+\newcommand{\Unit}{\mathbf 1}
+\newcommand{\False}{\mathbf 0}
+\newcommand{\Type}{\mathrm{Type}}
+\newcommand{\Theory}{\mathsf{Theory}}
+\newcommand{\Ind}{\mathbf{Ind}_{\dfix}}
+\newcommand{\DInd}{\mathbf{Ind}^{\DQRB}_{\dfix}}
+\newcommand{\sem}[1]{\mathopen{[\![}#1\mathclose{]\!]}}
+
+\title{可微分外点指示付き依存型理論\\
+{\large ---Diffeological QRB による証明障害の幾何学化と指示効果の精密化---}}
+\author{千葉将臣}
+\date{2026-07-30}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+外点指示付き依存型理論（EPMDTT）は、通常の証明判断 $\Gamma\vdash_T a:A$ と、内部証明の境界を記録する指示判断 $\Gamma\vdash_T^{\Meta}o:A\rightsquigarrow\dfix$ を分離する。従来の計算効果 $\Ind(A)=A+\Unit$ は、外点マーカーを $A$ の値から隔離し、元の理論への消去翻訳を与える一方、障害の幾何学的由来とその局所変動を記録しない。
+
+本稿は、可微分四重残余束（Diffeological QRB; DQRB）を意味論的基盤とする\textbf{可微分外点指示付き依存型理論}（Diffeological EPMDTT; $\DEPMDTT$）を構成する。命題または型 $A$ に、四比較写像の共通非可逆領域 $\mathcal O_A^D$、局所非同型証拠、診断プロットおよび微分的障害類を対応させ、これらをDQRB証明障害型 $\DObs_T(A)$ に束ねる。指示効果を
+\[
+ \DInd(A)=A+\sum_{o:\DObs_T(A)}\Unit
+\]
+として証拠付きに精密化し、その証拠を忘却すれば通常のEPMDTTの $A+\Unit$ を回収する。さらに対象理論への消去翻訳を合成することで、DQRB証拠から $A$ の項を生成する内部読出し規則を持たない断片が、元の通常判断に対して翻訳的に保守的であることを示す。
+
+依存型の文脈と置換はcontextual categoryで組織し、各文脈上のDQRB診断空間を可微分ファイブレーションとして配置する。これにより、置換に伴う障害証拠の再添字付け、滑らかな文脈変換、四つの時間---対象時間、文脈時間、診断時間、指示時間---を区別する。Gödelの第二不完全性定理、強制法、窓の連鎖への応用も与えるが、証明障害からDQRBへの実現、可微分指示写像、型理論的指示補題は自動的には得られない。本稿はそれらを明示的な自然性・支持・外部実現条件を要する予想として分離する。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入}
+
+\subsection{EPMDTTから可微分EPMDTTへ}
+
+EPMDTTは、証明不能性を証明可能性へ反転する体系ではない。対象理論 $T$ の内部で閉じない証明課題を、メタ理論 $\Meta$ に相対化された外点指示として記録する体系である\cite{ChibaEPMDTT2026}。その基本的区別は
+\begin{align}
+ \Gamma&\vdash_T a:A,
+ \label{eq:ordinary-judgment}\\
+ \Gamma&\vdash_T^{\Meta}o:A\rightsquigarrow\dfix
+ \label{eq:indication-judgment}
+\end{align}
+である。式\eqref{eq:ordinary-judgment}は $A$ の内部証明または値を、式\eqref{eq:indication-judgment}は $A$ に関する内部手続きが境界へ到達したという診断を表す。
+
+従来のEPMDTTでは、指示を計算に蓄積する型を
+\begin{equation}
+ \Ind(A)=A+\Unit
+ \label{eq:plain-effect}
+\end{equation}
+とした。この型は、$\dfix$ を $A$ の値にしないという構文的目的には適している。しかし右成分の単位項だけからは、どの障害が、どの局所点で、どの文脈変換に対して発生したかを区別できない。
+
+DQRBは、この不足を四つの比較写像と可微分診断空間によって補う。QRBの点的自己診断を、滑らかなプロット、D-位相、微分形式、コホモロジー障害および局所対称性へ拡張することで、障害の有無だけでなく、その持続、分岐および貼合せ不全を記述する\cite{ChibaDQRB2026}。本稿はこのDQRB証拠をEPMDTTの証明障害型へ導入する。
+
+\subsection{本稿の寄与}
+
+本稿の寄与は次の六点である。
+\begin{enumerate}
+ \item DQRB証明障害型 $\DObs_T(A)$ と三種類の指示判断を定義する。
+ \item 証拠付き指示効果 $\DInd(A)$ と、その障害輸送を含む添字付き結合を定義する。
+ \item 文脈圏上の可微分診断ファイブレーションによって置換とDQRB再添字付けを組織する。
+ \item $\DEPMDTT\to\EPMDTT\to T$ という二段階消去により、通常判断に対する条件付き保守性を示す。
+ \item 無記、弱い外点指示、強い外部実現を異なる判断として分離する。
+ \item 第二不完全性定理、強制法、四つの時間および窓の連鎖への応用を条件付きで定式化する。
+\end{enumerate}
+
+\subsection{非主張}
+
+本稿は、すべての証明障害が自動的にDQRBの点になるとは主張しない。$T\nvdash A$ だけから $\mathcal O_A^D\neq\varnothing$ は従わず、DQRB障害類の存在から外部理論における $A$ の真理も従わない。また、diffeologyは指示点を自動的に選ばない。DQRB実現、選択点、外部実現および強制法との比較写像は、それぞれ独立のデータまたは定理を必要とする。
+
+\section{四層の基礎構造}
+
+\subsection{対象理論とメタ理論}
+
+対象理論 $T$ は依存型理論であり、文脈、型、項および置換の判断を持つ。メタ理論 $\Meta$ は $T$ の構文、証明コード、正規化、モデルおよび理論拡大を論じる。通常判断は $T$ の内部に属するが、証明障害は $\Meta$ で構成される。
+
+\begin{definition}[証明障害と外部実現]
+$A$ に対する証明障害型 $\Obs_T(A)$ は、$A$ の項を与えず、$T$ 内の証明探索が閉じない理由を記録するメタ理論上の型である。外部実現型を
+\begin{equation}
+ \Ext_T(A)
+ :=
+ \sum_{T':\Theory}
+ \sum_{i:T\hookrightarrow T'}
+ \Prf_{T'}(iA)
+ \label{eq:external-realization}
+\end{equation}
+とする。
+\end{definition}
+
+$\Obs_T(A)$ と $\Ext_T(A)$ は異なる。前者は境界の診断、後者は明示された拡大理論における実現である。
+
+\subsection{QRB層}
+
+各型 $A$ に安定テンソル三角圏 $\mathcal C_T$ の対象 $X_A$ を対応させるとする。四つの自己関手と比較写像
+\begin{equation}
+ M_i:\mathcal C_T\longrightarrow\mathcal C_T,
+ \qquad
+ \eta_i:\Id\Longrightarrow M_i,
+ \qquad
+ i\in I:=\{S,N,SN,NS\}
+ \label{eq:four-comparisons}
+\end{equation}
+に対し、残余を
+\begin{equation}
+ \Res_i(X_A)=
+ \cofib\bigl(\eta_i(X_A):X_A\to M_iX_A\bigr)
+ \end{equation}
+とする。外点候補領域は
+\begin{equation}
+ \mathcal O_A=
+ \bigcap_{i\in I}\supp\bigl(\Res_i(X_A)\bigr)
+ \subseteq\Spc(\mathcal C_T^c)
+ \label{eq:qrb-locus}
+\end{equation}
+である\cite{ChibaQRB2026,balmer}。
+
+\subsection{DQRB層}
+
+$\mathcal O_A$ にdiffeology $\mathcal D_A$ を与え、残余の可微分実現と診断写像
+\begin{equation}
+ \mathcal R_A\Res_i(X_A)\in\Diff,
+ \qquad
+ \rho_{A,i}:\mathcal O_A^D
+ \longrightarrow
+ |\mathcal R_A\Res_i(X_A)|
+ \label{eq:dqrb-realization}
+\end{equation}
+を指定する。$\mathcal O_A^D=(\mathcal O_A,\mathcal D_A)$ と書く。
+
+\begin{assumption}[DQRB適合性]
+各 $\rho_{A,i}$ は、局所化比較写像 $\eta_i(X_A)_{\mathfrak p}$ の非可逆性を反映し、置換および指定された文脈変換と自然に可換するとする。
+\end{assumption}
+
+この仮定は、抽象的残余対象と可微分空間を無条件に同一視しないために必要である。
+
+\subsection{型理論層}
+
+型理論の文脈と置換をcontextual categoryまたはC-system $\Ctx_T$ として組織する。Contextual categoryは依存型理論の文脈拡張、代入、型および項の構造を圏論的に表す枠組みであり、univalent foundationsのモデル構成にも用いられる\cite{Voevodsky2015CSystem,KapulkinLumsdaine2021,AhrensLumsdaineVoevodsky2018}。
+
+本稿では、$\Ctx_T$ を時間そのものとは読まない。射 $\sigma:\Delta\to\Gamma$ は文脈置換であり、後述する文脈時間の変化を記述する材料にはなるが、物理的または指示的現在と同一ではない。
+
+\section{DQRB証明障害型}
+
+\subsection{点的証拠と微分的証拠}
+
+\begin{definition}[点的四重障害]
+$A$ の点的四重障害型を
+\begin{equation}
+ \mathsf{FourObs}_A(\mathfrak p)
+ :=
+ \prod_{i\in I}
+ \mathsf{NonIso}
+ \bigl(\eta_i(X_A)_{\mathfrak p}\bigr)
+ \label{eq:four-obstruction}
+\end{equation}
+と定める。
+\end{definition}
+
+\begin{definition}[微分的障害注釈]
+$\mathsf{DiffObs}_A(\mathfrak p)$ は、$\mathfrak p$ のD-開近傍上の次のデータのうち、選択した診断体系が要求するものを記録する型である。
+\begin{enumerate}
+ \item 診断プロット $p:U\to\mathcal O_A^D$ と $p(0)=\mathfrak p$。
+ \item 四診断プロフィール $(\rho_{A,i}\circ p)_{i\in I}$。
+ \item 閉微分形式またはde Rham障害類。
+ \item \v{C}ech--de Rhamまたは高次stack障害類。
+ \item 診断擬群に関する局所軌道または安定化群の情報。
+\end{enumerate}
+最小の点的意味論では $\mathsf{DiffObs}_A(\mathfrak p)=\Unit$ としてよい。
+\end{definition}
+
+\begin{definition}[DQRB証明障害型]
+$A$ のDQRB証明障害型を
+\begin{equation}
+ \DObs_T(A)
+ :=
+ \sum_{\mathfrak p:\mathcal O_A^D}
+ \mathsf{FourObs}_A(\mathfrak p)
+ \times
+ \mathsf{DiffObs}_A(\mathfrak p)
+ \label{eq:dobs}
+\end{equation}
+と定める。
+\end{definition}
+
+$o:\DObs_T(A)$ は $A$ の証明ではない。$o$ は外点候補、四つの非可逆性証拠、および任意の微分的注釈を保持する診断レコードである。
+
+\subsection{証明論的障害との比較}
+
+DQRB障害と従来の証明障害を結ぶには写像
+\begin{equation}
+ \varepsilon_A:\DObs_T(A)\longrightarrow\Obs_T(A)
+ \label{eq:obstruction-erasure}
+\end{equation}
+が必要である。この写像は、四重残余の非可逆性が $T$ のどの証明論的障害を表すかを解釈する。
+
+\begin{assumption}[障害解釈]
+型形成と置換に自然な族 $\varepsilon_A$ が与えられているとする。すなわち、置換 $\sigma:\Delta\to\Gamma$ に対し、DQRB障害の再添字付けと通常障害の代入が可換する。
+\end{assumption}
+
+この仮定なしには、幾何学的特異点を証明不能性と呼ぶことはできない。
+
+\subsection{三種類の判断}
+
+\begin{definition}[可微分指示判断]
+$\DEPMDTT$ は次の三判断を区別する。
+\begin{align}
+ \Gamma&\vdash_T a:A,
+ \tag{通常判断}\\
+ \Gamma&\vdash_T^{\Meta}o:A
+ \rightsquigarrow_{D}\dfix,
+ \qquad o:\DObs_T(A),
+ \tag{DQRB指示}\\
+ \Gamma&\vdash_T^{\Meta}(o,e):A
+ \rightsquigarrow_{D!}\dfix,
+ \qquad e:\Ext_T(A).
+ \tag{実現付き指示}
+\end{align}
+\end{definition}
+
+DQRB指示は、障害点の選択を含むため点付き診断である。しかし、選択された点が現実の外部実現先であるとは限らない。実現付き指示だけが $e$ によって拡大理論と証明を保持する。
+
+\section{証拠付き指示効果}
+
+\subsection{注釈付き効果型}
+
+\begin{definition}[DQRB指示効果]
+$A$ の証拠付き指示効果型を
+\begin{equation}
+ \DInd(A)
+ :=
+ A+
+ \sum_{o:\DObs_T(A)}\Unit
+ \label{eq:dind}
+\end{equation}
+と定める。左成分を $\mathsf{return}(a)$、右成分を $\mathsf{mark}_D(o)$ と書く。
+\end{definition}
+
+$\mathsf{mark}_D(o)$ は $\DInd(A)$ の項であるが、$A$ の項ではない。通常の指示効果と異なり、右成分は障害証拠 $o$ を保持する。
+
+\begin{definition}[導入規則]
+基本導入規則を
+\begin{equation}
+ \frac{\Meta\vdash o:\DObs_T(A)}
+ {\Gamma\vdash_T^{\Meta}
+   \mathsf{mark}_D(o):A\rightsquigarrow_D\dfix}
+ \quad(\dfix_D\text{-導入})
+ \label{eq:d-intro}
+\end{equation}
+および
+\begin{equation}
+ \frac{\Gamma\vdash_T^{\Meta}o:A\rightsquigarrow_D\dfix
+ \qquad \Meta\vdash e:\Ext_T(A)}
+ {\Gamma\vdash_T^{\Meta}(o,e):A
+ \rightsquigarrow_{D!}\dfix}
+ \quad(\text{外部実現付記})
+ \label{eq:strong-intro}
+\end{equation}
+とする。
+\end{definition}
+
+\subsection{障害輸送と結合}
+
+通常の例外モナドでは、例外を型に依存せず伝播できる。ここでは $\DObs_T(A)$ が $A$ に依存するため、$A\to\DInd(B)$ に沿う障害輸送が必要である。
+
+\begin{definition}[障害輸送構造]
+計算 $f:A\to\DInd(B)$ に対し、自然な写像
+\begin{equation}
+ f_{\sharp}:\DObs_T(A)\longrightarrow\DObs_T(B)
+ \label{eq:obstruction-transport}
+\end{equation}
+が与えられ、恒等写像と合成に関して
+\begin{equation}
+ (\Id_A)_{\sharp}=\Id,
+ \qquad
+ (g\mathbin{\star}f)_{\sharp}
+ =g_{\sharp}\circ f_{\sharp}
+ \label{eq:transport-laws}
+\end{equation}
+を満たすとき、これをDQRB障害輸送構造と呼ぶ。
+\end{definition}
+
+\begin{definition}[DQRB bind]
+障害輸送構造の下で
+\begin{align}
+ \mathsf{bind}_D(\mathsf{return}(a),f)
+ &=f(a),\\
+ \mathsf{bind}_D(\mathsf{mark}_D(o),f)
+ &=\mathsf{mark}_D(f_{\sharp}o)
+ \label{eq:d-bind}
+\end{align}
+と定める。
+\end{definition}
+
+\begin{proposition}[添字付きモナド律]
+障害輸送が式\eqref{eq:transport-laws}を満たし、$\mathsf{return}$ に沿う輸送が恒等であるならば、$\mathsf{bind}_D$ は左単位律、右単位律および結合律を満たす。
+\end{proposition}
+
+\begin{proof}
+内部値の場合は通常の直和モナドの計算による。障害値の場合、単位律は恒等輸送から、結合律は $(g\mathbin{\star}f)_{\sharp}=g_{\sharp}\circ f_{\sharp}$ から従う。
+\end{proof}
+
+障害輸送は自動的には存在しない。特に $f$ が命題の意味を大きく変える場合、$A$ の障害を $B$ の障害へ送る正当なDQRB文脈変換を構成する必要がある。
+
+\subsection{ハンドラ}
+
+$\DInd(A)$ から古い型 $B$ へ値を得るハンドラは
+\begin{equation}
+ h_{\mathrm{val}}:A\to B,
+ \qquad
+ h_{\mathrm{obs}}:
+ \DObs_T(A)\to B
+ \label{eq:handler}
+\end{equation}
+の両方を要求する。$h_{\mathrm{obs}}$ が $A$ の証拠を返す場合には、それ自体が外部実現または回復定理を必要とする。DQRB障害だけから一般的な $A$ を返すハンドラは許さない。
+
+\section{文脈と置換の可微分意味論}
+
+\subsection{Contextual category上の診断空間}
+
+$\Ctx_T$ の各文脈 $\Gamma$ にdiffeological space $\mathcal O_{\mathrm{ctx}}(\Gamma)$ を対応させ、置換 $\sigma:\Delta\to\Gamma$ に滑らかな引戻し
+\begin{equation}
+ \sigma^*:\mathcal O_{\mathrm{ctx}}(\Gamma)
+ \longrightarrow\mathcal O_{\mathrm{ctx}}(\Delta)
+ \label{eq:context-reindexing}
+\end{equation}
+を対応させる。
+
+\begin{definition}[可微分診断ファイブレーション]
+反変関手
+\begin{equation}
+ \mathcal O_{\mathrm{ctx}}:\Ctx_T^{\mathrm{op}}\longrightarrow\Diff
+ \label{eq:diagnostic-functor}
+\end{equation}
+と、各判断 $\Gamma\vdash A\;\Type$ に対するDQRB部分空間
+\begin{equation}
+ \mathcal O_A^D\hookrightarrow\mathcal O_{\mathrm{ctx}}(\Gamma)
+ \end{equation}
+の族を、$T$ の可微分診断ファイブレーションと呼ぶ。
+\end{definition}
+
+Grothendieck構成により、$\mathcal O_{\mathrm{ctx}}$ から総圏
+\begin{equation}
+ \int_{\Gamma\in\Ctx_T}\mathcal O_{\mathrm{ctx}}(\Gamma)
+ \longrightarrow\Ctx_T
+ \label{eq:grothendieck}
+\end{equation}
+を得る。総圏の対象は文脈と診断点の組 $(\Gamma,\mathfrak p)$ であり、射は置換と診断点の引戻しを同時に記録する。
+
+\subsection{置換安定性}
+
+\begin{assumption}[DQRB Beck--Chevalley条件]
+置換 $\sigma:\Delta\to\Gamma$ と型 $\Gamma\vdash A\;\Type$ に対し、QRB実現と四比較の再添字付けが存在し、診断写像を含む対応図式が可換するとする。
+\end{assumption}
+
+\begin{proposition}[障害型の置換]
+仮定6.2の下で、自然な再添字付け
+\begin{equation}
+ \sigma_A^*:\DObs_{T,\Gamma}(A)
+ \longrightarrow
+ \DObs_{T,\Delta}(A[\sigma])
+ \label{eq:dobs-substitution}
+\end{equation}
+が得られる。
+\end{proposition}
+
+\begin{proof}
+障害点を式\eqref{eq:context-reindexing}で引き戻し、四つの非同型証拠をBeck--Chevalley比較写像で輸送する。診断プロットと微分形式は滑らかな引戻しによって再添字付けする。
+\end{proof}
+
+\begin{theorem}[指示判断の置換安定性]
+仮定6.2の下で
+\begin{equation}
+ \Gamma\vdash_T^{\Meta}o:A\rightsquigarrow_D\dfix
+ \end{equation}
+ならば、任意の $\sigma:\Delta\to\Gamma$ に対して
+\begin{equation}
+ \Delta\vdash_T^{\Meta}
+ \sigma_A^*o:A[\sigma]\rightsquigarrow_D\dfix
+ \end{equation}
+が成り立つ。
+\end{theorem}
+
+\begin{proof}
+前提から $o:\DObs_{T,\Gamma}(A)$ を得る。命題6.3により $\sigma_A^*o:\DObs_{T,\Delta}(A[\sigma])$ を得て、$\dfix_D$-導入規則を適用する。
+\end{proof}
+
+\subsection{依存和と依存積}
+
+依存和 $\sum_{x:A}B(x)$ の障害には、基底 $A$ の障害、ファイバー $B(x)$ の障害、および両者の貼合せ障害があり得る。依存積 $\prod_{x:A}B(x)$ では、各ファイバーの局所診断を一様に選べるかという切断障害が生じる。したがって一般には
+\begin{equation}
+ \DObs_T\left(\sum_{x:A}B(x)\right),
+ \qquad
+ \DObs_T\left(\prod_{x:A}B(x)\right)
+\end{equation}
+を各成分の単純な直積とはできない。DQRB診断ファイブレーションの総空間、切断空間および貼合せコホモロジーを用いる必要がある。
+
+\begin{conjecture}[依存型閉包]
+可微分診断ファイブレーションが適切な従属和、従属積および同一視型の構造を持ち、QRB比較関手がそれらと両立するならば、$\DObs_T$ はMartin-Löf型形成規則に沿って閉じる。
+\end{conjecture}
+
+\section{二段階消去と保守性}
+
+\subsection{DQRB注釈の消去}
+
+\begin{definition}[第一消去]
+$\DEPMDTT$ から通常のEPMDTTへの翻訳 $U_D$ を、古い構文上では恒等とし、
+\begin{align}
+ U_D\bigl(\DInd(A)\bigr)&=\Ind(U_DA),\\
+ U_D\bigl(\mathsf{return}(a)\bigr)
+ &=\mathsf{return}(U_Da),\\
+ U_D\bigl(\mathsf{mark}_D(o)\bigr)
+ &=\mathsf{mark}(\varepsilon_Ao)
+ \label{eq:first-erasure}
+\end{align}
+と定める。
+\end{definition}
+
+式\eqref{eq:first-erasure}はdiffeology、障害点、四非同型証拠および微分的注釈を忘れ、証明論的障害 $\varepsilon_Ao$ だけを残す。
+
+\begin{definition}[第二消去]
+通常のEPMDTTから $T$ への翻訳 $U_0$ を
+\begin{align}
+ U_0(\Ind(A))&=U_0A+\Unit,\\
+ U_0(\mathsf{return}(a))&=\mathsf{inl}(U_0a),\\
+ U_0(\mathsf{mark}(o))&=\mathsf{inr}(*)
+ \label{eq:second-erasure}
+\end{align}
+と定める。
+\end{definition}
+
+\subsection{型保存}
+
+\begin{assumption}[保守的DQRB断片]
+次を仮定する。
+\begin{enumerate}
+ \item $T$ は単位型、直和型および必要な依存型形成規則を持つ。
+ \item DQRB規則は指示判断または $\DInd(A)$ の項だけを生成し、古い型 $A$ の項を直接生成しない。
+ \item 外部読出しと障害証拠の解釈はメタ理論上の操作であり、対象項形成規則ではない。
+ \item 障害輸送、置換、bindおよびハンドラは第一・第二消去と可換する。
+ \item $\varepsilon_A$ は置換と型形成に自然である。
+\end{enumerate}
+\end{assumption}
+
+\begin{lemma}[第一消去の型保存]
+仮定7.3の下で、$\DEPMDTT$ の対象判断
+\begin{equation}
+ \Gamma\vdash_{\DEPMDTT_{\Meta}(T)}t:A
+\end{equation}
+が導出できるならば
+\begin{equation}
+ U_D\Gamma\vdash_{\EPMDTT_{\Meta}(T)}U_Dt:U_DA
+\end{equation}
+が導出できる。
+\end{lemma}
+
+\begin{proof}
+導出木に関する帰納法による。新しい主要な場合は $\mathsf{mark}_D(o)$ であり、障害解釈 $\varepsilon_Ao:\Obs_T(A)$ に通常のEPMDTT導入規則を適用する。置換とbindの場合は仮定した自然性と可換性を用いる。
+\end{proof}
+
+\begin{lemma}[合成消去の型保存]
+仮定7.3の下で、$U_0\circ U_D$ は $\DEPMDTT$ の対象判断を $T$ の対象判断へ送る。
+\end{lemma}
+
+\begin{proof}
+補題7.4に通常EPMDTTの消去翻訳による型保存を適用する。
+\end{proof}
+
+\begin{theorem}[通常判断に対する翻訳的保守性]
+$\Gamma$ と $A$ が元の理論 $T$ の言語に属し、仮定7.3の下で
+\begin{equation}
+ \Gamma\vdash_{\DEPMDTT_{\Meta}(T)}t:A
+\end{equation}
+が導出できるならば、ある $T$ の項 $t_0$ が存在して
+\begin{equation}
+ \Gamma\vdash_Tt_0:A
+\end{equation}
+が成り立つ。
+\end{theorem}
+
+\begin{proof}
+$t_0:=(U_0\circ U_D)(t)$ と置く。古い文脈と型の上では合成翻訳は恒等であるため、補題7.5から結論を得る。
+\end{proof}
+
+\begin{corollary}[DQRB障害の非反射性]
+$T\nvdash A$ ならば、$o:\DObs_T(A)$ および指示判断 $o:A\rightsquigarrow_D\dfix$ が存在しても、それだけから $\DEPMDTT_{\Meta}(T)\vdash a:A$ は導けない。
+\end{corollary}
+
+\section{DQRB意味論の健全性}
+
+\subsection{点的健全性}
+
+\begin{theorem}[四重診断健全性]
+DQRB適合性の下で、$o:\DObs_T(A)$ ならば、その第一射影 $\mathfrak p=\pi_1(o)$ は $\mathcal O_A^D$ に属し、各 $i\in I$ について $\eta_i(X_A)_{\mathfrak p}$ は非同型である。
+\end{theorem}
+
+\begin{proof}
+$\DObs_T(A)$ の定義は、$\mathfrak p:\mathcal O_A^D$ と $\mathsf{FourObs}_A(\mathfrak p)$ を成分として含む。後者を各 $i$ に射影すれば非同型証拠を得る。
+\end{proof}
+
+これは診断の健全性であり、$A$ の真理の健全性ではない。
+
+\subsection{滑らかな安定性}
+
+各比較の非自明領域を
+\begin{equation}
+ V_{A,i}=
+ \{\mathfrak p\in\mathcal O_A^D
+ \mid \rho_{A,i}(\mathfrak p)\text{ は非自明}\}
+\end{equation}
+とする。
+
+\begin{proposition}[プロットに沿う局所持続]
+すべての $V_{A,i}$ がD-開ならば、任意の診断プロット $p:U\to\mathcal O_A^D$ と $p(0)\in\bigcap_iV_{A,i}$ に対し、$0$ の近傍で四重障害が持続する。
+\end{proposition}
+
+\begin{proof}
+各 $p^{-1}(V_{A,i})$ は $0$ の開近傍であり、その有限交差上で四診断がすべて非自明である。
+\end{proof}
+
+\subsection{コホモロジー障害の位置}
+
+微分的障害類
+\begin{equation}
+ \alpha\in H^k_{\mathrm{dR}}(U),
+ \qquad\text{または}\qquad
+ \alpha\in\mathbb H^k_{\check C\mathrm{dR}}(U)
+\end{equation}
+は、局所診断の大域的貼合せ、ホロノミーまたはde Rham比較の不一致を記録できる\cite{Minichiello2024Obstruction,Minichiello2024Bundles}。しかし $\alpha\neq0$ は、単独では $T\nvdash A$ も $\Ext_T(A)$ も意味しない。障害解釈 $\varepsilon_A$ と外部実現比較が必要である。
+
+\section{第二不完全性定理への応用}
+
+\subsection{無矛盾性型}
+
+$T$ の無矛盾性型を
+\begin{equation}
+ \Con_T:=\Prf_T(\bot)\to\False
+ \end{equation}
+とする。$T$ が第二不完全性定理の標準的仮定を満たすなら
+\begin{equation}
+ T\nvdash\Con_T
+ \label{eq:second-incompleteness}
+\end{equation}
+である\cite{godel}。
+
+\begin{assumption}[無矛盾性障害のDQRB実現]
+メタ理論 $\Meta$ が式\eqref{eq:second-incompleteness}を検証し、さらに
+\begin{equation}
+ o_{\Con}:\DObs_T(\Con_T)
+\end{equation}
+および
+\begin{equation}
+ \varepsilon_{\Con}(o_{\Con}):\Obs_T(\Con_T)
+\end{equation}
+を構成できるとする。
+\end{assumption}
+
+\begin{theorem}[可微分指示的外部化]
+仮定9.1の下で
+\begin{equation}
+ \DEPMDTT_{\Meta}(T)\vdash
+ o_{\Con}:\Con_T\rightsquigarrow_D\dfix
+ \label{eq:d-consistency-mark}
+\end{equation}
+が導出できる。一方、保守的DQRB断片では通常判断として $c:\Con_T$ は新たに導出されない。
+\end{theorem}
+
+\begin{proof}
+式\eqref{eq:d-consistency-mark}は $\dfix_D$-導入規則から従う。通常判断の非導出は定理7.6と $T\nvdash\Con_T$ から従う。
+\end{proof}
+
+\begin{remark}[幾何学化の意味]
+DQRB実現は第二不完全性定理の結論を強めるものではない。証明不能性に、四つの比較障害、局所点、滑らかな変動および任意のコホモロジー注釈を与えるものである。
+\end{remark}
+
+\subsection{外部実現}
+
+拡大理論 $T'$ と証明
+\begin{equation}
+ e:\Prf_{T'}(i\Con_T)
+\end{equation}
+が与えられた場合に限り、実現付き指示
+\begin{equation}
+ (o_{\Con},e):\Con_T
+ \rightsquigarrow_{D!}\dfix
+\end{equation}
+を形成する。DQRB障害類はこの $e$ を代替しない。
+
+\section{強制法と可微分指示補題}
+
+\subsection{可微分指示写像}
+
+強制法の完備ブール代数を $\mathbb B$ とする。DQRB外点候補領域への比較にはフレーム準同型
+\begin{equation}
+ \Theta_D:\mathbb B\longrightarrow
+ \OpenD(\mathcal O_A^D)
+ \label{eq:differential-theta}
+\end{equation}
+と選択点 $\xi_G\in\mathcal O_A^D$ が必要である。
+
+\begin{assumption}[強制法比較]
+すべての $b\in\mathbb B$ について
+\begin{equation}
+ b\in G
+ \quad\Longleftrightarrow\quad
+ \xi_G\in\Theta_D(b)
+ \label{eq:forcing-comparison}
+\end{equation}
+が成立するとする。
+\end{assumption}
+
+この仮定の下で、強制条件の所属をD-開診断近傍への所属として表現できる。しかし $\Theta_D$ と $\xi_G$ はdiffeologyから自動的には得られない。
+
+\subsection{型理論的比較}
+
+ブール値を微分的障害類へ送る写像 $\chi$ と、障害類からD-開支持を取る写像
+\begin{equation}
+ \mathbb B\xrightarrow{\chi}\mathcal H_A
+ \xrightarrow{\mathsf{Supp}_{\mathrm{diff}}}
+ \OpenD(\mathcal O_A^D)
+ \label{eq:cohomological-theta}
+\end{equation}
+があり、その合成が $\Theta_D$ になることが望まれる。
+
+\begin{conjecture}[可微分型理論的指示補題]
+式\eqref{eq:cohomological-theta}がフレーム準同型を与え、式\eqref{eq:forcing-comparison}が成立し、さらに障害解釈 $\varepsilon_A$ が強制関係と自然に可換するならば、適切な実現関係 $T'\Vdash_TA$ に対して
+\begin{equation}
+ T'\Vdash_TA
+ \quad\Longleftrightarrow\quad
+ \exists o:\DObs_T(A)\;
+ \bigl(T'\in\Theta_D(o)
+ \land o:A\rightsquigarrow_D\dfix\bigr)
+ \label{eq:d-indication-lemma}
+\end{equation}
+を満たす比較構造を構成できる。
+\end{conjecture}
+
+式\eqref{eq:d-indication-lemma}の $\Theta_D(o)$ は、厳密には障害証拠から対応するブール値またはD-開支持を抽出する追加写像を介して解釈される。具体例ではその型を明示しなければならない。
+
+\section{無記と外点指示}
+
+\subsection{判断行為と診断証拠}
+
+無記は、真偽判断を実行しない語用論的選択である。DQRB外点指示は、真偽が未決であること一般ではなく、指定された四比較の非可逆性を証拠付きで記録する。両者を次のように区別する。
+
+\begin{center}
+\begin{tabular}{p{0.22\textwidth} p{0.34\textwidth} p{0.33\textwidth}}
+\toprule
+状態 & 必要なデータ & 導かないもの \\
+\midrule
+無記 & 判断を開始しない選択 & 四重障害、外部真理 \\
+DQRB指示 & $o:\DObs_T(A)$ & $a:A$、外部実現 \\
+実現付き指示 & $o$ と $e:\Ext_T(A)$ & $T$ 内部の証明 \\
+通常証明 & $a:A$ & 外部障害の消滅一般 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+したがって、値の不在を一つの状態へ平坦化しない。無記は操作の非実行、DQRB指示は診断された境界、実現付き指示は外部証拠を伴う境界である。
+
+\section{四つの時間と動的診断}
+
+\subsection{時間の型分け}
+
+$\DEPMDTT$ では次の四方向を区別する。
+\begin{enumerate}
+ \item \textbf{対象時間} $\mathcal T_{\mathrm{obj}}$：型、命題または意味状態 $A_t$ の変化。
+ \item \textbf{文脈時間} $\mathcal T_{\mathrm{ctx}}$：文脈、理論または観測位置の変更。
+ \item \textbf{診断時間} $\mathcal T_{\mathrm{diag}}$：DQRBプロットに沿う障害プロフィールの変化。
+ \item \textbf{指示時間} $\mathcal T_{\mathrm{ref}}$：どの診断点を現実の指示点として選ぶかの変化。
+\end{enumerate}
+
+総診断空間を
+\begin{equation}
+ \pi:\mathfrak O_T\longrightarrow
+ \mathcal T_{\mathrm{obj}}\times
+ \mathcal T_{\mathrm{ctx}}
+ \label{eq:temporal-fibration}
+\end{equation}
+とし、診断時間をファイバー内のプロット
+\begin{equation}
+ p:\mathcal T_{\mathrm{diag}}
+ \longrightarrow\mathfrak O_T
+\end{equation}
+で、指示時間を切断
+\begin{equation}
+ s:\mathcal T_{\mathrm{ref}}
+ \longrightarrow\mathfrak O_T
+\end{equation}
+で表す。
+
+\subsection{時間と置換の非同一性}
+
+文脈圏の射は依存型の置換を表す。これは文脈時間の形式化に使えるが、指示時間とは異なる。置換 $\sigma:\Delta\to\Gamma$ は診断証拠を引き戻す一方、切断 $s$ はその時点で現実に採用される診断点を選ぶ。前者は構造変換、後者は点付きデータである。
+
+\begin{proposition}[四時間の独立性]
+式\eqref{eq:temporal-fibration}のデータだけでは、対象変化、文脈変化、診断プロットおよび指示切断のいずれも他の三つから一般には導出されない。
+\end{proposition}
+
+\begin{proof}
+それぞれは基底の二成分、ファイバー内の写像、総空間の切断という異なる型のデータである。相互に対応させるには接続、輸送または選択規則を追加しなければならない。
+\end{proof}
+
+\section{窓の連鎖と理論階層}
+
+理論階層
+\begin{equation}
+ T_0\hookrightarrow T_1\hookrightarrow T_2
+ \hookrightarrow\cdots,
+ \qquad
+ T_{n+1}\vdash\Con(T_n)
+ \end{equation}
+を考える。各段階にDQRB診断空間があるなら
+\begin{equation}
+ \mathcal O_{\Con(T_0)}^D
+ \longrightarrow
+ \mathcal O_{\Con(T_1)}^D
+ \longrightarrow
+ \mathcal O_{\Con(T_2)}^D
+ \longrightarrow\cdots
+ \label{eq:window-chain}
+\end{equation}
+という滑らかな窓の連鎖を構成する。
+
+\begin{proposition}[可微分窓の相対性]
+$T_{n+1}\vdash\Con(T_n)$ であっても、$T_{n+1}$ が第二不完全性定理の仮定を満たすなら、通常は $T_{n+1}\nvdash\Con(T_{n+1})$ である。したがって前段階の実現付き指示は、次段階のDQRB障害を消去しない。
+\end{proposition}
+
+式\eqref{eq:window-chain}にdiffeological groupoid作用がある場合、理論間で局所的に同じ診断形を持つ点を軌道としてまとめられる。ただし商がquasifoldになるには局所作用の追加条件が必要であり、指示点の選択は商構造から自動的には得られない。
+
+\section{実装原理}
+
+\subsection{診断レコード}
+
+実装上のDQRB障害は、概略次のレコードとして保持できる。
+\begin{equation}
+ \mathsf{DObstacle}(A)=
+ \left\{
+ \begin{array}{ll}
+ \mathsf{point} &: \mathcal O_A^D,\\
+ \mathsf{four} &: \mathsf{FourObs}_A(\mathsf{point}),\\
+ \mathsf{plot} &: \mathsf{Optional}(\mathsf{DiagPlot}_A),\\
+ \mathsf{class} &: \mathsf{Optional}(\mathsf{CohObs}_A),\\
+ \mathsf{origin} &: \mathsf{MetaTheoryIndex}
+ \end{array}
+ \right.
+ \label{eq:implementation-record}
+\end{equation}
+
+証明モードでは未処理の $\mathsf{mark}_D$ を含む計算を通常証明項へ昇格させない。ハンドラがマーカーを処理する場合には、障害輸送の正当性と返却値の型保存を別途要求する。
+
+\subsection{段階的機械化}
+
+機械化は次の順序が適切である。
+\begin{enumerate}
+ \item 二水準判断と $\DObs_T(A)$ のレコード化。
+ \item 第一・第二消去翻訳と型保存。
+ \item 文脈置換に対するDQRB証拠の再添字付け。
+ \item 障害輸送を持つ $\mathsf{bind}_D$。
+ \item 具体的DQRBモデルと微分的障害類の外部検証器。
+\end{enumerate}
+
+初期実装ではdiffeologyの全構造を証明支援系内部に持ち込まず、プロットとコホモロジー計算を証明証書として取り込み、カーネル側では証書の型と消去規則だけを検査する方法も考えられる。
+
+\section{検証状態と研究課題}
+
+\begin{center}
+\begin{tabular}{p{0.33\textwidth} p{0.24\textwidth} p{0.32\textwidth}}
+\toprule
+項目 & 状態 & 必要な追加構成 \\
+\midrule
+DQRB障害型 & 定義 & 型 $A$ のQRB実現 \\
+点的診断健全性 & 定義から成立 & DQRB適合性 \\
+置換安定性 & 条件付き定理 & Beck--Chevalley条件 \\
+添字付きモナド律 & 条件付き定理 & 障害輸送の関手性 \\
+二段階保守性 & 条件付き定理 & 消去と全規則の可換性 \\
+第二不完全性の指示 & 条件付き定理 & $o_{\Con}:\DObs_T(\Con_T)$ \\
+依存型形成への閉包 & 予想 & 従属積・和・同一視型との両立 \\
+可微分指示補題 & 予想 & $\Theta_D$、支持写像、外部実現 \\
+窓の商幾何 & 研究構想 & 滑らかなgroupoid作用 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+今後の最優先課題は、具体的な一つの理論 $T$ と命題族について $A\mapsto X_A$、$\mathcal O_A^D$、$\varepsilon_A$ を同時に構成することである。これがなければ $\DObs_T(A)$ は一般的な意味論スキーマに留まる。次に、置換と型形成に対する自然性を証明し、DQRB障害輸送を構成する。その後、強制法との比較およびコホモロジー支持から $\Theta_D$ を構成する。
+
+\section{結論}
+
+本稿は、DQRBを意味論的基盤とする可微分外点指示付き依存型理論 $\DEPMDTT$ を定式化した。従来のEPMDTTが $A+\Unit$ によって通常値と外点マーカーを分離したのに対し、本体系は右成分に $o:\DObs_T(A)$ を保持し、障害点、四比較の非可逆性、診断プロットおよび微分的障害類を区別する。これにより、外点指示は単なる値の不在ではなく、由来と局所変動を持つ診断効果となる。
+
+型理論的には、contextual category上に可微分診断ファイブレーションを置き、置換を滑らかな引戻しとして解釈した。DQRB Beck--Chevalley条件の下で障害型と指示判断は置換に安定となる。また、障害輸送の関手性の下で証拠付きbindは添字付きモナド律を満たす。
+
+論理的安全性については、DQRB注釈を通常EPMDTT障害へ送る第一消去と、外点効果を直和型へ送る第二消去を分離した。DQRB証拠から古い型の値を生成する内部規則を持たない限り、合成翻訳は元の理論の通常判断に対する保守性を与える。したがってDQRB障害は、証明不能性を解消せず、その境界を豊かな幾何学的データとして記録する。
+
+第二不完全性定理への応用では、$T\nvdash\Con_T$ を保ったまま、DQRB実現が構成された場合にのみ $\Con_T\rightsquigarrow_D\dfix$ を形成する。外部実現には別途 $e:\Ext_T(\Con_T)$ が必要である。同様に、強制法との可微分指示補題には $\Theta_D$、障害類の支持、選択点および自然な障害解釈が必要である。
+
+$\DEPMDTT$ の意義は、diffeologyを型理論へ装飾的に加えることではない。QRBが検出した境界の変化、局所安定性および貼合せ障害を、証明判断の外部依存として静的に追跡することにある。対象時間、文脈時間、診断時間、指示時間を分離することで、型の変化と現実の指示点を同一視せず、窓の連鎖を動的な診断幾何として記述できる。具体的DQRBモデル、障害解釈 $\varepsilon_A$、依存型閉包および可微分指示補題が構成されたとき、本体系は外点指示を持つ証明論の実質的な可微分意味論となる。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}

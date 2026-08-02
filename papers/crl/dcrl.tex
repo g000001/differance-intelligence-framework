@@ -1,0 +1,674 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{icat-common}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{conjecture}[definition]{予想}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{example}[definition]{例}
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{corollary}[definition]{系}
+
+\newcommand{\Diff}{\mathbf{Diff}}
+\newcommand{\Prob}{\mathbf{Prob}}
+\newcommand{\CRL}{\mathrm{CRL}}
+\newcommand{\DCRL}{\mathrm{DCRL}}
+\newcommand{\PoV}{\operatorname{PoV}}
+\newcommand{\Res}{\operatorname{Res}}
+\newcommand{\Id}{\operatorname{Id}}
+\newcommand{\Ker}{\operatorname{Ker}}
+\newcommand{\FI}{\mathcal I}
+\newcommand{\Stat}{\mathsf{Stat}}
+\newcommand{\Mark}{\mathsf{Mark}}
+\newcommand{\sem}[1]{\mathopen{[\![}#1\mathclose{]\!]}}
+
+\title{情報幾何学的モジュラー定理\\
+{\large ---Diffeological統計モデルにおけるgarbling因子化とCRL残余の確率意味論---}}
+\author{千葉将臣}
+\date{2026-07-31}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+計算関係論理（CRL）は、動的関係代数である冗（Amphigory）の射を計算状態間の推移として解釈し、視点数 $\PoV$ と継続残余 $\rho$ をPoV--$\rho$インターフェイスによって移送する。CRLの残余モジュラー定理は、未来制約を逆方向へ伝播して事前に局所化する経路が、事後照合する経路より残余を増加させないという抽象的比較を与える。しかし、これを確率的推論へ解釈するには、関係の交わり、逆射および残余をマルコフ核と情報量へ対応させる追加条件が必要である。
+
+本稿は、Hông Vân Lêによるほぼ2-可積分な $C^k$-diffeological統計モデルとFisher計量の単調性を用いて、CRLの条件付き確率意味論を構成する。確率的写像 $K:X\rightsquigarrow Y$ に対し、点 $\mu$ と接ベクトル $v$ に依存するFisher残余
+\[
+ \rho_K(\mu;v)
+ :=g_\mu(v,v)-g_{K_*\mu}(K_*v,K_*v)
+\]
+を定義する。残余は非負であり、マルコフ核の合成に対して加法的な連鎖則を満たす。二つの評価経路 $K_{\mathrm{right}}$ と $K_{\mathrm{left}}$ の間に
+\[
+ K_{\mathrm{left}}=Q\circ K_{\mathrm{right}}
+\]
+というgarbling因子化が存在するとき、Fisher単調性から
+\[
+ \rho_{K_{\mathrm{left}}}(\mu;v)
+ \geq
+ \rho_{K_{\mathrm{right}}}(\mu;v)
+\]
+が従うことを示す。これを\textbf{条件付き情報幾何学的モジュラー定理}と呼ぶ。
+
+本定理は、任意のベイズ逆や事前条件付けが自動的に最適であるとは主張しない。CRLのモジュラー対を二つのマルコフ核として実現し、事後照合経路が事前局所化経路の確率的後処理であることを証明したモデルに限って、抽象的残余圧縮の十分条件を与える。十分統計量の場合にはFisher残余が消失する。独立標本におけるPoVの加法性、Bernoulliモデルの十分統計量および二値通信路を例として、適用範囲と限界を明示する。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入}
+
+\subsection{CRLから確率意味論へ}
+
+FreydとScedrovの寓（allegory）は、関係の合成、交わりおよび逆関係を抽象化する\cite{FreydScedrov1990}。冗はこの静的骨格に、視点数 $\PoV$、継続残余 $\rho$、動的評価および無記を加えた関係代数である\cite{ChibaAmphigory2026}。CRLは冗の射を証明探索や制約伝播の状態推移へ解釈し、PoV--$\rho$インターフェイスによって評価情報を具体的な計算モデルへ移す\cite{ChibaCRL2026}。
+
+CRLの残余モジュラー比較は概略
+\begin{equation}
+ RS\cap T
+ \subseteq
+ R(S\cap R^\circ T),
+ \label{eq:abstract-modular}
+\end{equation}
+\begin{equation}
+ \rho(RS\cap T)
+ \geq
+ \rho\bigl(R(S\cap R^\circ T)\bigr)
+ \label{eq:abstract-residual}
+\end{equation}
+と表される。右辺は未来制約 $T$ を $R^circ$ によって先行段階へ伝播し、$S$ を実行する前に局所化する経路である。左辺は $RS$ を進めた後で $T$ と照合する経路である。
+
+式\eqref{eq:abstract-residual}を確率論へ移すことは自動的でない。二項関係の交わりは一般にはマルコフ核でなく、寓の逆関係は一般のベイズ逆核と同一でなく、条件付けは基準測度または事前分布に依存する。またFisher情報の損失は、射だけでなく統計モデル、点および接方向に依存する。
+
+本稿の目的は、この不足を追加仮定によって明示的に埋めることである。確率的な右経路と左経路をそれぞれマルコフ核として構成し、左経路が右経路のgarbling、すなわち確率的後処理となる場合に限り、Fisher残余の不等式を証明する。
+
+\subsection{Lêの単調性定理}
+
+Lêは、特異または無限次元の統計モデルを含み得る $C^k$-diffeological統計モデルを定義し、ほぼ2-可積分なモデルが確率的写像によって保存されること、およびFisher計量が確率的写像の下で非増加となることを示した\cite{Le2020DiffeologicalStatistics}。十分な確率的写像ではFisher計量が保存される。
+
+この結果は、CRLの残余をFisher情報の損失として実現する基礎を与える。しかし単調性定理が比較するのは、同じ接方向を一つの確率的写像で前送りする前後である。異なる二つの経路を比較するには、一方が他方の後処理であるという因子化が必要となる。
+
+\subsection{本稿の寄与}
+
+本稿の寄与は次の六点である。
+\begin{enumerate}
+ \item ほぼ2-可積分なdiffeological統計モデルを対象、確率的写像を射とするCRLの確率意味論を定義する。
+ \item 継続残余を方向付きFisher残余 $\rho_K(\mu;v)$ として実現する。
+ \item Fisher残余の非負性、合成に対する連鎖則および十分性による消失を示す。
+ \item Blackwell型のgarbling順序に沿ってFisher残余が単調増加することを示す。
+ \item garbling因子化を仮定した条件付き情報幾何学的モジュラー定理を証明する。
+ \item PoVを独立標本数として解釈できる範囲と、ベイズ逆・交わり・LLM応用が未構成である範囲を区別する。
+\end{enumerate}
+
+\subsection{非主張}
+
+本稿は、すべてのCRL射がマルコフ核になるとは主張しない。任意の関係の交わりが確率的写像として閉じること、任意のマルコフ核がモデルに共通するベイズ逆を持つこと、あるいは事前条件付けが常に情報損失を最小化することも主張しない。
+
+またFisher情報はエントロピーではない。本稿の $\rho_K$ は接方向におけるFisher計量の差であり、Shannonエントロピー、KLダイバージェンス、計算時間または予測損失と同一ではない。これらとの比較には別の自然変換または評価関数が必要である。
+
+\section{Diffeological統計モデル}
+
+\subsection{\texorpdfstring{$C^k$}{Ck}-diffeological統計モデル}
+
+可測空間 $X$ 上の確率測度全体を $P(X)$、有限符号付き測度のBanach空間を $S(X)$ とする。
+
+\begin{definition}[$C^k$-diffeological統計モデル]
+統計モデル $P_X\subseteq P(X)$ と、ユークリッド開集合から $P_X$ への $C^k$-プロットの族 $D_X$ であって、定値性、滑らかな前合成および局所貼合せの公理を満たし、包含
+\begin{equation}
+ i:P_X\hookrightarrow S(X)
+\end{equation}
+と適合するものを、$C^k$-diffeological統計モデルと呼ぶ\cite{Le2020DiffeologicalStatistics,IglesiasZemmour2013}。
+\end{definition}
+
+点 $\mu\in P_X$ における接ベクトル $v$ は、$\mu$ を通る許容曲線の微分として得られる符号付き測度であり、$v\ll\mu$ を満たす。そのRadon--Nikodym微分
+\begin{equation}
+ \log_\mu(v):=\frac{dv}{d\mu}
+ \end{equation}
+を対数表現と呼ぶ。
+
+\begin{definition}[ほぼ2-可積分性]
+すべての $\mu\in P_X$ と接ベクトル $v\in T_\mu P_X$ について
+\begin{equation}
+ \log_\mu(v)\in L^2(X,\mu)
+\end{equation}
+であるとき、$(P_X,D_X)$ はほぼ2-可積分であるという。このときFisher計量を
+\begin{equation}
+ g_\mu(v,w)
+ :=
+ \int_X
+ \log_\mu(v)\log_\mu(w)\,d\mu
+ \label{eq:fisher-metric}
+\end{equation}
+で定める。
+\end{definition}
+
+この定義は通常の有限次元統計多様体だけでなく、特異なパラメータ集合を持つ統計モデルにも適用できる\cite{Le2020DiffeologicalStatistics,AyJostLeSchwachhofer2017}。
+
+\subsection{確率的写像}
+
+\begin{definition}[確率的写像]
+可測空間 $X$ から $Y$ への確率的写像またはマルコフ核
+\begin{equation}
+ K:X\rightsquigarrow Y
+\end{equation}
+とは、各 $x\in X$ に確率測度 $K(x)\in P(Y)$ を可測に割り当てる写像である。前送りを
+\begin{equation}
+ K_*\mu(B)
+ :=
+ \int_X K(x)(B)\,d\mu(x)
+ \label{eq:kernel-pushforward}
+\end{equation}
+で定める。
+\end{definition}
+
+$K_*$ は符号付き測度に線形に拡張され、接ベクトル $v$ を $K_*v$ へ送る。Lêの定理1により、$(P_X,D_X)$ がほぼ2-可積分なら、その像
+\begin{equation}
+ P_Y:=K_*(P_X)
+\end{equation}
+は像diffeologyの下でほぼ2-可積分な統計モデルとなる\cite{Le2020DiffeologicalStatistics}。
+
+\begin{theorem}[Fisher計量の単調性]
+$K:X\rightsquigarrow Y$ とほぼ2-可積分な $(P_X,D_X)$ に対し、任意の $\mu\in P_X$ と $v\in T_\mu P_X$ について
+\begin{equation}
+ g_\mu(v,v)
+ \geq
+ g_{K_*\mu}(K_*v,K_*v)
+ \label{eq:fisher-monotonicity}
+\end{equation}
+が成り立つ。$K$ が $P_X$ に関して十分なら等号が成り立つ。
+\end{theorem}
+
+これはLêの単調性定理である\cite[Theorem~2]{Le2020DiffeologicalStatistics}。十分性は、モデル全体に共通する条件付き確率核を用いて、$K_*$ により失われた統計モデルを復元できることを要求する\cite{JostLeLuuTran2019}。
+
+\section{Fisher残余}
+
+\subsection{方向付き残余}
+
+\begin{definition}[Fisher残余]
+$K:X\rightsquigarrow Y$、$\mu\in P_X$、$v\in T_\mu P_X$ に対し
+\begin{equation}
+ \rho_K(\mu;v)
+ :=
+ g_\mu(v,v)
+ -g_{K_*\mu}(K_*v,K_*v)
+ \label{eq:fisher-residual}
+\end{equation}
+を、$K$ の $\mu$ における方向 $v$ のFisher残余と呼ぶ。
+\end{definition}
+
+$\rho_K$ は射だけの数ではない。基礎モデル、点および接方向に依存する。CRLのスカラー残余を得るには、例えば単位Fisher球上の上限
+\begin{equation}
+ \overline\rho_K(\mu)
+ :=
+ \sup_{g_\mu(v,v)=1}\rho_K(\mu;v)
+ \label{eq:operator-residual}
+\end{equation}
+や、点と方向に関する重み付き平均を別途選択する必要がある。本稿の基本定理は方向付き残余について述べる。
+
+\begin{proposition}[非負性]
+任意の許容される $K,\mu,v$ について
+\begin{equation}
+ \rho_K(\mu;v)\geq0
+\end{equation}
+である。
+\end{proposition}
+
+\begin{proof}
+式\eqref{eq:fisher-monotonicity}から直ちに従う。
+\end{proof}
+
+\subsection{残余の連鎖則}
+
+\begin{proposition}[Fisher残余の連鎖則]
+確率的写像
+\begin{equation}
+ X\mathrel{\overset{K}{\rightsquigarrow}}Y
+ \mathrel{\overset{L}{\rightsquigarrow}}Z
+\end{equation}
+に対し
+\begin{equation}
+ \rho_{L\circ K}(\mu;v)
+ =
+ \rho_K(\mu;v)
+ +
+ \rho_L(K_*\mu;K_*v)
+ \label{eq:residual-chain}
+\end{equation}
+が成り立つ。
+\end{proposition}
+
+\begin{proof}
+定義から
+\begin{align*}
+ \rho_{L\circ K}(\mu;v)
+ &=g_\mu(v,v)
+ -g_{L_*K_*\mu}(L_*K_*v,L_*K_*v)\\
+ &=\bigl[g_\mu(v,v)
+ -g_{K_*\mu}(K_*v,K_*v)\bigr]\\
+ &\quad+
+ \bigl[g_{K_*\mu}(K_*v,K_*v)
+ -g_{L_*K_*\mu}(L_*K_*v,L_*K_*v)\bigr]
+\end{align*}
+と分解すればよい。
+\end{proof}
+
+この等式は、確率的処理を段階的に適用したときのFisher情報損失が、各段階の残余の和として分解されることを表す。CRLの継続残余の蓄積則に対する具体的な候補となる。
+
+\subsection{十分性と残余消失}
+
+\begin{corollary}[十分写像の残余消失]
+$K$ が $P_X$ に関して十分なら、任意の $\mu,v$ について
+\begin{equation}
+ \rho_K(\mu;v)=0
+\end{equation}
+である。
+\end{corollary}
+
+\begin{proof}
+十分性の下で式\eqref{eq:fisher-monotonicity}が等号となるためである。
+\end{proof}
+
+逆は追加条件なしには主張しない。特定の接方向で残余が零であることは、モデル全体に対する十分性より弱い。
+
+\section{Garbling順序}
+
+\subsection{確率実験の後処理}
+
+\begin{definition}[garbling因子化]
+同じ入力空間 $X$ を持つ確率的写像
+\begin{equation}
+ K_1:X\rightsquigarrow Y_1,
+ \qquad
+ K_2:X\rightsquigarrow Y_2
+\end{equation}
+について、ある確率的写像 $Q:Y_1\rightsquigarrow Y_2$ が存在し
+\begin{equation}
+ K_2=Q\circ K_1
+ \label{eq:garbling}
+\end{equation}
+となるとき、$K_2$ は $K_1$ のgarblingまたは確率的後処理であるという。
+\end{definition}
+
+この関係は、$K_1$ の観測結果へ追加の確率的粗視化 $Q$ を施して $K_2$ を得ることを意味する。統計実験の比較におけるBlackwell順序の基本形である\cite{Blackwell1953}。
+
+\begin{theorem}[Fisher残余のgarbling単調性]
+式\eqref{eq:garbling}が成立するなら、任意の $\mu\in P_X$ と $v\in T_\mu P_X$ について
+\begin{equation}
+ \rho_{K_2}(\mu;v)
+ \geq
+ \rho_{K_1}(\mu;v)
+ \label{eq:garbling-residual}
+\end{equation}
+が成り立つ。より正確には
+\begin{equation}
+ \rho_{K_2}(\mu;v)
+ =
+ \rho_{K_1}(\mu;v)
+ +
+ \rho_Q(K_{1*}\mu;K_{1*}v).
+ \label{eq:garbling-decomposition}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+命題3.3を $K=K_1$、$L=Q$ に適用すると式\eqref{eq:garbling-decomposition}を得る。第二項は命題3.2により非負なので式\eqref{eq:garbling-residual}が従う。
+\end{proof}
+
+\begin{corollary}[等号の十分条件]
+$Q$ が像モデル $K_{1*}(P_X)$ に関して十分なら
+\begin{equation}
+ \rho_{K_2}(\mu;v)
+ =
+ \rho_{K_1}(\mu;v)
+\end{equation}
+である。
+\end{corollary}
+
+この定理は「先に条件付けすれば常に良い」とは述べない。二経路の情報量を順序づける具体的な $Q$ が構成された場合にのみ比較を与える。
+
+\section{条件付き情報幾何学的モジュラー定理}
+
+\subsection{確率的モジュラー実現}
+
+寓における交わり $S\cap R^\circ T$ は集合論的関係として定義できるが、マルコフ核の圏には一般の二項交わりが備わっていない。そこでCRLの各具体的モデルが、二つの経路全体を確率的写像として実現することを要求する。
+
+\begin{definition}[許容確率的モジュラー実現]
+CRLの適合する三射 $(R,S,T)$ に対する許容確率的モジュラー実現とは、同じ入力空間 $X$ を持つ二つの確率的写像
+\begin{align}
+ K_{\mathrm{left}}
+ &:=\sem{RS\cap T}_{\mathrm{prob}}
+ :X\rightsquigarrow Y_{\mathrm{left}},\\
+ K_{\mathrm{right}}
+ &:=\sem{R(S\cap R^\circ T)}_{\mathrm{prob}}
+ :X\rightsquigarrow Y_{\mathrm{right}}
+ \label{eq:modular-kernels}
+\end{align}
+と、確率的写像
+\begin{equation}
+ Q:Y_{\mathrm{right}}
+ \rightsquigarrow Y_{\mathrm{left}}
+\end{equation}
+であって
+\begin{equation}
+ K_{\mathrm{left}}
+ =Q\circ K_{\mathrm{right}}
+ \label{eq:modular-factorization}
+\end{equation}
+を満たすものをいう。
+\end{definition}
+
+式\eqref{eq:modular-factorization}は、事後照合経路の観測結果が、事前局所化経路の結果へ追加の粗視化、棄却または忘却を施して得られることを表す。これが抽象的包含式\eqref{eq:abstract-modular}をFisher情報の比較へ移すための実質的な追加条件である。
+
+\begin{theorem}[条件付き情報幾何学的モジュラー定理]
+$(P_X,D_X)$ をほぼ2-可積分な $C^k$-diffeological統計モデルとし、$(R,S,T)$ が式\eqref{eq:modular-factorization}を満たす許容確率的モジュラー実現を持つとする。このとき任意の $\mu\in P_X$ と $v\in T_\mu P_X$ について
+\begin{equation}
+ \rho_{K_{\mathrm{left}}}(\mu;v)
+ \geq
+ \rho_{K_{\mathrm{right}}}(\mu;v)
+ \label{eq:information-modular}
+\end{equation}
+が成り立つ。さらに
+\begin{equation}
+ \rho_{K_{\mathrm{left}}}(\mu;v)
+ -\rho_{K_{\mathrm{right}}}(\mu;v)
+ =
+ \rho_Q(K_{\mathrm{right}*}\mu;
+        K_{\mathrm{right}*}v)
+ \label{eq:modular-gap}
+\end{equation}
+である。
+\end{theorem}
+
+\begin{proof}
+式\eqref{eq:modular-factorization}に定理4.2を適用する。式\eqref{eq:modular-gap}は残余連鎖則、式\eqref{eq:information-modular}は $\rho_Q\geq0$ から従う。
+\end{proof}
+
+\begin{corollary}[CRL残余圧縮仮定の十分条件]
+CRLモデルの実現残余を
+\begin{align}
+ \widehat\rho_{\mathrm{left}}(\mu;v)
+ &:=\rho_{K_{\mathrm{left}}}(\mu;v),\\
+ \widehat\rho_{\mathrm{right}}(\mu;v)
+ &:=\rho_{K_{\mathrm{right}}}(\mu;v)
+\end{align}
+と定める。許容確率的モジュラー実現が存在すれば、そのモデルは方向 $v$ ごとにCRLの局所制約による残余圧縮仮定を満たす。
+\end{corollary}
+
+この系が本稿とCRLの接続点である。CRLの抽象定理を置換するのではなく、特定の確率モデルがCRLの仮定を満たすための十分条件を与える。
+
+\subsection{等号と厳密な圧縮}
+
+$Q$ が $K_{\mathrm{right}*}(P_X)$ に関して十分なら、式\eqref{eq:modular-gap}の右辺は零となり二経路のFisher残余は等しい。逆に、ある方向で $Q$ がFisher情報を厳密に減少させるなら
+\begin{equation}
+ \rho_{K_{\mathrm{left}}}(\mu;v)
+ >
+ \rho_{K_{\mathrm{right}}}(\mu;v)
+\end{equation}
+となる。
+
+したがって「事前局所化が有利」という主張の内容は、事後経路にだけ現れる追加の非十分な後処理 $Q$ を構成できるかどうかにある。ベイズ逆という名称だけではこの因子化は保証されない。
+
+\section{逆射とベイズ逆の限界}
+
+\subsection{モデルに共通する条件付き核}
+
+確率的写像 $K:X\rightsquigarrow Y$ のベイズ逆は、通常、事前分布 $\mu$ に依存する条件付き核
+\begin{equation}
+ K_\mu^\dagger:Y\rightsquigarrow X
+\end{equation}
+として構成される。異なる $\mu$ に対して同じ核を選べるとは限らない。そのため、寓の逆関係 $R^\circ$ のような射だけに依存する大域的逆と同一視できない。
+
+\begin{definition}[統計モデル上の共通逆核]
+$K$ に対する核 $K^\dagger:Y\rightsquigarrow X$ が
+\begin{equation}
+ K^\dagger_*K_*\mu=\mu
+ \qquad(\mu\in P_X)
+ \label{eq:common-inverse}
+\end{equation}
+を満たすとき、$P_X$ 上の共通逆核と呼ぶ。
+\end{definition}
+
+十分性の定義は、このようなモデル一様な条件付き核の存在と密接に関係する\cite{JostLeLuuTran2019,Le2020DiffeologicalStatistics}。式\eqref{eq:common-inverse}が成立する場合、$K$ は統計モデルに関する情報を失わず、Fisher残余は零となる。
+
+\subsection{交わりの非自動性}
+
+関係 $A,B\subseteq X\times Y$ の交わり $A\cap B$ は再び関係である。一方、二つのマルコフ核 $K,L:X\rightsquigarrow Y$ について、点ごとの測度の「交わり」は一般に確率測度にならない。積、最小値または条件付けを用いる場合も、正規化、絶対連続性、零確率事象の処理が必要となる。
+
+したがって本稿は記号
+\begin{equation}
+ S\cap R^\circ T
+\end{equation}
+を直接マルコフ核演算として定義しない。具体的モデルが条件付け規則を指定し、その結果として $K_{\mathrm{right}}$ を構成しなければならない。
+
+\section{PoVの制限付き情報幾何学的実現}
+
+\subsection{独立標本数としてのPoV}
+
+一般のCRLにおける $\PoV$ は、観測文脈、競合仮説または探索分岐の多様性を表し得る。これを標本数と同一視できるのは、独立同分布な積モデルに限定される。
+
+\begin{proposition}[独立積モデルのFisher加法性]
+一標本モデル $(P_X,D_X)$ の $N$ 個の独立積
+\begin{equation}
+ P_X^{\otimes N}
+\end{equation}
+では、同じパラメータ方向 $v$ に対するFisher情報は
+\begin{equation}
+ g_\mu^{(N)}(v,v)
+ =N g_\mu^{(1)}(v,v)
+ \label{eq:iid-additivity}
+\end{equation}
+となる。
+\end{proposition}
+
+\begin{proof}
+独立積の対数尤度微分は各標本のスコアの和である。スコアの期待値は零であり、独立性によって異なる標本間の交差項が消えるため、二乗ノルムの期待値は $N$ 倍となる。
+\end{proof}
+
+この場合に限り
+\begin{equation}
+ \PoV=N
+\end{equation}
+と置くことが自然である。相関した観測、重複した文脈または競合仮説では式\eqref{eq:iid-additivity}は自動的に成立せず、干渉項をデータから定義しなければならない。
+
+\subsection{十分統計量の例}
+
+\begin{example}[Bernoulli標本の成功回数]
+$X_i\sim\operatorname{Bernoulli}(\theta)$ を独立とし、全標本
+\begin{equation}
+ (X_1,\dots,X_N)
+\end{equation}
+から成功回数
+\begin{equation}
+ S_N=\sum_{i=1}^N X_i
+\end{equation}
+への統計写像を考える。$S_N$ はBernoulli族に対する十分統計量であり、全標本のFisher情報
+\begin{equation}
+ \frac{N}{\theta(1-\theta)}
+\end{equation}
+を保存する。したがって全標本から $S_N$ へのFisher残余は零である。
+\end{example}
+
+この例は圧縮と情報損失を区別する。状態空間の表現を小さくしても、統計モデルに関して十分であればFisher残余は発生しない。
+
+\section{具体例：二値通信路}
+
+\subsection{一段階の残余}
+
+入力を $X\sim\operatorname{Bernoulli}(\theta)$ とし、確率 $\varepsilon$ でビットを反転する二値対称通信路 $K_\varepsilon$ を考える。出力は
+\begin{equation}
+ Y\sim\operatorname{Bernoulli}(q),
+ \qquad
+ q=\varepsilon+(1-2\varepsilon)\theta
+\end{equation}
+に従う。
+
+$\theta$ 方向の入力Fisher情報は
+\begin{equation}
+ \FI_X(\theta)
+ =\frac{1}{\theta(1-\theta)}
+\end{equation}
+であり、出力で保持されるFisher情報は
+\begin{equation}
+ \FI_{K_\varepsilon}(\theta)
+ =
+ \frac{(1-2\varepsilon)^2}{q(1-q)}
+\end{equation}
+である。従って
+\begin{equation}
+ \rho_{K_\varepsilon}(\theta)
+ =
+ \frac{1}{\theta(1-\theta)}
+ -
+ \frac{(1-2\varepsilon)^2}{q(1-q)}
+ \geq0.
+ \label{eq:bsc-residual}
+\end{equation}
+
+$\varepsilon=0$ では恒等通信路なので残余は零である。$\varepsilon=1/2$ では出力が $\theta$ に依存せず、入力Fisher情報がすべて失われる。
+
+\subsection{追加garbling}
+
+$K_\varepsilon$ の出力へ、さらに反転確率 $\delta$ の通信路 $Q_\delta$ を適用し
+\begin{equation}
+ K_{\mathrm{left}}
+ :=Q_\delta\circ K_\varepsilon,
+ \qquad
+ K_{\mathrm{right}}
+ :=K_\varepsilon
+\end{equation}
+とする。このとき定理4.2により
+\begin{equation}
+ \rho_{K_{\mathrm{left}}}(\theta)
+ =
+ \rho_{K_{\mathrm{right}}}(\theta)
+ +
+ \rho_{Q_\delta}(K_{\varepsilon*}\mu;
+                  K_{\varepsilon*}v)
+ \geq
+ \rho_{K_{\mathrm{right}}}(\theta)
+\end{equation}
+である。
+
+この例では因子化が明示的であり、追加の事後処理が残余を増加させることが直接確認できる。一般のCRLモジュラー対についても、これに対応する $Q$ を構成することが定理5.2の適用条件となる。
+
+\section{計算意味論への帰結}
+
+\subsection{CRLへの寄与}
+
+本稿の定理はCRLの抽象的残余モジュラー定理を証明し直すものではない。次の含意を与える。
+\begin{equation}
+ \text{garbling因子化を持つ確率実現}
+ \quad\Longrightarrow\quad
+ \text{CRL残余圧縮仮定}
+ \label{eq:semantic-implication}
+\end{equation}
+
+したがってCRLの具体的実装について、次の手順で検証できる。
+\begin{enumerate}
+ \item 計算状態をほぼ2-可積分なdiffeological統計モデルとして与える。
+ \item 事前局所化経路と事後照合経路をマルコフ核として構成する。
+ \item 両者の間の後処理核 $Q$ を構成する。
+ \item 式\eqref{eq:modular-factorization}を証明する。
+ \item Fisher残余を計算し、式\eqref{eq:modular-gap}で圧縮量を測る。
+\end{enumerate}
+
+この意味でDCRLは、CRLの公理的インターフェイスに対する一つの確率的モデルクラスを与える。
+
+\subsection{計算費用との相違}
+
+Fisher残余が小さいことは、計算時間、メモリ消費または探索ノード数が小さいことを意味しない。事前条件付け核 $K_{\mathrm{right}}$ や後処理核 $Q$ の構成が高価な場合がある。計算残余とFisher残余を比較するには
+\begin{equation}
+ \Psi:
+ho_{\mathrm{comp}}
+ \longrightarrow
+ \rho_{\mathrm{Fisher}}
+\end{equation}
+のような測定対応と、その単調性または誤差評価を別途与える必要がある。
+
+\subsection{LLM応用の位置}
+
+LLMのアテンション、文脈長、予測損失または幻覚率を、そのまま $\PoV$ やFisher残余と同一視することはできない。LLMをCRLの確率的ハンドラとして扱うには、少なくとも次を構成する必要がある。
+\begin{enumerate}
+ \item モデル出力族のdiffeological統計モデル。
+ \item 文脈処理を表すマルコフ核。
+ \item 事前制約付き推論と事後検証の二つの核。
+ \item 両者を結ぶgarbling因子化または反例。
+ \item Fisher残余と実際の校正誤差・予測損失との比較。
+\end{enumerate}
+
+\begin{conjecture}[確率的ハンドラの残余圧縮]
+特定の推論タスクについて、制約を事前に組み込んだ推論核 $K_{\mathrm{right}}$ と事後検証核 $K_{\mathrm{left}}$ が構成され、$K_{\mathrm{left}}=Q\circ K_{\mathrm{right}}$ が成立するならば、そのタスクのFisher残余は事前制約付き経路で増加しない。
+\end{conjecture}
+
+これは定理5.2の直接的な適用スキーマであるが、一般のLLMについて因子化が成立することを主張するものではない。
+
+\section{検証状態と研究課題}
+
+\begin{center}
+\begin{tabular}{p{0.34\textwidth} p{0.22\textwidth} p{0.32\textwidth}}
+\toprule
+項目 & 状態 & 条件または根拠 \\
+\midrule
+確率写像下のモデル保存 & 既存定理 & Lêの定理1 \\
+Fisher計量の単調性 & 既存定理 & Lêの定理2 \\
+方向付きFisher残余 & 定義 & 点 $\mu$ と方向 $v$ に依存 \\
+残余連鎖則 & 命題 & 計量差の分解 \\
+garbling単調性 & 定理 & $K_2=Q\circ K_1$ \\
+情報幾何学的モジュラー定理 & 条件付き定理 & モジュラー因子化 \\
+十分統計量での残余消失 & 系 & モデル一様な十分性 \\
+PoVの標本数解釈 & 限定的定理 & 独立同分布積モデル \\
+交わりの確率的実現 & モデル依存 & 正規化・条件付けが必要 \\
+寓の逆射とベイズ逆の一致 & 未構成 & 共通逆核と自然性が必要 \\
+計算残余との比較 & 未構成 & 測定対応 $\Psi$ が必要 \\
+LLMハンドラへの適用 & 研究仮説 & 核と因子化の具体化 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+最優先課題は、CRLの一つの具体的探索アルゴリズムについて $K_{\mathrm{left}}$、$K_{\mathrm{right}}$ および $Q$ を構成することである。次に、条件付け演算がdiffeological統計モデル上で滑らかとなる条件、零確率事象を含む場合の部分核、Fisher残余の方向依存性をスカラーCRL残余へ集約する規則を定める必要がある。
+
+さらに、garbling因子化が存在しない場合にも残余不等式が成立するか、あるいは反例が生じるかを調べることが重要である。因子化は十分条件であり、必要条件とは限らない。
+
+\section{結論}
+
+本稿は、CRLの継続残余に対する確率的・情報幾何学的意味論を、ほぼ2-可積分な $C^k$-diffeological統計モデル上で構成した。確率的写像 $K$ によるFisher情報の損失を、点と接方向に依存するFisher残余
+\begin{equation*}
+ \rho_K(\mu;v)
+ =g_\mu(v,v)
+ -g_{K_*\mu}(K_*v,K_*v)
+\end{equation*}
+として定義した。この残余は非負であり、マルコフ核の合成に対して厳密な連鎖則を満たす。十分な写像では残余が消失する。
+
+中心結果は、事後照合経路 $K_{\mathrm{left}}$ が事前局所化経路 $K_{\mathrm{right}}$ のgarbling
+\begin{equation*}
+ K_{\mathrm{left}}
+ =Q\circ K_{\mathrm{right}}
+\end{equation*}
+として因子化される場合の条件付き情報幾何学的モジュラー定理である。このとき
+\begin{equation*}
+ \rho_{K_{\mathrm{left}}}(\mu;v)
+ -\rho_{K_{\mathrm{right}}}(\mu;v)
+ =
+ \rho_Q(K_{\mathrm{right}*}\mu;
+        K_{\mathrm{right}*}v)
+ \geq0
+\end{equation*}
+となる。従ってgarbling因子化は、CRLの局所制約による残余圧縮仮定に対する具体的な十分条件を与える。
+
+この結論は、LêのFisher単調性の「双対」として任意のベイズ逆の最適性を主張するものではない。比較を可能にするのは、二経路の間に構成された後処理核 $Q$ である。また寓の交わりと逆射を確率核の条件付けとベイズ逆へ移すには、モデルごとの追加構造が必要である。
+
+したがってDCRLの位置づけは、CRLを置換する理論ではなく、CRLの抽象的残余比較を満たす確率モデルを認定する意味論的コンパニオンである。今後、具体的な探索過程または推論アルゴリズムについてモジュラー因子化を構成できたとき、CRLの残余圧縮はFisher情報の保存・散逸として検証可能な量になる。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}

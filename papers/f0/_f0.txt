@@ -1,0 +1,3225 @@
+\RequirePackage{iftex}
+\ifLuaTeX
+  \documentclass[11pt,a4paper,ja=standard,lualatex]{article}
+\else\ifXeTeX
+  \documentclass[11pt,a4paper,ja=standard,xelatex]{article}
+\else
+  \documentclass[11pt,a4paper,ja=standard,pdflatex]{sarticle}
+\fi\fi
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{icat-common}
+
+\newtheorem{theorem}{定理}
+\newtheorem{definition}{定義}
+\newtheorem{proposition}{命題}
+\newtheorem{corollary}{系}
+\newtheorem{example}{例}
+\newtheorem{remark}{注意}
+\newtheorem{operation}{操作}
+
+\title{無記の意味論：意味と指示の不動点\\
+---保留の再帰と無記の再帰の分岐について---}
+\author{千葉将臣}
+\date{2026-06-30}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本論文は、意味（Sinn）と指示（Bedeutung）の関係を、
+分離可能とも同一とも断定しないための操作として
+無記（むき、Skt.\ avy\=akata）を定式化する。
+意味と指示は不可分であるが、同一ではない。
+しかしこの関係を「不可分である」「同一ではない」と命題化した瞬間、
+それは真偽・可能不可能・予想・独立性といった記の枠組みに回収される。
+本論文の主張は、この回収を避けるためには、意味と指示の関係を
+無記の不動点として、すなわち
+「無記は無記である」と断定するほかない、ということである。
+
+そのために本論文は、まず保留（エポケー、$E$）と無記（$\Avyakata$）を
+分離する。保留は将来の再開条件 $R$ を要求するため、
+$E(\varphi)\to E(R(\varphi))\to E(R(R(\varphi)))\to\cdots$
+という悪性無限退行を生じる。これに対して無記の再帰は、
+各段階で完結する操作の反復であり、退行ではない。
+さらに本論文は、この反復を「可能か不可能か」「予想されるか」
+という形で述べること自体が保留の再帰を呼び戻すことを示し、
+無記についての有効な記述は断定形でしか成立しないことを論じる。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入：記の罠}
+
+\subsection{記の枠組みとその限界}
+
+ある命題 $\varphi$ について、数学・論理学は通常、以下のいずれかの
+立場を取る。
+
+\begin{itemize}
+\item $\varphi$ は証明可能である（定理）。
+\item $\varphi$ は反証可能である（否定の定理）。
+\item $\varphi$ は与えられた体系から独立である
+  （ゲーデルの不完全性定理の意味で）。
+\item $\varphi$ は現時点で未解決だが、いずれ真偽が定まると想定される
+  （予想）。
+\end{itemize}
+
+本論文ではこれら四つの立場をまとめて\textbf{記}（き）の枠組みと呼ぶ。
+記の枠組みに共通するのは、$\varphi$ について
+「真偽がいずれかに定まっている、あるいは定まりうる」
+という前提である。独立性命題でさえ、
+「証明できないし反証もできない」という事実そのものは
+体系内で確定した記述として扱われる。
+
+この枠組みは、ある種の問いに対して過剰に強い。
+たとえば「意味と指示は分離可能か」「意味と指示は同一か」
+という問いに対して、肯定・否定・独立性・予想のいずれかを
+与えようとすると、意味と指示の関係はすでに
+命題的対象として固定されている。
+しかし本論文が扱う関係は、その固定以前にある。
+意味と指示は不可分であるが、同一ではない。
+この言い方自体も、厳密には記の枠組みに接近する。
+したがって本論文は、この関係を真偽の対象としてではなく、
+操作として扱う。
+
+\subsection{可能不可能・予想という回収}
+
+この種の論点は、しばしば次の二つの形式の議論に回収される。
+
+\begin{enumerate}
+\item 「無記として表現することは可能である／不可能である」。
+\item 「無記として表現できると予想される／考えられる」。
+\end{enumerate}
+
+しかし第一の形式は、無記を可能性命題として扱う。
+第二の形式は、無記を将来の確定を予定した予想命題として扱う。
+いずれも、無記を記の枠組みに戻す。
+本論文の目的は、無記を可能不可能や予想として述べることではない。
+無記が必要となる構造を示し、無記は無記であるとしか述べられない
+地点を確定することである。
+
+\section{記と無記}
+
+\subsection{記の定義}
+
+\begin{definition}[記]
+命題 $\varphi$ に対し、$\varphi$ の真偽を問うことが
+体系 $T$ の内部で意味を持つ（すなわち $T \vdash \varphi$,
+$T \vdash \neg\varphi$, あるいは
+$T \nvdash \varphi$ かつ $T \nvdash \neg\varphi$ という
+独立性の判定が $T$ の言語で記述可能である）とき、
+$\varphi$ は体系 $T$ に対して\textbf{記}であるという。
+\end{definition}
+
+\begin{definition}[無記]
+命題、あるいは命題的に見える問い $\varphi$ に対し、
+$\varphi$ の真偽を問う行為を実行しない操作を
+$\Avyakata(\varphi)$ と書き、\textbf{無記}と呼ぶ。
+
+$\Avyakata(\varphi)$ は真理値を持たない。
+これは「$\varphi$ は真でも偽でもない」という第三の真理値ではなく、
+$\varphi$ に対して真理値を付与する行為そのものを
+実行しないという操作である。
+\end{definition}
+
+\begin{remark}
+保留は将来の再開を予定する語であり、無記とは異なる。
+無記は判断を延期しない。
+無記は、問いを真偽の対象として立てる行為を、今ここで実行しない。
+\end{remark}
+
+\subsection{意味と指示への適用}
+
+記号 $S$ の意味を $\mathrm{Sinn}(S)$、
+指示対象を $\mathrm{Bed}(S)$ と書く。
+このとき次の二つの問いは、どちらも記の枠組みに属する。
+
+\begin{align}
+\mathrm{Sinn}(S) &= \mathrm{Bed}(S),\\
+\mathrm{Sinn}(S) &\perp \mathrm{Bed}(S).
+\end{align}
+
+第一式は意味と指示を同一化する。
+第二式は意味と指示を分離した独立対象として固定する。
+しかし、意味と指示の関係はこの二択では捉えられない。
+意味は指示なしに空転せず、指示は意味なしに記号的対象として現れない。
+この意味で両者は不可分である。
+他方で、意味は指示対象そのものではなく、指示対象も意味そのものではない。
+この意味で両者は同一ではない。
+
+したがって、本論文は次の操作を置く。
+
+\begin{operation}[意味と指示の無記]
+意味と指示の関係について、同一性命題にも分離命題にも
+真理値を付与しない。
+すなわち、
+\begin{equation}
+\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
+\qquad
+\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
+\end{equation}
+を実行する。
+\end{operation}
+
+この操作は、意味と指示が「同一か否か未解決である」と述べるものではない。
+また「分離可能かどうかは今後の研究課題である」と述べるものでもない。
+それらは予想ないし保留であり、記の枠組みに属する。
+無記は、意味と指示の関係を命題的二択へ移す操作を停止する。
+
+\section{保留の再帰}
+
+\subsection{保留の定義}
+
+\begin{definition}[保留（エポケー）]
+命題 $\varphi$ に対し、$\varphi$ についての判断を
+将来の再開を予定して中断する操作を $E(\varphi)$ と書く。
+$E(\varphi)$ は次の二条件を含む。
+
+\begin{enumerate}
+\item \textbf{再開可能性}：ある時点で $E(\varphi)$ は解除され、
+  $\varphi$ について記の判定が下される可能性が残されている。
+\item \textbf{対象の保存}：$E(\varphi)$ の実行中、
+  $\varphi$ という対象そのものは保存される。
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[$E$ の冪等性]
+$E$ は状態として冪等である。すなわち
+\begin{equation}
+E(E(\varphi))=E(\varphi).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+$E(\varphi)$ は「$\varphi$ についての判断が中断されている」
+という状態である。この状態にさらに保留を適用しても、
+新しい判断状態は生じない。判断が中断されているという
+同一状態が継続するだけである。したがって $E$ は冪等である。
+\end{proof}
+
+\subsection{解除条件による悪性無限退行}
+
+状態としての冪等性だけを見れば、保留の反復は単なる収束である。
+しかし保留には再開可能性が含まれる。
+この点を明示すると、保留は悪性無限退行を生じる。
+
+\begin{definition}[保留の解除条件]
+$E(\varphi)$ が解除される条件を $R(\varphi)$ と書く。
+$R(\varphi)$ は「いつ・いかなる条件のもとで
+$\varphi$ についての判断を再開するか」を定める命題である。
+\end{definition}
+
+\begin{theorem}[保留の悪性無限退行]
+$R(\varphi)$ が確定しない限り、$E(\varphi)$ は
+真に保留として機能しない。
+ところが $R(\varphi)$ の確定それ自体も一つの判断であるため、
+そこにも保留が適用可能である。
+したがって、
+\begin{equation}
+E(\varphi)\longrightarrow E(R(\varphi))
+\longrightarrow E(R(R(\varphi)))
+\longrightarrow\cdots
+\end{equation}
+という列が生じる。
+この列では、いずれの段階においても保留の正当化条件が完結せず、
+次の段階へ先送りされる。
+ゆえにこれは悪性無限退行である。
+\end{theorem}
+
+\begin{proof}
+保留が保留であるためには、将来の再開条件が少なくとも原理的に
+与えられなければならない。再開条件が与えられないなら、
+それは保留ではなく、判断しないことの無期限化である。
+しかし再開条件 $R(\varphi)$ を確定する判断もまた命題的対象であり、
+保留の対象から除外できない。
+したがって $R(\varphi)$ には $E(R(\varphi))$ が、
+さらに $R(R(\varphi))$ には $E(R(R(\varphi)))$ が適用される。
+この反復は、各段階の正当化を次段階に依存させるため、
+どの段階でも完結しない。
+\end{proof}
+
+\begin{remark}
+この退行は、保留が状態として冪等であることと矛盾しない。
+$E(E(\varphi))=E(\varphi)$ は、判断中断状態の同一性を示す。
+一方、悪性退行は、その中断状態を保留として正当化する
+再開条件の層に生じる。
+保留は状態としては一つに潰れるが、正当化としては無限に先送りされる。
+\end{remark}
+
+\section{無記の再帰}
+
+\subsection{無記の反復は退行ではない}
+
+無記の反復は、保留の退行とは異なる。
+無記は将来の再開条件を要求しないからである。
+
+\begin{theorem}[無記の各段階の完結性]
+任意の自然数 $n\geq1$ に対して、
+$\Avyakata^{n}(\varphi)$ はそれ自体で完結した操作である。
+すなわち、$\Avyakata^{n}(\varphi)$ の実行は、
+将来の再開・解除・条件確定に依存しない。
+\end{theorem}
+
+\begin{proof}
+$\Avyakata(\varphi)$ は「$\varphi$ について真偽を問う行為を
+実行しない」という操作であり、今この場で完結する。
+$\Avyakata(\Avyakata(\varphi))$ もまた、
+「$\Avyakata(\varphi)$ について真偽を問う行為を実行しない」
+という操作であり、同様に今この場で完結する。
+この反復のどの段階にも、保留における解除条件 $R$ は現れない。
+したがって無記の反復は、正当化を次段階に先送りする退行ではない。
+\end{proof}
+
+\begin{corollary}[退行と反復の区別]
+$E$ の再帰は退行である。
+各段階が次段階の正当化に依存し、いずれの段階も自立しないからである。
+これに対して $\Avyakata$ の再帰は反復である。
+各段階がその場で完結し、次段階に正当化を委ねないからである。
+\end{corollary}
+
+\subsection{無記の非冪等性}
+
+\begin{proposition}[無記の非冪等性]
+一般に、
+\begin{equation}
+\Avyakata(\Avyakata(\varphi))\neq\Avyakata(\varphi).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+$\Avyakata(\varphi)$ は、$\varphi$ について真偽を問う行為を
+実行しない操作である。
+一方 $\Avyakata(\Avyakata(\varphi))$ は、
+$\Avyakata(\varphi)$ という操作について真偽を問う行為を
+実行しない操作である。
+両者は対象の階層が異なる。
+したがって両者は同一視されない。
+\end{proof}
+
+この非冪等性は、保留の冪等性と対照的である。
+保留は同じ中断状態へ潰れる。
+無記は潰れない。
+しかし潰れないことは退行を意味しない。
+無記の各段階は完結したまま、次の段階を許す。
+
+\section{無記の不動点}
+
+\subsection{なぜ不動点が必要か}
+
+意味と指示の関係について、次の二つはいずれも不十分である。
+
+\begin{enumerate}
+\item 意味と指示は同一である。
+\item 意味と指示は分離可能である。
+\end{enumerate}
+
+第一は差異を消す。
+第二は不可分性を消す。
+さらに、次の二つも不十分である。
+
+\begin{enumerate}
+\item 意味と指示は同一か分離可能か、まだ分からない。
+\item 意味と指示は同一でも分離可能でもないと予想される。
+\end{enumerate}
+
+これらは保留または予想であり、将来の確定条件を要求する。
+したがって保留の再帰へ入る。
+必要なのは、意味と指示の関係を未決問題として残すことではない。
+必要なのは、その関係を真偽の対象にしない操作が、
+それ自体として完結していることを示すことである。
+
+\subsection{不動点としての無記}
+
+\begin{definition}[無記の不動点]
+対象 $\Phi$ が、記の枠組みによる同一化・分離・可能性化・予想化の
+いずれによっても保存されず、ただ $\Avyakata$ の遂行によってのみ
+その位置を保つとき、$\Phi$ は無記の不動点にあるという。
+このとき次の断定が成り立つ。
+\begin{equation}
+\Phi\text{ は }\Avyakata\text{ である。}
+\end{equation}
+\end{definition}
+
+ここで「不動点」とは、関数方程式 $f(x)=x$ の形式的同一性を
+主張する語ではない。
+むしろ、記の操作をいくら適用しても対象が記として固定されず、
+無記として述べるほかないという操作的位置を指す。
+
+\begin{theorem}[意味と指示の無記不動点]
+意味と指示の関係は、同一性命題としても分離命題としても、
+また可能性命題・予想命題としても記述されない。
+この関係は、無記の不動点としてのみ記述される。
+すなわち、
+\begin{equation}
+\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr),
+\qquad
+\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)
+\end{equation}
+であり、さらにこの無記化自体についても
+\begin{equation}
+\Avyakata\Bigl(\Avyakata\bigl(\mathrm{Sinn}(S)=\mathrm{Bed}(S)\bigr)\Bigr),
+\qquad
+\Avyakata\Bigl(\Avyakata\bigl(\mathrm{Sinn}(S)\perp\mathrm{Bed}(S)\bigr)\Bigr)
+\end{equation}
+である。
+\end{theorem}
+
+\begin{proof}
+意味と指示を同一とすれば、指示対象に還元されない意味の層が消える。
+意味と指示を分離すれば、意味が指示なしには対象化されず、
+指示も意味なしには記号的に現れないという不可分性が消える。
+したがって、同一性命題と分離命題はいずれも対象を保存しない。
+
+次に、この関係を「未決」「可能」「予想」として述べると、
+判断の将来の確定が予定される。
+これは保留 $E$ と同型であり、解除条件 $R$ を要求する。
+よって定理3.2の悪性無限退行を呼び込む。
+
+残る操作は、同一性命題にも分離命題にも真理値を付与しない
+$\Avyakata$ の遂行である。
+さらに、この遂行を命題として固定することを避けるためには、
+$\Avyakata$ 自体にも $\Avyakata$ を適用する必要がある。
+この反復は定理4.1により退行ではなく、各段階で完結する。
+したがって意味と指示の関係は、無記の不動点としてのみ保存される。
+\end{proof}
+
+\subsection{断定形の必然性}
+
+\begin{theorem}[無記の断定形必然性]
+無記 $\Avyakata(\varphi)$ を、保留・留保・予想・
+「〜かもしれない」といった回避表現によって記述することはできない。
+$\Avyakata(\varphi)$ について意味のある記述を与える唯一の方法は、
+\begin{equation}
+\varphi\text{ について }\Avyakata\text{ である。}
+\end{equation}
+という断定形である。
+\end{theorem}
+
+\begin{proof}
+回避表現は、記述 $D$ について将来の確定・再検討の可能性を含意する。
+これは保留 $E(D)$ と同型である。
+定理3.2より、$E(D)$ は解除条件 $R(D)$ の確定を要求し、
+悪性無限退行に陥る。
+したがって、無記を回避表現で述べることは、
+無記が回避するはずの保留の再帰を記述の層で呼び戻す。
+これを避けるには、記述が将来の解除条件を要求しない
+断定形でなければならない。
+\end{proof}
+
+\begin{remark}[断定は確信ではない]
+ここでいう断定形は、確信の強さや真理性の主張ではない。
+それは、ある操作が今この場で遂行され完結したことの表明である。
+$\Avyakata(\varphi)$ と断定することは、
+$\varphi$ が真であるとも偽であるとも主張しない。
+それは、$\varphi$ について真偽を問う行為を実行しない操作が
+完結したことを述べる。
+\end{remark}
+
+\section{結論}
+
+本論文は、意味と指示の関係を、同一性・分離・可能性・予想の
+いずれにも回収されない構造として扱った。
+そのために、保留 $E$ と無記 $\Avyakata$ を区別した。
+
+\begin{enumerate}
+\item 保留 $E$ は状態としては冪等であるが、再開条件 $R$ を要求するため、
+  正当化の層で悪性無限退行に陥る。
+\item 無記 $\Avyakata$ は、真偽を問う行為を実行しない操作であり、
+  将来の再開条件を要求しない。
+\item 無記の再帰 $\Avyakata^{n}(\varphi)$ は、各段階で完結する反復であり、
+  保留の退行とは異なる。
+\item 意味と指示は不可分でありつつ同一ではないが、
+  この関係は命題として確定されない。
+  それは無記の不動点として、無記であると断定されるほかない。
+\item 無記を可能不可能・予想・保留として述べることは、
+  無記を記へ戻す。
+  したがって無記についての有効な記述は断定形でしか成立しない。
+\end{enumerate}
+
+この結論は、仏教で事象の分析手法として広く利用されてきたインド論理学の四句分別（catu\d{s}ko\d{t}i）との
+対応を持つ。本論で検討した意味と指示の関係は、少なくとも次の
+四つの言明形式として展開できる。
+\begin{enumerate}
+\item 意味と指示は同一である。
+\item 意味と指示は分離可能である。
+\item 意味と指示は同一か分離可能か、まだ分からない。
+\item 意味と指示は同一でも分離可能でもないと予想される。
+\end{enumerate}
+これらは、肯定・否定・未決・非二択化という四つの仕方で
+意味と指示を記の対象へ移そうとする試みである。
+しかし本論の立場では、これら四つのいずれも、
+意味と指示の関係を無記として保持しない。
+したがって、無記を四句分別によって検討した結果もまた無記である。
+この点で、本論の結論は、龍樹『中論』における空の四句分別による分析を
+思想的先行例として持ち、その構造を、
+意味と指示の関係として再定式化するものである。
+
+結論は次の一文に集約される。
+
+\begin{quote}
+意味と指示の関係は、無記の不動点として無記である。
+\end{quote}
+
+この断定は、意味と指示についての新たな真理値を主張しない。
+それは、意味と指示を同一性・分離・可能性・予想の問いへ
+移す行為を実行しないという操作が、ここで完結したことを述べる。
+
+\begin{thebibliography}{99}
+
+\bibitem{Frege1892}
+Gottlob Frege.
+\newblock \"{U}ber Sinn und Bedeutung.
+\newblock \emph{Zeitschrift f\"{u}r Philosophie und philosophische Kritik},
+  100:25--50, 1892.
+
+\bibitem{NagarjunaGarfield1995}
+N\=ag\=arjuna.
+\newblock \emph{The Fundamental Wisdom of the Middle Way}.
+\newblock Translated with commentary by Jay L. Garfield.
+\newblock Oxford University Press, 1995.
+
+\bibitem{Husserl1913}
+Edmund Husserl.
+\newblock \emph{Ideen zu einer reinen Ph\"{a}nomenologie und
+  ph\"{a}nomenologischen Philosophie}.
+\newblock Max Niemeyer, 1913.
+
+\bibitem{Austin1962}
+J.\ L.\ Austin.
+\newblock \emph{How to Do Things with Words}.
+\newblock Oxford University Press, 1962.
+
+\bibitem{Kleene1952}
+Stephen Cole Kleene.
+\newblock \emph{Introduction to Metamathematics}.
+\newblock North-Holland, 1952.
+
+\end{thebibliography}
+
+\end{document}
+
+
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage{graphicx}
+
+% 定理環境
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{example}[definition]{例}
+
+\newcommand{\ZFC}{\mathrm{ZFC}}
+\newcommand{\PrT}{\mathrm{Pr}_T}
+\newcommand{\SelfRef}{\mathrm{SelfRef}}
+\newcommand{\Forc}{\mathrm{Forc}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\Res}{\mathrm{Res}}
+\newcommand{\cofib}{\mathrm{cofib}}
+\newcommand{\PoV}{\mathrm{PoV}}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\Spc}{\mathrm{Spc}}
+\newcommand{\Open}{\mathrm{Open}}
+\newcommand{\dfix}{\bigcirc}
+\DeclareMathOperator{\fib}{fib}
+
+\title{言語の外点：\\[0.2em]
+  {\Large —強制法と四重残余束による到達不能性の幾何学—}}
+\author{千葉将臣}
+\date{2026-07-19}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本論文は、形式的体系の内部では対象として定義できないが、内部からの関係によって間接的に指示できる外部を記号 $\dfix$ で表し、その数学的記述を試みる。$\dfix$ は値や点そのものではなく、外部への到達を記録する指示記号である。第一に、完備ブール代数的推移モデルと強制関係を用い、基底モデルに属さないジェネリック・フィルターを、基底モデル内で定義可能な関係によって指示する。第二に、四種の操作に伴う情報損失を安定圏における余ファイバーとして定式化し、それらの台の共通部分を四重残余束（Quadruple Residual Bundle; QRB）の特異領域と定義する。強制法に関する標準定理とQRBに固有の仮定を明確に分離することで、ジェネリック・フィルターとQRB側の代表点の対応を無条件の同一視とはせず、比較写像が満たすべき条件として提示する。さらに第三に、外点指示を「値の定義」ではなく「演算の幾何学的到達」の診断として再解釈し、$1/0\leadsto\dfix$ を典例として計算論的外点の診断機構を展開する。これにより、到達不能性を単なる未定義性ではなく、複数の比較写像が同時に同値でなくなる幾何学的障害として研究するための形式的枠組みを与える。最後に、$\dfix$ が真理保存性を通過する前に位置する「根源的単位元」を指示することを示唆し、今後の代数的展開への接続を開く。
+\end{abstract}
+
+\section{はじめに}
+
+\subsection{問題設定}
+
+十分に強い形式的体系は、自身の構文を算術化できる一方、自身の真理を内部で完全に定義することはできない \cite{godel,tarski}。Kripke の真理理論は部分的真理述語の最小不動点を構成するが、得られた言語の外側から新たな真理概念を問うリベンジ問題は残る \cite{kripke}。したがって、本論文では外部を新しい対象定数として内部言語に追加するのではなく、内部で計算できる関係が外部に対して与える制約によって指示する。
+
+この方針には二つの段階がある。第一段階は、強制関係 $p\Vdash\varphi$ による外部の指示である。第二段階は、複数の論理的・圏論的操作が捨てる情報を残余として記録し、その共通の非自明領域を幾何学化することである。
+
+本稿ではさらに第三の段階を提示する。外点 $\dfix$ は、体系内部の演算（例えば除算 $1/0$）が、内部の真理値の網を通過する前に「飛び出して」しまう幾何学的到達点として診断される。これは値の定義ではなく、操作の四重残余が同時に非ゼロとなり、外点領域に到達したことを記録する式である。
+
+\subsection{本論文の寄与と射程}
+
+本論文の寄与は次の四点である。
+
+\begin{enumerate}
+ \item 強制法の定義可能性補題と真理補題を、外部の「定義」ではなく「指示」のモデルとして整理する。
+ \item 安定テンソル三角圏において四つの残余対象とQRBを定義し、その特異領域を台の交差として与える。
+ \item ジェネリック・フィルターとQRB特異領域の対応を、無条件の同一視ではなく、明示的な比較写像を要する研究仮説として定式化する。
+ \item 外点を計算論的マーカーとして再解釈し、$1/0\leadsto\dfix$ を典例として、操作の幾何学的診断と根源的単位元の概念を導入する。
+\end{enumerate}
+
+特に、強制法が任意の集合論的命題を保存するとは主張しない。強制拡大は連続体仮説のような命題を変え得るが、基底モデルが推移的である場合には順序数を保存し、同じ自然数構造上の一階算術文の真理を保存する。
+
+\section{形式的準備}
+
+\subsection{体系と自己言及}
+
+\begin{assumption}
+$T$ は再帰的に公理化された無矛盾な一階理論であり、少なくとも Robinson 算術 $Q$ を含み、自身の構文と証明関係を算術化できるとする。
+\end{assumption}
+
+論理式 $\varphi$ の Gödel 数を $\ulcorner\varphi\urcorner$、$T$ の標準的な証明可能性述語を $\PrT(x)$ と書く。
+
+\begin{lemma}[対角線補題]
+任意の一変数論理式 $\psi(x)$ に対して、文 $G$ が存在し、
+\[
+ T\vdash G\leftrightarrow\psi(\ulcorner G\urcorner)
+\]
+が成り立つ。
+\end{lemma}
+
+補題 2.2 で $\psi(x)\equiv\neg\PrT(x)$ とすれば、適切な追加条件の下で Gödel 文が得られる \cite{kleene}。記法として
+\[
+ \SelfRef_T(\varphi)=\neg\PrT(\ulcorner\varphi\urcorner)
+\]
+と置く。ただし、これは対象言語の全真理を与える作用素ではない。
+
+\subsection{トポスと二重否定層化}
+
+\begin{definition}[エレメンタリー・トポス]
+圏 $\mathcal{E}$ がエレメンタリー・トポスであるとは、有限極限を持ち、デカルト閉であり、部分対象分類子 $\Omega$ を持つことをいう。
+\end{definition}
+
+一般のトポスの内部論理は直観主義的である。Lawvere--Tierney 位相 $j=\neg\neg$ に伴う層化関手 $a_{\neg\neg}$ は、同型を除いて冪等である \cite{johnstone}。したがって、二重否定層化から生じる残余は「層化が非冪等であること」ではなく、単位写像 $X\to a_{\neg\neg}X$ が一般には同型でないことによって測るべきである。
+
+\section{強制法による外部の指示}
+
+\subsection{ブール値と強制関係}
+
+\begin{assumption}
+$M$ を集合論の十分な有限部分を満たす可算推移モデル、$\mathbb{P}\in M$ を分離的な強制半順序、$\mathbb{B}$ を $M$ におけるその正則開完備化とする。
+\end{assumption}
+
+$M^{\mathbb{B}}$ を $\mathbb{B}$ 値宇宙とし、論理式 $\varphi$ のブール値を $\|\varphi\|_{\mathbb{B}}\in\mathbb{B}$ と書く。
+
+\begin{definition}[強制関係]
+$p\in\mathbb{P}$ と強制言語の論理式 $\varphi$ に対して
+\[
+ p\Vdash\varphi \quad\Longleftrightarrow\quad p\leq\|\varphi\|_{\mathbb{B}}
+\]
+と定める。
+\end{definition}
+
+\begin{theorem}[定義可能性補題と真理補題]
+仮定 3.1 の下で、各論理式 $\varphi$ に対する関係 $p\Vdash\varphi$ は $M$ 内で再帰的に定義できる。さらに、$G\subseteq\mathbb{P}$ が $M$-ジェネリックならば
+\[
+ M[G]\models\varphi(\tau_1^G,\dots,\tau_n^G) \quad\Longleftrightarrow\quad (\exists p\in G)\;p\Vdash\varphi(\tau_1,\dots,\tau_n)
+\]
+が成り立つ。
+\end{theorem}
+
+定理 3.3 は強制法の標準的な基本定理である \cite{cohen,bell,jech}。右辺は $M$ 内で扱えるが、ジェネリック・フィルター $G$ 自身は一般に $M$ の元ではない。この非対称性が、本論文における「外部を定義せずに指示する」という考えの厳密な原型である。
+
+\begin{definition}[強制法における外点]
+基底モデル $M$ の外部にある $M$-ジェネリック・フィルター $G$ を、強制法によって指示される外点 $\dfix$ の意味論的代表と呼び、
+\[
+ \dfix_{\Forc}:=G
+\]
+と表す。この等式は $M$ の内部で対象 $G$ を定義するものではなく、メタ理論において外点 $\dfix$ の役割を $G$ に担わせるという意味論的な同定である。体系内部から利用できるのは $G$ 自体ではなく、定理 3.3 の強制関係 $p\Vdash\varphi$ を通じて記述される $\dfix_{\Forc}$ の条件付きの振る舞いである。
+\end{definition}
+
+\begin{proposition}[相対的無矛盾性と算術的絶対性]
+$M\models\ZFC$ かつ $G$ が $M$-ジェネリックならば、$M[G]\models\ZFC$ であり、$M$ と $M[G]$ は同じ順序数を持つ。さらに両者が標準的な $\omega$ を共有する限り、自然数構造だけを量化領域とする一階算術文の真理は一致する。
+\end{proposition}
+
+\begin{remark}
+命題 3.5 は、強制拡大が集合論の全命題について保存拡大であることを意味しない。新しい実数、すなわち $\omega$ の新しい部分集合が追加される場合があり、集合論的命題の真理値は変化し得る。
+\end{remark}
+
+\subsection{計算論的外点：操作の幾何学的診断}\label{sec:comp-ext}
+
+これまでの外点 $\dfix_{\Forc}$ は、集合論的強制法の文脈で定義された。しかし、外点の概念はこれに留まらない。本節では、外点を「値の定義」ではなく「演算の幾何学的到達点」として再解釈し、計算論的外点の診断機構を展開する。
+
+\begin{definition}[指示的等式]
+対象 $X$ 上の項（あるいは操作の適用）$t$ に対し、
+\[
+ t\leadsto\dfix
+\]
+は、$t$ の生成する操作の残余束が外点領域に到達したことを意味する\textbf{指示的等式}である。これは $t$ が値 $\dfix$ を「持つ」という定義的等式ではなく、$t$ が外点を\textbf{指示した}という幾何学的診断である。
+\end{definition}
+
+\begin{definition}[操作の残余束]
+対象 $X$ 上の二項操作 $\mu:X\times X\to X$（部分射として解釈される）と特異入力 $\delta\in X$ に対し、\textbf{操作の残余束} $\mathrm{ORB}_\mu(\delta)$ を
+\[
+ \mathrm{ORB}_\mu(\delta):=\bigoplus_{i\in\{S,N,SN,NS\}}\Res_i(\mu(-,\delta))
+\]
+と定める。ここで $\mu(-,\delta):X\to X$ は部分射と見なし、各 $\Res_i$ は \S 4 で定義する四つの残余対象である。
+\end{definition}
+
+\begin{example}[$1/0\leadsto\dfix$ の四重診断]
+除算 $\mu(a,b)=a/b$ の特異入力 $\delta=0$ における操作の残余束 $\mathrm{ORB}_{/}(0)$ は、以下の四重崩壊を示す。
+
+\begin{enumerate}
+ \item[$M_S$（同一性）:] $a/b=c\Longleftrightarrow a=b\cdot c$ であるが、$1=0\cdot c$ はどの $c$ でも満たされない。同一性の回復が不可能であり、比較写像 $\eta_S$ は非同型となる。
+ \item[$M_N$（二重否定）:] $1/0$ が「無限大」と仮定しても、$0\cdot\infty$ は直観主義的に確定しない。二重否定層化 $a_{\neg\neg}$ による還元が破綻し、$\eta_N$ は非同型となる。
+ \item[$M_{SN}$（随伴）:] 乗法と除法の随伴関係において、$0$ は単位元ではなく吸収元である。随伴の単位射 $X\to UFX$ が非可逆となり、$\eta_{SN}$ は非同型となる。
+ \item[$M_{NS}$（自己参照）:] $x=1/0$ とおくと $x=1/(1/x)$ となり、自己言及的ループに陥る。対角化の意味論的実現が崩壊し、$\eta_{NS}$ は非同型となる。
+\end{enumerate}
+
+したがって $1/0\leadsto\dfix$ とは、「除算操作の残余が四重に非ゼロになり、外点領域に到達した」という幾何学的診断である。
+\end{example}
+
+\begin{proposition}[四重崩壊の同時性]
+操作 $\mu$ の特異入力 $\delta$ において、四つの局所化比較写像 $\eta_i(\mu(-,\delta))_{\mathfrak{p}}$ が同時に非同型となるとき、$\delta$ は外点領域 $\mathcal{O}_X$ の点を指示する。
+\end{proposition}
+
+この命題は、\S 4 の定理 4.5（交差点の判定）の操作的応用である。$1/0\leadsto\dfix$ は、値の定義ではなく、操作が外点を指示したことを記録する式なのである。
+
+\section{四重残余束の構成}
+
+\subsection{残余対象}
+
+QRBを文字通りの位相的ベクトル束と仮定するのではなく、まず余ファイバーを持つ圏で残余を定義する。
+
+\begin{assumption}
+$\mathcal{C}$ を冪等完備な安定テンソル三角圏とし、$X\in\mathcal{C}^c$ を体系 $T$ の意味論的状態を表すコンパクト対象とする。各 $i\in\{S,N,SN,NS\}$ に対し、完全自己関手 $M_i:\mathcal{C}\to\mathcal{C}$ と自然変換 $\eta_i:\Id_{\mathcal{C}}\Rightarrow M_i$ が与えられ、$M_i$ はコンパクト対象を保つとする。
+\end{assumption}
+
+\begin{definition}[四つの残余]
+各操作の残余対象を完全三角
+\[
+ X\xrightarrow{\eta_i(X)}M_i X\longrightarrow\Res_i(X)\longrightarrow\Sigma X
+\]
+によって定まる余ファイバー
+\[
+ \Res_i(X)=\cofib(\eta_i(X))
+\]
+と定義する。
+\end{definition}
+
+想定する四操作は次の通りである。
+\begin{enumerate}
+ \item $M_S$：同一性を外延的等号へ截断する比較操作。単なる恒等関手を選べば残余はゼロになるため、非自明な比較写像を明示する必要がある。
+ \item $M_N$：二重否定層化。残余 $\Res_N(X)$ は $X\to a_{\neg\neg}X$ が同型でない度合いを表す。
+ \item $M_{SN}$：随伴 $F\dashv U$ から生じるモナド $UF$。残余は単位 $X\to UFX$ の非可逆性を表す。
+ \item $M_{NS}$：構文の対角化を意味論側に実現する自己参照比較操作。この実現の存在は追加構造であり、対角線補題だけから自動的には得られない。
+\end{enumerate}
+
+\begin{definition}[四重残余束]
+対象 $X$ における四重残余束を
+\[
+ \QRB(X)=\Res_S(X)\oplus\Res_N(X)\oplus\Res_{SN}(X)\oplus\Res_{NS}(X)
+\]
+と定義する。
+\end{definition}
+
+\subsection{台と外点領域}
+
+$\mathcal{C}^c$ を $\mathcal{C}$ のコンパクト対象の部分圏とし、Balmer スペクトル $\Spc(\mathcal{C}^c)$ 上の台を $\supp(-)$ と書く \cite{balmer}。
+
+\begin{definition}[外点領域]
+四つの残余が同時に非自明となる領域を
+\[
+ \mathcal{O}_X=\bigcap_{i\in\{S,N,SN,NS\}}\supp\bigl(\Res_i(X)\bigr)\subseteq\Spc(\mathcal{C}^c)
+\]
+と定義する。$\mathcal{O}_X\neq\varnothing$ のとき、その点を QRB の外点候補と呼ぶ。
+\end{definition}
+
+ここで $\mathcal{O}_X$ は外点 $\dfix$ そのものではなく、四つの残余が同時に検出される外点候補の領域である。したがって、強制法における代表 $\dfix_{\Forc}=G$ と対応させるべき対象は領域全体 $\mathcal{O}_X$ ではなく、その内部の特定の点である。また、$\dfix$ は $\mathcal{O}_X$ の元（点）であり、$\mathcal{O}_X$ はその候補領域である。
+
+\begin{theorem}[交差点の判定]
+仮定 4.1 の下で、素点 $\mathfrak{p}\in\Spc(\mathcal{C}^c)$ が $\mathcal{O}_X$ に属することと、すべての $i$ について局所化された比較写像
+\[
+ \eta_i(X)_{\mathfrak{p}}:X_{\mathfrak{p}}\longrightarrow(M_i X)_{\mathfrak{p}}
+\]
+が同型でないことは同値である。
+\end{theorem}
+
+\begin{proof}
+安定圏では射が同型であることとその余ファイバーがゼロ対象であることが同値である。また、$\mathfrak{p}\notin\supp(Y)$ であることは局所化 $Y_{\mathfrak{p}}$ がゼロであることと同値である。これを四つの余ファイバーへ適用すればよい。
+\end{proof}
+
+定理 4.5 により、外点領域は比喩ではなく、四つの比較写像が同時に可逆性を失う素点の集合として特徴づけられる。ただし、その非空性は一般には保証されず、具体的な圏と四操作ごとに証明されなければならない。
+
+\subsection{根源的単位元}
+
+外点 $\dfix$ は、四つの比較写像の可逆性が同時に崩壊する点であるが、その意味はより根源的である。$\dfix$ は、恒等関手（単位元）や随伴の単位射が成立するために必要な「非自明な差異」を内包した地点であり、真理保存性（命題 3.5）が通過する\textbf{前}に位置する。
+
+\begin{definition}[根源的単位元]
+対象 $X$ において、四つの局所化比較写像 $\eta_i(X)_{\mathfrak{p}}$ が同時に非同型となる外点 $\mathfrak{p}\in\mathcal{O}_X$ を、$X$ の\textbf{根源的単位元}（primal unit）と呼ぶ。このとき、恒等関手、二重否定層化、随伴単位、自己参照対角化のいずれもが、$\mathfrak{p}$ において「単位」としての機能を喪失し、残余のみが露出する。
+\end{definition}
+
+\begin{remark}
+根源的単位元 $\dfix$ は、$M$ の内部真理の網（ブール値 $\|\varphi\|_{\mathbb{B}}$ の評価体系）を通過するのではなく、その網が張られる以前の層に位置する。命題 3.5 の真理保存性は、あくまで $\dfix$ が既に「飛び出した後」に後から確認される帰結に過ぎない。したがって $\dfix$ は、単なる外部の対象ではなく、あらゆる単位的・同一性的構造が成立するために必要な、しかしそれ自身はいかなる単位性にも還元されない根源である。
+\end{remark}
+
+\section{強制法と QRB を結ぶ比較原理}
+
+ジェネリック・フィルター $G$ と $\mathcal{O}_X$ は、ここまでの定義だけでは異なる種類の対象である。前者は強制半順序上のフィルターであり、後者はテンソル三角スペクトルの部分集合である。両者を同一視するには比較写像が必要となる。
+
+\begin{assumption}[指示写像]
+順序を保つ写像
+\[
+ \Theta:\mathbb{B}\longrightarrow\Open\bigl(\Spc(\mathcal{C}^c)\bigr)
+\]
+が存在し、有限交叉と任意結合を保存するとする。さらに、点 $\xi_G\in\mathcal{O}_X$ が存在し、各 $p\in\mathbb{P}$ に対して $p\in G$ と $\xi_G\in\Theta(p)$ が同値であるとする。
+\end{assumption}
+
+\begin{definition}[QRB における外点]
+仮定 5.1 を満たす点 $\xi_G\in\mathcal{O}_X$ を、QRB によって表現された外点と呼び、
+\[
+ \dfix_{\QRB}:=\xi_G
+\]
+と定める。このとき外点の二つの表現の関係を
+\[
+ \dfix \;\longleftrightarrow\; \dfix_{\Forc}=G \;\longleftrightarrow\; \dfix_{\QRB}=\xi_G\in\mathcal{O}_X
+\]
+と記す。右側の対応は仮定 5.1 に依存し、$G$ と $\xi_G$ が同一の集合論的対象であることではなく、条件 $p$ の所属と開集合 $\Theta(p)$ への所属が一致するという指示構造の同値を意味する。
+\end{definition}
+
+\begin{proposition}[条件付き指示原理]
+仮定 5.1 の下で、$p\Vdash\varphi$ ならば
+\[
+ \mathcal{O}_X\cap\Theta(p)\subseteq\mathcal{O}_X\cap\Theta(\|\varphi\|_{\mathbb{B}})
+\]
+が成り立つ。したがって、QRB 外点領域上でも強制関係と整合する包含関係によって $\varphi$ を指示できる。
+\end{proposition}
+
+\begin{proof}
+$p\Vdash\varphi$ の定義から $p\leq\|\varphi\|_{\mathbb{B}}$ である。$\Theta$ の単調性により $\Theta(p)\subseteq\Theta(\|\varphi\|_{\mathbb{B}})$ を得る。両辺と $\mathcal{O}_X$ の交わりを取れば結論が従う。
+\end{proof}
+
+命題 5.3 が与えるのは、ジェネリック・フィルターと QRB の完全な同型ではなく、両者の指示構造が整合するための十分条件である。すなわち、体系内部から強制関係によって指示される外点 $\dfix_{\Forc}$ の振る舞いが、QRB 側では点 $\dfix_{\QRB}$ の開近傍への所属関係として再表現される。具体例を構成するには、$\mathbb{B}$、$\mathcal{C}$、四関手、および $\Theta$ を同時に指定し、仮定 5.1 を検証する必要がある。
+
+\section{結論}
+
+本論文は、言語の外点を三つの水準に分けて定式化した。強制法の水準では、基底モデルに属さないジェネリック・フィルターを $\dfix_{\Forc}=G$ として、内部で定義可能な強制関係によって間接的に指示できる。圏論的水準では、四つの比較操作の余ファイバーを QRB として束ね、その台の共通部分を外点候補領域 $\mathcal{O}_X$ とし、指示写像が存在する場合には $\dfix_{\QRB}=\xi_G\in\mathcal{O}_X$ と定めた。そして計算論的水準では、外点を「値の定義」ではなく「演算の幾何学的到達点」として再解釈し、$1/0\leadsto\dfix$ を典例として、操作の四重崩壊が外点領域に到達したことを診断する機構を展開した。
+
+さらに、外点 $\dfix$ が真理保存性を通過する前に位置する「根源的単位元」であることを示唆した。$\dfix$ は、恒等関手や随伴の単位射が生成される前の、あらゆる単位的構造の成立条件そのものを体現する。これは到達不能性を単なる未定義性ではなく、複数の比較写像が同時に同値でなくなる幾何学的障害として研究するための、新しい形式的枠組みを与える。
+
+この分離によって、標準的な強制定理、圏論から従う交差点判定、そして今後構成すべき指示写像を区別できる。今後の主要課題は、具体的な論理トポスまたは安定圏において $\mathcal{O}_X\neq\varnothing$ を示し、強制代数から台の開集合への写像 $\Theta$ を構成することである。その達成によって初めて、ジェネリックな外部と四重残余の特異領域との対応が、比喩ではなく具体的な数学的定理となる。さらに、計算論的外点の診断機構を、より広範な操作的意味論（部分性モナド、車輪代数、制限圏）へと接続することも、今後の展望である。
+
+\bibliographystyle{plain}
+\bibliography{../ref}
+
+\end{document}
+
+
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{example}[definition]{例}
+\newtheorem{remark}[definition]{注記}
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{conjecture}[definition]{予想}
+
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\Fzero}{F_{0}}
+\newcommand{\Fomega}{F_{0,\omega}}
+\newcommand{\PoV}{\operatorname{PoV}}
+\newcommand{\rad}{\operatorname{rad}}
+\newcommand{\Obs}{\mathrm{Obs}}
+\newcommand{\Ind}{\mathrm{Ind}_{\dfix}}
+\newcommand{\Res}{\mathrm{Res}}
+
+\title{指示のみで構成された数体系 \texorpdfstring{$F_0$}{F0}}
+\author{千葉将臣}
+\date{2026-07-23}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、値を直接構成する代わりに、演算上の役割と到達可能性を指示する四記号 $\{0,1,\infty,\dfix\}$ からなる体系 $\Fzero$ を提案する。$0$ は吸収と基底、$1$ は同一性、$\infty$ は発散と極限方向、$\dfix$ は内部演算から到達できない外部を指示する。$\dfix$ は通常の数値ではなく、四重残余束（QRB）における外点の文法を有限の指示代数へ移した診断記号である。演算を加法相と乗法相の相互作用として読み、特異入力に対して結果を無条件に数値化せず、残余の衝突を $\dfix$ として記録する。さらに、冗、計算関係論理、○依存型および QRB との継承関係を整理する。ABC 予想とコラッツ予想への議論は証明ではなく、必要な追加軸や不変量を探索するための診断仮説として提示する。
+\end{abstract}
+
+\section{導入：\texorpdfstring{$F_1$}{F1} から \texorpdfstring{$F_0$}{F0} へ}
+
+\subsection{絶対幾何との関係}
+
+「一元体」$F_1$ をめぐる絶対幾何は、整数の幾何を通常の体より基礎的な構造から記述しようとする研究計画であり、モノイド、$\Gamma$-集合、超環など複数の定式化を持つ。Connes--Consani の絶対代数幾何もその一つである \cite{ConnesConsani2020}。これらは豊かな幾何学的対象を構成する一方、「素数の場所を指し示す直観」と「その意味を担う形式的対象」とを同時に扱う。
+
+本稿は既存の $F_1$ 理論を否定するのではなく、さらに弱い前構造を問う。すなわち、対象の意味や値を先に与えず、同一性、吸収、発散、外部到達という四種類の指示だけから出発できるかを検討する。この指示体系を $\Fzero$ と呼ぶ。
+
+\subsection{基本方針}
+
+$\Fzero$ のプリミティブを次の四記号とする。
+
+\begin{center}
+\begin{tabular}{c l p{0.56\textwidth}}
+\toprule
+記号 & 名称 & 指示内容 \\
+\midrule
+$1$ & 単位指示 & 同一性および恒等操作 \\
+$0$ & 吸収指示 & 消去、基底および「無」 \\
+$\infty$ & 無限指示 & 発散、極限および拡大方向 \\
+$\dfix$ & 外点指示 & 内部到達不能性および外部依存 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+$\dfix$ の文法は、QRB において複数の比較操作の残余が同時に非自明となる外点領域から着想を得る \cite{ChibaQRB2026}。ただし $\Fzero$ は QRB の幾何を内部に再構成するものではない。QRB の外点を値として取り込まず、特異な演算が内部領域を越えたことを記録する指示記号として用いる。
+
+\section{\texorpdfstring{$F_0$}{F0} の構成}
+
+\subsection{指示プリミティブ}
+
+\begin{axiom}[指示の最小性]
+$\Fzero$ のプリミティブ集合を
+\[
+ \mathcal{I}_0:=\{0,1,\infty,\dfix\}
+\]
+とする。$1$ は同一性、$0$ は吸収と基底、$\infty$ は有限領域からの発散方向、$\dfix$ は体系内部から到達不能な外部を指示する。これらの役割のいずれかを削除すると、対応する診断を区別できないものとする。
+\end{axiom}
+
+\begin{axiom}[外点指示の非値性]
+$\dfix$ は通常の数値ではなく、演算の残余が外点領域へ到達したことを記録する指示記号である。特異入力 $\delta$ を持つ演算 $\mu$ に対する
+\[
+ \mu(-,\delta)\leadsto\dfix
+\]
+は、数値等式ではなく、対応する残余診断 $\mathrm{ORB}_{\mu}(\delta)$ が非自明であることを表す。
+\end{axiom}
+
+\begin{remark}[記号と値の区別]
+$0,1,\infty$ は既存の数体系における値と同じ記号を用いるが、$\Fzero$ では第一義的に操作上の役割を指示する。具体的な数体系への解釈を与えた場合にのみ、それぞれの通常値と対応づけられる。
+\end{remark}
+
+\subsection{演算の相転移}
+
+$\Fzero$ では、加法と乗法を単一の演算表へ直ちに固定せず、異なる相として扱う。
+
+\begin{definition}[加法相と乗法相]
+加法相とは位置、順序、差分などを拘束する評価文脈であり、乗法相とは独立した因子や指示チャンネルを結合する評価文脈である。両相を接続する際に失われる情報を継続残余 $\rho$ と呼ぶ。
+\end{definition}
+
+分配律は二相を接続するが、その接続が常に無残余であるとは仮定しない。相の競合を内部の値へ一意に還元できない場合、結果ではなく診断
+\[
+ \rho>0\quad\Longrightarrow\quad\mu(a,b)\leadsto\dfix
+\]
+を記録する。閾値および残余の具体的構成は $\Fzero$ のモデルごとに与えられなければならない。
+
+\section{四つのプリミティブと診断閉包}
+
+\subsection{段階的拡張}
+
+$\{0,1\}$ だけでは、$1/0$ のような逆操作の不在と、体系全体の破綻とを区別できない。$\infty$ を加えれば発散方向を記録できるが、$0\cdot\infty$ や $\infty-\infty$ のように、吸収と発散、または二つの発散方向が衝突する場合の文脈依存性は残る。$\dfix$ は、この未解消の衝突を任意の数値へ同一視せずに保存する。
+
+\begin{center}
+\begin{tabular}{c c p{0.52\textwidth}}
+\toprule
+式 & 指示結果 & 診断 \\
+\midrule
+$1/0$ & $\dfix$ & 除算に必要な逆元が内部に存在しない \\
+$0\cdot\infty$ & $\dfix$ & 吸収相と発散相の競合が文脈なしには解けない \\
+$\infty-\infty$ & $\dfix$ & 二つの極限方向の相対速度が指定されていない \\
+$\mu(\dfix,x)$ & $\dfix$ & 外部依存を解消するハンドラが与えられていない \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+これらは拡張実数における通常の等式ではない。左辺の操作が指定された文脈だけでは値を決定できないことを、右辺の指示記号で表している。
+
+\begin{definition}[指示的全域化]
+部分的な二項演算 $\mu$ に対し、指示的全域化 $\widehat{\mu}:\mathcal{I}_0^2\to\mathcal{I}_0$ を、内部規則が結果を決定する場合は対応する指示を返し、それ以外の場合は $\dfix$ を返す操作として定める。
+\end{definition}
+
+\begin{proposition}[診断閉包]
+指示的全域化された有限個の二項演算の下で、$\mathcal{I}_0$ は閉じている。
+\end{proposition}
+
+\begin{proof}
+定義により、内部規則が適用できる場合の結果は $0,1,\infty$ のいずれかへ解釈される。結果が決定できない場合、または入力に未処理の $\dfix$ が含まれる場合は $\dfix$ を返す。したがって出力は常に $\mathcal{I}_0$ に属する。
+\end{proof}
+
+\begin{remark}
+この命題は閉包を定義から得る基礎結果であり、$\Fzero$ が体、半環、超環などの既知の代数構造であることを意味しない。結合律、可換律、分配律およびハンドラの整合性は別途証明する必要がある。
+\end{remark}
+
+\section{ABC 予想への診断仮説}
+
+\subsection{加法相と乗法相}
+
+互いに素な正整数 $a,b,c$ が $a+b=c$ を満たすとき、ABC 予想は任意の $\varepsilon>0$ に対して有限個の例外を除き
+\[
+ c<\rad(abc)^{1+\varepsilon}
+\]
+が成り立つという形で述べられる。$\Fzero$ の観点では、$a+b=c$ は加法的拘束、$\rad(abc)$ は異なる素因数を抽出する乗法的指示として読める。
+
+\begin{conjecture}[相転移残余による解釈]
+ABC 型不等式に現れる誤差は、加法相から乗法相へ情報を移す際の残余 $\rho$ としてモデル化できる。適切な $\rho$ と高さ関数を構成できれば、ABC 予想を相間の情報損失に対する上界として再定式化できる。
+\end{conjecture}
+
+関数体では変数と微分が加法的変化を測る追加構造を与える。一方、整数環における対応物は自明ではない。本稿では、この差を「基礎軸」「高さまたは対数軸」「外部化軸」という三機能へ分解する診断図式を提案する。
+
+\[
+\begin{array}{c}
+\text{基礎軸：整数の加法・乗法}\\[2mm]
+\swarrow\quad\searrow\\[-1mm]
+\text{高さ軸：対数的測定}
+\qquad
+\text{外部化軸：未解消残余の指示}
+\end{array}
+\]
+
+\begin{remark}[主張の範囲]
+上の三軸図式は ABC 予想の証明でも、ABC 予想の ZFC からの独立性証明でもない。必要な残余、比較写像、モデルおよび不等式は未構成であり、現段階では研究上の診断仮説である。
+\end{remark}
+
+\section{コラッツ予想と \texorpdfstring{$F_{0,\omega}$}{F0-omega}}
+
+\subsection{反例集合の分類}
+
+コラッツ写像を
+\[
+ C(n)=
+ \begin{cases}
+ n/2,&n\equiv0\pmod 2,\\
+ 3n+1,&n\equiv1\pmod 2
+ \end{cases}
+\]
+とする。コラッツ予想の反例が存在すると仮定した場合、軌道は非自明周期へ入るか、非有界に振る舞うかのいずれかを含まなければならない。数値の通常の大小だけでは、奇数ステップの増大と偶数ステップの減少を同一の単調量で追跡しにくい。
+
+\begin{definition}[無限指示軸]
+$\Fomega$ とは、各反復段階に $\Fzero$ の指示情報を付し、評価列全体を追跡する形式的な無限軸である。これは現段階では完成した代数対象ではなく、反復系の残余列を記述するための記法とする。
+\end{definition}
+
+提案する研究方針は、個々の値の単調降下ではなく、仮想的な反例集合 $S_{\mathrm{bad}}$ が反復の下で保持しなければならない不変量を探すことである。候補には、$2$ 進付値、奇数ステップ間の停止時間、対数ドリフト、周期条件などが含まれる。
+
+\begin{conjecture}[動的残余の消滅]
+適切な測度と残余関数 $\rho_{\omega}$ が構成され、反例集合の像について一様な縮小
+\[
+ \rho_{\omega}\bigl(C(S_{\mathrm{bad}})\bigr)
+ \leq q\,\rho_{\omega}(S_{\mathrm{bad}}),
+ \qquad 0\leq q<1
+\]
+が証明できるならば、有限測度を持つ不変な反例集合は存在しない。
+\end{conjecture}
+
+\begin{proof}[条件付き帰結]
+$S_{\mathrm{bad}}$ が不変ならば、反復により
+\[
+ \rho_{\omega}(S_{\mathrm{bad}})
+ \leq q^n\rho_{\omega}(S_{\mathrm{bad}})
+\]
+を得る。$n\to\infty$ とすれば有限な残余は $0$ でなければならない。ただし、残余ゼロから集合が空であることを結論するには、$\rho_{\omega}$ の忠実性がさらに必要である。
+\end{proof}
+
+\begin{remark}[未解決部分]
+必要な一様縮小、測度の忠実性、非自明周期の排除はいずれも未証明である。特に「測度ゼロ」は「反例が存在しない」を一般には意味しない。したがって本節はコラッツ予想の証明ではなく、証明に必要な補題を明示する研究計画である。
+\end{remark}
+
+\section{三軸構造の機能的解釈}
+
+関数体 $k[t]$ では、定数体 $k$、変数 $t$ の幾何、微分 $d/dt$ という異なる機能を区別できる。整数論でこれらに類する操作を探す際、本稿は次の三機能を区別する。
+
+\begin{enumerate}
+ \item 基礎軸：整数の加法・乗法と論理的推論を担う。
+ \item 高さ軸：対数、高さ、付値などにより乗法的規模を比較する。
+ \item 外部化軸：内部の演算では解消できない残余と必要な理論拡大を指示する。
+\end{enumerate}
+
+これは空間の実次元を数える主張ではなく、証明で必要となる操作的自由度の分類である。$\{0,1\}$、$\{0,1,\infty\}$、$\{0,1,\infty,\dfix\}$ という段階は、それぞれ二値判断、発散方向の追加、外部依存の追加に対応する。
+
+\section{関連理論との位置づけ}
+
+\subsection{継承関係}
+
+本稿が想定する概念上の関係を次に示す。
+\[
+\begin{array}{c}
+\Fzero\ \text{（純粋指示体系）}\\
+\downarrow\ \text{指示の関係的解釈}\\
+\text{Allegory}\ \cite{FreydScedrov1990}\\
+\downarrow\ \text{動的評価構造}\\
+\text{Amphigory}\ \cite{ChibaAmphigory2026}\\
+\downarrow\ \text{計算的実現}\\
+\text{CRL}\ \cite{ChibaCRL2026}\\
+\downarrow\ \text{型理論的外部化}\\
+\text{EPMDTT}\ \cite{ChibaEPMDTT2026}
+\end{array}
+\qquad
+\begin{array}{c}
+\text{QRB}\ \cite{ChibaQRB2026}\\
+\updownarrow\\
+\text{外点と残余の幾何学}
+\end{array}
+\]
+
+この図は既に構成された関手列を主張するものではない。$\Fzero$ から各理論への具体的な対象写像、射写像、保存則を与えることは今後の課題である。
+
+\subsection{対応表}
+
+\begin{center}
+\begin{tabular}{c p{0.31\textwidth} p{0.42\textwidth}}
+\toprule
+$\Fzero$ & 関連構造 & 解釈 \\
+\midrule
+$0$ & 恒等性截断または残余の消滅 & 吸収、消去、基底 \\
+$1$ & 恒等関手 $\mathrm{Id}$ & 可逆性と単位の基準 \\
+$\infty$ & 非停止列、$\PoV\to\infty$ & 発散および極限方向 \\
+$\dfix$ & QRB 外点、○依存型の指示判断 & 外部到達と未解消依存 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+○依存型では、$\Fzero$ の外点指示に対応する判断を
+\[
+ \Gamma\vdash_T^{\mathcal M}p:A\rightsquigarrow\dfix
+\]
+と書き、証明障害を $\Obs_T(A)$、計算型を
+\[
+ \Ind(A)=A+\mathbf{1}
+\]
+として記録する \cite{ChibaEPMDTT2026}。ここでも $\dfix$ は $A$ の値ではない。
+
+\section{結論と今後の課題}
+
+本稿は、同一性、吸収、発散、外部到達を表す $\{0,1,\infty,\dfix\}$ からなる指示体系 $\Fzero$ を提案した。特異演算を任意の値へ押し込まず、未解消の残余を $\dfix$ として保存することで、部分演算を診断付きで全域化できる。ただし、得られた閉包は定義的な閉包であり、既知の数体系と同じ代数法則を自動的に満たすものではない。
+
+今後の主要課題は次の通りである。
+\begin{enumerate}
+ \item 文脈依存の演算表、残余関数およびハンドラを具体化し、結合律などの保存条件を示す。
+ \item $\Fomega$ を余帰納的または超限的な対象として定式化する。
+ \item $\Fzero$ から冗、CRL、○依存型、QRB への具体的な比較写像を構成する。
+ \item ABC 予想およびコラッツ予想への診断仮説について、必要な残余評価と中間補題を証明可能な形へ分解する。
+ \item 指示体系を機械化し、未定義性、外部依存、独立性候補を区別して記録する検査器を実装する。
+\end{enumerate}
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
+
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{icat-common}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{example}[definition]{例}
+\newtheorem{remark}[definition]{注記}
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+
+\newcommand{\Fzero}{F_{0}}
+\newcommand{\Phase}{\Pi}
+\newcommand{\Pobj}{P_{\mathrm{obj}}}
+\newcommand{\Pobs}{P_{\mathrm{obs}}}
+\newcommand{\ofix}{\bigcirc^{\mathrm{fix}}}
+\newcommand{\oobs}{\bigcirc^{\mathrm{obs}}}
+\newcommand{\oobj}{\bigcirc^{\mathrm{obj}}}
+\newcommand{\iobs}{\infty^{\mathrm{obs}}}
+\newcommand{\iobj}{\infty^{\mathrm{obj}}}
+\newcommand{\oax}{\bigcirc^{\mathrm{ax}}}
+\newcommand{\ocomp}{\bigcirc^{\mathrm{comp}}}
+\newcommand{\Observe}{\mathsf{Observe}}
+\newcommand{\Residual}{\rho_{\mathrm{obs}}}
+\newcommand{\TruthCriterion}{\kappa}
+\newcommand{\CircleExt}{\mathcal{E}}
+
+\title{\texorpdfstring{$F_0$}{F0}によるメタ体系の相分類\\
+{\large ---観測者を含む非全体化的メタ分析---}}
+\author{千葉将臣}
+\date{2026-07-28}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、指示体系 $F_0=\{1,0,\infty,\bigcirc\}$ を、思想・形式体系・工学的体系を比較するメタ分析へ拡張する。分類対象がどの記号を用いるかだけでなく、その分類を行う分析者または観測者自身が体系のどこに位置するかを記録するため、$F_0$ を対象評価層 $\{1,0\}$ と観測者反省層 $\{\infty,\bigcirc\}$ に分ける。体系 $T$ の相プロファイルを、対象相、観測者相、観測者位置、外点処理、相遷移の五成分からなる $\Phase(T)$ として定義し、さらに観測者 $O$ と文脈 $c$ に相対化された運用プロファイル $\Phase_O(T;c)$ を導入する。近年の認識論における信念の真理規範、探究の規範、真理規範の実践的基礎づけを整理したうえで、個別判断に先立って判定規則 $\TruthCriterion_{O,c}$ が必要になることを「真理基準の操作的先行性」として定式化する。さらに、体系へ型付き外点 $\bigcirc^\lambda$ を導入する変換 $\CircleExt_\lambda$ を定義し、旧体系を保存しながら残余診断を細分する保存的発展、真理基準を変更する非保存的変質、対象値と観測者境界を混同する水準崩壊を区別する。観測は対象を分類するだけでなく、観測者を $O'$ へ更新し、未確定部分を残余 $\Residual$ として返す。数学的運用例として、証明による二値出力の純化、直観主義における構成反復 $\infty$、逆数学における公理境界 $\oax$、計算的逆数学における計算可能性境界 $\ocomp$ を区別する。$F_0$ メタ分析は四値論理ではなく、自己を含みつつ自己を完全には閉じない体系を比較・運用するための非全体化的な相分類である。
+\end{abstract}
+
+\section{導入}
+
+\subsection{問題設定}
+
+$F_0$ は、$0,1,\infty,\dfix$ を通常の値としてではなく、吸収、同一性、発散、外部到達を示す指示として組織する体系である \cite{ChibaF02026}。これをメタ分析に用いるとき、単に「ある理論が四記号のどれを含むか」を数えるだけでは不十分である。理論の真理値、未定義性、無限反復を記述している観測者が、対象理論の内部にいるのか、外部に固定されているのか、上位のメタ体系へ移動し続けるのかを同時に問わなければならない。
+
+本稿では $F_0$ の構成を
+\[
+ \Fzero
+ =
+ \underbrace{\{1,0\}}_{\text{対象評価層}}
+ +
+ \underbrace{\{\infty,\dfix\}}_{\text{観測者反省層}}
+\]
+と読む。$1$ と $0$ は対象の成立と不成立を、$\infty$ は観測行為の反復およびメタ体系の階層化を、$\dfix$ は観測者を含む体系を最終的に全体化できない境界を指示する。
+
+\begin{proposition}[$F_0$ の自己包含原則]
+$F_0$ メタ分析は分析者自身を分析対象から排除しない。ただし、分析者の内部化が生む再観測を $\infty$、その反復を単一の最終観測者へ閉じられないことを $\dfix$ として保持する。したがって $F_0$ は自己を含むが、自己を完全には閉じない。
+\end{proposition}
+
+\begin{proof}
+観測者を体系内の一対象として固定すると、その対象化を行った観測作用が体系外に残る。この作用をさらに対象化すれば同じ操作が反復されるため、過程は $\infty$ として記録される。反復全体を観測する最終視点を仮定すれば、同じ理由でその視点を観測する作用が外部に残る。よって最終視点は値として構成せず、その不在を $\dfix$ によって指示する。
+\end{proof}
+
+\subsection{本稿の射程}
+
+以下の分類は、各思想や理論が自ら $F_0$ の語彙を採用しているという歴史的主張ではない。既存の体系を同一の観測者記法へ翻訳した比較モデルである。とりわけ、仏教思想、老荘思想、否定神学などとの対応は構造上の比較に限定し、教義的同一視を行わない。
+
+\section{相プロファイル}
+
+\subsection{基本定義}
+
+\begin{definition}[$F_0$ 相プロファイル]
+体系または思想 $T$ の $F_0$ 相プロファイルを
+\[
+ \Phase(T)
+ =
+ \left\langle
+ \Pobj(T)\mid\Pobs(T);
+ \iota_T,\chi_T,\tau_T
+ \right\rangle
+\]
+と定める。各成分は次を表す。
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.25\textwidth} p{0.61\textwidth}}
+\toprule
+成分 & 意味 \\
+\midrule
+$\Pobj(T)\subseteq\{1,0\}$ & 対象を肯定または否定する評価相 \\
+$\Pobs(T)\subseteq\{\infty,\dfix\}$ & 観測者の再帰と全体化境界を扱う相 \\
+$\iota_T$ & 観測者が体系に占める位置 \\
+$\chi_T$ & $\dfix$ に相当する境界の処理方式 \\
+$\tau_T$ & 対象相と観測者相の間の遷移関係 \\
+\bottomrule
+\end{tabular}
+\end{center}
+記号 $\mid$ の左側を対象層、右側を観測者層と呼ぶ。
+\end{definition}
+
+\subsection{観測者・文脈相対のプロファイル}
+
+\begin{definition}[運用相プロファイル]
+観測者 $O$ が文脈 $c$ の下で体系 $T$ を分析して得る相プロファイルを
+\[
+ \Phase_O(T;c)
+ =
+ \left\langle
+ \Pobj^{O,c}(T)\mid\Pobs^{O,c}(T);
+ \iota_{O,T,c},\chi_{O,T,c},\tau_{O,T,c}
+ \right\rangle
+\]
+と定める。静的プロファイル $\Phase(T)$ は、観測者と文脈の差を捨象した略記である。
+\end{definition}
+
+同一の体系であっても、証明可能性を調べる場合、計算可能実現を調べる場合、歴史的思想として比較する場合では観測対象と境界処理が異なる。したがって $\Phase(T)$ を体系に内在する唯一のラベルとみなさず、$O$ と $c$ に相対化された観測結果と読む。
+
+\begin{definition}[$F_0$ 観測遷移]
+観測行為 $a$ を
+\[
+ \Observe_a:
+ (T,O,c)
+ \longmapsto
+ \bigl(\Phase_O(T;c),O',\Residual\bigr)
+\]
+と定める。$O'$ は観測後の観測者状態、$\Residual$ は選択した規則では確定できなかった判断、未検証の前提、水準混同の疑いを保持する観測残余である。
+\end{definition}
+
+\begin{proposition}[観測の非中立性]
+一般に $O'=O$ は仮定できない。観測者は、対象体系の境界を発見することによって、自身が外部固定、階層化、操作的包含、反省的包含のいずれに位置していたかを更新される。
+\end{proposition}
+
+\begin{proof}
+例えば外部固定された観測者が、自身の判定規則も分析対象に含めれば、その位置は $\mathrm{ext}$ から $\mathrm{ref}$ へ変化する。また、対象体系では決定できない判断を上位体系へ送れば $\mathrm{str}$ へ変化する。したがって観測は対象だけの写像ではなく、観測者状態を含む遷移である。
+\end{proof}
+
+\subsection{真理の先行性から真理基準の操作的先行性へ}
+
+\subsubsection{近年の哲学的用法}
+
+「真理の先行性」は、現代哲学で単一の定義を持つ固定的な術語ではない。しかし、それに近い主張は認識論と科学哲学のいくつかの議論に現れる。第一に、信念は真であるとき正しく、偽であるとき誤っているという\textbf{信念の真理規範}がある。信念が真理を目指すという比喩は、信念形成を規制する規範として解釈されてきた \cite{Wedgwood2002}。また、何を信じるべきかを熟慮するとき、問いが「$p$ を信じたいか」ではなく「$p$ は真か」へ移るという信念形成の透明性も論じられている \cite{ShahVelleman2005}。
+
+第二に、近年の探究論では、探究を開始、継続、終了する条件を定める\textbf{探究の規範}が論じられる。探究の目標を真なる信念、知識、正当化、理解のいずれに置くかについては競合する立場があり、真理が唯一の目標であることは自明ではない \cite{Haziza2023}。第三に、真理規範の拘束力を、信念という態度の本性だけでなく、知識の生産、維持、社会的協力を支える実践から基礎づける立場も提示されている \cite{Wei2024}。
+
+これらの用法は少なくとも次の三種類を区別させる。
+\begin{enumerate}
+ \item \textbf{存在論的先行性}：真理または事実が観測者と判断以前に成立するという主張。
+ \item \textbf{規範的先行性}：信念、主張、探究は真理に適合するよう規制されるという主張。
+ \item \textbf{実践的先行性}：真理規範の権威が、知識形成を支える社会的実践によって先に設定されるという主張。
+\end{enumerate}
+本稿は第一の存在論的主張を採用も否定もしない。$F_0$ が形式化するのは、第二と第三に接続する観測操作上の依存関係である。
+
+\subsubsection{操作的定義}
+
+\begin{definition}[真理基準]
+観測者 $O$ が文脈 $c$ において体系 $T$ の判断を $1$ または $0$ として受理するための適格条件を
+\[
+ \TruthCriterion_{O,c}
+ :
+ \mathsf{Judg}(T)
+ \dashrightarrow
+ \mathsf{Adm}_{O,c}
+\]
+と書き、真理基準と呼ぶ。$\mathsf{Adm}_{O,c}$ は証明、構成、モデル充足、計算可能実現など、文脈ごとの受理条件を表す。$\TruthCriterion_{O,c}$ 自体は命題の真理値ではない。
+\end{definition}
+
+\begin{definition}[真理基準の操作的先行性]
+個別判断を出力する操作 $\delta_{T,O}$ が定義されるために、対応する真理基準 $\TruthCriterion_{O,c}$ が規則依存上先に与えられなければならないことを
+\[
+ \TruthCriterion_{O,c}
+ \prec_{\mathrm{op}}
+ \delta_{T,O}
+\]
+と書き、真理基準の操作的先行性と呼ぶ。$\prec_{\mathrm{op}}$ は時間順序または存在論的因果ではなく、後者の定義が前者を前提とする依存順序である。
+\end{definition}
+
+\begin{theorem}[真理基準先行性定理]
+観測遷移
+\[
+ \Observe_a(T,O,c)
+ =
+ \bigl(\Phase_O(T;c),O',\Residual\bigr)
+\]
+が対象判断を含む形で定義されるならば、その判断に対する受理基準 $\TruthCriterion_{O,c}$ が存在し、
+\[
+ \TruthCriterion_{O,c}
+ \prec_{\mathrm{op}}
+ \delta_{T,O}
+\]
+が成り立つ。
+\end{theorem}
+
+\begin{proof}
+$\delta_{T,O}$ が命題 $\varphi$ を $1$、$0$、または観測残余へ振り分けるには、証明の存在、反証の存在、モデル充足、構成の完成などを識別する規則が必要である。その規則がなければ $\Pobj^{O,c}(T)$ も出力判断も定まらない。よって判断操作の定義は $\TruthCriterion_{O,c}$ に依存する。
+\end{proof}
+
+\begin{remark}[観測者不在の正確な帰結]
+観測者を持たない記述を $O=\varnothing$ と書くとき、
+\[
+ O=\varnothing
+ \quad\Longrightarrow\quad
+ \TruthCriterion_{O,c},\ 
+ \delta_{T,O},\ 
+ \Phase_O(T;c)
+ \text{ は未定義}
+\]
+となる。これは「観測者がなければ真理または世界が存在しない」という観念論的主張ではない。観測者なしには、真理を個別判断へ先行する規範として配置する操作的関係が成立しない、という限定された主張である。
+\end{remark}
+
+\subsubsection{観測者位置による変形}
+
+真理基準の先行性は、観測者位置によって異なる形を取る。
+\begin{center}
+\begin{tabular}{c p{0.69\textwidth}}
+\toprule
+観測者位置 & 真理基準の現れ方 \\
+\midrule
+$\mathrm{ext}$ & 真理基準は観測者以前に完成した外部規範として現れる。 \\
+$\mathrm{op}$ & 証明規則、構成規則、計算手続きとして判断出力へ先行する。 \\
+$\mathrm{gen}$ & 境界生成によって対象と真理基準が同時に立ち上がるため、先行性は時間的でなく構成依存的である。 \\
+$\mathrm{ref}$ & 真理基準自身が再観測され、基準の基準を問う反復 $\infty$ が生じる。 \\
+$\mathrm{dep}$ & 観測者、対象、真理基準が相互依存的に成立し、いずれにも絶対的な存在論的先行性を認めない。 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+したがって $F_0$ における「先行性」は、あらゆる観測者に同じ形で現れる真理の先在ではない。それは各観測形態が判断を生成するために必要とする規則依存を比較する概念である。
+
+\subsection{観測者の位置}
+
+\begin{definition}[観測者位置]
+$\iota_T$ の基本類型を次で与える。
+\begin{center}
+\begin{tabular}{c l p{0.57\textwidth}}
+\toprule
+記号 & 名称 & 意味 \\
+\midrule
+$\mathrm{ext}$ & 外部固定 & 観測者を体系外に置き、その位置を分析しない \\
+$\mathrm{str}$ & 階層化 & 対象、メタ、メタメタ体系へ観測者を移す \\
+$\mathrm{ref}$ & 反省的包含 & 観測者の作用そのものを体系内で記録する \\
+$\mathrm{op}$ & 操作的包含 & 観測者を評価、例外処理、運用操作として実装する \\
+$\mathrm{gen}$ & 構成的包含 & 観測行為そのものが対象と境界を生成する \\
+$\mathrm{lim}$ & 極限消去 & 観測者を極限操作で消去し、消去後の不動点を記録する \\
+$\mathrm{dep}$ & 縁起的包含 & 観測者、対象、観測関係を相互依存的に成立させ、いずれも基体としない \\
+\bottomrule
+\end{tabular}
+\end{center}
+複数の位置を併せ持つ場合は、例えば $(\mathrm{op},\mathrm{ref})$ のように組で表す。
+\end{definition}
+
+反省的包含は、観測者を通常の一対象として完全に閉じ込めることではない。自己対象化による反復を $\infty$、その全体化不能性を $\dfix$ として残すことによって初めて、観測者の作用を消去せずに記録できる。
+
+\subsection{外点の処理方式}
+
+\begin{definition}[外点処理]
+$\chi_T$ の基本類型を次で与える。
+\begin{center}
+\begin{tabular}{c l p{0.56\textwidth}}
+\toprule
+記号 & 名称 & 意味 \\
+\midrule
+$\chi_{\varnothing}$ & 排除 & $\dfix$ を語彙から除外する \\
+$\chi_{\mathrm{lat}}$ & 潜在 & 沈黙、未定義性、発散として痕跡だけを残す \\
+$\chi_{\mathrm{ext}}$ & 外部化 & 境界を次のメタ体系へ送る \\
+$\chi_{\mathrm{mark}}$ & 指示化 & 値ではない境界マーカーとして記録する \\
+$\chi_{\mathrm{int}}$ & 内部化 & 例外値、エラー、特殊状態として実装する \\
+$\chi_{\mathrm{fix}}$ & 不動点化 & カット消去後の内部的保存状態として表す \\
+$\chi_{\mathrm{deess}}$ & 脱実体化 & 観測者、対象、不動点のいずれにも自性を帰属させない \\
+$\chi_{\Avyakata}$ & 無記 & 真偽を問う行為を実行しない操作として断定する \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{definition}
+
+無記は未決定値や外点そのものではない。無記 $\Avyakata$ は真偽判定を遂行しない操作であり、将来の再開を要求する保留とも区別される \cite{ChibaAvyakata2026}。これに対して $\chi_{\mathrm{mark}}$ は、体系内部から到達できない構造的境界の存在を指示する。
+
+\section{同形記号の水準分離}
+
+\begin{definition}[対象、観測者、不動点の添字]
+同じ $\infty$ または $\dfix$ で書かれ得る状態を次のように区別する。
+\begin{enumerate}
+ \item $\iobj$：拡張実数や浮動小数点の値としての無限大。
+ \item $\iobs$：観測、意味論、メタ体系の無限反復。
+ \item $\oobj$：NaN、例外、失敗状態などの内部マーカー。
+ \item $\oobs$：体系全体を観測する最終視点の不在を示す外点指示。
+ \item $\ofix$：境界またはカットを消去した後に残る内部的不動点。
+ \item $\oax$：選択した基礎体系から定理へ到達するために不足する公理原理の境界。
+ \item $\ocomp$：指定された計算可能実現または計算可能含意では到達できない境界。
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[三種の $\dfix$ の非同一性]
+一般に
+\[
+ \oobj\neq\ofix\neq\oobs
+\]
+である。第一は体系内部で操作可能な特殊状態、第二は体系内部の保存または収束状態、第三は体系を全体化する最終観測者の不在を表す。
+\end{proposition}
+
+\begin{proof}
+$\oobj$ はデータまたは項として表現され、内部規則の入力となり得る。$\ofix$ は反復または消去の収束先であり、内部の恒等規則を担う。これに対し $\oobs$ は内部対象ではなく、内部対象とその観測者を一括して閉じる視点が構成できないことの指示である。したがって三者の型と操作可能性は異なる。
+\end{proof}
+
+この分離により、四種類の特殊値を実装した工学的体系と、観測者自身を含む $F_0$ 的メタ体系とを区別できる。
+
+\section{型付き外点拡張による発展と崩壊}
+
+\subsection{型付き外点拡張}
+
+体系に「○を付加する」ことは、単に記号集合へ一要素を加えることではない。付加される外点の水準と、それに許される推論規則を同時に指定しなければ、対象値、内部的不動点、観測者境界が混同される。
+
+\begin{definition}[型付き外点拡張]
+外点型の集合を
+\[
+ \Lambda_{\bigcirc}
+ =
+ \{\mathrm{obj},\mathrm{fix},\mathrm{obs},
+   \mathrm{ax},\mathrm{comp}\}
+\]
+とする。$\lambda\in\Lambda_{\bigcirc}$ と、$\bigcirc^\lambda$ に許される規則族 $R_\lambda$ に対して、体系 $T$ の型付き外点拡張を
+\[
+ \CircleExt_\lambda(T;R_\lambda)
+ =
+ \left\langle
+ \mathcal L(T)\cup\{\bigcirc^\lambda\},
+ R_T\cup R_\lambda
+ \right\rangle
+\]
+と定める。ここで $\mathcal L(T)$ は体系の言語、$R_T$ はその規則族である。この $\cup$ は構文と規則の拡張を表し、$\bigcirc^\lambda$ を通常の真理値として対象層へ加えることを意味しない。
+\end{definition}
+
+型付き外点拡張は、運用プロファイル上では
+\[
+ \Phase_O(T;c)
+ \longrightarrow
+ \Phase_{O'}\bigl(\CircleExt_\lambda(T;R_\lambda);c'\bigr)
+\]
+という相変換を生じさせる。$O'$ と $c'$ を許すのは、外点の導入が対象体系だけでなく、観測者位置、真理基準、分析文脈を更新し得るためである。
+
+\subsection{保存的発展と非保存的変質}
+
+\begin{definition}[保存的外点発展]
+$T'=\CircleExt_\lambda(T;R_\lambda)$ が次の条件を満たすとき、$T\to T'$ を保存的外点発展と呼ぶ。
+\begin{enumerate}
+ \item \textbf{旧判断の保存}：旧言語の任意の命題 $\varphi\in\mathcal L(T)$ について
+ \[
+  T'\vdash\varphi
+  \quad\Longleftrightarrow\quad
+  T\vdash\varphi.
+ \]
+ \item \textbf{水準保存}：$\bigcirc^\lambda$ は指定された対象層、操作層、観測者層の内部でのみ用いられ、異なる型の外点へ無規則に変換されない。
+ \item \textbf{残余精緻化}：旧体系で一括されていた観測残余が、外点型に応じて公理不足、計算不能、内部例外、観測者境界などへ細分される。
+\end{enumerate}
+\end{definition}
+
+保存的発展では、○は新たな万能値ではなく、従来確定できなかった理由を型付きで記録する診断子として働く。これに対して、水準保存を維持しながら旧判断の同値または真理基準 $\TruthCriterion_{O,c}$ を変更する拡張を\textbf{非保存的変質}と呼ぶ。非保存的変質は直ちに崩壊ではない。例えば新しい公理を採用することや、古典的受理基準から構成的受理基準へ移ることは体系を変えるが、その変更が明示され型整合的である限り、一つの正当な相遷移として分析できる。
+
+\begin{proposition}[二値出力純度の保存]
+$T\to T'$ が保存的外点発展であり、$\bigcirc^\lambda$ が観測残余の診断にのみ用いられるならば、旧言語の命題に対する確定出力の純度 $\{1,0\}$ は保存される。
+\end{proposition}
+
+\begin{proof}
+旧判断の保存により、旧言語の命題について $T'$ が新たに $1$ または $0$ を与えることはない。確定しない場合も $\bigcirc^\lambda$ は第三真理値として出力されず、$\Residual$ の原因を分類する観測者側の指示として用いられる。したがって確定出力は $\{1,0\}$ に留まる。
+\end{proof}
+
+\subsection{外点拡張の崩壊条件}
+
+\begin{definition}[外点拡張崩壊]
+$T'=\CircleExt_\lambda(T;R_\lambda)$ において次のいずれかが生じるとき、その拡張は外点拡張崩壊を起こすという。
+\begin{enumerate}
+ \item \textbf{型消去}：$\oobj$、$\ofix$、$\oobs$、$\oax$、$\ocomp$ の区別が失われ、相互に無条件で代入可能になる。
+ \item \textbf{観測者境界の対象値化}：$\oobs$ が $\Pobj(T')$ の通常値または通常項として推論入力に置かれる。
+ \item \textbf{万能化}：外点だけから旧言語の任意の命題が導かれ、
+ \[
+  T',\bigcirc^\lambda\vdash\varphi
+  \qquad
+  (\varphi\in\mathcal L(T))
+ \]
+ が無制限に成立する。
+ \item \textbf{自己全体化}：最終観測者を体系内部の完結した対象として固定し、再観測 $\infty$ と観測者境界 $\oobs$ の双方を消去する。
+\end{enumerate}
+\end{definition}
+
+崩壊とは単なる矛盾や非保存性ではない。$F_0$ の観点では、境界を記録するはずの○が水準差を消去し、体系のあらゆる不足を説明する万能項へ変わることが本質的な崩壊である。とりわけ
+\[
+ \oobs\in\Pobj(T')
+\]
+という配置は、最終観測者の不在を通常の対象値へ変換し、非全体化の指示によって体系を全体化するという逆転を生じさせる。
+
+\begin{proposition}[観測者外点の内部値化による崩壊]
+$\oobs$ を対象層の通常値として完全に内部化し、その値から体系全体の正当性を判定できると仮定するならば、$F_0$ の自己包含原則は維持できない。
+\end{proposition}
+
+\begin{proof}
+内部化された $\oobs$ が体系全体を正当に判定できるならば、その判定作用自身も体系内で完結していなければならない。しかし、その作用を対象化する再観測を考えると、新たな観測作用が残る。これを消去して完結性を主張すれば自己全体化となり、保持すれば内部化は完了しない。したがって $\oobs$ を完結した通常値とする仮定は、自己を含むが完全には閉じないという原則と両立しない。
+\end{proof}
+
+\subsection{主要体系における発展と崩壊}
+
+型付き外点拡張の効果は体系ごとに異なる。
+\begin{center}
+\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.19\textwidth} >{\raggedright\arraybackslash}p{0.35\textwidth} >{\raggedright\arraybackslash}p{0.35\textwidth}}
+\toprule
+対象体系 & 発展としての外点導入 & 崩壊または変質の危険 \\
+\midrule
+古典的二値論理 & $\oax$ により基礎体系に相対的な独立性または公理不足を記録する & $\oobs$ を第三真理値とし、意味論者の境界と対象命題の値を混同する \\
+直観主義論理 & $\ocomp$ により構成探索の未完了と計算可能非実現を分離する & 開かれた探索 $\infty$ を直ちに不能性または偽へ閉じる \\
+逆数学 & $\oax$ により定理が要求する公理原理を型付きで抽出する & $\oax$ を $0$ と同一視し、基礎体系からの非導出を定理の偽とみなす \\
+工学的体系 & $\oobj$ により例外を内部状態として処理し、正常値の演算を保護する & $\oobj$ を $\oobs$ と同一視し、実装上の例外から体系全体の限界を結論する \\
+空論 & $\oobs$ により観測者消去を確認するメタ観測の痕跡を保持する & $\ofix$ または $\oobs$ を観測者消去後の絶対的基体として実体化する \\
+中観的空思想 & $\chi_{\mathrm{deess}}$ により導入された外点自身への自性帰属を禁止する & 「空の外点」を最終実体とし、脱実体化操作を停止する \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+この比較から、同じ○の導入でも、ある体系では残余診断の発展となり、別の体系では真理基準の変更、あるいは水準崩壊となることが分かる。したがって外点拡張の評価は、記号の有無ではなく
+\[
+ (\lambda,R_\lambda,
+  \TruthCriterion_{O,c},
+  \iota_{O,T,c},
+  \chi_{O,T,c})
+\]
+の組に対して行わなければならない。
+
+\section{基本類型}
+
+\subsection{全肯定型と二値閉包型}
+
+全肯定型を
+\[
+ \Phase(T)=
+ \langle\{1\}\mid\varnothing;
+ \mathrm{ext},\chi_{\varnothing},\varnothing\rangle
+\]
+とする。これは否定、自己反省、境界を明示せず、成立の側だけを採る理念型である。多面的判断を持つ思想を直ちにこの型へ同一視してはならない。
+
+二値閉包型を
+\[
+ \Phase(T)=
+ \langle\{1,0\}\mid\varnothing;
+ \mathrm{ext},\chi_{\varnothing},\varnothing\rangle
+\]
+とする。この型は対象を肯定と否定へ閉じ、観測者、無限反復、体系境界を形式体系の外へ固定する。ニヒリズムは $\{1,0\}$ そのものではなく、肯定可能性を否定へ吸収する偏った遷移
+\[
+ 1\longrightarrow0
+\]
+として記述する方が精密である。
+
+\subsection{スパイラル型}
+
+\begin{definition}[スパイラリズム]
+対象層の限界に達するたび、観測者を上位メタ体系へ移す型を
+\[
+ \Phase(T)=
+ \left\langle
+ \{1,0\}\mid\{\infty\};
+ \mathrm{str},\chi_{\mathrm{ext}},
+ T_0\to T_1\to T_2\to\cdots
+ \right\rangle
+\]
+と書き、スパイラル型と呼ぶ。
+\end{definition}
+
+これは単純な循環ではない。対象を記述する観測者の位置が各段階で一つ上へ移動する。Kripke 型真理理論を対象言語とメタ言語の階層として運用する場合、Grothendieck 宇宙を上位宇宙へ入れ子化する場合、体系の無矛盾性を上位体系で検証し続ける場合などが候補となる。Kripke の最小不動点構成自体は単調作用素による明確な数学的構成であるが、未接地性を語る言語をさらに内部化すると、新たな記述階層を要求し得る \cite{kripke}。
+
+各段階で $\dfix$ は消滅せず、
+\[
+ \bigcirc_n\rightsquigarrow T_{n+1}
+\]
+として次の外部へ送られる。
+
+\subsection{潜在外点型、外点指示型、無記型}
+
+潜在外点型を
+\[
+ \Phase(T)=
+ \langle\{1,0\}\mid\{\infty,\dfix\};
+ \mathrm{str},\chi_{\mathrm{lat}},\tau_{\mathrm{silent}}\rangle
+\]
+とする。再帰、部分性、発散を扱う一方、外点へ積極的な対象言語を与えない。Kleene 的再帰論をこの型として読む場合、これは歴史的帰属ではなく、未定義性の痕跡を $F_0$ から読み直す解釈である \cite{kleene}。
+
+外点指示型を
+\[
+ \Phase(T)=
+ \langle\{1,0\}\mid\{\infty,\dfix\};
+ \mathrm{ref},\chi_{\mathrm{mark}},
+ \mathrm{internal}\rightsquigarrow\dfix\rangle
+\]
+とする。QRB、○依存型、$F_0$ の外点診断は、この型の候補である \cite{ChibaQRB2026,ChibaEPMDTT2026,ChibaF02026}。
+
+無記型を
+\[
+ \Phase(T)=
+ \left\langle
+ \{1,0\}\mid\{\infty,\dfix\};
+ \mathrm{ref},\chi_{\Avyakata},
+ \mathrm{question}\mapsto\mathrm{non\text{-}performance}
+ \right\rangle
+\]
+とする。無記は境界を第三真理値として内部化せず、その問いについて真偽判定を遂行しない。したがって外点指示と無記は併用できるが同一ではない。
+
+\section{既存体系の試験的分類}
+
+表\ref{tab:profiles}は、代表的な体系を $F_0$ の相プロファイルへ試験的に翻訳したものである。同一体系でも解釈または運用方法によって異なるプロファイルを持ち得る。
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{$F_0$ による試験的相分類}
+\label{tab:profiles}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.21\textwidth} >{\raggedright\arraybackslash}p{0.38\textwidth} >{\raggedright\arraybackslash}p{0.31\textwidth}}
+\toprule
+体系 & 相プロファイルの主要部 & 観測者と境界の扱い \\
+\midrule
+古典的二値論理 & $\{1,0\}\mid\varnothing$; $\mathrm{ext}$ & 意味論者を対象理論外に固定 \\
+階層的形式主義 & $\{1,0\}\mid\{\infty\}$; $\mathrm{str}$ & 無矛盾性の窓を上位体系へ移す \\
+Brouwer 的構成主義 & $\{1,0\}\mid\{\infty\}$; $\mathrm{op}$ & 可能無限を構成行為として扱う \\
+直観主義論理の証明運用 & $\{1,0\}\mid\{\infty\}$; $\mathrm{op}$ & 構成探索を反復し、完了した構成だけを出力 \\
+標準的逆数学 & $\{1,0\}\mid\{\infty,\oax\}$; $\mathrm{ref}$ & 定理から必要な公理原理を逆算 \\
+計算的逆数学 & $\{1,0\}\mid\{\infty,\ocomp\}$; $(\mathrm{op},\mathrm{ref})$ & 計算可能含意と $\omega$-モデルによる境界分析 \\
+Kripke 型真理理論 & $\{1,0\}\mid\{\infty,\dfix\}$; $\mathrm{str}$ & 不動点をメタ理論から観測 \\
+Kleene 的再帰論 & $\{1,0\}\mid\{\infty,\dfix\}$; $\chi_{\mathrm{lat}}$ & 未定義性に外点の痕跡を読む \\
+矛盾耐性直接論理 & $\{1,0\}\mid\{\dfix\}$; $\mathrm{op}$ & 爆発を抑え、矛盾を運用規則で扱う \\
+制限圏・部分性モナド & $\{1,0\}\mid\{\oobj\}$; $\mathrm{op}$ & 定義域または計算効果として内部表現 \\
+前期 Wittgenstein 的限界 & $\{1,0\}\mid\{\oobs\}$; $\mathrm{ext}$ & 語り得る領域の外に境界を固定 \\
+否定神学 & $\{0\}\mid\{\oobs\}$; $\chi_{\mathrm{mark}}$ & 否定を通じて外部を指示 \\
+老荘的発生論 & $\varnothing\mid\{\dfix\}$; $\mathrm{ref}$ & 根源から $\{1,0,\infty\}$ への分化として読む \\
+一般システム論的機械化 & $\{1,0\}\mid\{\infty,\dfix\}$; $\mathrm{str}$ & 自己観測を階層化する \\
+顕現論 & $\{1,0\}\mid\{\infty,\dfix\}$; $\mathrm{gen}$ & 知覚が対象と境界を生成 \\
+界論 & $\{1,0\}\mid\{\infty,\dfix\}$; $(\mathrm{op},\mathrm{ref})$ & 境界生成演算を体系内に保持 \\
+空論 & $\{1\}\mid\{\ofix\}$; $\mathrm{lim}$ & カット消去後の内部保存状態 \\
+中観的空思想 & $\{1,0\}_{\mathrm{conv}}\mid\{\oobs\}$; $\mathrm{dep}$ & 観測者、対象、$\ofix$ をともに脱実体化 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+この表は異なる伝統を単一の尺度で優劣評価するものではない。比較の焦点は、対象へ何を帰属させるかではなく、その帰属を行う観測者の位置と境界処理である。
+
+\section{数学的記述体系の運用分析}
+
+\subsection{証明による二値出力の純化}
+
+数学的記述体系では、対象命題 $\varphi$ に対する確定出力を、原則として証明と反証の二方向へ限定する。理論 $T$ と観測者 $O$ に対する判断操作を
+\[
+ \delta_{T,O}(\varphi)
+ =
+ \begin{cases}
+  1,&T\vdash_O\varphi,\\
+  0,&T\vdash_O\neg\varphi,\\
+  \Residual(\varphi),&
+  T\nvdash_O\varphi\text{ かつ }T\nvdash_O\neg\varphi
+ \end{cases}
+\]
+と書く。
+
+\begin{definition}[二値出力の純化]
+証明運用における $\{1,0\}$ の純化とは、すべての命題が決定可能であることではない。確定していない命題を第三の真理値へ変換せず、$\Residual$ として観測者側に保持し、確定出力だけを $1$ または $0$ に制限することをいう。
+\end{definition}
+
+したがって
+\[
+ T\nvdash\varphi
+\]
+だけから $\delta_{T,O}(\varphi)=0$ は従わない。また、残余が直ちに $\infty$ または $\dfix$ であるとも限らない。探索反復、必要公理、計算可能性など、障害の由来を観測して初めて対応する相へ分類する。
+
+\begin{proposition}[証明の観測者的役割]
+証明は対象層へ新しい第三値を加える操作ではなく、観測残余から検証可能な経路を抽出し、確定結果を $\{1,0\}$ へ戻す観測者側の純化操作として解釈できる。
+\end{proposition}
+
+\subsection{直観主義論理：\texorpdfstring{$\infty$}{infinity} の構成的運用}
+
+直観主義論理では、命題の肯定は構成または証明項の提示に依存する。Curry--Howard 的な読解では、$a:A$ が与えられたときに命題 $A$ が確定する \cite{MartinLof1984}。その運用プロファイルを
+\[
+ \Phase_O(\mathrm{Int};\mathrm{construction})
+ =
+ \left\langle
+ \{1,0\}\mid\{\infty\};
+ \mathrm{op},\chi_{\mathrm{lat}},
+ \tau_{\mathrm{construction}}
+ \right\rangle
+\]
+と書く。
+
+ここで $\infty$ は命題の第三真理値ではなく、構成候補の生成、証明探索、近似の更新を反復できるという観測者側の操作相である。
+\[
+ \infty^{\mathrm{obs}}
+ \xrightarrow{\text{有限構成の完成}}
+ 1,
+ \qquad
+ \infty^{\mathrm{obs}}
+ \xrightarrow{\text{矛盾構成の完成}}
+ 0.
+\]
+構成が完了しない場合、結果は $\infty$ という値になるのではなく、探索が開いたまま $\Residual$ に残る。したがって直観主義の特徴は、$\infty$ を操作しつつ、完了した判断の出力純度を $\{1,0\}$ に保つ点にある。
+
+\subsection{標準的逆数学：公理境界の逆算}
+
+逆数学は、通常数学の定理 $\varphi$ を証明するために必要な集合存在公理または部分体系を、弱い基礎体系 $B$ 上で特定する研究計画である \cite{Simpson2009}。典型的には原理 $A$ に対して
+\[
+ B\vdash A\rightarrow\varphi,
+ \qquad
+ B\vdash\varphi\rightarrow A
+\]
+を示し、
+\[
+ B\vdash\varphi\leftrightarrow A
+\]
+を得る。
+
+この操作を
+\[
+ \Phase_O(\mathrm{RM};B)
+ =
+ \left\langle
+ \{1,0\}\mid\{\infty,\oax\};
+ \mathrm{ref},\chi_{\mathrm{mark}},
+ \tau_{\mathrm{reverse}}
+ \right\rangle
+\]
+と表す。$\infty$ は候補体系と証明変換を探索する反復、$\oax$ は基礎体系 $B$ 単独では越えられない相対的な公理境界である。ここで $\oax$ は「計算不能」を意味せず、$B$ に対して不足している原理を指示する。
+
+\begin{proposition}[逆数学の反省的運用]
+通常の証明が公理から定理へ進むのに対し、逆数学の観測者は完成した定理から証明資源を逆向きに分析する。したがって逆数学は対象命題の真偽判定だけでなく、証明行為自身の公理依存を対象化する $\mathrm{ref}$ 型の運用である。
+\end{proposition}
+
+\subsection{計算的逆数学：計算可能性境界の分離}
+
+計算的逆数学は、標準的逆数学の含意をそのまま用いる代わりに、$\omega$-モデルや計算可能含意を重視して原理間の関係を分析する立場である。ただし計算可能含意は標準的な証明論的含意と同一ではなく、基礎論的正当化を保存しない場合があることが指摘されている \cite{Eastaugh2018}。
+
+そこで計算的逆数学のプロファイルを標準的逆数学から分離し、
+\[
+ \Phase_O(\mathrm{CRM};\mathrm{comp})
+ =
+ \left\langle
+ \{1,0\}\mid\{\infty,\ocomp\};
+ (\mathrm{op},\mathrm{ref}),
+ \chi_{\mathrm{mark}},
+ \tau_{\mathrm{computable}}
+ \right\rangle
+\]
+と書く。$\ocomp$ は指定された計算可能実現からの到達不能性を表し、$\oax$ とは区別される。
+\[
+ \oax
+ =\text{基礎体系に不足する公理原理},
+ \qquad
+ \ocomp
+ =\text{計算可能実現に不足する計算資源}.
+\]
+この区別により、「証明できない」「基礎体系から導けない」「計算可能に実現できない」を同じ $\dfix$ へ潰さず、観測者側の異なる診断として保持できる。
+
+\section{顕現論・界論・空論}
+
+\subsection{三体系を結ぶサイクル}
+
+顕現論、界論、空論は、三つの独立体系としてだけでなく、観測者を含む一つの循環の異なる断面として読める。
+\[
+ \ofix
+ \xrightarrow{\text{知覚・境界生成}}
+ \{1,0\}
+ \xrightarrow{\text{再帰的区分}}
+ \iobs
+ \xrightarrow{\text{消去・収束}}
+ \ofix.
+\]
+このサイクルでは、既成の対象を観測者が後から評価するのではない。観測行為が境界を生成し、その境界によって対象相 $\{1,0\}$ が顕現する。
+
+\begin{remark}[資料中の $\dfix$ の多義性]
+顕現論・界論・空論の資料では、$\dfix$ が、顕現以前の全体性、直接知覚不能性、中道不動点、大域的カット消去後の保存状態、観測者消去後の極限を表す。これらを $F_0$ の観測者境界 $\oobs$ と一括すると、内部的不動点と最終観測者の不在が混同される。以下では前者を $\ofix$、後者を $\oobs$ と書き分ける。
+\end{remark}
+
+\subsection{顕現論：観測者による対象生成}
+
+顕現論では、世界全体は直接知覚されず、知覚は「ある」と「ない」の境界を生成する射影操作として働く。観測者は既成対象を受動的に読む外部者ではなく、対象が現れる条件を構成する作用である。そのプロファイルを
+\[
+ \Phase(\mathrm{Aletheics})
+ =
+ \left\langle
+ \{1,0\}\mid\{\infty,\dfix\};
+ \mathrm{gen},
+ \{\chi_{\Avyakata},\chi_{\mathrm{mark}}\},
+ \tau_{\mathrm{projection}}
+ \right\rangle
+\]
+と表す。
+
+相遷移は
+\[
+ \text{直接知覚不能な全体}
+ \xrightarrow{\text{知覚}}
+ \text{境界}
+ \xrightarrow{\text{二分}}
+ \{1,0\}
+ \xrightarrow{\text{再帰}}
+ \infty
+\]
+である。「ない」を直接対象化しないことは $\chi_{\Avyakata}$、知覚可能領域の外を指すことは $\chi_{\mathrm{mark}}$ に対応する。したがって顕現論では、$1$ と $0$ は世界の原初的属性ではなく、境界生成後に現れる二次的な相である。
+
+\subsection{界論：観測者の演算子化}
+
+界論では、観測者は人格的主体ではなく、境界を生成するメタ否定演算子 $\metanegation$ として体系内に実装される。境界生成が反復され、四句分別的な証明木が成長し、所定の消去によって $\ofix$ へ戻る。そのプロファイルを
+\[
+ \Phase(\mathrm{Boundary})
+ =
+ \left\langle
+ \{1,0\}\mid\{\infty,\dfix\};
+ (\mathrm{op},\mathrm{ref}),
+ \{\chi_{\mathrm{mark}},\chi_{\mathrm{fix}}\},
+ \tau_{\metanegation}
+ \right\rangle
+\]
+とする。
+\[
+ \ofix
+ \xrightarrow{\metanegation}
+ A
+ \xrightarrow{\metanegation^2,\metanegation^3}
+ \text{境界の肥大化}
+ \xrightarrow{\metanegation^4/\text{消去}}
+ \ofix.
+\]
+
+界論は観測者を排除せず、$\metanegation$ の作用として保持する。この意味で操作的包含と反省的包含の複合型である。ただし
+\[
+ \metanegation^4 A\sim_{\mathrm{mid}}\dfix,
+ \qquad
+ \dfix\vdash\dfix
+\]
+に現れる $\dfix$ は体系内部の収束先であり、$F_0$ の外点指示よりも $\ofix$ と読む方が精密である。
+
+\subsection{空論：観測者消去後の保存状態}
+
+空論は、境界生成以前または大域的カット消去後の状態を
+\[
+ \ofix\vdash\ofix
+\]
+という恒等的真理保存として記述する。この断面では対象間の差異と推論の横棒が消去されるため、対象評価層は $\{1\}$ に縮退する。
+\[
+ \Phase(\mathrm{Sunyata})
+ =
+ \left\langle
+ \{1\}\mid\{\ofix\};
+ \mathrm{lim},\chi_{\mathrm{fix}},
+ \tau_{\mathrm{cut\text{-}free}}
+ \right\rangle.
+\]
+ここで $1$ は個別命題の全肯定ではなく、入力と出力の差異を生まない保存を表す。したがって同じ $\{1\}$ を持つ全肯定型とは観測者プロファイルが異なる。
+
+「観測者が完全に消えた」という記述自体は、その消去を確認するメタ観測者を暗黙に要求する。$F_0$ はこの痕跡を $\oobs$ として保持する。ゆえに空論を完全に閉じた観測者不在の体系とせず、
+\[
+ \ofix\parallel\oobs
+\]
+という二重構造として読む。
+
+\subsection{仏教的空思想：不動点自身の空性化}
+
+仏教的空思想、とりわけ中観を $F_0$ から解釈する場合、それは空論における観測者不在性を単に量的に強めたものではない。中観の空は、対象と観測者に固定的な自性を認めないだけでなく、空そのものを究極的な実体または基体として立てることも拒む。いわゆる「空の空」は、空を新たな存在者へ置き換えることではなく、空という記述も縁起的な働きの外にないことを示す \cite{Garfield1995,Westerhoff2009}。
+
+この差異を $F_0$ 上で表すため、空論の内部的不動点
+\[
+ \ofix\vdash\ofix
+\]
+に対して、さらに脱実体化操作
+\[
+ \chi_{\mathrm{deess}}(\ofix)
+ :
+ \neg\operatorname{Svabhava}(\ofix)
+\]
+を適用する。これは $\ofix$ を別の値へ写す演算ではない。$\ofix$ が恒等的保存を担うことと、$\ofix$ が独立自存する実体であることを分離し、後者のみを拒む型付け条件である。
+
+中観的空思想の試験的プロファイルを
+\[
+ \Phase(\mathrm{Madhyamaka})
+ =
+ \left\langle
+ \{1,0\}_{\mathrm{conv}}
+ \mid
+ \{\oobs\};
+ \mathrm{dep},
+ \{\chi_{\mathrm{deess}},\chi_{\Avyakata}\},
+ \tau_{\mathrm{dependent}}
+ \right\rangle
+\]
+と書く。添字 $\mathrm{conv}$ は、慣習的な水準では肯定と否定の判断が機能し続けることを示す。$\mathrm{dep}$ は観測者を消滅させるのではなく、観測者、対象、観測関係を相互依存的な成立として記録する。$\chi_{\mathrm{deess}}$ はそれらのいずれも最終基体とせず、$\chi_{\Avyakata}$ は最終的自性を要求する問いを新たな真理値へ閉じない。
+
+\begin{proposition}[空論と空思想の差異]
+空論と中観的空思想の関係は
+\[
+ \text{空論}:
+ \quad
+ \text{観測者と境界の消去}
+ \longrightarrow
+ \ofix,
+\]
+\[
+ \text{中観的空思想}:
+ \quad
+ \ofix
+ \xrightarrow{\chi_{\mathrm{deess}}}
+ \neg\operatorname{Svabhava}(\ofix)
+\]
+と区別される。後者は前者の不動点を破壊するのではなく、その不動点を自性ある最終実体として読むことを禁止する。
+\end{proposition}
+
+\begin{proof}
+空論の $\ofix\vdash\ofix$ は、境界とカットを除いた後にも保存される内部規則を与える。しかし、この保存則を体系の最終基体と解釈すれば、観測者消去後に新たな絶対項を置くことになる。中観的読解では、保存則の操作的有効性は認めても、その担い手へ独立自存性を帰属させない。したがって保存と自性を分離する $\chi_{\mathrm{deess}}$ が必要となる。
+\end{proof}
+
+\begin{remark}[無記との相違]
+脱実体化と無記も同一ではない。$\chi_{\mathrm{deess}}$ は「自性を持たない」という関係的構造を記述するのに対し、$\chi_{\Avyakata}$ は所定の真偽判定を遂行しない操作である。中観的空思想をすべて無記へ還元せず、構造的な空性化と問いの不遂行を別成分として保持する必要がある。
+\end{remark}
+
+\begin{proposition}[顕現・界・空の相循環]
+三体系は
+\[
+ \boxed{
+ \text{空論（保存）}
+ \xrightarrow{\text{知覚}}
+ \text{顕現論（生成）}
+ \xrightarrow{\text{境界反復}}
+ \text{界論（運動）}
+ \xrightarrow{\text{消去}}
+ \text{空論（保存）}}
+\]
+という相循環の三断面として整理できる。
+\end{proposition}
+
+\begin{proof}
+空論は差異生成以前または消去後の保存状態を与える。知覚作用がこの状態へ境界を導入すると、成立と不成立の対象相が顕現する。境界生成を演算子として反復すると界論の動的証明木が生じる。大域的消去はこの証明木の境界とカットを除き、再び内部的保存状態へ戻す。よって三体系は保存、生成、運動、消去からなる循環を形成する。
+\end{proof}
+
+\section{工学的内部化との区別}
+
+\subsection{IEEE 754}
+
+IEEE 754 は有限値、符号付きゼロ、無限大、NaN を対象内部のデータとして実装する。拡張された対象相を明示して
+\[
+ \Phase_{\mathrm{eng}}(\mathrm{IEEE754})
+ =
+ \left\langle
+ \{1,0,\iobj,\oobj\}\mid\varnothing;
+ \mathrm{ext},\chi_{\mathrm{int}},\tau_{\mathrm{arith}}
+ \right\rangle
+\]
+と読む。NaN は $\dfix$ の工学的類例になり得るが、表現可能なビットパターンであり、観測者境界 $\oobs$ ではない。したがって四種の対象状態を実装しても、それだけでは観測者を含む $F_0$ メタ体系にならない。
+
+\subsection{例外処理と単純機械}
+
+Let-it-Crash 型の例外処理は
+\[
+ \Phase_{\mathrm{eng}}(T)
+ =
+ \langle\{1,0,\oobj\}\mid\varnothing;
+ \mathrm{op},\chi_{\mathrm{int}},
+ \mathrm{failure}\to\mathrm{supervision}\rangle
+\]
+と表せる。失敗を局所的に許容し、監督機構へ移すが、監督者を誰が監督するかまで問わない限り、$\iobs$ と $\oobs$ は現れない。
+
+単純な規則系では、規則と初期条件を選ぶ観測者が体系外に残る。軌道が複雑であることと観測者が内部化されていることは別である。$F_0$ 分析は、計算の複雑性と規則選択者の位置を分離する。
+
+\section{\texorpdfstring{$F_0$}{F0} 観測プロトコル}
+
+\begin{definition}[$F_0$ メタ分析手順]
+観測者 $O$ は文脈 $c$ を明示し、体系 $T$ を次の順に検査する。
+\begin{enumerate}
+ \item \textbf{文脈指定}：証明可能性、構成可能性、公理強度、計算可能性など、何を観測するかを固定する。
+ \item \textbf{真理基準指定}：何を証明、反証、構成、充足または実現として受理するかを $\TruthCriterion_{O,c}$ に記録する。
+ \item \textbf{対象判定}：何を成立 $1$、不成立 $0$ とするか。
+ \item \textbf{未完了過程}：停止しない計算、意味論的反復、宇宙階層を認めるか。
+ \item \textbf{観測者位置}：判定者は体系外、上位体系、内部操作のいずれか。
+ \item \textbf{再観測}：観測者自身を観測すると同じ構造が反復するか。
+ \item \textbf{境界処理}：閉じなさを排除、潜在化、外部化、指示化、内部化、不動点化、無記化のどれで扱うか。
+ \item \textbf{型付き外点拡張検査}：○を導入する場合、その型 $\lambda$ と規則 $R_\lambda$ を明示し、保存的発展、非保存的変質、外点拡張崩壊のいずれかを判定する。
+ \item \textbf{水準混同検査}：内部例外値、不動点、観測者境界を混同していないか。
+ \item \textbf{全体化検査}：自己を完全に記述できる最終視点を暗黙に仮定していないか。
+ \item \textbf{観測者更新}：分析後の位置 $O'$ と未確定部分 $\Residual$ を記録する。
+\end{enumerate}
+\end{definition}
+
+この手順により、同じ $\{1,0,\infty,\dfix\}$ を用いる二体系でも、それを値として実装するのか、メタ階層へ外部化するのか、観測作用として内部に記録するのか、内部的不動点へ収束させるのか、無記として判断行為を完結させるのかを区別できる。運用結果は
+\[
+ (T,O,c)
+ \xrightarrow{\Observe}
+ \bigl(\Phase_O(T;c),O',\Residual\bigr)
+\]
+として保存する。
+
+\section{中心命題と形式化課題}
+
+\begin{theorem}[$F_0$ メタ分析原理]
+メタ体系の差異は、対象へどの真理値を与えるかだけでは決まらない。その真理値を与える観測者をどこに置き、観測者の再帰 $\infty$ と自己全体化不能の境界 $\dfix$ をどのように処理するかによって分類される。
+\end{theorem}
+
+したがって $F_0$ は四値論理ではない。そのメタ分析的構成は
+\[
+ \text{対象評価}
+ +
+ \text{観測者の自己反省}
+ +
+ \text{自己全体化不能性の指示}
+\]
+であり、非全体化的な自己包含メタ理論である。
+
+今後の形式化には次が必要である。
+\begin{enumerate}
+ \item $\Phase(T)$ の同値関係を定め、表記に依存しない分類を与える。
+ \item 相遷移 $\tau_T$ を有向グラフまたは圏として定式化する。
+ \item 観測者位置の変更を忘却、持ち上げ、外部化などの写像として表す。
+ \item $\chi_{\mathrm{mark}}$、$\chi_{\mathrm{fix}}$、$\chi_{\mathrm{deess}}$、$\chi_{\Avyakata}$ の型を分離する。
+ \item 同一体系が文脈に応じて複数のプロファイルを持つ場合の添字を導入する。
+ \item $\ofix$ と $\oobs$ の関係を形式化する。
+ \item 顕現論・界論・空論の循環を相プロファイル間の遷移圏として構成する。
+ \item 空論から中観的空思想への移行を、不動点の消去ではなく不動点への自性帰属を禁止する型制約として定式化する。
+ \item 観測者更新 $O\to O'$ と観測残余 $\Residual$ の合成規則を与える。
+ \item $\oax$ と $\ocomp$ の比較写像を構成し、公理的非導出と計算可能非実現を分離する。
+ \item 真理基準 $\TruthCriterion_{O,c}$ の変更が相プロファイルと観測者更新へ与える影響を形式化する。
+ \item 型付き外点拡張 $\CircleExt_\lambda$ の合成則を定め、複数の外点型を順次導入した場合の保存性と崩壊条件を与える。
+\end{enumerate}
+
+\section{結論}
+
+本稿は、$F_0$ を対象の四状態を並べる分類ではなく、観測者自身の位置を含む相プロファイルとして再構成した。対象評価層 $\{1,0\}$ と観測者反省層 $\{\infty,\dfix\}$ を分離し、観測者位置 $\iota$、外点処理 $\chi$、相遷移 $\tau$ を加えることで、二値閉包、スパイラル型階層、潜在外点、外点指示、無記、工学的例外処理を区別した。さらに静的分類 $\Phase(T)$ を運用プロファイル $\Phase_O(T;c)$ へ拡張し、観測が観測者を $O'$ へ更新し、未確定部分を $\Residual$ として返すことを定式化した。現代認識論における真理規範と探究規範の議論を踏まえ、真理の存在論的先在とは区別された「真理基準の操作的先行性」を導入し、判断出力 $\delta_{T,O}$ が受理規則 $\TruthCriterion_{O,c}$ に依存することを示した。加えて型付き外点拡張 $\CircleExt_\lambda$ を導入し、旧判断を保存しながら観測残余を細分する保存的発展、真理基準または旧判断を変更する非保存的変質、外点の型消去や観測者境界の対象値化によって生じる外点拡張崩壊を分離した。
+
+数学的記述体系への適用では、証明が確定出力を $\{1,0\}$ に純化し、未確定部分を第三値ではなく観測残余として保持することを示した。直観主義論理は構成反復として $\infty$ を操作し、標準的逆数学は公理境界 $\oax$ を、計算的逆数学は計算可能性境界 $\ocomp$ を扱う。この分離により、非導出、未完了、計算不能を一つの外点へ同一視しない運用が得られる。
+
+顕現論・界論・空論の分析は、観測者が対象を生成し、境界を反復させ、消去後に保存状態へ戻る循環を示した。同時に、資料中で同じ $\dfix$ によって表されていた内部的不動点と観測者境界を、それぞれ $\ofix$ と $\oobs$ に分ける必要を明らかにした。さらに中観的空思想を、$\ofix$ を破棄する体系ではなく、$\ofix$ への自性帰属を脱実体化する二階の操作として位置づけた。この区別を保持する限り、$F_0$ は観測者を体系へ含めながら、その観測者または内部的不動点を絶対的な最終基体へ固定しないメタ分析として機能する。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
+
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{icat-common}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{example}[definition]{例}
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+
+\newcommand{\Fzero}{F_{0}}
+\newcommand{\CircleRef}{\bigcirc^{\mathrm{ref}}}
+\newcommand{\CircleEval}{\bigcirc^{\mathrm{eval}}}
+\newcommand{\Obj}{\mathcal M}
+\newcommand{\Obs}{\mathcal R}
+\newcommand{\Time}{\mathcal T}
+\newcommand{\Val}{\mathcal V}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Lan}{\operatorname{Lan}}
+\newcommand{\Ran}{\operatorname{Ran}}
+\newcommand{\Nat}{\operatorname{Nat}}
+\newcommand{\op}{\mathrm{op}}
+\newcommand{\Chu}{\mathbf{Chu}}
+\newcommand{\PSh}{\widehat{\mathcal C}}
+\newcommand{\CoPSh}{\check{\mathcal C}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\Res}{\mathrm{Res}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\Spc}{\mathrm{Spc}}
+\newcommand{\Ctx}{\mathbf{Ctx}}
+\newcommand{\Ty}{\mathrm{Ty}}
+\newcommand{\Tm}{\mathrm{Tm}}
+
+\title{意味と指示の構造論\\
+{\large ---直交性、鏡像構成、カン拡張、および指示の操作的先行性---}}
+\author{千葉将臣}
+\date{2026-07-29}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、意味と指示の関係を、意味論上の同一性または分離可能性の二択としてではなく、観測対象と観測者像のあいだに成立する構造として分析する。出発点は、通常の圏に現れる対象構造と、カン拡張に現れる文脈変換を、意味と指示の二方向として読むことである。この着想を二つの相補的視点へ分解する。第一の\textbf{直交性の視点}は、意味／観測対象と指示／観測者像を、独立に変化しうる二方向として分析的に区別する。第二の\textbf{鏡像構成の視点}は、両方向が評価関係を介して左右反転し、相互に表現を与える仕組みを捉える。後者の形式的模型としてChu空間を、両側の表現を相互に再構成する形式としてIsbell双対を位置づけ、カン拡張を観測文脈の変更に沿う普遍的な延長・補完として解釈する。
+
+指示方向の標準的な圏論的基盤として、Cartmellのcontextual categoryおよびVoevodskyのC-systemを導入する。文脈と代入の圏を基底とし、各文脈上の型と項をファイバーとして配置すると、指示／観測文脈は基底方向、意味はその上のファイバー方向として形式化される。代入 $f^*$ は体系内観測位置の変更を表し、その左右随伴 $\Sigma_f\dashv f^*\dashv\Pi_f$ および関手圏上の $\Lan_K\dashv K^*\dashv\Ran_K$ は、文脈変更に沿う意味・指示像の再構成を与える。
+
+さらに、単一のChu鏡面を、四重残余束（QRB）に現れる四つの比較操作へ分解する。四重結像とは四つの像が一致することではなく、同一性截断、二重否定閉包、随伴単位、自己参照比較という四方向の結像障害が同じ素点で同時に検出されることである。QRBの外点候補領域は四残余の台の共通部分として与えられ、真理保存性はこの四重構造そのものではなく、その後に確認される意味論的一断面として位置づけられる。
+
+観測者と時間は同一視しない。観測者は区別を行う位置であり、時間は状態および指示点を順序づける構造である。$F_0$ の記号 $\bigcirc$ は、評価値域と現実的指示点という異なる型の役割を担いうるため、本稿では $\CircleEval$ と $\CircleRef$ に型分けする。無点化された鏡像構成そのものは対象側と観測側に優先順位を与えないが、$\CircleRef$ が特定の観測位置を選ぶとき、その位置は観測された意味の成立に操作上先行する。本稿はこれを\textbf{指示先行公理}として定式化する。数学は時間構造と指示点間の関係を記述できるが、無点化された構造だけから現実の「ここ・いま・これ」を選出することはない。これらの主張は数学上の一般的不可能性定理ではなく、構造記述と現実的指示を分離する $F_0$ メタ分析上の原理である。
+
+時間については、文脈の依存順序、項の計算・簡約順序、HoTTのパスが与える変形次元、現実的指示点をもつ観測時間を区別する。これらは相互に関係づけられるが、標準的には同一の時間構造ではない。本稿で「観測者は時間ではない」というとき、主として第四の観測時間と観測文脈を区別している。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入}
+
+\subsection{問題設定}
+
+Frege以来、意味と指示の区別は、記号が対象を指すことと、その対象が与えられる仕方を区別するための基本的枠組みである\cite{Frege1892Sinn}。しかし、意味と指示を二つの完成した対象として並置すると、両者を結ぶ作用が第三項として必要になる。他方、両者を同一化すると、同じ対象を異なる仕方で与える構造を失う。
+
+本稿はこの問題を、次の四項の関係として読み替える。
+\begin{enumerate}
+ \item 意味を担う\textbf{観測対象}、
+ \item 指示を成立させる\textbf{観測位置}、
+ \item 両者を結ぶ\textbf{評価関係}、
+ \item 観測が「ここ・いま・これ」として現実化する\textbf{指示点}。
+\end{enumerate}
+観測位置は観測者そのものではなく、体系内に表現された観測者像である。体系外の観測者を内部対象として固定すれば、その固定を行う観測作用が再び外部に残るからである。この区別は、$F_0=\{1,0,\infty,\bigcirc\}$ を対象評価層 $\{1,0\}$ と観測者反省層 $\{\infty,\bigcirc\}$ に分ける既存のメタ分析を継承する\cite{ChibaF02026}。
+
+\subsection{本稿の主張}
+
+本稿の中心的主張は次の八点である。
+\begin{enumerate}
+ \item 意味と指示の\textbf{直交性}は、両者の無関係性ではなく、独立変化可能性を表す。
+ \item 意味と指示の\textbf{鏡像構成}は、直交的に区別された二方向が評価関係によって相互規定されることを表す。
+ \item contextual category／C-systemは、指示を文脈と代入の基底軸として、意味をその上の型・項のファイバーとして形式化する。
+ \item Chu空間は鏡像構成の静的模型を、Isbell双対は両側の表現の相互再構成を与える。
+ \item QRBの○は単一の鏡像ではなく、四つの比較操作の残余が同一点で重なる四重結像として捉えられる。
+ \item カン拡張は観測者の実在的移動ではなく、体系内の観測文脈の変換に沿う像の延長・補完を与える。
+ \item 観測者と時間は異なる。両者は指示点 $\CircleRef$ において交差するが、同一ではない。
+ \item 観測された意味が成立するには、$\CircleRef$ による観測位置の指定が操作上先行する。
+\end{enumerate}
+
+\subsection{非主張と方法上の注意}
+
+本稿は、$F_0$ とChu空間またはIsbell双対が数学的に同一であるとは主張しない。また、「通常の圏」と「カン拡張の方向の圏」という二種類の圏が、既存の圏論において厳密に直交するとも主張しない。カン拡張は関手圏における普遍構成であり、随伴、極限、余極限と深く関係する\cite{Kan1958,MacLane1998,Riehl2016}。本稿の対応は、$F_0$ の意味論的区別を圏論的に精密化するための構造上の比較である。
+
+\section{意味と指示の二方向}
+
+\subsection{対象側と観測側}
+
+意味構造の領域を $\Obj$、体系内の観測位置の領域を $\Obs$ とする。概念的には、$m\in\Obj$ は観測される対象、$r\in\Obs$ は対象を区別する観測文脈を表す。
+
+\begin{definition}[意味方向]
+意味方向とは、対象の構造、対象間の射、同型、双対、随伴など、何がどの構造をもつかを記述する方向である。$F_0$ では主として対象評価層 $\{1,0\}$ に対応する。
+\end{definition}
+
+\begin{definition}[指示方向]
+指示方向とは、対象がどの文脈から「これ」として与えられるか、および文脈変換後に指示像がどう再構成されるかを記述する方向である。$F_0$ では主として観測者反省層 $\{\infty,\bigcirc\}$ に対応する。
+\end{definition}
+
+ここで「指示＝観測者」という略記は、実在的主体との同一化ではない。正確には、指示方向は\textbf{体系内に表現された観測者の位置および指示作用}である。
+
+\subsection{直交性の視点}
+
+\begin{definition}[構造的直交性]
+意味方向 $\Obj$ と指示方向 $\Obs$ が構造的に直交するとは、少なくとも概念上、次の二種類の変換を区別できることをいう。
+\begin{enumerate}
+ \item 対象構造を固定したまま観測文脈を変換すること。
+ \item 観測文脈を固定したまま対象構造を変換すること。
+\end{enumerate}
+\end{definition}
+
+この定義における直交性は、内積が零であるという幾何学的主張ではない。また、両方向のあいだに関係がないことも意味しない。直交性が示すのは、両者を同一の変数へ還元してはならないという分析上の独立性である。
+
+\begin{proposition}[直交性の非分離性]
+意味方向と指示方向が構造的に直交していても、両者が完全に分離可能であるとは限らない。
+\end{proposition}
+
+\begin{proof}
+対象 $m$ がどのように現れるかは観測文脈 $r$ に依存し、観測文脈 $r$ が何を区別する文脈であるかは対象領域 $\Obj$ に依存する。したがって変換方向は区別できるが、具体的な観測結果は両者の組に依存する。
+\end{proof}
+
+\subsection{鏡像構成の視点}
+
+直交性が両方向を分解して見る視点であるのに対し、鏡像構成は両方向の結合を見る。評価値域を $\Val$ とし、
+\begin{equation}
+ \varepsilon:\Obj\times\Obs\longrightarrow\Val
+ \label{eq:evaluation}
+\end{equation}
+を置く。$\varepsilon(m,r)$ は、観測文脈 $r$ において対象 $m$ がどのように現れ、区別されるかを表す。
+
+評価表を転置すれば、
+\begin{equation}
+ \varepsilon^{\mathsf T}:\Obs\times\Obj\longrightarrow\Val,
+ \qquad
+ \varepsilon^{\mathsf T}(r,m)=\varepsilon(m,r)
+\end{equation}
+を得る。これは対象と観測位置が同一になることではなく、同じ評価関係を反対側から読むことである。
+
+\begin{theorem}[二視点の相補性]
+直交性と鏡像構成は、意味と指示の異なる現象ではなく、同じ評価構造の分析面と総合面である。
+\end{theorem}
+
+\begin{proof}
+直交性は式\eqref{eq:evaluation}の二つの入力 $\Obj$ と $\Obs$ を型として区別する。鏡像構成は、それらが評価写像 $\varepsilon$ において結合され、転置によって役割を交換できることを示す。前者は入力の非同一性を、後者は入力間の相互規定性を記述するため、両者は相補的である。
+\end{proof}
+
+\section{文脈圏による指示軸の形式化}
+
+\subsection{Contextual categoryとC-system}
+
+依存型理論では、型や項は無文脈に存在するのではなく、判断文脈 $\Gamma$ に相対化される。基本判断は
+\begin{equation}
+ \Gamma\;\mathsf{ctx},
+ \qquad
+ \Gamma\vdash A\;\mathsf{type},
+ \qquad
+ \Gamma\vdash a:A
+ \label{eq:contextual-judgments}
+\end{equation}
+である。Cartmellのcontextual categoryは、文脈、文脈拡張、代入を圏論的に組織するための構造であり、Voevodskyはその構成的な変種をC-systemとして研究した。とりわけ、宇宙圏 $(\mathcal C,p)$ からC-system $CC(\mathcal C,p)$ を構成する手続きが与えられている\cite{Voevodsky2015CSystem}。
+
+Contextual categoryまたはC-systemの対象は文脈 $\Gamma$、射
+\begin{equation}
+ f:\Delta\longrightarrow\Gamma
+\end{equation}
+は $\Gamma$ の変数を $\Delta$ 上の項によって置き換える代入として読まれる。型 $A$ による文脈拡張は
+\begin{equation}
+ \Gamma.A\xrightarrow{\pi_A}\Gamma
+\end{equation}
+と表され、代入 $f$ に沿う型の再添字付けは、選択された引戻しによって
+\begin{equation}
+ f^*A\in\Ty(\Delta)
+\end{equation}
+を与える。こうした文脈上の型理論的構造は、contextual categories、categories with families、split type-categoriesなど複数の同値または近縁な形式で研究されている\cite{AhrensLumsdaineVoevodsky2018}。
+
+\begin{remark}[確立された構造と本稿の解釈]
+標準理論で確立されているのは「指示の圏」という名称ではなく、文脈と代入の圏である。本稿は、この文脈圏を指示／観測者像の軸として読む。したがって、以下の対応はcontextual categoryの定義そのものではなく、その $F_0$ 的解釈である。
+\end{remark}
+
+\subsection{基底としての指示、ファイバーとしての意味}
+
+文脈の圏を $\Ctx$ とする。各文脈 $\Gamma$ における型の圏または型の集まりを $\Obj(\Gamma)$ と書けば、意味構造は概念的に反変な添字付け
+\begin{equation}
+ \Obj:\Ctx^{\op}\longrightarrow\mathbf{Cat}
+ \label{eq:indexed-meaning}
+\end{equation}
+として表せる。集合値の簡略化では $\Obj:\Ctx^{\op}\to\Set$ としてもよい。文脈射 $f:\Delta\to\Gamma$ に対して
+\begin{equation}
+ f^*:\Obj(\Gamma)\longrightarrow\Obj(\Delta)
+\end{equation}
+が代入・再添字付けを与える。
+
+\begin{definition}[文脈的指示軸]
+文脈圏 $\Ctx$ とその射による方向を、体系内で指示位置を組織する\textbf{文脈的指示軸}と呼ぶ。各文脈 $\Gamma$ 上のファイバー $\Obj(\Gamma)$ を、その指示位置において成立する\textbf{意味ファイバー}と呼ぶ。
+\end{definition}
+
+このとき、これまでの意味と指示の直交性は、単なる二変数の独立性より精密に、基底方向とファイバー方向の区別として表現される。
+\begin{equation}
+ \begin{array}{ccl}
+ \Gamma\in\Ctx
+ &:& \text{指示・観測文脈},\\
+ A\in\Obj(\Gamma)
+ &:& \text{文脈 $\Gamma$ で成立する意味},\\
+ a\in\Tm_{\Gamma}(A)
+ &:& \text{その意味の下で指示される項},\\
+ f:\Delta\to\Gamma
+ &:& \text{体系内観測位置の変換}.
+ \end{array}
+ \label{eq:context-f0-correspondence}
+\end{equation}
+
+\begin{proposition}[基底・ファイバーとしての直交性]
+文脈的指示軸と意味方向の直交性は、基底 $\Ctx$ に沿う移動と、各ファイバー $\Obj(\Gamma)$ 内の変換を型の異なる操作として区別することによって形式化される。
+\end{proposition}
+
+\begin{proof}
+文脈変更 $f:\Delta\to\Gamma$ は異なるファイバー間の再添字付け $f^*$ を誘導する。一方、固定した $\Gamma$ における射 $A\to B$ は同じファイバー $\Obj(\Gamma)$ 内の意味変換である。前者は基底方向、後者は垂直方向であり、同じ射型ではない。ただし再添字付けがファイバー内構造へ作用するため、両方向は独立に区別されながら相互に関係する。
+\end{proof}
+
+この構図は、「指示＝観測者」という略記をさらに限定する。$\Ctx$ が表現するのは実在する観測者ではなく、体系内で利用可能な観測文脈の全体である。したがってcontextual categoryは観測者そのものではなく、観測者像を形式化する。
+
+\subsection{代入の随伴とカン拡張}
+
+適切な comprehension category、局所デカルト閉圏、または同等の型理論的意味論では、再添字付け $f^*$ の左右に
+\begin{equation}
+ \Sigma_f\dashv f^*\dashv\Pi_f
+ \label{eq:dependent-adjunctions}
+\end{equation}
+が存在する。$\Sigma_f$ は依存和に、$\Pi_f$ は依存積に対応し、文脈変更に沿って意味を前向きまたは制約的に再構成する。
+
+関手圏において文脈関手 $K:\mathcal C\to\mathcal D$ を用いる場合には、制限関手 $K^*$ の左右随伴として
+\begin{equation}
+ \Lan_K\dashv K^*\dashv\Ran_K
+ \label{eq:context-kan-triple}
+\end{equation}
+を得る。式\eqref{eq:dependent-adjunctions}は文脈圏の各射に沿う局所的・依存的な再構成を、式\eqref{eq:context-kan-triple}は関手圏全体における文脈変更を記述する。この区別により、カン拡張を実在的観測者の移動ではなく、文脈圏上のデータを別の基底へ移送する普遍構成として位置づけられる。
+
+\begin{remark}[Kan fibrationとの区別]
+単体的集合によるUnivalent Foundationsのモデルで用いられるKan fibrationと、本稿で扱うKan extensionは別の概念である。単体的モデルがKan fibrationを用いることから、指示軸としてのKan extensionが直接導かれるわけではない。カン拡張への接続は、文脈関手に沿う制限 $K^*$ とその左右随伴から得られる。
+\end{remark}
+
+Kapulkin--Lumsdaineによる単体的モデルは、宇宙を用いて依存型理論のcontextual categoryを構成し、単体的集合上のunivalent universeを与える。その帰結として、contextual categoryの言葉で定式化された単一のunivalent universeをもつMartin-Löf型理論が、二つの到達不能基数をもつZFCと少なくとも同程度に無矛盾であることが示される\cite{KapulkinLumsdaine2021}。これは文脈圏がHoTTの一つの標準的な意味論的核であることを示すが、文脈圏そのものを時間や実在的観測者と同一化するものではない。
+
+\subsection{文脈圏上の四重結像}
+
+文脈圏を導入すると、QRBの四比較操作も文脈相対化できる。各 $\Gamma\in\Ctx$ の意味ファイバーに
+\begin{equation}
+ M_i^{\Gamma}:\Obj(\Gamma)\longrightarrow\Obj(\Gamma),
+ \qquad
+ i\in\{S,N,SN,NS\}
+\end{equation}
+を置く。文脈変更 $f:\Delta\to\Gamma$ に対して、四重結像の安定性は比較写像
+\begin{equation}
+ \beta_{i,f}:
+ f^*M_i^{\Gamma}
+ \Longrightarrow
+ M_i^{\Delta}f^*
+ \label{eq:contextual-fourfold-comparison}
+\end{equation}
+によって測られる。
+
+\begin{definition}[文脈安定な四重結像]
+すべての文脈射 $f$ と四操作 $i$ について、式\eqref{eq:contextual-fourfold-comparison}が定義され同型となり、恒等射および合成と整合するとき、四重結像は文脈安定であるという。
+\end{definition}
+
+これは、同一性截断、二重否定閉包、随伴単位、自己参照比較を、観測文脈を変更する前に適用しても後に適用しても同じ結果になるというBeck--Chevalley型の条件である。比較が非可逆となる場合、その残余は単なる対象内部の障害ではなく、文脈変更と意味操作の不整合を記録する。
+
+適切な安定ファイバーと台の理論が与えられれば、各文脈 $\Gamma$ における外点候補領域
+\begin{equation}
+ \mathcal O_{X,\Gamma}
+ =
+ \bigcap_i
+ \supp\bigl(\Res_i^{\Gamma}(X)\bigr)
+\end{equation}
+を考えられる。この構成により、文脈圏はQRBの四重結像がどの観測位置で保存され、どこで同時に崩壊するかを添字付けする基底となる。
+
+\begin{remark}[UniMathとの関係]
+UniMathは依存型理論とunivalenceに基づく形式化ライブラリであり、その全体をC-systemの意味論上に構築していると述べるのは強すぎる。一方、contextual categories、C-systems、categories with familiesなどの比較はUniMath上で形式化されており、Voevodskyの型理論メタ理論においてC-systemが主要な道具であったことは明確である\cite{AhrensLumsdaineVoevodsky2018}。
+\end{remark}
+
+\section{Chu空間：鏡像構成の静的模型}
+
+\subsection{定義と双対}
+
+固定された集合 $K$ 上のChu空間は、三項組
+\begin{equation}
+ (A,r,X),
+ \qquad
+ r:A\times X\longrightarrow K
+\end{equation}
+として与えられる\cite{Pratt1995}。$A$ を点・状態の側、$X$ を属性・試験の側と読めば、$r$ は状態が各試験に対して示す評価表である。
+
+Chu双対は
+\begin{equation}
+ (A,r,X)^{\perp}=(X,r^{\mathsf T},A)
+\end{equation}
+によって両側を交換する。この形は、
+\begin{equation}
+ (\Obj,\varepsilon,\Obs)^{\perp}
+ =
+ (\Obs,\varepsilon^{\mathsf T},\Obj)
+\end{equation}
+という本稿の鏡像構成に対応する。
+
+\begin{remark}[鏡像は同一化ではない]
+Chu双対が交換するのは評価関係の左右の役割である。$A=X$ や、点と属性が同一種類の対象であることは要求されない。したがって観測対象と観測者像の交換も、主体と客体の存在論的同一化ではない。
+\end{remark}
+
+\subsection{○の型分け}
+
+元の考察では、評価関係を $\varepsilon:\Obj\times\Obs\to\bigcirc$ と略記した。しかし論文上は、評価の値域と指示の発生点を同じ型へ入れるべきではない。そこで本稿では、同じ $F_0$ 記号の型付きの現れとして、
+\begin{align}
+ \CircleEval &:\text{評価関係が値を取る境界または値域},\\
+ \CircleRef &:\text{「ここ・いま・これ」を指定する指示点}
+\end{align}
+を区別する。Chu空間の $K$ に対応するのは主として $\CircleEval$ であり、後述する点付き観測に対応するのは $\CircleRef$ である。
+
+この型分けは $\bigcirc$ を二つの無関係な記号へ分裂させるものではない。同じメタ記号が、評価面と指示点という異なる位置で現れることを明示し、水準崩壊を防ぐものである。
+
+\section{QRBと四重結像}
+
+\subsection{単一鏡面から四つの比較操作へ}
+
+Chu空間の評価写像は、意味と指示を左右に配置する鏡面の基本形を与える。しかしQRBにおける○は、この単一の鏡面だけから導かれるのではない。QRBでは、体系の意味論的状態を表す対象 $X$ に対して、四つの自己関手
+\begin{equation}
+ M_i:\mathcal C\longrightarrow\mathcal C,
+ \qquad
+ i\in\{S,N,SN,NS\}
+\end{equation}
+と自然変換
+\begin{equation}
+ \eta_i:\operatorname{Id}_{\mathcal C}\Longrightarrow M_i
+\end{equation}
+を置く\cite{ChibaQRB2026}。四操作の役割は次の通りである。
+
+\begin{center}
+\begin{tabular}{p{0.15\textwidth} p{0.31\textwidth} p{0.43\textwidth}}
+\toprule
+操作 & QRBでの比較 & 意味‐指示論での結像方向 \\
+\midrule
+$M_S$ & 同一性の外延的等号への截断 & 構造的自己同一性の結像 \\
+$M_N$ & 二重否定層化 & 真理・意味論的閉包の結像 \\
+$M_{SN}$ & 随伴から生じるモナド $UF$ & 意味から指示への単位的輸送 \\
+$M_{NS}$ & 自己参照比較操作 & 指示から意味への反射・対角化 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+したがって、本稿の単一評価面 $\CircleEval$ は、QRBとの接続において四つの結像様式へ分解される。ここで「結像」とは $M_iX$ という像だけを指すのではなく、元の状態 $X$ とその像 $M_iX$ を比較する写像 $\eta_i(X)$ を含む。
+
+\subsection{四残余と四重結像}
+
+各比較写像の残余を
+\begin{equation}
+ \Res_i(X)
+ =
+ \operatorname{cofib}\bigl(\eta_i(X):X\to M_iX\bigr)
+\end{equation}
+とする。残余が零であることは、適切な安定圏の仮定の下で比較写像が同型であることに対応し、非零残余は元の状態と結像との差異を記録する。
+
+\begin{definition}[四重結像]
+対象 $X$ の四重結像とは、四つの比較族
+\begin{equation}
+ \bigl\{\eta_S(X),\eta_N(X),
+ \eta_{SN}(X),\eta_{NS}(X)\bigr\}
+\end{equation}
+を同時に考察することである。四重結像は四つの像が互いに等しいことを意味せず、四方向の比較が同じ対象 $X$ において重ねて評価されることを意味する。
+\end{definition}
+
+四つの残余を束ねたQRBは
+\begin{equation}
+ \QRB(X)
+ =
+ \Res_S(X)\oplus\Res_N(X)
+ \oplus\Res_{SN}(X)\oplus\Res_{NS}(X)
+\end{equation}
+である。その外点候補領域は、Balmerスペクトル上で
+\begin{equation}
+ \mathcal O_X
+ =
+ \bigcap_{i\in\{S,N,SN,NS\}}
+ \supp\bigl(\Res_i(X)\bigr)
+ \subseteq
+ \Spc(\mathcal C^c)
+ \label{eq:qrb-external-locus}
+\end{equation}
+と定義される。この共通部分に属する点 $\mathfrak p$ では、四つの局所化比較写像 $\eta_i(X)_{\mathfrak p}$ が同時に非同型となる。
+
+\begin{proposition}[四重不動点とQRB外点の対極性]
+四方向すべてで
+\begin{equation}
+ \eta_i(X)\text{ が同型}
+ \qquad(i\in\{S,N,SN,NS\})
+ \label{eq:fourfold-fixed-point}
+\end{equation}
+となる状態を四重不動点と呼ぶならば、QRB外点候補は、局所的に四比較写像がすべて非同型となる対極的な障害領域である。
+\end{proposition}
+
+したがって、四重結像には二つの極がある。四比較がすべて可逆であれば、同一性、意味論的閉包、随伴輸送、自己参照の全方向で自己同一性が保存される。反対に、それらが同じ点ですべて非可逆となれば、四つの単位的構造が同時に閉じないQRBの外点候補が現れる。
+
+\begin{remark}[候補領域と指示点]
+式\eqref{eq:qrb-external-locus}が与える $\mathcal O_X$ は○そのものではなく候補領域である。QRBの指示点 $\CircleRef$ を得るには、$\mathcal O_X\neq\varnothing$ を示し、その内部の点 $\mathfrak p$ を指定する追加データが必要である。強制法の外点と対応させる場合には、さらに比較写像と対応点の構成が必要になる。
+\end{remark}
+
+\subsection{真理保存性の位置}
+
+真理保存性は四重結像の全体ではない。とりわけ $M_N$ の意味論的閉包、および $M_S$ の同一性保存と関係する一断面として読めるが、QRBの形式上、それ自体が四残余の一つとして定義されているわけではない。真理保存性は、四つの比較構造と外点指示が設定された後に、特定の意味論またはモデル拡大について確認される帰結である。
+
+したがって、体系の意味‐指示的自己同一性を真理保存性だけから判定することはできない。完全な自己同一性には式\eqref{eq:fourfold-fixed-point}の四条件が必要であり、QRBの○は逆に、四条件の局所的な同時崩壊によって指示される。
+
+\section{カン拡張：観測文脈に沿う再構成}
+
+\subsection{左・右カン拡張}
+
+関手
+\begin{equation}
+ K:\mathcal C\to\mathcal D,
+ \qquad
+ F:\mathcal C\to\mathcal E
+\end{equation}
+を考える。$K$ を文脈の埋め込みまたは変換、$F$ を元の文脈で与えられた意味・指示データと読む。
+
+左カン拡張 $\Lan_KF:\mathcal D\to\mathcal E$ は、自然変換
+\begin{equation}
+ \eta:F\Longrightarrow (\Lan_KF)K
+\end{equation}
+を備え、この形の延長のなかで普遍的である。右カン拡張 $\Ran_KF$ は、
+\begin{equation}
+ \epsilon:(\Ran_KF)K\Longrightarrow F
+\end{equation}
+を備え、双対な普遍性を満たす\cite{MacLane1998,Riehl2016}。
+
+$F_0$ 的には、左カン拡張を与えられた局所データから像を生成的に延長する側、右カン拡張を全体との整合条件から像を制約的に補完する側として読むことができる。ただし「前進」「後退」は時間方向を意味せず、普遍性の向きを表す比喩である。
+
+\subsection{観測者の移動という比喩}
+
+カン拡張を「観測者の移動に伴う指示の再構成」と呼ぶとき、移動するのは観測者そのものではない。体系が内部に持つ文脈の表現が $K$ によって変換されるのである。
+
+\begin{definition}[体系内観測位置変換]
+体系内観測位置変換とは、実在的観測者の運動ではなく、観測文脈を表す圏または添字のあいだの関手 $K:\mathcal C\to\mathcal D$ である。
+\end{definition}
+
+この定義により、観測者自身は自らの指示原点にとどまりながら、体系の側では異なる観測者像が射によって関係づけられる。
+
+\subsection{絶対カン拡張}
+
+カン拡張が絶対的であるとは、そのカン拡張が終域 $\mathcal E$ から出る任意の関手によって保存されることをいう。したがって絶対性は「任意の関手に対してカン拡張が存在する」という意味ではない。
+
+$F_0$ 的には、絶対カン拡張を、後続の表現変更を経ても失われない指示再構成として解釈できる。ただし、同型と絶対カン拡張の対応は厳密な同値ではなく、対象側の安定性と文脈変換側の安定性を対照する類比である。
+
+\subsection{カン拡張内部に現れる二方向の対応}
+
+カン拡張は、通常の圏論的構造とは別に置かれた第二の圏ではない。一つのカン拡張
+\begin{equation}
+ K:\mathcal C\to\mathcal D,
+ \qquad
+ F:\mathcal C\to\mathcal E
+\end{equation}
+の内部には、少なくとも二つの役割を分析的に区別できる。第一は、$\mathcal C,\mathcal D,\mathcal E$ の対象・射・同型・双対・随伴などを扱う\textbf{対象構造側}である。第二は、文脈関手 $K$ に沿って $F$ の像を延長し、普遍性によって新しい指示像を定める\textbf{文脈再構成側}である。
+
+この二方向は別々の数学的体系ではなく、同じカン拡張を異なる役割から見たものである。対象構造側は「何がどの構造をもつか」を記述し、文脈再構成側は「その構造が別の文脈でどのように与え直されるか」を記述する。したがって本稿でいう直交性は、カン拡張の外部に二つの圏を並べることではなく、その内部にある\textbf{構造の変換}と\textbf{文脈に沿う再構成}を混同せずに分離する分析的直交性である。
+
+この観点から、対象構造側に現れる概念と、文脈再構成側に現れる概念との対応を次のように整理する。
+\begin{center}
+\begin{tabular}{p{0.26\textwidth} p{0.29\textwidth} p{0.34\textwidth}}
+\toprule
+対象構造側 & 文脈・指示側 & 本稿での位置づけ \\
+\midrule
+同型 & 絶対カン拡張 & 安定性の類比であり同値ではない \\
+双対 & 反対圏 & 双対性を実現する操作上の関係 \\
+随伴 & 左カン拡張 & 随伴は適切なカン拡張として表現可能 \\
+余随伴的方向 & 右カン拡張 & 双対な普遍再構成 \\
+\bottomrule
+\end{tabular}
+\end{center}
+この表の各行は、左右の概念が数学的に同値であることを主張しない。同型と絶対カン拡張は異なる水準の安定性を、双対と反対圏は性質とそれを実現する方向反転を、随伴と左右のカン拡張は関係構造と普遍的再構成を、それぞれ対照している。したがってこの表は、カン拡張内部に共存する対象構造方向と文脈再構成方向を $F_0$ 的に可視化した対応表である。
+
+\subsection{四重結像の文脈横断的保存}
+
+四重結像を導入すると、カン拡張の問題は、一つの像を文脈変換後に延長することから、四つの結像様式がそれぞれ文脈変換と両立するかを調べる問題へ精密化される。各 $i\in\{S,N,SN,NS\}$ について、左カン拡張では
+\begin{equation}
+ \Lan_K(M_iF)
+ \qquad\text{と}\qquad
+ M_i(\Lan_KF),
+ \label{eq:lan-fourfold-comparison}
+\end{equation}
+右カン拡張では
+\begin{equation}
+ \Ran_K(M_iF)
+ \qquad\text{と}\qquad
+ M_i(\Ran_KF)
+ \label{eq:ran-fourfold-comparison}
+\end{equation}
+を比較する。
+
+式\eqref{eq:lan-fourfold-comparison}および式\eqref{eq:ran-fourfold-comparison}のあいだに自然な比較写像が存在することは一般には自動的でない。$M_i$ の保存性、分配則、またはカン拡張との整合条件が追加されなければならない。比較写像が与えられ、それが同型である場合、$i$ 番目の結像は文脈変換を先に行っても後に行っても同じ像を与える。この性質を、$i$ 番目の結像の\textbf{文脈横断的保存}と呼ぶ。
+
+\begin{definition}[四重文脈保存]
+四つすべての $i\in\{S,N,SN,NS\}$ について、$M_i$ と選択した左または右カン拡張との比較写像が存在し、かつ同型であるとき、そのカン拡張は四重結像を文脈横断的に保存するという。
+\end{definition}
+
+絶対カン拡張は任意の後続関手によって保存されるため、各 $M_i$ がカン拡張の終域上の自己関手として作用する場合、絶対性は四つの結像を後から適用してもカン拡張の普遍性が失われないための強い十分条件となる。これにより、同型と絶対カン拡張の対応は単なる抽象的類比にとどまらず、四つの自己同一性検査を文脈変更後にも保持する安定性として読み直せる。
+
+反対に、四つの比較の一部だけが非可逆なら、その文脈変換は部分的な結像障害を生む。四つすべての比較が同じ局所点で非可逆となる場合には、適切な安定圏、余ファイバー、台の理論を追加することによって、式\eqref{eq:qrb-external-locus}に類するQRB型の共通障害領域を検討できる。ただし、この構成はカン拡張だけから自動的に得られる定理ではなく、四自己関手と比較写像を明示した上で構成すべき課題である。
+
+\section{Isbell双対：両側の表現の相互再構成}
+
+\subsection{前層と余前層}
+
+小圏 $\mathcal C$ に対して、
+\begin{equation}
+ \PSh=[\mathcal C^{\op},\Set],
+ \qquad
+ \CoPSh=[\mathcal C,\Set]
+\end{equation}
+と置く。前層 $P\in\PSh$ は各対象が外部文脈からどのように試されるかを記録する観測プロフィールとして、余前層 $Q\in\CoPSh$ は各対象からどのような作用が出るかを記録する作用プロフィールとして読める。
+
+Yoneda埋め込みを $y(c)=\mathcal C(-,c)$、余Yoneda埋め込みを $y^{\dagger}(c)=\mathcal C(c,-)$ とする。Isbell共役は概略、
+\begin{align}
+ \mathcal O(P)(c)&=\Nat(P,y(c)),\\
+ \mathcal S(Q)(c)&=\Nat(Q,y^{\dagger}(c))
+\end{align}
+によって、一方のプロフィールから他方のプロフィールを構成する\cite{Isbell1960}。型を整えると、これは
+\begin{equation}
+ \mathcal O:\PSh
+ \rightleftarrows
+ \CoPSh^{\op}:\mathcal S
+\end{equation}
+という随伴として表される。
+
+\subsection{二重共役と反射的閉包}
+
+共役を二度適用すると、一般に標準写像
+\begin{equation}
+ P\longrightarrow P^{**}
+\end{equation}
+が得られるが、これは常に同型とは限らない。$P\cong P^{**}$ となる対象は、両側からの表現が整合して反射的に閉じている。
+
+$F_0$ 的には、第一の共役は対象から観測者像を、第二の共役は観測者像から再構成された対象像を与える。二重共役で元に戻らない差は、鏡像化によって追加された整合条件または失われた識別を表す。
+
+\subsection{Chu空間・Isbell双対・カン拡張}
+
+三者の役割は次のように分けられる。
+\begin{center}
+\begin{tabular}{p{0.22\textwidth} p{0.66\textwidth}}
+\toprule
+形式 & 本稿での役割 \\
+\midrule
+Chu空間 & 対象と観測文脈を評価写像の左右に置く鏡の静的な形 \\
+Isbell双対 & 左右の表現を共役させ、相互に再構成する反射運動 \\
+カン拡張 & 文脈関手に沿ってデータを普遍的に延長・補完する操作 \\
+\bottomrule
+\end{tabular}
+\end{center}
+プロ関手を媒介にすればIsbell共役とカン拡張は統一的に扱えるが、本稿ではこの一般化を構成せず、役割の区別にとどめる。
+
+\section{型理論における同一性と時間解釈}
+
+\subsection{点、パス、高次パス}
+
+Homotopy Type Theoryでは、型 $A$ を空間、項 $a,b:A$ を点、同一性型 $a=_A b$ の項をパスとして読む。二つのパス $p,q:a=_A b$ の同一性 $p=q$ は高次パスである\cite{HoTT2013}。
+
+ここで、HoTTにおける集合は任意の型ではない。集合、すなわち $0$-型では、任意の $a,b:A$ に対して同一性型 $a=b$ が命題であり、二つのパス $p,q:a=b$ は同一視される。したがって、同一化の仕方の差を保持するには一般の高次型が必要である。
+
+ユニヴァレンスは、型間の同値を宇宙内の同一性と結びつける。この構造は、「同じ構造をもつが外延的には別に提示された意味体系」を、宇宙内のパスとして扱う手がかりを与える。
+
+\subsection{時間としてのパスという比喩}
+
+パスを時間的変化の完成した履歴として読むことは可能である。しかし、パス変数は物理的時間そのものではなく、変形を表す一般的な次元である。したがって型理論を「時間を静的に表したもの」と呼ぶ場合、正確には次の意味に限定される。
+\begin{quote}
+型理論は、変化の履歴をパスとして一つの数学的対象へ内在化し、その履歴間の同一性を高次パスとして比較できる。
+\end{quote}
+
+意味体系そのものが変化する場合、時間または変化の添字を $t:\Time$ として
+\begin{equation}
+ A:\Time\longrightarrow\mathcal U
+\end{equation}
+を置ける。各 $A(t)$ は時点 $t$ における意味体系であり、
+\begin{equation}
+ a:\prod_{t:\Time}A(t)
+\end{equation}
+は意味変化に沿う指示の選択または切断である。
+
+\begin{remark}[瞬間と履歴]
+特定の $t$ における $p(t)=q(t)$ は瞬間的な比較である。これに対し $p=q$ は履歴全体の整合的な同一性である。「時間を止めたとき同じ」と「二つの時間履歴が同じ」は区別される。
+\end{remark}
+
+\subsection{区別すべき四種類の時間}
+
+型理論、文脈圏、計算意味論、および観測論では、順序や変化を表す複数の構造が用いられる。本稿では、これらを一つの時間概念へ同一化せず、次の四種類に分ける。
+
+\begin{center}
+\begin{tabular}{p{0.19\textwidth} p{0.31\textwidth} p{0.39\textwidth}}
+\toprule
+種類 & 形式的な典型 & 本稿での役割 \\
+\midrule
+依存時間 & 文脈拡張 $\Gamma\to\Gamma.A$、文脈長 & 型・項が成立する論理的依存順序 \\
+計算時間 & 簡約列 $e_0\to e_1\to e_2\to\cdots$ & 項の評価・正規化・実行の順序 \\
+パス時間 & $p:a=_A b$、高次パス $p=q$ & 状態間の変形と同一化の仕方 \\
+観測時間 & $t_0\to t_1\to t_2$ と現在点 $t_0$ & 「ここ・いま」に相対化された観測事象の順序 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{definition}[依存時間]
+文脈
+\begin{equation}
+ \Gamma_0
+ \longleftarrow
+ \Gamma_1
+ \longleftarrow
+ \Gamma_2
+ \longleftarrow\cdots
+\end{equation}
+において、文脈拡張によって変数・型・仮定が順次依存する順序を\textbf{依存時間}と呼ぶ。これは物理的な前後ではなく、後の判断が前の文脈を必要とするという形成上の順序である。
+\end{definition}
+
+Contextual categoryにおける文脈長、基底文脈への射、文脈拡張は依存時間を静的な圏構造として保持する。代入 $f:\Delta\to\Gamma$ は、この依存順序に沿って文脈を読み替える操作である。
+
+\begin{definition}[計算時間]
+項または機械状態の簡約・遷移
+\begin{equation}
+ e_0\longrightarrow e_1\longrightarrow e_2\longrightarrow\cdots
+\end{equation}
+が与える操作的順序を\textbf{計算時間}と呼ぶ。計算時間は、項がどの型をもつかではなく、その項がどの評価過程を通るかを記述する。
+\end{definition}
+
+同じ型をもつ二つの項が異なる計算履歴をもつことも、異なる文脈表現が同じ正規形へ到達することもありうる。したがって依存時間と計算時間には一般に標準的な同一視はない。
+
+\begin{definition}[パス時間]
+同一性型の項
+\begin{equation}
+ p:a=_A b
+\end{equation}
+を状態 $a$ から状態 $b$ への変形として読むとき、その変形次元を\textbf{パス時間}と呼ぶ。さらに $p=q$ は、二つの変形履歴のあいだの高次変形を表す。
+\end{definition}
+
+パス時間は抽象的な変形パラメータであり、計算時間の一ステップや物理的時間の経過を自動的には表さない。計算履歴からパスを構成する場合や、時間発展を型のパスとしてモデル化する場合には、両者を結ぶ追加の解釈写像が必要である。
+
+\begin{definition}[観測時間]
+観測事象を順序づける対象 $\Time$ と、その中の現在点
+\begin{equation}
+ t_0:1\longrightarrow\Time
+\end{equation}
+からなる点付き時間構造を\textbf{観測時間}と呼ぶ。$F_0$ 的には、現在の観測位置と時点の選択が $\CircleRef$ によって指示される。
+\end{definition}
+
+観測時間は、特定の指示点を基準に「現在」「以前」「以後」を組織するための構造である。文脈圏は可能な観測文脈を組織するが、どの文脈と時点が現実の「ここ・いま」であるかは、点付き観測
+\begin{equation}
+ \sigma:1\longrightarrow\Obs\times\Time
+\end{equation}
+によって別に指定される。
+
+\begin{proposition}[四時間の非同一性]
+依存時間、計算時間、パス時間、観測時間のあいだには、一般に標準的な同一視は存在しない。これらを関係づけるには、簡約からパスへの写像、時間添字付き型族、文脈を時間へ割り当てる関手などの追加構造が必要である。
+\end{proposition}
+
+\begin{proof}
+依存時間は判断の形成依存、計算時間は操作的遷移、パス時間は同一性または変形、観測時間は現在点をもつ事象順序をそれぞれ記述する。各構造の対象、射、保存すべき関係が異なるため、定義だけから相互の同一性は得られない。追加のモデルがそれらを結ぶ場合に限り、比較写像または関手として関係づけられる。
+\end{proof}
+
+$F_0$ における対応は次のようにまとめられる。
+\begin{equation}
+ \begin{array}{ccl}
+ \text{依存時間} &:& \text{文脈的指示軸の形成順序},\\
+ \text{計算時間} &:& \text{体系内部の操作的遷移},\\
+ \text{パス時間} &:& \text{意味の同一化と高次変形},\\
+ \text{観測時間} &:& \CircleRef\text{ に相対化された指示点列}.
+ \end{array}
+ \label{eq:four-times-f0}
+\end{equation}
+
+したがって、「観測者は時間ではない」という主張は、観測文脈 $\Gamma$ と観測時間 $t$ が異なる添字であることを意味する。観測された意味は、必要に応じて
+\begin{equation}
+ \Obj:\Ctx^{\op}\times\Time\longrightarrow\mathbf{Cat}
+ \label{eq:context-time-indexed-meaning}
+\end{equation}
+という二重添字付けによって表現される。
+
+\section{観測者と時間の分離}
+
+\subsection{三変数の観測構造}
+
+観測者の体系内表現を $\Obs$、時間構造を $\Time$、観測対象を $\Obj$、観測値を $\Val$ とすれば、観測は
+\begin{equation}
+\operatorname{ev}:\Obs\times\Time\times\Obj
+ \longrightarrow\Val
+ \label{eq:temporal-evaluation}
+\end{equation}
+と表せる。
+
+文脈圏による形式化では、$\Obs$ は $\Ctx$ の対象、または観測に用いる文脈の部分圏として具体化される。したがって観測位置 $r\in\Obs$ は文脈 $\Gamma$ に、観測位置の変換は代入射 $f:\Delta\to\Gamma$ に対応する。一方、時間 $\Time$ は文脈圏とは別の添字構造であり、文脈の長さや文脈拡張をそのまま物理的時間と読むことはしない。
+
+\begin{definition}[観測者と時間]
+観測者とは、何をどこから区別するかを指定する位置または規則である。時間とは、状態および観測事象を順序づけ、接続する構造である。
+\end{definition}
+
+したがって観測者は時間ではない。観測者像を固定したまま時間を変化させることも、同じ時点で観測位置を変化させることも可能である。両者の独立性は、意味と指示の直交性とは別の第三方向を導入する。
+
+\subsection{「ここ・いま」の点付き構造}
+
+式\eqref{eq:temporal-evaluation}だけでは、どの観測位置と時点が現実の「ここ・いま」であるかは指定されない。そこで
+\begin{equation}
+ \sigma:1\longrightarrow\Obs\times\Time,
+ \qquad
+ \sigma(*)=(r_0,t_0)
+ \label{eq:pointing}
+\end{equation}
+という点を選ぶ。$F_0$ 的には、この選択作用を $\CircleRef$ として指示する。
+
+\begin{proposition}[指示点の非導出性]
+無点化された構造 $(\Obs,\Time,\operatorname{ev})$ は、それだけでは特権的な点 $(r_0,t_0)$ を指定しない。
+\end{proposition}
+
+\begin{proof}
+特権点は式\eqref{eq:pointing}という追加データである。自己同型によって点が交換されうる構造では、構造不変な仕方で一つの点を選べない場合がある。一般にも、点の選択は無点化構造の定義には含まれていない。
+\end{proof}
+
+この命題は、数学が現在時刻を表せないという主張ではない。点 $t_0:1\to\Time$ を追加すれば現在点は表現できる。区別されるのは、時間構造を記述することと、ある点を現実の現在として\textbf{指示すること}である。
+
+\subsection{指示の操作的先行性}
+
+評価写像
+\begin{equation}
+ \varepsilon:\Obj\times\Obs\longrightarrow\Val
+\end{equation}
+だけを見れば、$\Obj$ と $\Obs$ はともに入力であり、一方が他方に先行するとはいえない。Chu双対も評価表の左右を交換するため、無点化された鏡像構成は基本的に対称である。指示の先行性は、この対称な構造だけから導かれるのではなく、$\CircleRef$ が一方を現実の観測位置として選ぶことによって生じる。
+
+観測された意味として対象 $m$ が現れることを $\mathsf{Appear}(m)$ と書く。また、$\operatorname{ev}(r,t,m)$ が定義されることを $\operatorname{ev}(r,t,m)\mathord\downarrow$ と書く。
+
+\begin{axiom}[指示先行公理]
+対象が観測された意味として現れるならば、その対象を指示する観測位置と時間位置が指定されている。すなわち、
+\begin{equation}
+ \mathsf{Appear}(m)
+ \Longrightarrow
+ \exists r:\Obs\;\exists t:\Time\;
+ \operatorname{ev}(r,t,m)\mathord\downarrow .
+ \label{ax:reference-priority}
+\end{equation}
+\end{axiom}
+
+式\eqref{ax:reference-priority}の「先行」は時間的順序ではない。意味の現実的な現れを定義するために、観測位置が先に型付けされていなければならないという\textbf{操作的依存順序}である。これを
+\begin{equation}
+ (r,t):\Obs\times\Time
+ \prec_{\mathrm{op}}
+ \mathsf{Appear}(m)
+\end{equation}
+と書く。
+
+この依存関係は、意味の型を観測位置と時間位置に依存する型族
+\begin{equation}
+ \mathcal M:\Obs\times\Time\longrightarrow\mathcal U
+\end{equation}
+として精密化すれば、判断
+\begin{equation}
+ r:\Obs,\;t:\Time
+ \;\vdash\;
+ m:\mathcal M(r,t)
+ \label{eq:dependent-meaning}
+\end{equation}
+に現れる。式\eqref{eq:dependent-meaning}では、$m$ を観測された意味として型付けする前に、文脈内に $r$ と $t$ が存在しなければならない。
+
+Contextual categoryの判断順序では、この先行性はさらに基本的な形で現れる。判断 $\Gamma\vdash A\;\mathsf{type}$ や $\Gamma\vdash a:A$ を形成するには、まず $\Gamma\;\mathsf{ctx}$ が成立していなければならない。したがって指示先行公理は、文脈形成が型・項判断に先行するという依存型理論の構文的依存関係を、$F_0$ の観測論へ読み替えたものでもある。
+
+\begin{proposition}[指示先行性の弱い解釈]
+指示先行公理から導かれるのは、観測された意味の成立が指示位置に依存するという主張であって、観測されない対象または意味が存在しないという主張ではない。
+\end{proposition}
+
+\begin{proof}
+公理\eqref{ax:reference-priority}の前件は $\mathsf{Appear}(m)$ であり、対象 $m$ の存在そのものではない。したがって同公理は、現れから指示位置の存在を導くが、指示されていない対象の非存在を導かない。
+\end{proof}
+
+\begin{remark}[強い存在論的先行性]
+「指示されない意味は存在しない」という主張は、
+\begin{equation}
+ m\text{ が存在する}
+ \Longrightarrow
+ \exists r,t\;\operatorname{ev}(r,t,m)\mathord\downarrow
+\end{equation}
+という、より強い存在論的公理を必要とする。本稿はこの公理を採用しない。採用するのは、現実化された観測意味に限定された操作的先行性である。
+\end{remark}
+
+$F_0$ 的には、$\CircleEval$ は対象と観測者像を左右対称な評価関係へ置き、$\CircleRef$ はその対称性を破って、特定の観測位置を現実の指示原点として選ぶ。したがって指示の先行性は鏡面そのものからではなく、鏡面の一方を「ここ」として極性化する $\CircleRef$ の作用から生じる。
+
+\subsection{時間性と指示点列}
+
+単独の $\CircleRef$ は時間全体ではなく、時間の切断面を示す。時間性は
+\begin{equation}
+ \CircleRef_{t_0}\longrightarrow
+ \CircleRef_{t_1}\longrightarrow
+ \CircleRef_{t_2}\longrightarrow\cdots
+\end{equation}
+という指示点間の関係として表現される。体系はこの関係を順序、射、パスまたは流れとして記述できる。他方、どの点が現実の現在として指示されているかは、点付きデータに属する。
+
+\section{F0における統合構図}
+
+\subsection{三方向と二つの○}
+
+以上をまとめると、本稿の構造は次の三方向をもつ。
+\begin{enumerate}
+ \item $\Obj$：意味／観測対象の方向、
+ \item $\Obs$：指示／観測者像の方向、
+ \item $\Time$：観測事象を接続する時間の方向。
+\end{enumerate}
+また $\bigcirc$ は型付きで二つの役割をもつ。
+\begin{enumerate}
+ \item $\CircleEval$：$\Obj$ と $\Obs$ の評価関係が成立する鏡面、
+ \item $\CircleRef$：$\Obs$ と $\Time$ の特定の組を「ここ・いま」として選ぶ指示点。
+\end{enumerate}
+
+$\CircleEval$ が与える鏡像関係は左右対称であるが、QRBとの接続では、この鏡面は
+\begin{equation}
+ M_S,\quad M_N,\quad M_{SN},\quad M_{NS}
+\end{equation}
+の四つの比較方向へ分解される。四重結像の共通残余領域は○の候補領域を与え、$\CircleRef$ はその内部の特定点と観測位置を選択して対称性を極性化する。この選択によって、指示は観測された意味に対して操作的に先行する。
+
+概念図は
+\begin{equation}
+ \text{意味／観測対象}
+ \quad\xleftrightarrow{\ \CircleEval\ }\quad
+ \text{指示／観測者像}
+\end{equation}
+と
+\begin{equation}
+ \CircleRef_{t_0}\to\CircleRef_{t_1}\to\CircleRef_{t_2}\to\cdots
+\end{equation}
+の交差として表される。
+
+\subsection{構造記述の限界}
+
+\begin{proposition}[$F_0$ 指示限界原理]
+数学的体系は、観測対象と観測者像の評価関係、文脈変換に沿う再構成、および時間点間の関係を記述できる。しかし、無点化された構造だけから現実の「ここ・いま・これ」を選出することは、構造記述とは別の指示作用を要する。
+\end{proposition}
+
+これは数学上の一般的不可能性定理ではない。$\CircleRef$ を追加データとして内部化することはできる。しかし、その内部点が現実の指示点であるという対応を確立するには、体系とその使用状況を結ぶ解釈が必要になる。本原理は、その解釈作用を構造そのものと混同しないためのメタ分析原理である。
+
+\subsection{二つの視点の最終整理}
+
+\begin{center}
+\begin{tabular}{p{0.2\textwidth} p{0.34\textwidth} p{0.34\textwidth}}
+\toprule
+視点 & 問うこと & 形式的手がかり \\
+\midrule
+直交性 & 意味、指示、時間を型の異なる変化方向として分離できるか & 積、添字圏、依存型 \\
+文脈的指示軸 & 指示位置と意味ファイバーをどう型分けするか & contextual category、C-system、再添字付け $f^*$ \\
+四種類の時間 & 依存・計算・パス・観測の順序をどう区別するか & 文脈拡張、簡約、同一性型、点付き時間 \\
+鏡像構成 & 対象と観測者像が評価を介してどう相互規定されるか & Chu双対、Isbell共役 \\
+四重結像 & 四方向の自己同一性検査がどこで同時に閉じるか／崩れるか & QRB、四比較写像、四残余の共通台 \\
+文脈再構成 & 観測文脈の変更後に像をどう延長するか & 左・右カン拡張 \\
+現実的指示 & どの位置と時点が「ここ・いま・これ」か & 点付き構造、$\CircleRef$ \\
+指示の先行性 & 観測意味の成立が何に依存するか & 指示先行公理、依存型族 $\mathcal M(r,t)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+直交性は分離の視点であり、contextual categoryはその指示方向を文脈と代入の基底軸として形式化する。鏡像構成は結合の視点であり、四重結像はその結合を四つの自己同一性検査へ分解する視点である。カン拡張は四つの像を文脈変換に沿って再構成し、それぞれが文脈を横断して保存されるかを問う。時間はそれらの観測事象を接続する。観測者と時間は $\CircleRef$ において交差するが、同一ではない。さらに $\CircleRef$ は、対称な鏡像関係の観測側を現実の指示原点として選び、観測された意味に対する指示の操作的先行性を成立させる。
+
+\section{結論}
+
+本稿は、意味と指示の関係を、直交性と鏡像構成という二つの相補的視点から再構成した。直交性は、意味／観測対象と指示／観測者像が異なる型の変化方向であることを示す。鏡像構成は、両方向が評価写像において結合され、転置によって相互の像を与えることを示す。したがって両者は別の現象ではなく、一つの評価構造を分解と結合の両面から捉えたものである。
+
+指示方向については、Cartmellのcontextual categoryおよびVoevodskyのC-systemを導入し、文脈と代入の圏を基底、各文脈上の型と項を意味ファイバーとして配置した。これにより、指示の軸は比喩的な第二軸にとどまらず、$\Ctx$ 上の再添字付け $f^*$ として形式化される。依存和・依存積の随伴 $\Sigma_f\dashv f^*\dashv\Pi_f$ は局所的な文脈移送を、$\Lan_K\dashv K^*\dashv\Ran_K$ は関手圏上の大域的な文脈変更を与える。
+
+時間構造については、依存時間、計算時間、パス時間、観測時間を区別した。依存時間は文脈形成、計算時間は項の実行、パス時間は同一性と変形、観測時間は現在点をもつ事象順序を表す。これらは追加構造によって関係づけられるが、自動的には同一視されない。特に文脈 $\Gamma$ と観測時点 $t$ は別の添字であり、意味構造は $\Obj:\Ctx^{\op}\times\Time\to\mathbf{Cat}$ として二重に相対化できる。
+
+Chu空間は対象と観測文脈を評価写像の左右へ配置する静的模型を与え、Isbell双対は両側の表現を相互に共役させる。カン拡張は、観測文脈の変換後に成立する像を普遍的に延長または補完する。この三者を区別することで、鏡そのもの、鏡像の相互反射、文脈変更後の像の再構成を混同せずに記述できる。
+
+QRBとの接続により、単一のChu鏡面は、同一性截断、二重否定閉包、随伴単位、自己参照比較という四つの結像様式へ分解された。四重結像は四つの像の一致ではなく、四比較写像を同じ対象上で重ねて検査する構造である。四比較がすべて可逆な状態は四重不動点を与え、それらが同じ局所点ですべて非可逆となる領域はQRBの外点候補領域を与える。真理保存性はこの全体の一断面であり、QRBの○を単独で導出するものではない。
+
+この四重化によって、カン拡張は一つの像の延長ではなく、四つの結像様式が文脈変更と両立するかを検査する構造として精密化された。絶対カン拡張は、四自己関手を後続適用しても普遍性が保存される強い条件として位置づけられる。他方、四比較の共通障害領域を実際にQRBとして構成するには、自己関手とカン拡張の比較写像、余ファイバー、および台を追加しなければならない。
+
+さらに、観測者と時間を分離した。観測者は区別の位置、時間は事象の接続構造である。両者は点付き観測 $\sigma:1\to\Obs\times\Time$ において「ここ・いま」として交差する。$F_0$ の $\bigcirc$ は、この議論では評価面 $\CircleEval$ と指示点 $\CircleRef$ に型分けされる。$\CircleEval$ は対象と観測者像を対称な鏡像関係へ置くのに対し、$\CircleRef$ は特定の観測位置を選び、その位置を観測意味の型付けに操作上先行させる。指示先行公理は意味の存在一般を観測へ還元せず、観測された意味の現実化に限定してこの依存関係を述べる。数学はこれらの構造と関係を記述できるが、現実的指示を無点化構造そのものと同一視しない。この非同一性を保持することが、意味と指示の構造論における $F_0$ の役割である。
+
+今後の課題は、第一に $\CircleEval$ と $\CircleRef$ のあいだの型付き遷移を定義すること、第二にcontextual categoryまたはC-system上で意味ファイバー $\Obj(\Gamma)$ と指示先行公理を厳密に構成すること、第三に文脈相対化された四自己関手 $M_i^{\Gamma}$ と再添字付け $f^*$ の比較写像 $\beta_{i,f}$ を構成し、その余ファイバーの共通台を調べること、第四に観測文脈をプロ関手として構成しIsbell共役とカン拡張を統一すること、第五に時間添字をもつChu空間または高次圏的モデルを構成することである。これらが与えられたとき、本稿の構造的類比は、より具体的な数学的モデルへ進む。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
+
+@article{balmer,
+  author  = {Paul Balmer},
+  title   = {The Spectrum of Prime Ideals in Tensor Triangulated Categories},
+  journal = {Journal f{"u}r die reine und angewandte Mathematik},
+  volume  = {588},
+  pages   = {149--168},
+  year    = {2005}
+}
+
+@book{bell,
+  author    = {John L. Bell},
+  title     = {Boolean-Valued Models and Independence Proofs in Set Theory},
+  publisher = {Oxford University Press},
+  year      = {1985}
+}
+
+@article{cohen,
+  author  = {Paul J. Cohen},
+  title   = {The Independence of the Continuum Hypothesis},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {50},
+  pages   = {1143--1148},
+  year    = {1963}
+}
+
+@article{godel,
+  author  = {Kurt G{"o}del},
+  title   = {{"U}ber formal unentscheidbare S{"a}tze der Principia Mathematica und verwandter Systeme I},
+  journal = {Monatshefte f{"u}r Mathematik und Physik},
+  volume  = {38},
+  pages   = {173--198},
+  year    = {1931}
+}
+
+@book{jech,
+  author    = {Thomas Jech},
+  title     = {Set Theory: The Third Millennium Edition, Revised and Expanded},
+  publisher = {Springer},
+  year      = {2003}
+}
+
+@book{johnstone,
+  author    = {Peter T. Johnstone},
+  title     = {Sketches of an Elephant: A Topos Theory Compendium},
+  publisher = {Oxford University Press},
+  year      = {2002}
+}
+
+@book{kleene,
+  author    = {Stephen C. Kleene},
+  title     = {Introduction to Metamathematics},
+  publisher = {North-Holland},
+  year      = {1952}
+}
+
+@article{kripke,
+  author  = {Saul A. Kripke},
+  title   = {Outline of a Theory of Truth},
+  journal = {The Journal of Philosophy},
+  volume  = {72},
+  number  = {19},
+  pages   = {690--716},
+  year    = {1975}
+}
+
+@article{tarski,
+  author  = {Alfred Tarski},
+  title   = {Der Wahrheitsbegriff in den formalisierten Sprachen},
+  journal = {Studia Philosophica},
+  volume  = {1},
+  pages   = {261--405},
+  year    = {1936}
+}
+
+@book{FreydScedrov1990,
+  author    = {Peter J. Freyd and Andre Scedrov},
+  title     = {Categories, Allegories},
+  publisher = {North-Holland},
+  year      = {1990}
+}
+
+@misc{ChibaQRB2026,
+  author = {千葉将臣},
+  title  = {言語の外点：強制法と四重残余束による到達不能性の幾何学},
+  note   = {Manuscript, 2026-07-19},
+  year   = {2026}
+}
+
+@misc{ChibaAmphigory2026,
+  author = {千葉将臣},
+  title  = {冗（Amphigory）の基礎的定式化：視点数・継続残余・無記の関係代数},
+  note   = {Manuscript, 2026-07-07},
+  year   = {2026}
+}
+
+@misc{ChibaCRL2026,
+  author = {千葉将臣},
+  title  = {計算関係論理：PoV--$\rho$ インターフェイスによる動的評価体系},
+  note   = {Manuscript, 2026-07-21},
+  year   = {2026}
+}
+
+@misc{ChibaEPMDTT2026,
+  author = {千葉将臣},
+  title  = {G{"o}del 第二不完全性定理の肯定的転回：○依存型による証明論の外部化},
+  note   = {Manuscript, 2026-07-21},
+  year   = {2026}
+}
+
+@misc{ChibaAvyakata2026,
+  author = {千葉将臣},
+  title  = {無記の意味論：意味と指示の不動点――保留の再帰と無記の再帰の分岐について},
+  note   = {Manuscript, 2026-06-30},
+  year   = {2026}
+}
+
+@misc{ChibaF02026,
+  author = {千葉将臣},
+  title  = {指示のみで構成された数体系 $F_0$},
+  note   = {Manuscript, 2026-07-23},
+  year   = {2026}
+}
+
+@book{Austin1962,
+  author    = {J. L. Austin},
+  title     = {How to Do Things with Words},
+  publisher = {Clarendon Press},
+  address   = {Oxford},
+  year      = {1962}
+}
+
+@book{Beall2007,
+  editor    = {J. C. Beall},
+  title     = {Revenge of the Liar: New Essays on the Paradox},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  year      = {2007}
+}
+
+@article{ConnesConsani2020,
+  author  = {Alain Connes and Caterina Consani},
+  title   = {On Absolute Algebraic Geometry: The Affine Case},
+  journal = {Journal of Algebra and Its Applications},
+  volume  = {19},
+  number  = {6},
+  pages   = {2050105},
+  year    = {2020},
+  doi     = {10.1142/S0219498820501054}
+}
+
+@book{MartinLof1984,
+  author    = {Per Martin-L{"o}f},
+  title     = {Intuitionistic Type Theory},
+  publisher = {Bibliopolis},
+  address   = {Naples},
+  year      = {1984},
+  note      = {Notes by Giovanni Sambin}
+}
+
+@article{Moggi1991,
+  author  = {Eugenio Moggi},
+  title   = {Notions of Computation and Monads},
+  journal = {Information and Computation},
+  volume  = {93},
+  number  = {1},
+  pages   = {55--92},
+  year    = {1991}
+}
+
+@article{Capretta2005,
+  author  = {Venanzio Capretta},
+  title   = {General Recursion via Coinductive Types},
+  journal = {Logical Methods in Computer Science},
+  volume  = {1},
+  number  = {2},
+  year    = {2005}
+}
+
+@book{Lloyd1987,
+  author    = {J. W. Lloyd},
+  title     = {Foundations of Logic Programming},
+  edition   = {2},
+  publisher = {Springer},
+  year      = {1987}
+}
+
+@inproceedings{JaffarLassez1987,
+  author    = {Joxan Jaffar and Jean-Louis Lassez},
+  title     = {Constraint Logic Programming},
+  booktitle = {Proceedings of the 14th ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
+  pages     = {111--119},
+  year      = {1987}
+}
+
+@book{Bishop2006,
+  author    = {Christopher M. Bishop},
+  title     = {Pattern Recognition and Machine Learning},
+  publisher = {Springer},
+  year      = {2006}
+}
+
+@inproceedings{Vaswani2017,
+  author    = {Ashish Vaswani and Noam Shazeer and Niki Parmar and Jakob Uszkoreit and Llion Jones and Aidan N. Gomez and Lukasz Kaiser and Illia Polosukhin},
+  title     = {Attention Is All You Need},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {30},
+  year      = {2017}
+}
+
+@book{Garfield1995,
+  author    = {Jay L. Garfield},
+  title     = {The Fundamental Wisdom of the Middle Way: Nagarjuna's Mulamadhyamakakarika},
+  publisher = {Oxford University Press},
+  address   = {New York},
+  year      = {1995}
+}
+
+@book{Westerhoff2009,
+  author    = {Jan Westerhoff},
+  title     = {Nagarjuna's Madhyamaka: A Philosophical Introduction},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  year      = {2009}
+}
+
+@book{Simpson2009,
+  author    = {Stephen G. Simpson},
+  title     = {Subsystems of Second Order Arithmetic},
+  edition   = {2},
+  series    = {Perspectives in Logic},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  year      = {2009}
+}
+
+@misc{Eastaugh2018,
+  author       = {Benedict Eastaugh},
+  title        = {Computational Reverse Mathematics and Foundational Analysis},
+  year         = {2018},
+  eprint       = {1807.10022},
+  archivePrefix = {arXiv},
+  primaryClass = {math.LO}
+}
+
+@article{Wedgwood2002,
+  author  = {Ralph Wedgwood},
+  title   = {The Aim of Belief},
+  journal = {Philosophical Perspectives},
+  volume  = {16},
+  pages   = {267--297},
+  year    = {2002},
+  doi     = {10.1111/1468-0068.36.s16.10}
+}
+
+@article{ShahVelleman2005,
+  author  = {Nishi Shah and J. David Velleman},
+  title   = {Doxastic Deliberation},
+  journal = {The Philosophical Review},
+  volume  = {114},
+  number  = {4},
+  pages   = {497--534},
+  year    = {2005},
+  doi     = {10.1215/00318108-114-4-497}
+}
+
+@article{Haziza2023,
+  author  = {Eliran Haziza},
+  title   = {Norms of Inquiry},
+  journal = {Philosophy Compass},
+  volume  = {18},
+  number  = {12},
+  pages   = {e12952},
+  year    = {2023},
+  doi     = {10.1111/phc3.12952}
+}
+
+@article{Wei2024,
+  author  = {Xintong Wei},
+  title   = {A Practice-Based Account of the Truth Norm of Belief},
+  journal = {Episteme},
+  volume  = {21},
+  number  = {2},
+  pages   = {698--718},
+  year    = {2024},
+  doi     = {10.1017/epi.2022.26}
+}
+
