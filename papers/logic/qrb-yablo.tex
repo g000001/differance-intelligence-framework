@@ -1,0 +1,544 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{icat-common}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{conjecture}[definition]{予想}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{example}[definition]{例}
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{corollary}[definition]{系}
+
+\newcommand{\Val}{\mathsf{Val}}
+\newcommand{\Fix}{\operatorname{Fix}}
+\newcommand{\Cyc}{\operatorname{Cyc}}
+\newcommand{\SR}{\operatorname{SR}}
+\newcommand{\Prof}{\operatorname{Prof}}
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\DQRB}{\mathrm{DQRB}}
+\newcommand{\Res}{\mathrm{Res}}
+\newcommand{\cofib}{\operatorname{cofib}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\Spc}{\mathrm{Spc}}
+\newcommand{\Id}{\operatorname{Id}}
+\newcommand{\Unit}{\mathbf 1}
+\newcommand{\Bool}{\mathbb B}
+\newcommand{\N}{\mathbb N}
+
+\title{ヤブロ列は自己言及的か\\
+{\large ---局所構文と大域評価の尺度付き分析---}}
+\author{千葉将臣}
+\date{2026-07-30}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+ヤブロ列は、各文が後続文だけに言及するにもかかわらず、古典的な二値評価を許さない。このため、ヤブロ列が自己言及的であるかをめぐって、非循環性を強調する立場と、固定点構成または無限対象への言及に循環性を認める立場が対立してきた。本稿は、この問いが単一の自己言及述語を前提とする限り不十分に型付けされていると論じ、\textbf{局所構文的自己言及}、\textbf{形式化依存的自己言及}、\textbf{大域操作的自己依存}を分離する。
+
+数学的核として、真理値列空間 $\Bool^{\N}$ 上のヤブロ評価作用素
+\[
+ (Fv)_n=1
+ \quad\Longleftrightarrow\quad
+ \forall k>n\;(v_k=0)
+\]
+を導入する。参照グラフは有向閉路を持たない一方、意味論的適合条件は大域的固定点方程式 $v=Fv$ となり、この方程式には解がないことを示す。さらに、有限切断は一意な固定点を持つが、その固定点は切断長を無限化すると零列へ収束し、零列は無限作用素の固定点ではない。これは、有限段階の整合的評価を支える境界証拠が無限遠へ逃げ、有限化と大域評価が可換しないことを表す。また $F$ は積位相に関して不連続である。
+
+以上から、ヤブロ列の尺度付き自己言及プロフィールは、構文的閉路については否定的であり、大域的評価の自己適合要求については肯定的である。したがって「自己言及的である」と「自己言及的でない」は同じ述語に対する矛盾した回答ではなく、異なる尺度と型を持つ判断である。QRBはこの差を局所比較と大域比較の残余として組織する候補を与えるが、本稿は四重残余の同時非自明性を仮定せず、完全なQRB実現を今後の構成課題として区別する。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入}
+
+\subsection{問いの所在}
+
+ヤブロのパラドックスは、無限列
+\begin{equation}
+ Y_n:\quad
+ \text{「すべての }k>n\text{ について }Y_k\text{ は偽である」}
+ \label{eq:yablo-sentence}
+\end{equation}
+から生じる。各 $Y_n$ は自分自身にも先行文にも言及せず、後続文だけに言及する。Yabloはこの構成を循環的自己言及を含まないパラドックスとして提示した\cite{Yablo1993}。他方、述語固定点、無限対象の指示、非整礎性または大域的依存を考慮すれば、自己言及が別の形で残っているという批判がある\cite{Priest1997Yablo,Beall2001Yablo,Leitgeb2002Yablo,BuenoColyvan2003Yablo,Cook2014Yablo}。
+
+本稿の中心問題は、どちらの立場を単純に選ぶことでも、ヤブロ列へ新しい真理値を割り当てることでもない。問うべきなのは
+\begin{equation}
+ \text{「どの対象が、どの関係について、どの尺度で自己を参照するのか」}
+ \label{eq:typed-question}
+\end{equation}
+である。「ヤブロ列は自己言及的か」という文は、自己言及の型と尺度を指定しなければ、複数の非同値な問いを一つに潰している。
+
+\subsection{中心的主張}
+
+本稿の主張は次の五点である。
+\begin{enumerate}
+ \item ヤブロ参照グラフは有向非巡回であり、局所構文的自己言及を持たない。
+ \item ヤブロ列の意味論的適合条件は、列全体の評価 $v$ を同じ列から定まる作用素 $F$ へ戻す大域固定点方程式 $v=Fv$ であり、解を持たない。
+ \item 各有限切断は一意な固定点を持つが、その固定点列の極限は無限作用素の固定点でない。したがって局所的な有限整合性は大域的整合性へ連続的に移行しない。
+ \item 一階算術における対角化または一様固定点の使用は、ヤブロ列そのものの参照グラフではなく、選択された形式化の自己言及負荷である。
+ \item よって最も精確な回答は「構文的には非自己言及的であり、大域評価的には自己依存的である」である。
+\end{enumerate}
+
+\subsection{非主張}
+
+本稿は、固定点を持たないすべての作用素を自己言及的と呼ぶものではない。また、参照グラフに無限路があるだけで自己言及が成立するとも主張しない。大域操作的自己依存には、評価対象と評価入力が同じ全体対象であること、意味論的適合が自己適用方程式として要求されること、および有限切断から大域解への安定な移行が失敗することを要求する。
+
+さらに、本稿はヤブロ列に対する完全なQRB対象、四つの自己関手、Balmerスペクトル上の共通台を構成したとは主張しない。QRBは尺度差を組織する診断語彙として用いるが、四重残余の同時非自明性は条件付き研究課題として残す。
+
+\section{ヤブロ列と自己言及論争}
+
+\subsection{標準的な非整合性議論}
+
+式\eqref{eq:yablo-sentence}の各文に古典的真理値を割り当てられると仮定する。ある $Y_n$ が真なら、すべての後続文は偽である。特に $Y_{n+1}$ は偽なので、その内容は成立せず、ある $k>n+1$ について $Y_k$ が真でなければならない。しかしこれは $Y_n$ が真であることに反する。したがってすべての $Y_n$ は偽である。ところがすべてが偽なら、任意の $n$ についてすべての後続文が偽なので $Y_n$ は真となる。よって古典的な整合的真理値割当は存在しない。
+
+この議論そのものは、各文が自分自身へ向かう辺を必要としない。それでも列全体に対する真理値割当を一度に要求するため、局所的な参照関係と大域的な意味論的閉包が異なる振る舞いを示す。
+
+\subsection{三つの論点}
+
+既存の論争は少なくとも三つの論点を含む。
+\begin{enumerate}
+ \item \textbf{参照グラフの循環性}：各文から、それが言及する文への辺を張ったグラフに閉路があるか。
+ \item \textbf{形式化の固定点依存性}：無限列を有限な構文体系内で一様に表現するため、対角化補題または自己言及的述語を使用するか。
+ \item \textbf{意味論的全体依存性}：列の真理値が、列全体の真理値を入力とする同じ評価規則の固定点として要求されるか。
+\end{enumerate}
+
+Priest、Beall、Leitgebらの批判は、主として第二または第三の意味で循環性を回収する\cite{Priest1997Yablo,Beall2001Yablo,Leitgeb2002Yablo}。BuenoとColyvanは、無限対象の記述と対象そのものの循環性を区別する\cite{BuenoColyvan2003Yablo}。Cookは多様なヤブロ型パターンを分析し、循環性の概念そのものを精密化した\cite{Cook2004Patterns,Cook2014Yablo}。Ketlandは一階算術での一様固定点と $\omega$-矛盾性を区別する\cite{Ketland2005Yablo}。したがって論争は、単一の事実についての単純な賛否というより、自己言及を何によって測るかという分類問題である。
+
+\section{尺度付き自己言及}
+
+\subsection{局所構文的自己言及}
+
+\begin{definition}[参照グラフ]
+ヤブロ列の参照グラフを
+\begin{equation}
+ G_Y=(\N,E_Y),
+ \qquad
+ (n,k)\in E_Y
+ \Longleftrightarrow n<k
+ \label{eq:reference-graph}
+\end{equation}
+と定める。文 $Y_n$ が文 $Y_k$ に言及するとき、$n$ から $k$ へ辺を張る。
+\end{definition}
+
+\begin{definition}[局所構文的自己言及]
+文 $Y_n$ が局所構文的に自己言及的であるとは、$G_Y$ において $n$ から $n$ へ戻る有限有向路が存在することをいう。列が局所構文的に自己言及的であるとは、そのような $n$ が存在することをいう。
+\end{definition}
+
+\begin{proposition}[構文的非循環性]
+ヤブロ参照グラフ $G_Y$ は有向閉路を持たない。したがってヤブロ列は局所構文的には自己言及的でない。
+\end{proposition}
+
+\begin{proof}
+各辺 $(n,k)$ は $n<k$ を満たす。有向路に沿って添字は狭義単調増加するため、有限ステップ後に出発点へ戻ることはない。
+\end{proof}
+
+この命題は、ヤブロの非循環性主張の最も明確な数学的内容である。ただし $G_Y$ には
+\begin{equation}
+ 0\longrightarrow1\longrightarrow2\longrightarrow\cdots
+\end{equation}
+という無限有向路がある。閉路の不在は、依存関係が整礎的であることや、末端から再帰的に評価できることを意味しない。
+
+\subsection{形式化依存的自己言及}
+
+一階算術の有限な言語で無限列を一様に生成する場合、二項満足関係または真理述語を用い、対角化によって一つの述語 $Y(x)$ を構成する方法がある。このとき固定点は述語の構成に現れる\cite{Ketland2005Yablo}。しかし、その事実から直ちに式\eqref{eq:reference-graph}のグラフへ閉路が追加されるわけではない。
+
+\begin{definition}[形式化負荷]
+ヤブロ列の表示 $\mathfrak f$ に対し、
+\begin{equation}
+ \SR_{\mathrm{form}}(Y;\mathfrak f)=1
+\end{equation}
+とは、$\mathfrak f$ が列の生成または意味論的適合を得るために対角化、自己適用コード、または固定点述語を本質的に使用することをいう。使用しない表示では値を $0$ とする。
+\end{definition}
+
+この成分は列だけの不変量ではなく、表示 $\mathfrak f$ に依存する。したがって
+\begin{equation}
+ \SR_{\mathrm{form}}(Y;\mathfrak f_1)
+ \neq
+ \SR_{\mathrm{form}}(Y;\mathfrak f_2)
+\end{equation}
+は矛盾ではない。無限論理で各式を外延的に与える表示と、一階算術で一様述語を生成する表示は、異なる形式化負荷を持ち得る。
+
+\subsection{大域操作的自己依存}
+
+\begin{definition}[大域操作的自己依存]
+文系 $S$ が大域操作的に自己依存的であるとは、次を満たすことをいう。
+\begin{enumerate}
+ \item 全体評価の空間 $V_S$ と評価作用素 $F_S:V_S\to V_S$ がある。
+ \item $S$ の意味論的適合が $v=F_S(v)$ として要求される。
+ \item 各出力成分の決定が有限の局所データだけでは安定せず、全体依存を有限境界へ還元する極限過程が固定点を保存しない。
+\end{enumerate}
+\end{definition}
+
+この定義は、単なる自己写像の存在を自己言及とは呼ばない。評価される全体 $v$ が同じ全体から生成された規則へ入力され、その自己適合が要求されること、および局所近似が大域適合を保存しないことを要請する。
+
+\section{ヤブロ評価作用素}
+
+\subsection{無限作用素}
+
+真を $1$、偽を $0$ とし、真理値列の空間を
+\begin{equation}
+ \Val_Y:=\Bool^{\N},
+ \qquad \Bool=\{0,1\}
+\end{equation}
+とする。
+
+\begin{definition}[ヤブロ評価作用素]
+写像 $F:\Val_Y\to\Val_Y$ を
+\begin{equation}
+ (Fv)_n=1
+ \quad\Longleftrightarrow\quad
+ \forall k>n\;(v_k=0)
+ \label{eq:yablo-operator}
+\end{equation}
+で定める。
+\end{definition}
+
+列 $v$ がヤブロ文の内容と真理値の対応を満たすことは、固定点方程式
+\begin{equation}
+ v=Fv
+ \label{eq:global-fixed-point}
+\end{equation}
+に等しい。
+
+\begin{theorem}[無限ヤブロ作用素の固定点不在]
+\begin{equation}
+ \Fix(F)=\varnothing.
+ \label{eq:no-fixed-point}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+$v=Fv$ と仮定する。ある $n$ で $v_n=1$ なら、式\eqref{eq:yablo-operator}よりすべての $k>n$ で $v_k=0$ である。特に $v_{n+1}=0$ なので、固定点条件より $(Fv)_{n+1}=0$ である。よってある $k>n+1$ で $v_k=1$ でなければならず、先の結論に反する。
+
+したがってすべての $n$ で $v_n=0$ である。しかしこのとき任意の $n$ についてすべての $k>n$ で $v_k=0$ なので、$(Fv)_n=1$ となり $v_n=0$ に反する。
+\end{proof}
+
+この定理が示すのは、参照グラフの閉路ではなく、列全体に対する意味論的自己適合の不可能性である。
+
+\subsection{有限切断}
+
+\begin{definition}[有限ヤブロ作用素]
+$N\in\N$ に対し
+\begin{equation}
+ \Val_Y^{(N)}:=\Bool^{\{0,\dots,N\}}
+\end{equation}
+とし、$F_N:\Val_Y^{(N)}\to\Val_Y^{(N)}$ を
+\begin{equation}
+ (F_Nv)_n=1
+ \quad\Longleftrightarrow\quad
+ \forall k\;(n<k\leq N\Rightarrow v_k=0)
+ \label{eq:finite-operator}
+\end{equation}
+で定める。
+\end{definition}
+
+有限列では最終文 $Y_N$ の量化範囲が空になる。したがって $Y_N$ は真となり、無限列には存在しない境界条件を与える。
+
+\begin{theorem}[有限切断の一意固定点]
+$F_N$ は一意な固定点 $e^{(N)}$ を持ち、
+\begin{equation}
+ e^{(N)}_n=
+ \begin{cases}
+  0,&n<N,\\
+  1,&n=N
+ \end{cases}
+ \label{eq:finite-fixed-point}
+\end{equation}
+である。
+\end{theorem}
+
+\begin{proof}
+固定点 $v$ では、$n=N$ の後続添字が存在しないため $(F_Nv)_N=1$、従って $v_N=1$ である。任意の $n<N$ について後続成分 $v_N=1$ が存在するので $(F_Nv)_n=0$、従って $v_n=0$ である。逆に式\eqref{eq:finite-fixed-point}の列は式\eqref{eq:finite-operator}を満たす。
+\end{proof}
+
+\subsection{境界証拠の無限遠への逃走}
+
+$e^{(N)}$ を、$N$ より後を $0$ で延長することによって $\Val_Y$ の元とみなす。このとき $e^{(N)}$ は第 $N$ 成分だけが $1$ である列である。
+
+\begin{theorem}[有限固定点の極限崩壊]
+$\Bool^{\N}$ に積位相を入れると
+\begin{equation}
+ e^{(N)}\longrightarrow \boldsymbol 0
+ \end{equation}
+であるが、$\boldsymbol 0\notin\Fix(F)$ である。さらに
+\begin{equation}
+ \lim_{N\to\infty}F(e^{(N)})=\boldsymbol 0
+ \neq
+ \boldsymbol 1=F\left(\lim_{N\to\infty}e^{(N)}\right).
+ \label{eq:noncommuting-limit}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+任意の固定座標 $m$ について、$N>m$ なら $e^{(N)}_m=0$ であるから $e^{(N)}\to\boldsymbol 0$ である。零列では任意の後続成分が $0$ なので $F(\boldsymbol 0)=\boldsymbol 1$ であり、零列は固定点でない。
+
+一方、$F(e^{(N)})$ の第 $m$ 成分は、$m<N$ なら後続の第 $N$ 成分が $1$ なので $0$、$m\geq N$ なら後続に $1$ がないので $1$ である。固定した $m$ について十分大きな $N$ では前者となるため、$F(e^{(N)})\to\boldsymbol 0$ である。
+\end{proof}
+
+有限切断を整合させる真の最終成分は、$N$ の増加とともに常に右へ移動する。任意の有限位置から見ればその証拠は消失し、極限では「すべて偽」という列だけが残る。しかし無限ヤブロ作用素はその列を「すべて真」へ送る。これを\textbf{境界証拠の逃走}と呼ぶ。
+
+\subsection{不連続性}
+
+\begin{theorem}[ヤブロ作用素の不連続性]
+$\Bool$ を離散空間とし $\Val_Y=\Bool^{\N}$ に積位相を入れると、$F$ は連続でない。
+\end{theorem}
+
+\begin{proof}
+第 $n$ 出力が $1$ である集合
+\begin{equation}
+ A_n=\{v\in\Val_Y\mid(Fv)_n=1\}
+ =\bigcap_{k>n}\{v\mid v_k=0\}
+\end{equation}
+を考える。$A_n$ は閉集合だが開集合ではない。実際、$v\in A_n$ の任意の基本近傍は有限個の座標しか固定しないため、固定されていない十分大きな $k>n$ の成分を $1$ に変更した列を含み、その列は $A_n$ に属さない。したがって座標射影で定まる開集合の逆像が開でなく、$F$ は連続でない。
+\end{proof}
+
+不連続性は、各 $Y_n$ の値がどれほど長い有限接頭部を見ても確定せず、無限の尾全体に依存することを位相的に表す。Bernardiの位相的分析は、ヤブロ型構造における連続性と固定点の関係を別の一般的枠組みから研究している\cite{Bernardi2009Yablo}。
+
+\section{自己言及プロフィール}
+
+\subsection{二つの主要成分}
+
+\begin{definition}[尺度付き自己言及プロフィール]
+ヤブロ列 $Y$ の主要プロフィールを
+\begin{equation}
+ \Prof_{\SR}(Y)
+ :=
+ \bigl(
+ \SR_{\mathrm{syn}}(Y),
+ \SR_{\mathrm{op}}(Y)
+ \bigr)
+ \in\{0,1\}^2
+ \label{eq:sr-profile}
+\end{equation}
+とする。第一成分は参照グラフに有向閉路があれば $1$、第二成分は定義3.5の大域操作的自己依存を満たせば $1$ とする。
+\end{definition}
+
+\begin{theorem}[ヤブロ列の尺度付き判定]
+\begin{equation}
+ \Prof_{\SR}(Y)=(0,1).
+ \label{eq:yablo-profile}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+第一成分は命題3.3から $0$ である。第二成分について、評価空間と作用素は定義4.1で与えられ、意味論的適合は式\eqref{eq:global-fixed-point}である。有限切断の固定点が無限極限で固定点を保存しないことは定理4.5、有限局所情報で出力が安定しないことは定理4.6から従う。よって定義3.5の三条件を満たす。
+\end{proof}
+
+この結果は「ヤブロ列は自己言及的である」と「自己言及的でない」を同じ座標上で同時に肯定するものではない。正確には
+\begin{equation}
+ \neg\SR_{\mathrm{syn}}(Y)
+ \qquad\text{かつ}\qquad
+ \SR_{\mathrm{op}}(Y)
+\end{equation}
+であり、二つの述語は型が異なる。
+
+\subsection{形式化成分を含む拡張プロフィール}
+
+表示 $\mathfrak f$ を固定すれば
+\begin{equation}
+ \Prof_{\SR}(Y;\mathfrak f)
+ :=
+ \bigl(
+ \SR_{\mathrm{syn}}(Y),
+ \SR_{\mathrm{form}}(Y;\mathfrak f),
+ \SR_{\mathrm{op}}(Y)
+ \bigr)
+ \label{eq:extended-profile}
+\end{equation}
+と拡張できる。第一・第三成分は本稿のモデルの下で $(0,1)$ に固定されるが、第二成分は形式化に依存する。
+
+一階算術における一様固定点表示では第二成分が $1$ となり得る。他方、無限個の命題変数と無限連言を外延的に許す言語では、個々の式を与えるための対角化を回避できる場合がある。Picolloによる二階言語での再構成や、Ketlandによる $\omega$-矛盾性の分析も、形式体系の強さと一様性が帰結を変えることを示している\cite{Picollo2012Yablo,Ketland2005Yablo}。
+
+\subsection{問いへの回答}
+
+以上を自然言語へ戻すと、問いへの回答は次のようになる。
+\begin{quote}
+ヤブロ列は、文間参照の局所構文という尺度では自己言及的でない。しかし、列全体の真理値が同じ列から定まる評価作用素の固定点であることを要求する大域評価の尺度では、自己依存的である。形式化に固定点が現れるかは、さらに選択された表示に依存する。
+\end{quote}
+
+したがって「ある／ない」の対立を解く鍵は第三の真理値ではなく、自己言及述語の添字を明示することである。
+
+\section{QRBによる尺度差の診断}
+
+\subsection{最小診断と完全QRBの区別}
+
+QRBは、複数の比較写像の非可逆性を残余対象によって測り、その台の共通部分を外点候補として診断する枠組みである\cite{ChibaQRB2026}。ヤブロ列に適用する際には、まず次の二つの比較を区別する必要がある。
+\begin{enumerate}
+ \item \textbf{局所構文比較}：各文の参照先を展開したとき、その文自身へ有限路で戻るかを比較する。
+ \item \textbf{大域評価比較}：候補評価 $v$ と、ヤブロ規則を適用した評価 $Fv$ の一致を比較する。
+\end{enumerate}
+
+局所構文比較には閉路障害がない。他方、大域評価比較では等化子
+\begin{equation}
+ \operatorname{Eq}(\Id,F)=\Fix(F)
+\end{equation}
+が空である。この二つの診断は、式\eqref{eq:yablo-profile}の二成分に対応する。
+
+\begin{definition}[ヤブロ最小QRB診断]
+ヤブロ列の最小QRB診断を
+\begin{equation}
+ \mathfrak Q_Y^{\min}
+ :=
+ \bigl(
+  \Cyc(G_Y),
+  \Fix(F),
+  (e^{(N)})_{N\in\N},
+  \lim F(e^{(N)})\neq F(\lim e^{(N)})
+ \bigr)
+ \label{eq:minimal-qrb}
+\end{equation}
+と呼ぶ。
+\end{definition}
+
+これは監査レコードであり、安定テンソル三角圏における四重残余束そのものではない。特に、四項があるという理由だけでQRBの四比較 $S,N,SN,NS$ と同一視してはならない。
+
+\subsection{条件付きQRB実現}
+
+完全なQRBとして論じるには、安定テンソル三角圏 $\mathcal C_Y$、ヤブロ対象 $X_Y$、四つの自己関手 $M_i$ と自然変換
+\begin{equation}
+ \eta_i:\Id_{\mathcal C_Y}\Longrightarrow M_i,
+ \qquad i\in\{S,N,SN,NS\},
+\end{equation}
+および残余
+\begin{equation}
+ \Res_i(X_Y)=\cofib(\eta_i(X_Y))
+\end{equation}
+を具体的に構成しなければならない。
+
+\begin{conjecture}[ヤブロ尺度のQRB実現]
+ヤブロ評価作用素の有限切断系と極限不整合を忠実に表す安定圏実現が存在し、局所構文比較の残余は零である一方、大域評価自己比較に対応する残余は非零となる。
+\end{conjecture}
+
+この予想だけから四つの残余が同一の素点で同時に非零であることは従わない。したがって
+\begin{equation}
+ \bigcap_i\supp(\Res_i(X_Y))\neq\varnothing
+\end{equation}
+は別途証明すべき強い主張である。本稿の尺度付き結論は、その証明を前提としない。
+
+\subsection{QRBの役割}
+
+この限定の下でもQRBには役割がある。第一に、局所構文の可逆性と大域評価の非適合を別々の比較として保持できる。第二に、固定点不在、不連続性、形式化負荷を単一の「矛盾」という語へ潰さず、異なる残余候補として分類できる。第三に、観測尺度または形式化を変えたとき、どの比較が保存されるかを問う研究計画を与える。
+
+\section{Diffeologyによる動的精密化}
+
+\subsection{何を追加できるか}
+
+ヤブロ列の変種、形式化、有限切断および境界条件をパラメータ空間 $P$ で動かすとき、$P$ にdiffeologyを与えれば、診断がパラメータに沿ってどのように変化するかを記述できる。例えばプロット
+\begin{equation}
+ p:U\longrightarrow P
+\end{equation}
+に沿って、参照グラフの閉路性、固定点集合、境界証拠の位置、作用素の連続性を追跡できる。
+
+ただし標準ヤブロ作用素 $F$ の固定点不在は、diffeologyを導入する前に定理4.2として成立している。Diffeologyはこの結論を解決へ変えるのではなく、どの変形で固定点が発生または消滅するか、有限切断の境界証拠がどのように移動するかを精密化する。
+
+\subsection{可微分ヤブロ族}
+
+\begin{definition}[可微分ヤブロ族]
+パラメータ付き評価作用素の族
+\begin{equation}
+ \mathcal F:P\longrightarrow
+ \operatorname{Map}(\Val_Y,\Val_Y),
+ \qquad q\longmapsto F_q
+\end{equation}
+が、選択した汎関数diffeologyに関して滑らかであるとき、これを可微分ヤブロ族と呼ぶ。
+\end{definition}
+
+この族に対して
+\begin{equation}
+ \mathcal Z=
+ \{(q,v)\in P\times\Val_Y\mid v=F_q(v)\}
+\end{equation}
+を固定点総空間とする。射影 $\mathcal Z\to P$ のファイバーが空になる領域は、大域評価が閉じないパラメータ領域を表す。
+
+\begin{conjecture}[固定点障害の可微分化]
+適切な可微分実現の下で、固定点総空間の局所切断が貼り合わさらないことを測る障害類を構成でき、その支持がヤブロ型大域自己依存の安定領域を与える。
+\end{conjecture}
+
+これは今後の課題であり、標準ヤブロ列について既に構成されたコホモロジー障害を主張するものではない。
+
+\section{解決、診断、無記}
+
+\subsection{何が解決されたか}
+
+本稿は「ヤブロ列の各文は真か偽か」という真理値問題を解決しない。古典的二値評価が存在しないことを、作用素の固定点不在として再定式化する。一方、「ヤブロ列は自己言及的か」という分類問題については、述語を尺度付きに型付けすることで解答を与える。
+
+\begin{center}
+\begin{tabular}{p{0.28\textwidth} p{0.23\textwidth} p{0.36\textwidth}}
+\toprule
+問い & 判定 & 根拠 \\
+\midrule
+局所構文的に自己言及的か & いいえ & 参照グラフがDAG \\
+形式化に固定点が必要か & 表示依存 & 一様な一階表示と無限表示の差 \\
+大域評価的に自己依存的か & はい & $v=Fv$、固定点不在、極限非可換 \\
+古典的真理値で解けるか & いいえ & $\Fix(F)=\varnothing$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{無記の位置}
+
+QRB的な外点指示または無記は、固定点不在から新しい真理値を生成する操作ではない。真理値割当が閉じないことを診断した後、その評価操作を未完了の再帰として無限に継続せず、適用不能として終了する規律である。したがって
+\begin{equation}
+ Y_n\rightsquigarrow\dfix
+\end{equation}
+は $Y_n=\dfix$ という対象言語上の等式ではなく、指定された評価規則が大域適合に失敗したというメタ水準の記録である。
+
+この区別により、「自己言及的でないから真理値を割り当てられるはずだ」という推論も、「大域的に自己依存するから各文が自分自身へ言及する」という逆向きの推論も避けられる。
+
+\section{検証状態と今後の課題}
+
+\begin{center}
+\begin{tabular}{p{0.34\textwidth} p{0.22\textwidth} p{0.32\textwidth}}
+\toprule
+項目 & 状態 & 根拠または追加条件 \\
+\midrule
+参照グラフの非循環性 & 定理 & 添字の狭義増加 \\
+無限作用素の固定点不在 & 定理 & 二値評価上の直接証明 \\
+有限切断の一意固定点 & 定理 & 終端境界条件 \\
+固定点極限の崩壊 & 定理 & 積位相での座標収束 \\
+ヤブロ作用素の不連続性 & 定理 & 無限尾条件が非開 \\
+尺度付きプロフィール $(0,1)$ & 定理 & 上記結果と定義3.5 \\
+形式化負荷の分類 & 枠組み & 表示ごとの比較が必要 \\
+完全なQRB実現 & 予想 & 安定圏と四比較の具体化 \\
+四重残余の共通台 & 未証明 & 各残余の台計算 \\
+可微分固定点障害類 & 予想 & DQRB実現と貼合せ理論 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+第一の課題は、形式化 $\mathfrak f$ の圏を定め、どの射が形式化負荷を保存するかを明らかにすることである。第二に、有限切断系 $(F_N)$ を逆極限または導来極限として表し、式\eqref{eq:noncommuting-limit}を障害対象へ持ち上げる必要がある。第三に、その障害対象をQRBのどの比較写像へ対応させるかを構成する。第四に、ヤブロ型作用素の可微分族を具体化し、固定点消滅の安定性と分岐をDQRBとして解析する。
+
+\section{結論}
+
+本稿は「ヤブロ列は自己言及的か」という問いを、局所構文、形式化、大域評価という三つの尺度へ分解した。参照グラフ $G_Y$ は有向閉路を持たず、各文は局所構文的に自分自身へ戻らない。この意味ではヤブロ列は自己言及的でない。
+
+しかし列全体の意味論的適合は、真理値列 $v$ をヤブロ評価作用素 $F$ へ入力し、その出力と同じ $v$ であることを要求する固定点方程式 $v=Fv$ である。この方程式に解はない。さらに有限切断 $F_N$ は一意な固定点を持つにもかかわらず、その固定点を無限化した極限は $F$ の固定点にならず、$F$ は積位相について不連続である。有限段階を閉じる最終真成分は無限遠へ逃げ、大域評価は局所解の極限として回収されない。
+
+したがってヤブロ列の自己言及プロフィールは
+\begin{equation*}
+ \Prof_{\SR}(Y)=(0,1)
+\end{equation*}
+である。これは矛盾した二つの回答ではない。第一成分は文間参照の閉路を、第二成分は全体評価の自己適合要求を測る。形式化に対角化が現れるかは第三の、表示依存的な成分である。
+
+最終的な回答は次のように述べられる。
+\begin{quote}
+ヤブロ列は構文的には自己言及的でない。しかし、その大域的評価操作は自己依存的である。両者は異なる尺度の述語であり、矛盾しない。
+\end{quote}
+
+QRBはこの尺度差を複数の比較と残余として保持する診断枠組みを与える。ただし、ヤブロ列の四重残余束を得るには、安定圏、四比較、残余対象および共通台を今後具体的に構成しなければならない。Diffeologyもまた、固定点不在を解消するのではなく、その障害がパラメータに沿ってどのように持続・分岐するかを記述する次段階の精密化である。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
