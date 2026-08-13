@@ -3,16 +3,21 @@
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{lmodern}
 \usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
 
-% 定理環境
 \theoremstyle{definition}
 \newtheorem{definition}{定義}[section]
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{conjecture}[definition]{予想}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{example}[definition]{例}
+\theoremstyle{plain}
 \newtheorem{theorem}[definition]{定理}
 \newtheorem{lemma}[definition]{補題}
 \newtheorem{proposition}[definition]{命題}
-\newtheorem{remark}[definition]{注記}
-\newtheorem{assumption}[definition]{仮定}
-\newtheorem{example}[definition]{例}
+\newtheorem{corollary}[definition]{系}
 
 \newcommand{\ZFC}{\mathrm{ZFC}}
 \newcommand{\PrT}{\mathrm{Pr}_T}
@@ -20,17 +25,23 @@
 \newcommand{\Forc}{\mathrm{Forc}}
 \newcommand{\QRB}{\mathrm{QRB}}
 \newcommand{\Res}{\mathrm{Res}}
-\newcommand{\cofib}{\mathrm{cofib}}
+\newcommand{\cofib}{\operatorname{cofib}}
 \newcommand{\PoV}{\mathrm{PoV}}
-\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\Id}{\operatorname{Id}}
 \newcommand{\supp}{\mathrm{supp}}
 \newcommand{\Spc}{\mathrm{Spc}}
-\newcommand{\Open}{\mathrm{Open}}
+\newcommand{\Open}{\operatorname{Open}}
+\newcommand{\ORB}{\mathrm{ORB}}
+\newcommand{\Ext}{\mathbf{Ext}}
+\newcommand{\Ind}{\mathrm{Ind}}
+\newcommand{\QRBVis}{\mathrm{QRBVis}}
+\newcommand{\Rep}{\mathrm{Rep}}
 \newcommand{\dfix}{\bigcirc}
+\newcommand{\sem}[1]{\mathopen{[\![}#1\mathclose{]\!]}}
 \DeclareMathOperator{\fib}{fib}
 
 \title{言語の外点：\\[0.2em]
-  {\Large —強制法と四重残余束による到達不能性の幾何学—}}
+  {\Large ---強制法による外点指示と四重残余束への条件付き展開---}}
 \author{千葉将臣}
 \date{2026-07-19}
 
@@ -38,272 +49,591 @@
 \maketitle
 
 \begin{abstract}
-本論文は、形式的体系の内部では対象として定義できないが、内部からの関係によって間接的に指示できる外部を記号 $\dfix$ で表し、その数学的記述を試みる。$\dfix$ は値や点そのものではなく、外部への到達を記録する指示記号である。第一に、完備ブール代数的推移モデルと強制関係を用い、基底モデルに属さないジェネリック・フィルターを、基底モデル内で定義可能な関係によって指示する。第二に、四種の操作に伴う情報損失を安定圏における余ファイバーとして定式化し、それらの台の共通部分を四重残余束（Quadruple Residual Bundle; QRB）の特異領域と定義する。強制法に関する標準定理とQRBに固有の仮定を明確に分離することで、ジェネリック・フィルターとQRB側の代表点の対応を無条件の同一視とはせず、比較写像が満たすべき条件として提示する。さらに第三に、外点指示を「値の定義」ではなく「演算の幾何学的到達」の診断として再解釈し、$1/0\leadsto\dfix$ を典例として計算論的外点の診断機構を展開する。これにより、到達不能性を単なる未定義性ではなく、複数の比較写像が同時に同値でなくなる幾何学的障害として研究するための形式的枠組みを与える。最後に、$\dfix$ が真理保存性を通過する前に位置する「根源的単位元」を指示することを示唆し、今後の代数的展開への接続を開く。
+本稿は、形式体系の内部では対象として定義できない外部を、内部で定義可能な関係によって間接的に指示する方法を考察する。外点記号 $\dfix$ は新しい真理値や内部対象ではなく、指定された意味論において外部への依存または到達を記録するメタ水準の指示記号である。
+
+本稿の内容を三段階に分ける。第一段階は、強制法に基づく完成した基礎である。強制関係の定義可能性補題と真理補題を用い、基底モデルに属さないジェネリック・フィルター $G$ を、外点指示の強制法的解釈 $\sem{\dfix}_{(M,\mathbb P,G)}$ として採用する。これは強制法の標準定理に基づく意味論的提案であり、$G$ を基底モデル内に定義するものではない。
+
+第二段階は、明示された追加データの下で成立する抽象的な四重残余束（QRB）スキーマである。安定テンソル三角圏に四つの比較関手と自然変換が与えられたとき、その余ファイバーを残余対象とし、四つのBalmer台の共通部分を外点候補領域と定める。選択した台と局所化の適合条件の下で、共通台への所属が四比較の局所的非可逆性と同値であることを示す。
+
+第三段階は今後の具体化課題である。強制代数からQRBスペクトルの開集合への観測写像と、既存の外点代表 $G$ とQRB点 $\xi$ を結ぶ指示関係は未構成である。QRBは $G$ または $\dfix$ を定義せず、外部依存が四重残余の幾何学上に表現可能かを検査する補助装置として位置づける。したがってQRB表現が存在しない場合も、強制法による外点指示は影響を受けない。また除算零については、独立な部分演算意味論が与える障害証拠 $e_{/}$ を先に置き、QRBは $1/0\rightsquigarrow_0e_{/}\;[\mathfrak p:\QRB]$ という任意的な幾何学注釈だけを追加する。「根源的単位元」も数学的単位元の定義ではなく、この診断構造に対する解釈仮説として区別する。ここでいう非干渉性とは、QRB注釈が基底モデル、強制関係または基礎判断を変更しないという意味であり、残余対象やジェネリック・フィルターを単なる観測者の心理的記号へ還元するものではない。
 \end{abstract}
 
-\section{はじめに}
+\tableofcontents
 
-\subsection{問題設定}
+\section{導入}
 
-十分に強い形式的体系は、自身の構文を算術化できる一方、自身の真理を内部で完全に定義することはできない \cite{godel,tarski}。Kripke の真理理論は部分的真理述語の最小不動点を構成するが、得られた言語の外側から新たな真理概念を問うリベンジ問題は残る \cite{kripke}。したがって、本論文では外部を新しい対象定数として内部言語に追加するのではなく、内部で計算できる関係が外部に対して与える制約によって指示する。
+\subsection{外部を定義せずに指示する}
 
-この方針には二つの段階がある。第一段階は、強制関係 $p\Vdash\varphi$ による外部の指示である。第二段階は、複数の論理的・圏論的操作が捨てる情報を残余として記録し、その共通の非自明領域を幾何学化することである。
+十分に強い形式体系は自身の構文を算術化できる一方、自身の真理を内部で完全に定義することはできない\cite{godel,tarski}。Kripkeの真理理論は部分的真理述語の最小不動点を構成するが、その言語の外側から新しい真理概念を問うリベンジ問題は残る\cite{kripke}。
 
-本稿ではさらに第三の段階を提示する。外点 $\dfix$ は、体系内部の演算（例えば除算 $1/0$）が、内部の真理値の網を通過する前に「飛び出して」しまう幾何学的到達点として診断される。これは値の定義ではなく、操作の四重残余が同時に非ゼロとなり、外点領域に到達したことを記録する式である。
+本稿は、外部を新しい対象定数または第三の真理値として内部言語に追加しない。代わりに、内部で定義可能な関係が、メタ理論上の外部対象に対してどのような条件を課すかを記録する。この記録を
+\begin{equation}
+ t\rightsquigarrow\dfix
+ \label{eq:indication-symbol}
+\end{equation}
+と表す。式\eqref{eq:indication-symbol}は一般には対象言語上の等式ではなく、選択した意味論に相対的な指示判断である。
 
-\subsection{本論文の寄与と射程}
+記号 $\dfix$ は一般的な指示マーカーであり、その意味論的実現は解釈括弧 $\sem{\dfix}_{\mathcal S}$ によって区別する。本稿の強制法的実現では $\mathcal S=(M,\mathbb P,G)$ とする。一方、QRB側の点 $\xi$ は $\dfix$ の新たな意味論的値ではなく、既存の外点指示に付加される幾何学的注釈である。
 
-本論文の寄与は次の四点である。
+\subsection{四つの主張強度}
 
+本稿では、主張を次の四水準に分ける。
+
+\begin{center}
+\begin{tabular}{p{0.25\textwidth} p{0.27\textwidth} p{0.38\textwidth}}
+\toprule
+水準 & 本稿での位置 & 内容 \\
+\midrule
+既存定理 & 強制法の基礎 & 定義可能性補題、真理補題、強制拡大の基本性質 \\
+意味論的提案 & 外点指示 & $\sem{\dfix}_{(M,\mathbb P,G)}:=G$ と解釈する \\
+条件付き定理 & 抽象QRB & 四比較と台・局所化データが与えられた場合の残余判定 \\
+研究予想 & 具体的接続 & 指示関係、非空な具体例、$1/0$ のQRB注釈 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+この区別は、QRBの抽象定義が無意味であることを示すものではない。抽象スキーマは仮定の下で厳密に成立する。他方、その仮定を同時に満たす具体的な論理モデルまたは計算モデルの構成は別の問題である。
+
+\subsection{本稿の寄与}
+
+本稿の寄与は次の四点である。
 \begin{enumerate}
- \item 強制法の定義可能性補題と真理補題を、外部の「定義」ではなく「指示」のモデルとして整理する。
- \item 安定テンソル三角圏において四つの残余対象とQRBを定義し、その特異領域を台の交差として与える。
- \item ジェネリック・フィルターとQRB特異領域の対応を、無条件の同一視ではなく、明示的な比較写像を要する研究仮説として定式化する。
- \item 外点を計算論的マーカーとして再解釈し、$1/0\leadsto\dfix$ を典例として、操作の幾何学的診断と根源的単位元の概念を導入する。
+ \item 強制関係を、外部対象を内部で定義せずに指示する標準的原型として整理する。
+ \item ジェネリック・フィルター $G$ を外点指示の意味論的代表として採用し、その射程を明示する。
+ \item 四比較が与えられた安定圏における抽象QRBスキーマと、共通台の条件付き判定定理を定式化する。
+ \item 強制法上の外点代表とQRB点の間の指示関係を導入し、QRBを外点の定義ではなく任意的な幾何学的表現として位置づける。
 \end{enumerate}
 
-特に、強制法が任意の集合論的命題を保存するとは主張しない。強制拡大は連続体仮説のような命題を変え得るが、基底モデルが推移的である場合には順序数を保存し、同じ自然数構造上の一階算術文の真理を保存する。
+\subsection{非主張}
+
+本稿は、任意の形式体系または任意の部分演算からQRBが自動的に得られるとは主張しない。また、ジェネリック・フィルターとBalmerスペクトルの点を同一の集合論的対象とはみなさない。さらに、除算が零で未定義であるという事実だけから、四つのQRB残余が同一の素点で同時に非零になるとは結論しない。
 
 \section{形式的準備}
 
 \subsection{体系と自己言及}
 
 \begin{assumption}
-$T$ は再帰的に公理化された無矛盾な一階理論であり、少なくとも Robinson 算術 $Q$ を含み、自身の構文と証明関係を算術化できるとする。
+$T$ は再帰的に公理化された無矛盾な一階理論であり、少なくともRobinson算術 $Q$ を含み、自身の構文と証明関係を算術化できるとする。
 \end{assumption}
 
-論理式 $\varphi$ の Gödel 数を $\ulcorner\varphi\urcorner$、$T$ の標準的な証明可能性述語を $\PrT(x)$ と書く。
+論理式 $\varphi$ のGödel数を $\ulcorner\varphi\urcorner$、$T$ の標準的な証明可能性述語を $\PrT(x)$ と書く。
 
 \begin{lemma}[対角線補題]
 任意の一変数論理式 $\psi(x)$ に対して、文 $G$ が存在し、
-\[
+\begin{equation}
  T\vdash G\leftrightarrow\psi(\ulcorner G\urcorner)
-\]
+\end{equation}
 が成り立つ。
 \end{lemma}
 
-補題 2.2 で $\psi(x)\equiv\neg\PrT(x)$ とすれば、適切な追加条件の下で Gödel 文が得られる \cite{kleene}。記法として
-\[
- \SelfRef_T(\varphi)=\neg\PrT(\ulcorner\varphi\urcorner)
-\]
-と置く。ただし、これは対象言語の全真理を与える作用素ではない。
+$\psi(x)\equiv\neg\PrT(x)$ とすれば、適切な導出可能性条件の下でGödel文が得られる\cite{kleene}。記法として
+\begin{equation}
+ \SelfRef_T(\varphi)
+ :=\neg\PrT(\ulcorner\varphi\urcorner)
+\end{equation}
+と置く。ただし、これは対象言語の全真理を与える作用素ではなく、後述するQRBの自己参照比較を自動的に構成するものでもない。
 
-\subsection{トポスと二重否定層化}
+\subsection{二重否定層化}
 
 \begin{definition}[エレメンタリー・トポス]
-圏 $\mathcal{E}$ がエレメンタリー・トポスであるとは、有限極限を持ち、デカルト閉であり、部分対象分類子 $\Omega$ を持つことをいう。
+圏 $\mathcal E$ がエレメンタリー・トポスであるとは、有限極限を持ち、デカルト閉であり、部分対象分類子 $\Omega$ を持つことをいう。
 \end{definition}
 
-一般のトポスの内部論理は直観主義的である。Lawvere--Tierney 位相 $j=\neg\neg$ に伴う層化関手 $a_{\neg\neg}$ は、同型を除いて冪等である \cite{johnstone}。したがって、二重否定層化から生じる残余は「層化が非冪等であること」ではなく、単位写像 $X\to a_{\neg\neg}X$ が一般には同型でないことによって測るべきである。
+一般のトポスの内部論理は直観主義的である。Lawvere--Tierney位相 $j=\neg\neg$ に伴う層化関手 $a_{\neg\neg}$ は、同型を除いて冪等である\cite{johnstone}。従って、二重否定層化に関する残余を考える場合、測るべきなのは層化の非冪等性ではなく、単位写像
+\begin{equation}
+ X\longrightarrow a_{\neg\neg}X
+\end{equation}
+が同型でない度合いである。
 
 \section{強制法による外部の指示}
+
+\subsection{本章の状態}
+
+本章で用いる強制法の定義可能性補題と真理補題は標準定理である。その上で、ジェネリック・フィルターを外点記号の意味論的代表として読むことが本稿の提案である。標準定理と提案を区別する。
 
 \subsection{ブール値と強制関係}
 
 \begin{assumption}
-$M$ を集合論の十分な有限部分を満たす可算推移モデル、$\mathbb{P}\in M$ を分離的な強制半順序、$\mathbb{B}$ を $M$ におけるその正則開完備化とする。
+$M$ を集合論の十分な有限部分を満たす可算推移モデル、$\mathbb P\in M$ を分離的な強制半順序、$\mathbb B$ を $M$ におけるその正則開完備化とする。
 \end{assumption}
 
-$M^{\mathbb{B}}$ を $\mathbb{B}$ 値宇宙とし、論理式 $\varphi$ のブール値を $\|\varphi\|_{\mathbb{B}}\in\mathbb{B}$ と書く。
+$M^{\mathbb B}$ を $\mathbb B$ 値宇宙とし、論理式 $\varphi$ のブール値を $\|\varphi\|_{\mathbb B}\in\mathbb B$ と書く。
 
 \begin{definition}[強制関係]
-$p\in\mathbb{P}$ と強制言語の論理式 $\varphi$ に対して
-\[
- p\Vdash\varphi \quad\Longleftrightarrow\quad p\leq\|\varphi\|_{\mathbb{B}}
-\]
+$p\in\mathbb P$ と強制言語の論理式 $\varphi$ に対して
+\begin{equation}
+ p\Vdash\varphi
+ \quad\Longleftrightarrow\quad
+ p\leq\|\varphi\|_{\mathbb B}
+\end{equation}
 と定める。
 \end{definition}
 
 \begin{theorem}[定義可能性補題と真理補題]
-仮定 3.1 の下で、各論理式 $\varphi$ に対する関係 $p\Vdash\varphi$ は $M$ 内で再帰的に定義できる。さらに、$G\subseteq\mathbb{P}$ が $M$-ジェネリックならば
-\[
- M[G]\models\varphi(\tau_1^G,\dots,\tau_n^G) \quad\Longleftrightarrow\quad (\exists p\in G)\;p\Vdash\varphi(\tau_1,\dots,\tau_n)
-\]
+仮定3.2の下で、各論理式 $\varphi$ に対する関係 $p\Vdash\varphi$ は $M$ 内で再帰的に定義できる。さらに $G\subseteq\mathbb P$ が $M$-ジェネリックならば
+\begin{equation}
+ M[G]\models\varphi(\tau_1^G,\dots,\tau_n^G)
+ \quad\Longleftrightarrow\quad
+ (\exists p\in G)\;
+ p\Vdash\varphi(\tau_1,\dots,\tau_n)
+ \label{eq:truth-lemma}
+\end{equation}
 が成り立つ。
 \end{theorem}
 
-定理 3.3 は強制法の標準的な基本定理である \cite{cohen,bell,jech}。右辺は $M$ 内で扱えるが、ジェネリック・フィルター $G$ 自身は一般に $M$ の元ではない。この非対称性が、本論文における「外部を定義せずに指示する」という考えの厳密な原型である。
+この定理は強制法の標準的な基本定理である\cite{cohen,bell,jech}。強制関係は基底モデル側で扱えるが、$M$-ジェネリック・フィルター $G$ 自身は一般に $M$ の元ではない。この非対称性が「外部を内部対象として定義せず、その振る舞いを内部関係によって指示する」という構図の原型となる。
 
-\begin{definition}[強制法における外点]
-基底モデル $M$ の外部にある $M$-ジェネリック・フィルター $G$ を、強制法によって指示される外点 $\dfix$ の意味論的代表と呼び、
-\[
- \dfix_{\Forc}:=G
-\]
-と表す。この等式は $M$ の内部で対象 $G$ を定義するものではなく、メタ理論において外点 $\dfix$ の役割を $G$ に担わせるという意味論的な同定である。体系内部から利用できるのは $G$ 自体ではなく、定理 3.3 の強制関係 $p\Vdash\varphi$ を通じて記述される $\dfix_{\Forc}$ の条件付きの振る舞いである。
+\subsection{外点指示の意味論的代表}
+
+\begin{definition}[強制法における外点指示]
+メタ理論において選択した $M$-ジェネリック・フィルター $G$ を、強制法における外点指示の意味論的代表と呼び
+\begin{equation}
+ \sem{\dfix}_{(M,\mathbb P,G)}:=G
+ \label{eq:forcing-external-point}
+\end{equation}
+と記す。
 \end{definition}
 
-\begin{proposition}[相対的無矛盾性と算術的絶対性]
+式\eqref{eq:forcing-external-point}は、$M$ の内部で定数 $G$ を定義する等式ではない。また、すべての種類の外部がジェネリック・フィルターであるという分類定理でもない。これは、外部指示という役割を強制法のモデルでは $G$ に担わせるという意味論的規約である。内部から利用できるのは $G$ そのものではなく、式\eqref{eq:truth-lemma}を介して記述される条件付きの振る舞いである。
+
+\begin{proposition}[強制拡大の範囲]
 $M\models\ZFC$ かつ $G$ が $M$-ジェネリックならば、$M[G]\models\ZFC$ であり、$M$ と $M[G]$ は同じ順序数を持つ。さらに両者が標準的な $\omega$ を共有する限り、自然数構造だけを量化領域とする一階算術文の真理は一致する。
 \end{proposition}
 
 \begin{remark}
-命題 3.5 は、強制拡大が集合論の全命題について保存拡大であることを意味しない。新しい実数、すなわち $\omega$ の新しい部分集合が追加される場合があり、集合論的命題の真理値は変化し得る。
+この命題は、強制拡大が集合論の全命題について保存拡大であることを意味しない。新しい実数が追加される場合があり、連続体仮説など集合論的命題の真理値は変化し得る。
 \end{remark}
 
-\subsection{計算論的外点：操作の幾何学的診断}\label{sec:comp-ext}
+\section{抽象的四重残余束スキーマ}
 
-これまでの外点 $\dfix_{\Forc}$ は、集合論的強制法の文脈で定義された。しかし、外点の概念はこれに留まらない。本節では、外点を「値の定義」ではなく「演算の幾何学的到達点」として再解釈し、計算論的外点の診断機構を展開する。
+\subsection{本章の状態}
 
-\begin{definition}[指示的等式]
-対象 $X$ 上の項（あるいは操作の適用）$t$ に対し、
-\[
- t\leadsto\dfix
-\]
-は、$t$ の生成する操作の残余束が外点領域に到達したことを意味する\textbf{指示的等式}である。これは $t$ が値 $\dfix$ を「持つ」という定義的等式ではなく、$t$ が外点を\textbf{指示した}という幾何学的診断である。
-\end{definition}
+本章は、QRBが任意の論理体系から自動的に得られると主張するものではない。安定圏、四比較、自然変換および支持理論が追加データとして与えられた場合に成立する\textbf{条件付き抽象理論}を定式化する。具体的な論理体系に対してこれらのデータを構成する問題は第5節へ分離する。
 
-\begin{definition}[操作の残余束]
-対象 $X$ 上の二項操作 $\mu:X\times X\to X$（部分射として解釈される）と特異入力 $\delta\in X$ に対し、\textbf{操作の残余束} $\mathrm{ORB}_\mu(\delta)$ を
-\[
- \mathrm{ORB}_\mu(\delta):=\bigoplus_{i\in\{S,N,SN,NS\}}\Res_i(\mu(-,\delta))
-\]
-と定める。ここで $\mu(-,\delta):X\to X$ は部分射と見なし、各 $\Res_i$ は \S 4 で定義する四つの残余対象である。
-\end{definition}
+\subsection{QRBデータ}
 
-\begin{example}[$1/0\leadsto\dfix$ の四重診断]
-除算 $\mu(a,b)=a/b$ の特異入力 $\delta=0$ における操作の残余束 $\mathrm{ORB}_{/}(0)$ は、以下の四重崩壊を示す。
-
+\begin{definition}[抽象QRBデータ]
+対象 $X$ に対する抽象QRBデータとは、次の組である。
 \begin{enumerate}
- \item[$M_S$（同一性）:] $a/b=c\Longleftrightarrow a=b\cdot c$ であるが、$1=0\cdot c$ はどの $c$ でも満たされない。同一性の回復が不可能であり、比較写像 $\eta_S$ は非同型となる。
- \item[$M_N$（二重否定）:] $1/0$ が「無限大」と仮定しても、$0\cdot\infty$ は直観主義的に確定しない。二重否定層化 $a_{\neg\neg}$ による還元が破綻し、$\eta_N$ は非同型となる。
- \item[$M_{SN}$（随伴）:] 乗法と除法の随伴関係において、$0$ は単位元ではなく吸収元である。随伴の単位射 $X\to UFX$ が非可逆となり、$\eta_{SN}$ は非同型となる。
- \item[$M_{NS}$（自己参照）:] $x=1/0$ とおくと $x=1/(1/x)$ となり、自己言及的ループに陥る。対角化の意味論的実現が崩壊し、$\eta_{NS}$ は非同型となる。
+ \item 冪等完備な安定テンソル三角圏 $\mathcal C$ とコンパクト対象 $X\in\mathcal C^c$。
+ \item 添字集合 $I=\{S,N,SN,NS\}$ で添字付けられた完全自己関手
+ \begin{equation}
+  M_i:\mathcal C\longrightarrow\mathcal C
+ \end{equation}
+ と自然変換 $\eta_i:\Id_{\mathcal C}\Rightarrow M_i$。
+ \item 各 $M_i$ がコンパクト対象を保つという条件。
+ \item $\Spc(\mathcal C^c)$ 上のBalmer台と、使用する局所化との標準的適合条件。
 \end{enumerate}
+\end{definition}
 
-したがって $1/0\leadsto\dfix$ とは、「除算操作の残余が四重に非ゼロになり、外点領域に到達した」という幾何学的診断である。
-\end{example}
-
-\begin{proposition}[四重崩壊の同時性]
-操作 $\mu$ の特異入力 $\delta$ において、四つの局所化比較写像 $\eta_i(\mu(-,\delta))_{\mathfrak{p}}$ が同時に非同型となるとき、$\delta$ は外点領域 $\mathcal{O}_X$ の点を指示する。
-\end{proposition}
-
-この命題は、\S 4 の定理 4.5（交差点の判定）の操作的応用である。$1/0\leadsto\dfix$ は、値の定義ではなく、操作が外点を指示したことを記録する式なのである。
-
-\section{四重残余束の構成}
-
-\subsection{残余対象}
-
-QRBを文字通りの位相的ベクトル束と仮定するのではなく、まず余ファイバーを持つ圏で残余を定義する。
-
-\begin{assumption}
-$\mathcal{C}$ を冪等完備な安定テンソル三角圏とし、$X\in\mathcal{C}^c$ を体系 $T$ の意味論的状態を表すコンパクト対象とする。各 $i\in\{S,N,SN,NS\}$ に対し、完全自己関手 $M_i:\mathcal{C}\to\mathcal{C}$ と自然変換 $\eta_i:\Id_{\mathcal{C}}\Rightarrow M_i$ が与えられ、$M_i$ はコンパクト対象を保つとする。
-\end{assumption}
+ここで $S,N,SN,NS$ という名前は、同一性比較、二重否定比較、随伴単位比較、自己参照比較という意図を記録する。しかし名称だけでは関手を定めない。各応用で $M_i$ と $\eta_i$ を実際に構成しなければならない。
 
 \begin{definition}[四つの残余]
-各操作の残余対象を完全三角
-\[
- X\xrightarrow{\eta_i(X)}M_i X\longrightarrow\Res_i(X)\longrightarrow\Sigma X
-\]
-によって定まる余ファイバー
-\[
- \Res_i(X)=\cofib(\eta_i(X))
-\]
-と定義する。
+抽象QRBデータの下で
+\begin{equation}
+ \Res_i(X)
+ :=\cofib\bigl(\eta_i(X):X\to M_iX\bigr)
+ \label{eq:qrb-residual}
+\end{equation}
+と定める。すなわち完全三角
+\begin{equation}
+ X\xrightarrow{\eta_i(X)}M_iX
+ \longrightarrow\Res_i(X)
+ \longrightarrow\Sigma X
+\end{equation}
+を取る。
 \end{definition}
 
-想定する四操作は次の通りである。
+\begin{definition}[四重残余対象]
+対象 $X$ の四重残余対象を
+\begin{equation}
+ \QRB(X)
+ :=
+ \Res_S(X)\oplus
+ \Res_N(X)\oplus
+ \Res_{SN}(X)\oplus
+ \Res_{NS}(X)
+\end{equation}
+と定める。「束」という名称は四残余を束ねることを表し、局所自明なベクトル束を意味しない。
+\end{definition}
+
+\subsection{台と外点候補領域}
+
+\begin{definition}[外点候補領域]
+四残余の台の共通部分
+\begin{equation}
+ \mathcal O_X
+ :=
+ \bigcap_{i\in I}
+ \supp\bigl(\Res_i(X)\bigr)
+ \subseteq\Spc(\mathcal C^c)
+ \label{eq:qrb-locus}
+\end{equation}
+をQRB外点候補領域と呼ぶ\cite{balmer}。
+\end{definition}
+
+$\mathcal O_X$ は選択された外点そのものではない。また、その非空性は定義から従わない。非空性を示すには、一つの素点で四残余が同時に非零となる具体例が必要である。
+
+\begin{theorem}[共通台の条件付き判定]
+抽象QRBデータと台・局所化の適合条件の下で、素点
+\begin{equation}
+ \mathfrak p\in\Spc(\mathcal C^c)
+\end{equation}
+について次は同値である。
 \begin{enumerate}
- \item $M_S$：同一性を外延的等号へ截断する比較操作。単なる恒等関手を選べば残余はゼロになるため、非自明な比較写像を明示する必要がある。
- \item $M_N$：二重否定層化。残余 $\Res_N(X)$ は $X\to a_{\neg\neg}X$ が同型でない度合いを表す。
- \item $M_{SN}$：随伴 $F\dashv U$ から生じるモナド $UF$。残余は単位 $X\to UFX$ の非可逆性を表す。
- \item $M_{NS}$：構文の対角化を意味論側に実現する自己参照比較操作。この実現の存在は追加構造であり、対角線補題だけから自動的には得られない。
+ \item $\mathfrak p\in\mathcal O_X$。
+ \item すべての $i\in I$ について局所化された比較写像
+ \begin{equation}
+  \eta_i(X)_{\mathfrak p}:
+  X_{\mathfrak p}\longrightarrow(M_iX)_{\mathfrak p}
+ \end{equation}
+ が同型でない。
 \end{enumerate}
-
-\begin{definition}[四重残余束]
-対象 $X$ における四重残余束を
-\[
- \QRB(X)=\Res_S(X)\oplus\Res_N(X)\oplus\Res_{SN}(X)\oplus\Res_{NS}(X)
-\]
-と定義する。
-\end{definition}
-
-\subsection{台と外点領域}
-
-$\mathcal{C}^c$ を $\mathcal{C}$ のコンパクト対象の部分圏とし、Balmer スペクトル $\Spc(\mathcal{C}^c)$ 上の台を $\supp(-)$ と書く \cite{balmer}。
-
-\begin{definition}[外点領域]
-四つの残余が同時に非自明となる領域を
-\[
- \mathcal{O}_X=\bigcap_{i\in\{S,N,SN,NS\}}\supp\bigl(\Res_i(X)\bigr)\subseteq\Spc(\mathcal{C}^c)
-\]
-と定義する。$\mathcal{O}_X\neq\varnothing$ のとき、その点を QRB の外点候補と呼ぶ。
-\end{definition}
-
-ここで $\mathcal{O}_X$ は外点 $\dfix$ そのものではなく、四つの残余が同時に検出される外点候補の領域である。したがって、強制法における代表 $\dfix_{\Forc}=G$ と対応させるべき対象は領域全体 $\mathcal{O}_X$ ではなく、その内部の特定の点である。また、$\dfix$ は $\mathcal{O}_X$ の元（点）であり、$\mathcal{O}_X$ はその候補領域である。
-
-\begin{theorem}[交差点の判定]
-仮定 4.1 の下で、素点 $\mathfrak{p}\in\Spc(\mathcal{C}^c)$ が $\mathcal{O}_X$ に属することと、すべての $i$ について局所化された比較写像
-\[
- \eta_i(X)_{\mathfrak{p}}:X_{\mathfrak{p}}\longrightarrow(M_i X)_{\mathfrak{p}}
-\]
-が同型でないことは同値である。
 \end{theorem}
 
 \begin{proof}
-安定圏では射が同型であることとその余ファイバーがゼロ対象であることが同値である。また、$\mathfrak{p}\notin\supp(Y)$ であることは局所化 $Y_{\mathfrak{p}}$ がゼロであることと同値である。これを四つの余ファイバーへ適用すればよい。
+安定圏では、射が同型であることとその余ファイバーが零対象であることが同値である。局所化の完全性により
+\begin{equation}
+ \Res_i(X)_{\mathfrak p}
+ \simeq
+ \cofib\bigl(\eta_i(X)_{\mathfrak p}\bigr)
+\end{equation}
+となる。台・局所化の適合条件から
+\begin{equation}
+ \mathfrak p\notin\supp(\Res_i(X))
+ \quad\Longleftrightarrow\quad
+ \Res_i(X)_{\mathfrak p}\simeq0
+\end{equation}
+である。これを四つの $i$ について適用すればよい。
 \end{proof}
 
-定理 4.5 により、外点領域は比喩ではなく、四つの比較写像が同時に可逆性を失う素点の集合として特徴づけられる。ただし、その非空性は一般には保証されず、具体的な圏と四操作ごとに証明されなければならない。
+この定理は抽象QRBデータから従う条件付き定理である。一方、四関手の意味論的妥当性、$\mathcal O_X$ の非空性、外点の選択は定理の外にある。
 
-\subsection{根源的単位元}
+\section{QRBの具体的実現に関する研究課題}
 
-外点 $\dfix$ は、四つの比較写像の可逆性が同時に崩壊する点であるが、その意味はより根源的である。$\dfix$ は、恒等関手（単位元）や随伴の単位射が成立するために必要な「非自明な差異」を内包した地点であり、真理保存性（命題 3.5）が通過する\textbf{前}に位置する。
+\subsection{四比較の構成問題}
 
-\begin{definition}[根源的単位元]
-対象 $X$ において、四つの局所化比較写像 $\eta_i(X)_{\mathfrak{p}}$ が同時に非同型となる外点 $\mathfrak{p}\in\mathcal{O}_X$ を、$X$ の\textbf{根源的単位元}（primal unit）と呼ぶ。このとき、恒等関手、二重否定層化、随伴単位、自己参照対角化のいずれもが、$\mathfrak{p}$ において「単位」としての機能を喪失し、残余のみが露出する。
+四比較の想定される役割は次の通りである。
+\begin{enumerate}
+ \item $M_S$：対象の内包的同一性を指定された外延的比較へ送る関手。
+ \item $M_N$：二重否定層化またはその安定圏実現。
+ \item $M_{SN}$：随伴 $F\dashv U$ から生じるモナド $UF$ とその単位。
+ \item $M_{NS}$：構文的対角化を意味論側へ送る自己参照比較。
+\end{enumerate}
+
+この一覧は定義ではなく設計仕様である。特に、トポス上の層化と安定テンソル三角圏上の完全関手を結ぶ実現、構文的対角化から意味論的自己関手を作る翻訳は未構成である。
+
+\begin{conjecture}[非自明QRB実現]
+自然な論理的または計算的意味論から抽象QRBデータ
+\begin{equation}
+ (\mathcal C,X,(M_i,\eta_i)_{i\in I})
+\end{equation}
+を構成でき、かつ
+\begin{equation}
+ \mathcal O_X\neq\varnothing
+\end{equation}
+となる具体例が存在する。
+\end{conjecture}
+
+\subsection{強制法とQRBの比較予想}
+
+ジェネリック・フィルター $G$ とQRB点 $\xi$ は異なる型の対象である。前者は固定した強制文脈 $(M,\mathbb P)$ に相対的なフィルターであり、後者はテンソル三角スペクトルの点である。本稿は両者を等号で同一視せず、関係によって比較する。
+
+\begin{definition}[強制文脈の外点代表集合]
+メタ理論において
+\begin{equation}
+ \Ext_{M,\mathbb P}
+ :=
+ \{G\subseteq\mathbb P
+ \mid G\text{ は }M\text{-ジェネリック}\}
+ \label{eq:forcing-external-representatives}
+\end{equation}
+と置く。これは固定した $(M,\mathbb P)$ に相対的な意味論的代表の集合であり、絶対的な「外点全体」を意味しない。
 \end{definition}
 
-\begin{remark}
-根源的単位元 $\dfix$ は、$M$ の内部真理の網（ブール値 $\|\varphi\|_{\mathbb{B}}$ の評価体系）を通過するのではなく、その網が張られる以前の層に位置する。命題 3.5 の真理保存性は、あくまで $\dfix$ が既に「飛び出した後」に後から確認される帰結に過ぎない。したがって $\dfix$ は、単なる外部の対象ではなく、あらゆる単位的・同一性的構造が成立するために必要な、しかしそれ自身はいかなる単位性にも還元されない根源である。
-\end{remark}
+\begin{conjecture}[強制法--QRB指示インターフェイス]
+次のデータが構成できる。
+\begin{enumerate}
+ \item 有限交叉と任意結合を保存する観測写像
+ \begin{equation}
+  \Theta_X:\mathbb B
+  \longrightarrow
+  \Open\bigl(\Spc(\mathcal C^c)\bigr)。
+  \label{eq:theta}
+ \end{equation}
+ \item 指示関係
+ \begin{equation}
+  \Ind_X
+  \subseteq
+  \Ext_{M,\mathbb P}
+  \times\Spc(\mathcal C^c)
+  \label{eq:indication-relation}
+ \end{equation}
+ であって、$\Ind_X(G,\xi)$ ならば
+ \begin{equation}
+  \xi\in\mathcal O_X
+  \label{eq:indication-in-locus}
+ \end{equation}
+ および、すべての $b\in\mathbb B$ について
+ \begin{equation}
+  b\in G
+  \quad\Longleftrightarrow\quad
+  \xi\in\Theta_X(b)
+  \label{eq:generic-point-comparison}
+ \end{equation}
+ を満たすもの。
+\end{enumerate}
+\end{conjecture}
 
-\section{強制法と QRB を結ぶ比較原理}
+写像 $\Ext_{M,\mathbb P}\to\Spc(\mathcal C^c)$ ではなく関係を用いることで、一つの $G$ が複数のQRB表現を持つ可能性と、QRB表現をまったく持たない可能性の両方を許す。
 
-ジェネリック・フィルター $G$ と $\mathcal{O}_X$ は、ここまでの定義だけでは異なる種類の対象である。前者は強制半順序上のフィルターであり、後者はテンソル三角スペクトルの部分集合である。両者を同一視するには比較写像が必要となる。
-
-\begin{assumption}[指示写像]
-順序を保つ写像
-\[
- \Theta:\mathbb{B}\longrightarrow\Open\bigl(\Spc(\mathcal{C}^c)\bigr)
-\]
-が存在し、有限交叉と任意結合を保存するとする。さらに、点 $\xi_G\in\mathcal{O}_X$ が存在し、各 $p\in\mathbb{P}$ に対して $p\in G$ と $\xi_G\in\Theta(p)$ が同値であるとする。
-\end{assumption}
-
-\begin{definition}[QRB における外点]
-仮定 5.1 を満たす点 $\xi_G\in\mathcal{O}_X$ を、QRB によって表現された外点と呼び、
-\[
- \dfix_{\QRB}:=\xi_G
-\]
-と定める。このとき外点の二つの表現の関係を
-\[
- \dfix \;\longleftrightarrow\; \dfix_{\Forc}=G \;\longleftrightarrow\; \dfix_{\QRB}=\xi_G\in\mathcal{O}_X
-\]
-と記す。右側の対応は仮定 5.1 に依存し、$G$ と $\xi_G$ が同一の集合論的対象であることではなく、条件 $p$ の所属と開集合 $\Theta(p)$ への所属が一致するという指示構造の同値を意味する。
+\begin{definition}[QRB可視性と表現ファイバー]
+$G\in\Ext_{M,\mathbb P}$ に対し
+\begin{equation}
+ \QRBVis_X(G)
+ :\Longleftrightarrow
+ \exists\xi\in\Spc(\mathcal C^c)\;
+ \Ind_X(G,\xi)
+ \label{eq:qrb-visibility}
+\end{equation}
+と定める。また
+\begin{equation}
+ \Rep_X(G)
+ :=
+ \{\xi\in\mathcal O_X
+ \mid\Ind_X(G,\xi)\}
+ \label{eq:qrb-representation-fiber}
+\end{equation}
+を $G$ のQRB表現ファイバーと呼ぶ。
 \end{definition}
 
-\begin{proposition}[条件付き指示原理]
-仮定 5.1 の下で、$p\Vdash\varphi$ ならば
-\[
- \mathcal{O}_X\cap\Theta(p)\subseteq\mathcal{O}_X\cap\Theta(\|\varphi\|_{\mathbb{B}})
-\]
-が成り立つ。したがって、QRB 外点領域上でも強制関係と整合する包含関係によって $\varphi$ を指示できる。
+$\Rep_X(G)$ が非空で $\xi\in\Rep_X(G)$ を選んだ場合、外点指示の二つの型付き表現を
+\begin{equation}
+ \sem{\dfix}_{(M,\mathbb P,G)}=G
+ \quad\rightsquigarrow_{\Ind_X}\quad
+ \xi\in\mathcal O_X
+ \label{eq:typed-external-indication}
+\end{equation}
+と記す。右辺を $\dfix_{\QRB}$ と定義して左辺と等置することはしない。QRBは既存の代表 $G$ に幾何学的注釈を与えるだけである。
+
+\begin{proposition}[関係的指示原理]
+予想5.3のデータが与えられ、$\Ind_X(G,\xi)$ とする。$p\in G$ かつ $p\Vdash\varphi$ ならば
+\begin{equation}
+ \xi\in
+ \Theta_X(\|\varphi\|_{\mathbb B})
+ \label{eq:relational-indication-principle}
+\end{equation}
+が成り立つ。
 \end{proposition}
 
 \begin{proof}
-$p\Vdash\varphi$ の定義から $p\leq\|\varphi\|_{\mathbb{B}}$ である。$\Theta$ の単調性により $\Theta(p)\subseteq\Theta(\|\varphi\|_{\mathbb{B}})$ を得る。両辺と $\mathcal{O}_X$ の交わりを取れば結論が従う。
+$\Ind_X(G,\xi)$ と $p\in G$ から、式\eqref{eq:generic-point-comparison}により $\xi\in\Theta_X(p)$ である。また $p\Vdash\varphi$ から
+\begin{equation}
+ p\leq\|\varphi\|_{\mathbb B}
+\end{equation}
+である。$\Theta_X$ の単調性により
+\begin{equation}
+ \Theta_X(p)
+ \subseteq
+ \Theta_X(\|\varphi\|_{\mathbb B})
+\end{equation}
+なので結論を得る。
 \end{proof}
 
-命題 5.3 が与えるのは、ジェネリック・フィルターと QRB の完全な同型ではなく、両者の指示構造が整合するための十分条件である。すなわち、体系内部から強制関係によって指示される外点 $\dfix_{\Forc}$ の振る舞いが、QRB 側では点 $\dfix_{\QRB}$ の開近傍への所属関係として再表現される。具体例を構成するには、$\mathbb{B}$、$\mathcal{C}$、四関手、および $\Theta$ を同時に指定し、仮定 5.1 を検証する必要がある。
+\begin{proposition}[QRB補助からの独立性]
+予想5.3の指示インターフェイスが存在しない場合、または $\mathcal O_X=\varnothing$ の場合でも、第3節の強制関係、真理補題、強制拡大および $\sem{\dfix}_{(M,\mathbb P,G)}:=G$ という意味論的規約は変更されない。
+\end{proposition}
+
+\begin{proof}
+第3節の各定義と定理は $(M,\mathbb P,\mathbb B,G)$ のみによって記述され、$\mathcal C$、$\mathcal O_X$、$\Theta_X$ および $\Ind_X$ を参照しない。従ってQRBインターフェイスの不存在は強制法側の導出に影響しない。
+\end{proof}
+
+この独立性により、QRBは外点を生成または定義する理論ではなく、既存の外点指示が四重残余の幾何学上で可視化できるかを検査する任意的な補助層となる。これは形式的な保守拡大定理ではなく、強制法的基礎層がQRBデータを参照しないことの確認である。
+
+\subsection{基礎構造への非干渉性と観測的解釈}
+
+「QRBが基礎体系へ影響を与えない」という主張を明確にするため、本稿では次の三水準を区別する。
+\begin{enumerate}
+ \item \textbf{基礎数学の水準：} 基底モデル $M$、強制関係、真理補題、および選択された圏 $\mathcal C$ と比較写像は、各々の定義に従う数学的構造である。
+ \item \textbf{QRB診断の水準：} $\Res_i(X)\neq0$、$\mathfrak p\in\mathcal O_X$、比較写像の非同型性は、抽象QRBデータが与えられた周囲のメタ理論における数学的事実である。
+ \item \textbf{観測的解釈の水準：} それらの事実を「外部依存の痕跡」「外点の可視化」または「根源的単位元」と読むことは、本稿が付加する解釈である。
+\end{enumerate}
+
+従って、数学的診断とその観測的読解の関係は
+\begin{equation}
+ \underbrace{\Res_i(X)\neq0}_{\text{数学的事実}}
+ \quad\Longrightarrow\quad
+ \underbrace{\eta_i(X)\text{ の非可逆性}}_{\text{数学的診断}}
+ \quad\rightsquigarrow\quad
+ \underbrace{\text{外部の痕跡としての読解}}_{\text{観測的解釈}}
+ \label{eq:three-level-diagnosis}
+\end{equation}
+と整理される。最後の矢印は数学的含意ではなく、意味論的な指示または読解を表す。
+
+\begin{remark}[非干渉性の射程]
+QRB注釈は、基底モデル $M$ の要素、強制関係 $p\Vdash\varphi$、または既に成立している基礎判断を書き換えない。この意味でQRBは基礎構造に対して逆作用を持たない。他方、$\Res_i(X)$ と $\mathcal O_X$ は、QRBデータを含む周囲の数学的理論では真正な対象であり、単なる観測者の心理状態ではない。また、強制拡大 $M[G]$ は一般に $M$ と同一ではなく、新しい集合を含み得るため、非干渉性を「強制拡大によって何も変化しない」という主張と混同しない。
+\end{remark}
+
+この分離によって、「数学自体が外部を知る」「QRBが外点を生成する」といった実体化を避けながら、四残余と共通台の数学的内容を保持できる。観測者に相対的なのは残余の存在ではなく、残余を外点指示の痕跡として読む段階である。
+
+\section{計算論的外点：条件付き診断例}
+
+\subsection{本章の状態}
+
+本章は計算操作のQRB実現に関する研究方向を提示する。操作障害または外部依存は、QRBとは独立な部分演算意味論によって先に与えられるものとする。QRBはその障害を生成せず、四重残余の点によって幾何学的に注釈できるかを検査する。部分演算が未定義となることと、四比較が同一の素点で同時に非可逆となることは別の条件である。
+
+\subsection{操作のQRB実現}
+
+\begin{assumption}[操作実現データ]
+部分演算 $\mu$ と特異入力 $\delta$ に対し、次が与えられているとする。
+\begin{enumerate}
+ \item QRBとは独立な操作意味論における外部障害証拠の集合
+ \begin{equation}
+  \Ext^{\mathrm{op}}_{\mu,\delta}
+ \end{equation}
+ と、基礎指示判断
+ \begin{equation}
+  \mu(-,\delta)\rightsquigarrow_0 e,
+  \qquad
+  e\in\Ext^{\mathrm{op}}_{\mu,\delta}.
+  \label{eq:base-operation-indication}
+ \end{equation}
+ \item 操作状態を表すコンパクト対象 $X_{\mu,\delta}\in\mathcal C^c$ と、その抽象QRBデータ。
+ \item 操作障害証拠とQRB点を結ぶ関係
+ \begin{equation}
+  \Ind^{\mathrm{op}}_{\mu,\delta}
+  \subseteq
+  \Ext^{\mathrm{op}}_{\mu,\delta}
+  \times\Spc(\mathcal C^c),
+  \label{eq:operation-indication-relation}
+ \end{equation}
+ ただし $\Ind^{\mathrm{op}}_{\mu,\delta}(e,\mathfrak p)$ なら
+ \begin{equation}
+  \mathfrak p\in\mathcal O_{X_{\mu,\delta}}
+ \end{equation}
+ であり、$e$ が四比較の局所的非可逆性を健全に説明するもの。
+\end{enumerate}
+\end{assumption}
+
+\begin{definition}[QRB付き操作指示]
+基礎指示判断\eqref{eq:base-operation-indication}が成立し、さらに
+\begin{equation}
+ \Ind^{\mathrm{op}}_{\mu,\delta}(e,\mathfrak p)
+\end{equation}
+である場合
+\begin{equation}
+ \mu(-,\delta)
+ \rightsquigarrow_0 e
+ \;[\mathfrak p:\QRB]
+ \label{eq:conditional-operation-indication}
+\end{equation}
+と記す。$e$ はQRBとは独立に与えられた障害証拠であり、$[\mathfrak p:\QRB]$ はその幾何学的注釈である。従ってQRB注釈を消去すれば基礎指示判断へ戻る。
+\end{definition}
+
+\begin{proposition}[操作指示のQRB消去]
+式\eqref{eq:conditional-operation-indication}が形成できるならば
+\begin{equation}
+ \mu(-,\delta)\rightsquigarrow_0 e
+\end{equation}
+が成立する。逆に、基礎指示判断だけからQRB注釈の存在は従わない。
+\end{proposition}
+
+\begin{proof}
+前半はQRB付き操作指示の定義から注釈を忘却すればよい。後半では $\Ind^{\mathrm{op}}_{\mu,\delta}(e,\mathfrak p)$ を満たす点 $\mathfrak p$ の存在が追加条件である。
+\end{proof}
+
+\subsection{除算零の診断候補}
+
+除算 $\mu(a,b)=a/b$ と $\delta=0$ を考える。通常の体では $1/0$ は未定義であり、選択した部分演算意味論において未定義性の証拠 $e_{/}$ を構成できるなら
+\begin{equation}
+ 1/0\rightsquigarrow_0 e_{/}
+ \label{eq:division-base-indication}
+\end{equation}
+と記録できる。この基礎指示はQRBを必要としない。しかし、この事実だけでQRB四重崩壊は証明されない。QRB注釈へ進むには少なくとも次を構成する必要がある。
+
+\begin{enumerate}
+ \item \textbf{同一性比較：} 方程式 $1=0\cdot c$ の解不存在を、安定圏上の比較写像 $\eta_S$ の非可逆性へ送る実現。
+ \item \textbf{二重否定比較：} 除算の部分性を含む論理トポスと、その二重否定層化を安定圏へ送る実現。
+ \item \textbf{随伴比較：} 乗法と除法の適切な部分随伴またはrestriction構造と、その単位の非可逆性。
+ \item \textbf{自己参照比較：} 形式的な再帰式と意味論的対角化を結ぶ自己関手 $M_{NS}$。
+ \item \textbf{同時性：} 上の四残余が同一の素点 $\mathfrak p$ で非零となること。
+\end{enumerate}
+
+\begin{conjecture}[除算零のQRB可視性]
+除算の部分性を忠実に表す操作実現データが存在し、ある素点 $\mathfrak p$ について
+\begin{equation}
+ \Ind^{\mathrm{op}}_{/,0}(e_{/},\mathfrak p)
+\end{equation}
+が成り立つ。このとき基礎指示\eqref{eq:division-base-indication}を
+\begin{equation}
+ 1/0\rightsquigarrow_0 e_{/}
+ \;[\mathfrak p:\QRB]
+\end{equation}
+と幾何学的に注釈できる。
+\end{conjecture}
+
+この予想は $1/0$ に新しい値も新しい外点証拠も与えない。QRBの役割は、既に構成された未定義性証拠 $e_{/}$ が四重残余の幾何学上で可視化できるかを検査することである。部分性モナド、restriction category、wheel algebraなどの既存の部分演算処理と比較し、QRB注釈が追加的に何を区別するかを示す必要がある。
+
+\section{解釈的展望：根源的単位元}
+
+四つの比較単位が同時に可逆性を失う点では、通常の同一性、閉包、随伴および自己参照の各構造が、対象を元の形へ回収できない。比較写像の非同型性と共通台への所属は数学的事実であるが、この状況を「あらゆる単位構造以前の差異が露出する」と読むことは観測的・哲学的解釈である。
+
+\begin{conjecture}[根源的単位元という解釈]
+選択された点 $\mathfrak p\in\mathcal O_X$ を、数学的な単位対象そのものではなく、単位的比較が成立しないことを記録する\textbf{根源的単位元}（primal unit）の指示点として解釈できる。
+\end{conjecture}
+
+この名称は現段階では解釈的である。$\mathfrak p$ がモノイド単位、圏の恒等射、終対象などの普遍性を満たすとは主張しない。「根源的単位元」は、観測者が単位的比較の同時非可逆性に与える認識マーカーであり、数学的概念へ昇格させるには、適切な普遍性または初期性を別途定義しなければならない。
+
+また「真理の網が張られる以前」という表現は、論理的または哲学的な読みであり、強制拡大の時間的順序を述べるものではない。強制法上の外点指示とQRB上の比較崩壊を接続するには、依然として予想5.3の指示インターフェイスが必要である。
+
+\section{検証状態と構築計画}
+
+\begin{center}
+\begin{tabular}{p{0.34\textwidth} p{0.22\textwidth} p{0.32\textwidth}}
+\toprule
+項目 & 状態 & 根拠または追加条件 \\
+\midrule
+強制関係の定義可能性 & 既存定理 & 強制法の基本定理 \\
+強制法の真理補題 & 既存定理 & 式\eqref{eq:truth-lemma} \\
+$G$ による外点指示 & 意味論的定義 & メタ理論上の代表選択 \\
+抽象QRB残余 & 条件付き定義 & 四関手と自然変換 \\
+共通台の判定 & 条件付き定理 & 台・局所化の適合性 \\
+非空なQRB具体例 & 未構成 & 四残余の同時非零性 \\
+強制法--QRB指示関係 & 予想 & $\Theta_X$ と $\Ind_X$ \\
+QRB補助からの独立性 & 条件付き命題 & 強制法側がQRBを参照しない \\
+基礎構造への非干渉性 & 解釈原則 & 数学的診断と観測的読解を分離 \\
+$1/0$ のQRB注釈 & 予想 & 基礎障害証拠と $\Ind^{\mathrm{op}}_{/,0}$ \\
+根源的単位元 & 解釈仮説 & 普遍性は未定義 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+構築計画は次の順序が適切である。
+\begin{enumerate}
+ \item 一つの具体的な安定圏と対象 $X$ を選ぶ。
+ \item 四つの自己関手 $M_i$ と比較写像 $\eta_i$ を構成する。
+ \item 各残余のBalmer台を計算し、$\mathcal O_X\neq\varnothing$ を示す。
+ \item 強制代数から開集合への観測写像 $\Theta_X$ と、外点代表をQRB点へ関係づける $\Ind_X$ を構成する。
+ \item 部分演算または証明探索が独立に生成する障害証拠とQRB点を結ぶ指示関係を構成する。
+\end{enumerate}
+
+第一から第三段階だけでも非自明なQRB具体例となる。第四段階が成立して初めて強制法との比較が定理化され、第五段階が成立して初めて $1/0$ などの計算診断が抽象スキーマの具体例となる。
 
 \section{結論}
 
-本論文は、言語の外点を三つの水準に分けて定式化した。強制法の水準では、基底モデルに属さないジェネリック・フィルターを $\dfix_{\Forc}=G$ として、内部で定義可能な強制関係によって間接的に指示できる。圏論的水準では、四つの比較操作の余ファイバーを QRB として束ね、その台の共通部分を外点候補領域 $\mathcal{O}_X$ とし、指示写像が存在する場合には $\dfix_{\QRB}=\xi_G\in\mathcal{O}_X$ と定めた。そして計算論的水準では、外点を「値の定義」ではなく「演算の幾何学的到達点」として再解釈し、$1/0\leadsto\dfix$ を典例として、操作の四重崩壊が外点領域に到達したことを診断する機構を展開した。
+本稿は、言語の外点に関する構成を、強制法による指示、抽象QRBスキーマ、具体的実現予想の三段階へ分離した。
 
-さらに、外点 $\dfix$ が真理保存性を通過する前に位置する「根源的単位元」であることを示唆した。$\dfix$ は、恒等関手や随伴の単位射が生成される前の、あらゆる単位的構造の成立条件そのものを体現する。これは到達不能性を単なる未定義性ではなく、複数の比較写像が同時に同値でなくなる幾何学的障害として研究するための、新しい形式的枠組みを与える。
+強制法の段階では、定義可能性補題と真理補題という標準定理に基づき、基底モデルに属さないジェネリック・フィルター $G$ の振る舞いを内部の強制関係によって記述できる。$\sem{\dfix}_{(M,\mathbb P,G)}:=G$ はこの非対称性を外点指示として読む意味論的規約であり、$G$ を基底モデル内部に定義するものではない。
 
-この分離によって、標準的な強制定理、圏論から従う交差点判定、そして今後構成すべき指示写像を区別できる。今後の主要課題は、具体的な論理トポスまたは安定圏において $\mathcal{O}_X\neq\varnothing$ を示し、強制代数から台の開集合への写像 $\Theta$ を構成することである。その達成によって初めて、ジェネリックな外部と四重残余の特異領域との対応が、比喩ではなく具体的な数学的定理となる。さらに、計算論的外点の診断機構を、より広範な操作的意味論（部分性モナド、車輪代数、制限圏）へと接続することも、今後の展望である。
+QRBの段階では、安定圏、四比較および支持理論が与えられた場合に、余ファイバーと共通台を用いる条件付き抽象理論を定式化した。共通台の判定定理はこのデータから従うが、四比較の具体的意味論、共通台の非空性および外点選択は追加構成を必要とする。
+
+強制法とQRBを結ぶ指示関係、除算零のQRB注釈、根源的単位元の普遍的特徴づけは今後の研究課題である。QRBは外点代表や操作障害を生成せず、既存の指示に幾何学的可視性を追加する。従ってQRB表現が存在しなくても強制法的解釈 $\sem{\dfix}_{(M,\mathbb P,G)}$ は変更されず、除算零の基礎的な未定義性判断も変更されない。
+
+本稿でいう基礎構造への非干渉性とは、QRB注釈が $M$、強制関係または基礎判断へ逆作用しないことを意味する。これは残余対象や共通台を観測者の心理的記録へ還元する主張ではない。$\Res_i(X)\neq0$ と $\mathfrak p\in\mathcal O_X$ は周囲のメタ理論における数学的事実であり、それらを外部の痕跡として読む段階だけが観測的解釈に属する。
+
+この階層化によって、既存数学から従う部分、著者が導入する意味論的規約、追加データの下で成立する定理、今後構成すべき比較写像を区別できる。QRB研究の次の目標は、抽象語彙をさらに増やすことではなく、四残余の共通台が実際に非空となる一つの完全な具体例を構成し、その数学的診断と外点指示としての読解を明示的に接続することである。
 
 \bibliographystyle{plain}
-\bibliography{../ref}
+\bibliography{ref}
 
 \end{document}

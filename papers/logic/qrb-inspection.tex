@@ -1,0 +1,504 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{conjecture}[definition]{予想}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{example}[definition]{例}
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{corollary}[definition]{系}
+
+\newcommand{\QRB}{\mathrm{QRB}}
+\newcommand{\OHTT}{\mathrm{OHTT}}
+\newcommand{\EPMDTT}{\mathrm{EPMDTT}}
+\newcommand{\Diff}{\mathbf{Diff}}
+\newcommand{\Ind}{\operatorname{Ind}}
+\newcommand{\DObs}{\operatorname{DObs}}
+\newcommand{\Unit}{\mathbf 1}
+\newcommand{\Meta}{\mathsf{Meta}}
+\newcommand{\Gap}{\operatorname{Gap}}
+\newcommand{\Coh}{\operatorname{Coh}}
+\newcommand{\Res}{\operatorname{Res}}
+\newcommand{\cofib}{\operatorname{cofib}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\Spc}{\operatorname{Spc}}
+\newcommand{\Id}{\operatorname{Id}}
+\newcommand{\Open}{\operatorname{Open}}
+\newcommand{\Obs}{\operatorname{Obs}}
+\newcommand{\erase}{\operatorname{erase}}
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\sem}[1]{\mathopen{[\![}#1\mathclose{]\!]}}
+
+\title{独立した診断システムの比較\\[0.2em]
+{\large ---Diffeology、Open Horn Type Theory、EPMDTTおよび四重残余束---}}
+\author{千葉将臣}
+\date{2026-08-12}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、Diffeology、Open Horn Type Theory（OHTT）、外点指示付き依存型理論（EPMDTT）および四重残余束（QRB）を、互いに独立した診断システムとして比較する。OHTTとEPMDTTは判断体系の水準で比較できる。OHTTはcoherenceとgapを相互排他的なproof-relevant判断として導入するのに対し、EPMDTTは通常判断と外点指示判断を分離し、指示効果 $\Ind(A)=A+\Unit$ と消去翻訳によって基礎判断への非干渉性を表す。Diffeologyはplotによって特異空間や文脈変動を滑らかさの圏内に保持し、QRBは四つの比較写像の非可逆性を余ファイバーとBalmer台の共通部分として記録する。
+
+本稿では比較対象を、構文・判断、意味論、診断量という三層へ配置する。構文層ではOHTTのgap判断とEPMDTTの外点指示判断を比較する。意味論層ではOHTTのruptured simplicial semantics、diffeological空間、およびQRBを担う安定テンソル三角圏を区別する。診断量の層ではgap witness、指示証拠、plotに沿う変動、QRB残余と共通台を比較する。これにより、局所的証拠、文脈的変動、複合的共局在という異なる診断解像度を、理論階層を混同せず記述する。
+
+さらにKripke型リベンジ問題への適用可能性を各体系について個別に検討する。本稿でいう相補性は、体系間の翻訳、実現または合成を前提としない。同一の問題に対して得られる局所的gap、外部依存の指示、文脈的変動および複合的共局在を、メタ水準で併置して比較できることを意味する。本稿の寄与は統合システムを提案することではなく、各体系の固有の診断能力、限界および独立した診断結果の比較可能性を明示することにある。
+\end{abstract}
+
+\tableofcontents
+
+\section{導入}
+
+\subsection{解決から診断へ}
+
+数学的障害への標準的な対応は、定義域の制限、公理の追加、モデルの変更、真理値の拡張、または証明探索の継続によって、障害を既存構造の内部へ回収することである。しかし、回収の操作が障害そのものの形を失わせる場合がある。特異商空間を多様体近似へ置換すれば特異性が失われ、導出不能を単なる証明の不在として扱えば失敗の証拠が失われ、複数の比較操作を一つの真偽判定へ還元すれば障害の方向性が失われる。
+
+本稿でいう\textbf{診断システム}とは、障害をただちに解消または値へ回収せず、障害が生じた位置、方向、証拠または文脈依存性を数学的構造として保持する枠組みである。この意味でDiffeology、OHTT、EPMDTT、QRBには共通の志向がある。ただし四者は並列ではない。OHTTとEPMDTTは判断体系、Diffeologyとruptured simplicial semanticsおよび安定圏は意味論、gap witness・指示証拠・QRB残余は診断量に属する。従って比較には理論水準の明示が必要である。
+
+\subsection{比較の目的}
+
+本稿の目的は次の五点である。
+\begin{enumerate}
+ \item 各体系が障害を何として表現するかを明確にする。
+ \item 局所的、文脈的、大域的という診断解像度を比較する。
+ \item 障害の数学的事実と、それを外部の痕跡として読む解釈を区別する。
+ \item Kripke型リベンジ問題への適用可能性と限界を比較する。
+ \item 四体系を接続せずに、それぞれの診断結果をメタ水準で併置する相補性を定式化する。
+\end{enumerate}
+
+\subsection{非主張}
+
+本稿は、Diffeology、OHTT、EPMDTTまたはQRBが単独でリベンジ問題を解決するとは主張しない。各体系の数学的同値性、OHTTのgap witnessとEPMDTTの指示証拠またはQRB残余の同一性、任意のdiffeological plotと論理的観測文脈の一致も主張しない。また、QRB外点候補領域を外点そのものまたは新しい真理値とはみなさない。比較および相補性の議論は、四体系を一つの形式体系へ統合する構成を含意しない。
+
+\section{障害診断の比較語彙}
+
+\subsection{障害、証拠、文脈}
+
+\begin{definition}[診断対象]
+体系 $\mathcal S$ における診断対象とは、標準的な閉包、合成、輸送、局所モデルまたは同値比較へ回収できないことが、$\mathcal S$ 内または指定されたメタ理論内で表現された対象をいう。
+\end{definition}
+
+障害の不在と障害の証拠は異なる。ある項がまだ構成されていないことは、その構成不能性の証拠ではない。また一つの文脈で障害が生じることは、すべての文脈で同じ障害が生じることを意味しない。このため本稿では次の三水準を区別する。
+
+\begin{definition}[三つの診断水準]
+障害診断の水準を次のように分類する。
+\begin{enumerate}
+ \item \textbf{局所的・証拠的水準：} 特定の判断、輸送または合成に対する障害証拠。
+ \item \textbf{文脈的・変動的水準：} パラメータ、plotまたは観測文脈に沿う障害の変化。
+ \item \textbf{複合的・共局在的水準：} 異なる比較方向の障害が同じ幾何学的位置で同時に非自明となること。
+\end{enumerate}
+\end{definition}
+
+この分類は各理論を排他的に分配するものではない。主要な診断機構に着目すると、OHTTは局所的gap証拠、EPMDTTは証明境界の指示、Diffeologyは文脈変動、QRBは複数障害の共局在を強く表現する。
+
+\subsection{数学的事実と診断的読解}
+
+診断対象は観測者の心理状態ではない。例えばplotの滑らかさ、gap witnessの導出、余ファイバーの非零性は、各理論の公理と意味論に相対的な数学的事実である。一方、それらを「外部入力の痕跡」または「外点の指示」と読む段階は追加の解釈である。
+
+\begin{equation}
+ \underbrace{\text{障害構造}}_{\text{数学的事実}}
+ \quad\rightsquigarrow\quad
+ \underbrace{\text{外部の痕跡としての読解}}_{\text{診断的解釈}}
+ \label{eq:fact-reading}
+\end{equation}
+
+式\eqref{eq:fact-reading}の矢印は論理的含意ではなく指示的読解を表す。この分離は、各層の数学的内容を保ったまま、解決ではなく診断という共通語彙を導入するために必要である。
+
+\section{Diffeologyによる特異性の保存}
+
+\subsection{plotによる滑らかさ}
+
+集合 $X$ 上のdiffeologyは、各ユークリッド開集合 $U\subseteq\mathbb R^n$ から $X$ への写像のうち、plotと呼ばれる族を指定することで与えられる\cite{IglesiasZemmour2013,IglesiasZemmour2025Why}。
+
+\begin{definition}[Diffeological空間]
+集合 $X$ 上のdiffeology $\mathcal D_X$ とは、写像 $p:U\to X$ の族であって、次を満たすものをいう。
+\begin{enumerate}
+ \item 定値写像はplotである。
+ \item $p:U\to X$ がplotで $f:V\to U$ が通常の滑らかな写像なら、$p\circ f$ はplotである。
+ \item 開被覆上で局所的にplotとなる写像はplotである。
+\end{enumerate}
+\end{definition}
+
+この定義は局所モデルを一つの $\mathbb R^n$ に固定しない。部分空間、商、積、直和、写像空間に自然なdiffeologyを与えられるため、多様体でない対象を滑らかさの圏外へ排除せず扱える。特に商diffeologyは、全射 $\pi:X\to Y$ に対し、$Y$ のplotを局所的に $X$ のplotへ持ち上がる写像として定める。
+
+\subsection{特異性の診断}
+
+Diffeologyは、特異性を「滑らかでないため対象外」とせず、plot、D-topology、局所微分同相群の作用、点ごとの次元などによって区別する。Iglesias-Zemmourは、局所微分同相の軌道によるKlein型層化を、半直線、orbifold、quasifoldなどの特異性を区別する方法として提示している\cite{IglesiasZemmour2025Why}。
+
+本稿の語彙では、Diffeologyの診断性は次にある。
+\begin{equation}
+ \text{特異対象}
+ \not\longmapsto
+ \text{排除}
+ \qquad
+ \text{ではなく}
+ \qquad
+ \text{特異対象}
+ \longmapsto
+ \text{plot族と局所軌道による記述}.
+\end{equation}
+
+ただし、plotは失敗証拠ではない。Diffeologyは、ある論理判断が導出不能であることや、輸送がgap-witnessedであることを直接表現しない。従って本稿では、Diffeologyを障害の\textbf{文脈変動を載せる幾何学的基盤}として比較する。
+
+\begin{remark}[診断としての限界]
+Diffeological空間の特異点または層は真正な数学的対象であるが、それを論理的障害の痕跡と読むには、論理文脈からplotへの翻訳が必要である。任意のplotを観測者位置と同一視することはできない。
+\end{remark}
+
+\section{Open Horn Type Theoryによるgapの内在化}
+
+\subsection{coherence、gap、open}
+
+OHTTは依存型理論を、coherenceとgapという二つの原始的でproof-relevantな判断形式によって拡張する\cite{Poernomo2025OHTT}。判断 $J$ と文脈 $\Gamma$ に対して
+\begin{equation}
+ \Gamma\vdash^{+}J,
+ \qquad
+ \Gamma\vdash^{-}J
+ \label{eq:ohtt-polarity}
+\end{equation}
+をそれぞれcoherence witnessとgap witnessを持つ判断と読む。同一の文脈と判断について両者は相互排他的である。
+
+\begin{definition}[open judgment]
+$\Gamma\vdash^{+}J$ の証拠も $\Gamma\vdash^{-}J$ の証拠も与えられていないとき、$J$ は $\Gamma$ においてopenであるという。
+\end{definition}
+
+openは第三の真理値ではなく、coherenceもgapもまだwitnessされていない状態である。またgapは古典否定または直観主義的否定から定義されず、非coherenceの正の証拠として扱われる。この点で、単なる導出の不在と認定された障害が区別される。
+
+\subsection{transport horn}
+
+OHTTの中心例はtransport hornである。項とpathがcoherentであっても、そのpathに沿うtransportがgap-witnessedとなり得る。この構成は、すべてのhornの充填を要求するKan的意味論に対し、充填されるhorn、gapが証拠化されたhorn、openなhornを区別する。意味論にはcoherenceとgapの構造を備えたruptured simplicial setsおよびruptured Kan complexesが用いられる\cite{Poernomo2025OHTT}。
+
+本稿の診断語彙では、OHTTは
+\begin{equation}
+ \text{合成または輸送の不成立}
+ \longmapsto
+ \omega:\Gamma\vdash^{-}J
+\end{equation}
+という局所的・証拠的変換を提供する。障害は「まだ証明がない」という消極的状態ではなく、異なる証拠を持ち得る正の構造となる。
+
+\subsection{EPMDTTおよびQRBとの型の違い}
+
+gap witness $\omega$ は型理論的判断の証拠である。EPMDTTの指示証拠も型理論的判断に属するため比較可能性が高いが、両者の役割は異なる。QRB残余 $\Res_i(X)$ はさらに別の層にある安定圏の対象である。従って
+\begin{equation}
+ \omega=\Res_i(X)
+\end{equation}
+のような同一視は型が合わない。ただし、型が異なることは比較を妨げない。比較に必要なのは、各体系における障害の役割、証拠性および消去可能性を共通の比較軸で記述することであり、OHTTからEPMDTTへの構文翻訳やgap witnessからQRB残余への意味論的実現ではない。そのような翻訳を要求するのは、同値性または統合を主張する場合に限られる。
+
+\section{EPMDTTによる外部指示と消去}
+
+\subsection{通常判断と指示判断}
+
+EPMDTTは、通常の型判断と、内部証明の境界を外部依存として記録する指示判断を分離する\cite{ChibaEPMDTT2026}。典型的には
+\begin{align}
+ \Gamma&\vdash_T a:A,
+ \label{eq:epmdtt-ordinary}\\
+ \Gamma&\vdash_T^{\Meta}o:A\rightsquigarrow\dfix
+ \label{eq:epmdtt-indication}
+\end{align}
+と書く。式\eqref{eq:epmdtt-indication}は $A$ の項または証明を与えず、指定されたメタ理論に相対的な外部依存を指示する。
+
+\begin{definition}[指示効果]
+EPMDTTの指示効果を
+\begin{equation}
+ \Ind(A):=A+\Unit
+ \label{eq:indication-effect-inspection}
+\end{equation}
+とする。左成分は通常値、右成分は外点マーカーを保持するが、右成分から $A$ の項を取り出す一般的消去規則は持たない。
+\end{definition}
+
+OHTTが障害をgapという内在的な負極性判断として保持するのに対し、EPMDTTは通常証明から外部指示への境界を判断形式として分離する。概念的には
+\begin{equation}
+ \underbrace{\Gamma\vdash^-J}_{\text{OHTT: gapの内在化}}
+ \qquad\text{と}\qquad
+ \underbrace{\Gamma\vdash_T^{\Meta}o:A\rightsquigarrow\dfix}_{\text{EPMDTT: 外部依存の指示}}
+ \label{eq:ohtt-epmdtt-contrast}
+\end{equation}
+が対照をなす。ただし $J$ と $A$ の翻訳を与えない限り、両判断は同値ではない。
+
+\subsection{消去と保守性}
+
+EPMDTTでは、指示効果を基礎型理論へ戻す消去翻訳を用いる。外部マーカーから古い型の項を無条件に抽出する規則を持たない断片では、基礎言語の通常判断に対する翻訳的保守性が成立する\cite{ChibaEPMDTT2026}。本稿で重要なのは
+\begin{equation}
+ \erase_0(\Ind(A))=A+\Unit
+\end{equation}
+という表現上の消去よりも、指示判断が $A$ の通常証明を新たに生成しないことである。
+
+\begin{remark}[OHTTとの比較軸]
+OHTTのcoherent fragmentが基礎型理論とどのような保守関係を持つかと、EPMDTTの消去翻訳による保守性は別の問題である。本稿では両者を、障害判断の導入条件、証拠の役割、未決定状態の扱い、基礎判断への影響という外在的な比較軸によって比較する。両体系の間の構文翻訳は仮定しない。
+\end{remark}
+
+\subsection{QRBからの独立性}
+
+QRB残余は安定圏の対象であり、EPMDTTの指示判断は型理論的判断である。EPMDTTの定義、指示効果および消去翻訳はQRBデータを参照せず、QRBの定義もEPMDTTの構文を参照しない。従って両者は、外部依存の指示と比較写像の非可逆性という異なる診断対象を扱う独立した体系として比較される。
+
+Diffeological EPMDTTのような証拠付き拡張は別個の研究対象である\cite{ChibaDEPMDTT2026}。その存在はEPMDTTとQRBの比較に必要ではなく、本稿もEPMDTTをQRBの構文的インターフェイスとは位置づけない。
+
+\section{四重残余束による複合診断}
+
+\subsection{抽象QRBデータ}
+
+QRBは四つの比較操作の非可逆性を同時に記録するための抽象スキーマである\cite{ChibaQRB2026}。
+
+\begin{assumption}[QRBデータ]
+$\mathcal C$ を冪等完備な安定テンソル三角圏、$X\in\mathcal C^c$ をコンパクト対象とする。添字集合
+\begin{equation}
+ I=\{S,N,SN,NS\}
+\end{equation}
+に対して、コンパクト対象を保つ完全自己関手 $M_i:\mathcal C\to\mathcal C$ と自然変換
+\begin{equation}
+ \eta_i:\Id_{\mathcal C}\Rightarrow M_i
+\end{equation}
+が与えられているとする。
+\end{assumption}
+
+\begin{definition}[残余対象]
+各比較の残余を
+\begin{equation}
+ \Res_i(X)
+ :=\cofib\bigl(\eta_i(X):X\to M_iX\bigr)
+ \label{eq:qrb-residual-inspection}
+\end{equation}
+と定める。
+\end{definition}
+
+安定圏では $\eta_i(X)$ が同型であることと $\Res_i(X)$ が零対象であることが同値である。従って残余の非零性は、比較写像の非可逆性を数学的対象として保存する。
+
+\begin{definition}[QRBと共通障害領域]
+四重残余対象および外点候補領域を
+\begin{align}
+ \QRB(X)
+ &:={\bigoplus}_{i\in I}\Res_i(X),\\
+ \mathcal O_X
+ &:={\bigcap}_{i\in I}\supp(\Res_i(X))
+ \subseteq\Spc(\mathcal C^c)
+ \label{eq:qrb-locus-inspection}
+\end{align}
+と定める\cite{balmer}。
+\end{definition}
+
+$\mathfrak p\in\mathcal O_X$ は、四つの局所化比較写像が $\mathfrak p$ で同時に非同型となることを表す。ただし $\mathcal O_X$ は外点そのものではなく、四障害が共局在する数学的領域である。その点を外部の痕跡として読むことは追加の診断的解釈である。
+
+\subsection{非干渉的注釈}
+
+QRBは基礎判断へ新しい真理値を返すのではなく、既存の判断または障害証拠へ幾何学的注釈を付加する。基礎判断を $J$ とし、QRB点による注釈を
+\begin{equation}
+ J\;[\mathfrak p:\QRB]
+\end{equation}
+と書くなら、少なくとも
+\begin{equation}
+ \erase\bigl(J\;[\mathfrak p:\QRB]\bigr)=J
+ \label{eq:qrb-erasure}
+\end{equation}
+を要求する。式\eqref{eq:qrb-erasure}はQRB注釈が基礎判断を書き換えないことを表す。他方、$J$ だけからQRB注釈の存在は従わない。
+
+\begin{remark}
+この非干渉性は、QRB拡張の形式的保守性定理そのものではない。厳密な保守性を示すには基礎言語とQRB拡張言語を定義し、基礎言語の命題 $\varphi$ について
+\begin{equation}
+ T_{\QRB}\vdash\varphi
+ \quad\Longrightarrow\quad
+ T_0\vdash\varphi
+\end{equation}
+を証明する必要がある。
+\end{remark}
+
+\section{独立体系としての比較}
+
+\subsection{判断体系の比較：OHTTとEPMDTT}
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{0.22\textwidth} p{0.32\textwidth} p{0.32\textwidth}@{}}
+\toprule
+比較軸 & OHTT & EPMDTT \\
+\midrule
+基本判断 & coherence判断、gap判断 & 通常判断、外点指示判断 \\
+障害の位置づけ & 非coherenceのproof-relevantな内在的証拠 & 通常証明へ回収しない外部依存の指示 \\
+未決定状態 & coherenceもgapもないopen judgment & 指示導入の証拠も通常項も得られない状態 \\
+基礎体系への関係 & coherent fragmentとの関係を個別に検討 & 消去翻訳と外点からの一般消去規則の不在 \\
+リベンジへの応答 & 再発をgapまたはopenとして記録し得る & 再発を真偽へ回収せず外部依存として指示し得る \\
+固有の限界 & gap判断自体を高次の言語から再評価できる & 指示導入を正当化する外部実現関係が別途必要 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+この表は両体系の判断形式を比較するものであり、OHTT判断をEPMDTT判断へ翻訳できることを仮定しない。
+
+\subsection{幾何学的診断の比較：DiffeologyとQRB}
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{0.22\textwidth} p{0.32\textwidth} p{0.32\textwidth}@{}}
+\toprule
+比較軸 & Diffeology & QRB \\
+\midrule
+主対象 & 特異空間、商空間、写像空間 & 安定圏の対象と四つの比較写像 \\
+診断構造 & plot族、D-topology、局所軌道 & 余ファイバー、Balmer台、共通台 \\
+主要解像度 & 文脈的・幾何学的変動 & 複合的・共局在的非可逆性 \\
+基礎対象への関係 & 基礎集合を保つ忘却が可能 & QRB注釈を消去して基礎判断へ戻す \\
+リベンジへの応答 & 評価文脈の変動を記述し得る & 複数の比較障害の共局在を記録し得る \\
+固有の限界 & 論理的失敗証拠を直接持たない & 四比較と共通台の具体的構成が必要 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+DiffeologyとQRBの比較も、一方を他方の意味論として用いることを要求しない。前者は滑らかな文脈変動、後者は支持上の共局在という異なる幾何学的診断方式を持つ。
+
+\subsection{共通点}
+
+各層の共通点は、標準構造へ回収できないものを即座に無意味または不存在としないことである。
+\begin{enumerate}
+ \item Diffeologyは非多様体的対象をplotの圏内に残す。
+ \item OHTTは非coherenceをgap witnessとして正の構造にする。
+ \item EPMDTTは証明境界を通常証明へ回収せず指示判断として残す。
+ \item QRBは非可逆性を余ファイバーとして残す。
+\end{enumerate}
+
+この意味で各理論は「失敗または境界をデータへ変換する」という共通原理を持つ。
+
+\begin{proposition}[診断形式の非同一性]
+上記の共通原理だけから、diffeological singularity、OHTT gap、EPMDTT indication、QRB residualの間の同値は従わない。
+\end{proposition}
+
+\begin{proof}
+四者はそれぞれplotの族、正負判断の証拠、外部指示判断、安定圏の対象という異なる型を持つ。従って共通の比較軸を設定できても、診断対象や証拠を同一視することはできない。
+\end{proof}
+
+\section{Kripke型リベンジ問題への適用可能性}
+
+\subsection{リベンジの再発}
+
+Kripkeの部分的真理理論は評価の単調作用素の不動点を用いて、groundedな文に真理値を割り当て、ungroundedな文を未定義のまま残す\cite{kripke}。しかし、得られた真理述語または未定義性の分類を対象化し、新しい言語から「この文はその分類に入らない」と述べれば、評価不能性が新しいメタ水準で再発し得る。ここではこの一般的現象をリベンジ問題と呼ぶ。
+
+診断体系に対する問いは、リベンジを永久に停止できるかではなく、再発した障害を以前の障害と区別して記録できるかである。
+
+\subsection{各層による応答}
+
+\paragraph{Diffeology.}
+Diffeologyは真理述語を提供しないため、リベンジ問題へ直接答えない。しかし、論理体系、評価段階、観測者位置などの族をdiffeological空間として構成できるなら、評価障害が文脈に沿ってどのように変化するかをplotによって記述する可能性がある。この適用には、論理文脈からdiffeological plotへの具体的翻訳が必要である。
+
+\paragraph{OHTT.}
+評価判断をOHTTの判断 $J$ として解釈すれば、評価のcoherence、認定されたgap、どちらも証拠化されていないopenを区別できる。リベンジ文は新しいgapまたはopen judgmentとして記録され得る。しかし「この判断はgapである」という判断自体に対して新しいcoherenceまたはgapを問えば、リベンジは一段高い判断へ移動する可能性がある。従ってOHTTは再発を証拠化するが、最終閉包を自動的に保証しない。
+
+\paragraph{EPMDTT.}
+リベンジ文に通常証明を与えられないが、指定されたメタ理論における外部実現または境界証拠を保持できる場合、EPMDTTは
+\begin{equation}
+ A_{\mathrm{rev}}\rightsquigarrow\dfix
+\end{equation}
+という指示判断として記録し得る。この判断は $A_{\mathrm{rev}}$ の証明ではないため、リベンジを真または偽へ回収しない。ただし、どの証拠が指示導入を正当化するかはメタ理論と外部実現関係に依存する。
+
+\paragraph{QRB.}
+QRBはリベンジ文へ真理値を割り当てず、複数の比較操作がどの支持点で非可逆となるかを記録する。新しい真理述語が導入されるたびにQRBデータを再構成できるなら、再発を新しい残余プロフィールとして比較できる。ただし、四比較の具体化と共通台の非空性は各段階で証明されなければならない。
+
+\subsection{独立した非解決的診断}
+
+新しい真理述語によって評価不能性が再発した問題を $P_{\mathrm{rev}}$ とする。四体系は処理系列を形成するのではなく、適用条件が満たされる範囲で $P_{\mathrm{rev}}$ を互いに独立に診断する。
+\begin{enumerate}
+ \item OHTTは、局所的な評価または輸送不能性をgap/openとして区別する。
+ \item EPMDTTは、通常証明から外部指示への境界を記録する。
+ \item Diffeologyは、評価文脈に沿う障害プロフィールの変化を記述する。
+ \item QRBは、異なる比較障害の共局在を記録する。
+\end{enumerate}
+
+これらの診断の間に順序、入力出力関係または翻訳関手は仮定しない。ある体系が $P_{\mathrm{rev}}$ に適用できない場合でも、他の体系による診断は影響を受けない。
+
+\begin{proposition}[リベンジ診断の非終端性]
+上の手続きは、最終真理述語の存在またはリベンジ過程の停止を含意しない。
+\end{proposition}
+
+\begin{proof}
+各体系が与えるのは、gap witness、外部指示、plotに沿う変動、または残余の共通台であり、新しいメタ言語からそれらを再評価する操作を禁止しないためである。
+\end{proof}
+
+この非終端性は欠陥ではなく診断体系としての射程である。各体系はリベンジを消去するのではなく、再発をそれぞれ固有の語彙で記録する。
+
+\section{独立診断としての相補性}\label{sec:complementary}
+
+\subsection{相補性の意味}
+
+本稿でいう相補性は、四体系を合成した新しい形式体系の存在を意味しない。同一の問題 $P$ に各体系を独立に適用したとき、異なる種類の情報が得られることを意味する。概念的には
+\begin{equation}
+ \begin{array}{cccc}
+ P & P & P & P \\
+ \downarrow & \downarrow & \downarrow & \downarrow \\
+ D_{\mathrm{Diff}}(P)
+ & D_{\OHTT}(P)
+ & D_{\EPMDTT}(P)
+ & D_{\QRB}(P)
+ \end{array}
+ \label{eq:independent-complementarity}
+\end{equation}
+と表す。ここで $D_{\mathcal S}(P)$ は体系 $\mathcal S$ が独自に生成する診断記録である。下段の記録間には矢印を置かない。
+
+観測者は、定義された成分だけをメタ水準の診断プロフィール
+\begin{equation}
+ \mathcal D(P)
+ :=\bigl(
+ D_{\mathrm{Diff}}(P),
+ D_{\OHTT}(P),
+ D_{\EPMDTT}(P),
+ D_{\QRB}(P)
+ \bigr)
+ \label{eq:diagnostic-profile}
+\end{equation}
+として併置できる。ただし式\eqref{eq:diagnostic-profile}は積型、圏論的積または統合言語の対象を定義するものではない。異種の診断結果を並べたメタ水準の記録であり、適用不能な成分は未定義のまま許される。
+
+\begin{definition}[独立診断の相補性]
+二つ以上の診断体系が相補的であるとは、同一の問題に対して、それぞれが他の体系を前提とせずに診断記録を生成でき、その記録が互いに異なる比較軸に関する情報を与えることをいう。
+\end{definition}
+
+この定義では、構文翻訳、実現関手、自然変換または共通の内部言語を要求しない。
+
+\subsection{相補性による利点}
+
+独立した診断結果を併置すれば、単独の体系では区別しにくい次の状況を記述できる。
+\begin{enumerate}
+ \item OHTTではgapが証拠化されるが、EPMDTTでは外部指示の導入条件が満たされない。
+ \item EPMDTTでは外部依存を指示できるが、OHTTではcoherenceとgapのいずれも証拠化されない。
+ \item Diffeologyでは障害の文脈変動が記述できるが、QRBの共通台は空である。
+ \item QRBでは四障害が共局在するが、それに対応する論理的gap判断は構成されていない。
+\end{enumerate}
+
+従って相補性の価値は、障害の有無を一値で決めることではなく、内在的gap、外部指示、文脈変動および共局在を、相互還元せずに別々に評価できる点にある。
+
+\section{限界と研究課題}
+
+\subsection{各体系に固有の未構成部分}
+
+本稿の比較は体系間翻訳を要求しないが、各体系を具体的な意味論的障害へ適用するための構成には未解決部分がある。
+\begin{enumerate}
+ \item OHTTでは、対象とする評価判断に対するcoherence、gapおよびopenの具体的意味論を与えること。
+ \item EPMDTTでは、外点指示の導入を正当化するメタ理論上の実現関係を与えること。
+ \item Diffeologyでは、評価文脈またはモデル族へ自然なdiffeologyを与えること。
+ \item QRBでは、四比較 $M_S,M_N,M_{SN},M_{NS}$ と非空な共通台を一つの具体例で構成すること。
+\end{enumerate}
+
+\subsection{保守性と非干渉性}
+
+OHTTは判断形式を拡張し、EPMDTTは指示効果を追加し、Diffeologyは集合へ滑らかさを付加し、QRBは幾何学的注釈を付加する。これらの拡張が元の体系に対してどの意味で保守的かは同一ではない。OHTTについてはcoherent fragmentと元の型理論の関係、EPMDTTについては既存の消去翻訳、Diffeologyについては基礎集合を保つ忘却関手、QRBについては式\eqref{eq:qrb-erasure}を形式化した証明論的消去定理を、それぞれ独立に調べる必要がある。
+
+\subsection{リベンジ問題の具体化}
+
+本稿のリベンジ分析は比較スキーマであり、特定の真理言語についてOHTT判断、EPMDTT指示、diffeological文脈空間、QRB比較写像を完全には構成していない。今後はKripkeの固定点構成を共通の比較事例とし、各体系を個別に適用した結果を併置すべきである。ある体系の診断結果を別の体系の入力へ変換することは、本稿の課題には含めない。
+
+\section{結論}
+
+本稿は、OHTTとEPMDTTを構文・判断体系として比較し、DiffeologyとQRBを意味論および診断量の層へ配置した。OHTTは輸送または合成の不成立をproof-relevantなgapとして内在化し、coherent、gapped、openを区別する。EPMDTTは通常証明と外点指示を分離し、指示効果と消去翻訳によって証明境界を非干渉的に記録する。Diffeologyは特異対象と文脈変動をplotと局所構造によって保持し、QRBは四比較の非可逆性を残余対象として保存して、その共通台によって複数障害の共局在を記録する。
+
+各理論は同一の障害を異なる表記で述べるものではない。また、一つの統合システムを構成する部品でもない。本稿は、判断体系についてOHTTとEPMDTTを、幾何学的診断についてDiffeologyとQRBをそれぞれ比較し、各体系に固有の能力と限界を分離した。
+
+Kripke型リベンジ問題に対して、いずれの体系も最終真理述語を与えない。相補的比較が可能にするのは、新しい評価不能性を消去することではなく、同一の再発を局所gap、外部指示、文脈変動、複合残余という異なる観点から記録することである。この相補性は各体系の独立性を前提とし、体系間の翻訳や処理順序を含まない。
+
+次の課題は、一つの具体的な意味論的障害を共通事例として選び、四体系を互いに依存させず適用することである。その結果を同じ比較軸の下で整理することにより、どの情報が重なり、どの情報が各体系に固有であるかを検証できる。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
