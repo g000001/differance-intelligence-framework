@@ -1,0 +1,808 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{lmodern}
+\usepackage{booktabs,array}
+\usepackage[unicode,colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0.35\baselineskip}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{principle}[definition]{原則}
+\newtheorem{remark}[definition]{注意}
+\newtheorem{example}[definition]{例}
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{corollary}[definition]{系}
+
+\newcommand{\dfix}{\mathord{\text{○}}}
+\newcommand{\udfix}{\mathord{\text{◎}}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Prf}{\mathrm{Prf}}
+\newcommand{\EPMDTT}{\mathrm{EPMDTT}}
+\newcommand{\Diff}{\mathbf{Diff}}
+\newcommand{\Sh}{\mathbf{Sh}}
+\newcommand{\Plot}{\mathbf{Plot}}
+\newcommand{\Comp}{\mathrm{Comp}_{\dfix}}
+\newcommand{\JTeq}{\equiv_{\mathrm J}}
+\newcommand{\Arr}{\mathsf{Arrive}_{1}}
+\newcommand{\FD}{\mathsf{FD}}
+\newcommand{\Crit}{\mathrm{Crit}}
+\newcommand{\1}{\mathbf{1}}
+
+\title{微分生成的証明空間と外点指示\\
+{\large ---最小EPMDTT意味論、◎閉包、およびコラッツ問題---}}
+\author{千葉将臣}
+\date{2026-08-15}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、Diffeology によって局所的な証明族とその接着を幾何学化し、
+最小限の外点指示付き依存型理論（EPMDTT）によって体系境界を判断として
+記録する、微分生成的証明空間の枠組みを提案する。外点記号 $\dfix$ は
+空間の点、証明項、真理値または発散値ではなく、局所証明探索が指定体系の
+境界に達したことを表す指示判断の右端にのみ現れる。究極指示 $\udfix$ は、
+証明空間全体が通常証明と外点指示の二形式によって閉じられたことを記録する。
+
+技術的には、diffeological space $X$ のプロット圏上に通常証明の層
+$\mathcal F$ と外点指示導出の層 $\mathcal I_{\dfix}$ を置き、許容推移に
+関する $\dfix$ の由来保存、反証の分離、および反射的な◎閉包を課す。
+この一般条件から、○自由文脈における非生成、◎閉包の冪等性、通常判断に
+対する保守性、および閉包消去の定理を得る。さらに、局所証明の接着障害を
+Čech 1次コホモロジー類として表し、対象理論の証明が大域切断を与えるという
+実現仮定の下で、非零障害類から構造的到達不能性を導く。
+
+コラッツ問題については、Chamberland の実解析的拡張と整数格子上の
+相補的選択子から有限パリティ証明書の生成 Diffeology を構成する。
+これにより、有限証明書の局所族、接着データ、外点指示、および◎閉包を
+同じ形式の中に置く。ただし、単なる「次元差」や逆像木の複雑さだけから
+ZFC+U における証明不能性は従わない。本稿が与えるのは、明示された実現
+関手と非零障害類が存在するときに限って証明不能性を導く厳密な判定原理で
+ある。コラッツに対する無条件の到達不能性には、この障害類の非消滅と
+実現関手の普遍性を別途示す必要がある。
+\end{abstract}
+
+\tableofcontents
+
+\section{序論}
+
+\subsection{目的}
+
+通常の形式証明は有限な記号列または有限な導出木として与えられる。
+しかし、ある命題に対する証明探索全体は、パラメータ付き証明族、有限近似、
+分岐、局所的な証明書、および互いに整合しない接着データを含み得る。
+本稿の目的は、この証明探索の幾何学を Diffeology によって記述しつつ、
+その幾何学の外部を新しい点として対象化しないことである。
+
+Diffeological space は、ユークリッド開集合からのプロットによって滑らかさを
+定める。部分空間、商、写像空間、極限および余極限を同一の圏で扱えるため、
+特異空間や無限次元空間を含む証明族のパラメータ空間として適している
+\cite{BaezHoffnung2011,IglesiasZemmour2013}。またプロットを基礎とする層と
+Čech コホモロジーが構成されており、局所データの接着障害を記述できる
+\cite{KrepskiWattsWolbert2022}。
+
+一方、Diffeology それ自体は証明判断を持たない。とくに、あるプロットが
+延長できないことと、命題が偽であること、対象理論で証明不能であること、
+計算が発散することは同じではない。本稿ではこの区別を保つため、EPMDTT
+\cite{ChibaExternal2026,ChibaEPMDTT2026} のうち、外点指示と究極指示に
+必要な最小判断だけを diffeological 意味論へ加える。
+
+\subsection{本稿の主張}
+
+本稿の主結果は次の四点である。
+
+\begin{enumerate}
+ \item 微分生成的証明空間を、diffeological space、通常証明層、外点指示
+       導出層、および許容推移の組として定義する。
+ \item ○由来保存、反証分離、閉包網羅性および反射性から、◎閉包の一般
+       定理を証明する。
+ \item 通常証明が局所証明束の大域切断を与える場合、非零の Čech 障害類が
+       対象理論からの到達不能性を含意することを示す。
+ \item コラッツ有限パリティ証明書を局所プロットとして配置し、無条件に
+       得られる有限結果と、障害類の非消滅を必要とする到達不能性主張を
+       分離する。
+\end{enumerate}
+
+重要なのは、低次元の空間から高次元の diffeological space への滑らかな
+写像や埋込みは一般に存在し得ることである。したがって「証明空間の次元が
+異なる」というだけでは証明不能性は導けない。また、個々の形式証明が有限で
+あることから、その証明族に自然に入る Diffeology が離散的であることも
+従わない。本稿では、次元差を主証明には用いず、必要ならば内的接空間などの
+補助的不変量としてのみ扱う \cite{ChristensenWu2016}。
+
+\section{Diffeological space とプロット上の層}
+
+\begin{definition}[Diffeological space]
+集合 $X$ 上の Diffeology とは、各ユークリッド開集合
+$U\subseteq\mathbb R^n$ に対する写像 $p:U\to X$ の族であって、次を
+満たすものである。
+\begin{enumerate}
+ \item 定数写像はプロットである。
+ \item プロットと滑らかな写像の合成はプロットである。
+ \item 開被覆上で局所的にプロットである写像はプロットである。
+\end{enumerate}
+この構造を持つ $X$ を diffeological space と呼ぶ。
+\end{definition}
+
+\begin{definition}[プロット圏]
+$X$ のプロット圏 $\Plot(X)$ の対象をプロット $p:U\to X$ とする。
+$q:V\to X$ から $p:U\to X$ への射を、
+$q=p\circ f$ を満たす滑らかな写像 $f:V\to U$ とする。$U$ の通常の
+開被覆が与える族を被覆族とし、$\Plot(X)$ をサイトとみなす。
+\end{definition}
+
+\begin{definition}[プロット上の証明層]
+$P$ を対象理論 $T$ の命題とする。$X_T(P)$ を $P$ に関する有限証明探索、
+パラメータ付き証明族および検証状態を台とする diffeological space とする。
+プロット $p:U\to X_T(P)$ 上の通常証明データの層を
+\[
+ \mathcal F_{T,P}\in\Sh(\Plot(X_T(P)))
+\]
+と書く。$\mathcal F_{T,P}(p)$ の元は、$p$ が表す証明族に対する局所的な
+有限導出または検証可能な証明書である。
+\end{definition}
+
+ここで「層である」とは、整合する局所証明データが一意に接着することを
+意味する。接着できない局所データを無理に同一の証明へ変換してはならない。
+また、証明層の大域切断
+\[
+ \Gamma(X_T(P),\mathcal F_{T,P})
+\]
+は大域的に整合する証明族を表すが、それが直ちに $T$ の形式証明項であるとは
+限らない。両者を結ぶ実現写像は第6節で明示する。
+
+\section{最小EPMDTT判断層}
+
+\subsection{非値性}
+
+\begin{principle}[外点指示の非値性]\label{pr:nonvalue}
+$\dfix$ および $\udfix$ は、$X_T(P)$ の点、層の切断、証明項、真理値、
+集合の要素、軌道の極限または計算結果ではない。許される基本判断は
+\[
+ \Gamma\vdash \pi:P,
+ \qquad
+ \Gamma\vdash b:P\rightsquigarrow\dfix
+\]
+の二形式である。後者は、枝 $b$ が指定された対象体系の境界に達したこと
+だけを記録する。
+\end{principle}
+
+したがって $F(\dfix)$、$\dfix\in X$、$x_n\to\dfix$ という式は本稿の
+対象言語には属さない。以下で「外点指示の層」と呼ぶものも、$\dfix$ 自体を
+切断として含むのではなく、右端が $\dfix$ である導出コードを分類する。
+
+\begin{definition}[外点指示導出の層]
+$\mathcal I_{\dfix,T,P}$ を $\Plot(X_T(P))$ 上の層とし、
+$\mathcal I_{\dfix,T,P}(p)$ の元を
+\[
+ b_p:P|_p\rightsquigarrow\dfix
+\]
+という形の局所指示導出とする。$\dfix$ はこの層の元ではなく、各導出の
+終端形式を指定するメタ記号である。
+\end{definition}
+
+\subsection{許容推移と由来保存}
+
+すべての滑らかな写像に外点指示の反射を要求すると、無関係な証明状態まで
+同一視する危険がある。そこで証明探索規則、計算規則または検証規則から
+生じる射だけを許容射として指定する。
+
+\begin{definition}[許容射]
+$\mathcal A_{T,P}\subseteq\Plot(X_T(P))$ を、恒等射と合成について閉じた
+広部分圏とする。その射を許容射と呼ぶ。許容射は、対象理論の一段推論、
+計算の一段推移、証明書の制限、またはこれらの可逆な再パラメータ化を表す。
+\end{definition}
+
+\begin{definition}[○由来保存]
+許容射 $a:q\to p$ に沿う指示導出の移送を $a^\sharp$ とする。
+次の二つを満たすとき、外点指示は由来を保存するという。
+\begin{equation}\label{eq:origin}
+ \frac{b_p:P|_p\rightsquigarrow\dfix}
+      {a^\sharp b_p:P|_q\rightsquigarrow\dfix},
+ \qquad
+ \frac{a^\sharp b_p:P|_q\rightsquigarrow\dfix}
+      {b_p:P|_p\rightsquigarrow\dfix}.
+\end{equation}
+第一規則を○保存、第二規則を○非生成と呼ぶ。
+\end{definition}
+
+略記 $a^\sharp(\dfix)\JTeq\dfix$ は、値の等式ではなく式
+\eqref{eq:origin} の双方向導出可能性を表す。
+
+\begin{theorem}[○自由文脈における非生成]\label{thm:no-origin}
+$\Gamma$ が外点指示導出を含まず、導出に用いる非通常規則が
+式 \eqref{eq:origin} を満たす許容射だけであるならば、$\Gamma$ から
+$P\rightsquigarrow\dfix$ は導出されない。
+\end{theorem}
+
+\begin{proof}
+導出木に関する構造帰納法による。通常規則は外点指示を生成しない。
+許容射の結論が外点指示で終わるなら、○非生成規則によってその前提も
+外点指示で終わる。これを導出木の根まで反復すると $\Gamma$ に外点指示が
+存在することになり、仮定に反する。
+\end{proof}
+
+\subsection{反証分離}
+
+\begin{principle}[反証分離]\label{pr:refutation}
+$P$ の通常の反証、実在する反例、または局所証明データ間の明示的矛盾を、
+$P\rightsquigarrow\dfix$ へ移す規則を置かない。反証は通常判断として保持し、
+◎閉包の形成を阻却する。
+\end{principle}
+
+この原則により、外点指示は「偽」「反例」「未定義」の別名にならない。
+
+\section{微分生成的証明空間と◎閉包}
+
+\begin{definition}[微分生成的証明空間]
+命題 $P$ に対する微分生成的証明空間を
+\begin{equation}\label{eq:dps}
+ \mathfrak P_T(P)=
+ \bigl(X_T(P),\mathcal F_{T,P},
+       \mathcal I_{\dfix,T,P},\mathcal A_{T,P}\bigr)
+\end{equation}
+と定める。これは一つの diffeological space だけではなく、通常証明層、
+外点指示導出層、および由来を追跡する許容射を備えた構造である。
+\end{definition}
+
+\begin{definition}[最大証明対象]
+$\mathcal S_T(P)$ を有限証明探索状態、$\Crit(X)$ を $X$ の閉包、健全性、
+接着および網羅性を再検証する有限状態の生成操作とする。最大証明対象を
+\begin{equation}\label{eq:maximal}
+ \mathcal S_T^\infty(P)
+ =\nu X\bigl(\mathcal S_T(P)\cup\Crit(X)\bigr)
+\end{equation}
+と書く。$\nu$ は余帰納的な最大不動点を表し、$\dfix$ または $\udfix$ の
+値ではない。
+\end{definition}
+
+式 \eqref{eq:maximal} は、閉包を批判する枝をさらに外側へ追加する代わりに、
+その再検証を同じ通常対象へ戻すための構成である。ただし、最大不動点を
+記号で書くだけではその存在や期待する性質は従わない。具体的モデルでは、
+余代数またはプロットの互換族として構成する必要がある。
+
+\begin{definition}[◎閉包の形成条件]\label{def:formation}
+微分生成的証明空間 $\mathfrak P_T(P)$ が次を満たすとする。
+\begin{enumerate}
+ \item \textbf{局所健全性}：$\mathcal F_{T,P}$ の証明切断は対象理論の
+       推論規則に関して健全である。
+ \item \textbf{由来保存}：$\mathcal I_{\dfix,T,P}$ は許容射に関して
+       式 \eqref{eq:origin} を満たす。
+ \item \textbf{反証分離}：原則 \ref{pr:refutation} を満たす。
+ \item \textbf{網羅性}：$\mathcal S_T^\infty(P)$ の各最大互換枝は、
+       通常証明切断または正当に由来する外点指示導出のいずれかで終端し、
+       未分類枝を残さない。
+ \item \textbf{有限制限整合性}：終端形式はプロットの制限と有限近似の
+       拡張に関して整合する。
+\end{enumerate}
+これらを◎閉包の形成条件と呼ぶ。
+\end{definition}
+
+網羅性は本稿で最も強い条件である。この条件を命題ごとに自由に宣言すると、
+任意の命題について偽の二分法を作れる。したがって網羅性は定義だけでなく、
+対象ごとにモデルまたは構造帰納法によって証明されなければならない。
+
+\begin{definition}[◎閉包判断]
+定義 \ref{def:formation} の条件が満たされるとき、
+\begin{equation}\label{eq:ultimate}
+ \Comp(\mathfrak P_T(P)):
+ \left\langle
+  \Gamma(X_T(P),\mathcal F_{T,P})
+  \ \middle\Vert\
+  \mathcal S_T^\infty(P)\rightsquigarrow\dfix
+ \right\rangle
+ \rightsquigarrow\udfix
+\end{equation}
+と記す。$\udfix$ は二つの終端形式の一方ではなく、証明空間全体が
+この二形式によって閉じられたことを指示する。
+\end{definition}
+
+\begin{definition}[反射的閉包モデル]
+微分生成的証明空間の圏を $\mathbf{DPrf}_T$、形成条件を満たす閉対象の
+充満部分圏を $\mathbf{DPrf}^{\mathrm{cl}}_T$ とする。包含関手が左随伴
+\[
+ C_{\dfix}:\mathbf{DPrf}_T\longrightarrow
+ \mathbf{DPrf}^{\mathrm{cl}}_T
+\]
+を持つとき、$C_{\dfix}$ を反射的◎閉包モデルと呼ぶ。
+\end{definition}
+
+\begin{theorem}[◎閉包一般定理]\label{thm:general-closure}
+反射的◎閉包モデルにおいて次が成り立つ。
+\begin{enumerate}
+ \item \textbf{冪等性}：
+       $C_{\dfix}C_{\dfix}\cong C_{\dfix}$。
+ \item \textbf{○非生成}：○自由文脈から外点指示終端は生じない。
+ \item \textbf{閉包消去}：○自由文脈の下で式 \eqref{eq:ultimate} が形成
+       されるなら、通常側の大域切断が存在する。
+ \item \textbf{反証保存}：通常反証が存在する対象には◎閉包を形成できない。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+第一は反射部分圏への反射子の標準的冪等性による。第二は定理
+\ref{thm:no-origin} である。第三について、網羅性により終端は通常切断または
+外点指示で尽くされ、後者は第二によって除かれる。第四は反証分離と形成条件
+の反証なしという要請から従う。
+\end{proof}
+
+\begin{remark}[閉包消去の射程]
+定理 \ref{thm:general-closure} が直接与えるのは
+$\Gamma(X_T(P),\mathcal F_{T,P})\ne\varnothing$ であり、対象理論の形式証明
+$T\vdash P$ ではない。大域切断から形式証明を読み出すには、第6節の実現・
+反映条件が必要である。この区別が、判断的閉包を循環論法から分離する。
+\end{remark}
+
+\section{モデルと相対整合性}
+
+\subsection{空指示モデル}
+
+\begin{example}[空指示モデル]
+任意の diffeological space $X$ と層 $\mathcal F$ に対し、外点指示導出層を
+空層とし、$C_{\dfix}$ を恒等反射子とする。由来保存と非生成は自明に成立する。
+このモデルは非自明な◎閉包を与えないが、最小EPMDTT判断層の規則それ自体が
+矛盾を強制しないことを示す。
+\end{example}
+
+\subsection{境界指示モデル}
+
+\begin{example}[境界指示モデル]
+$X$ のプロット $p:U\to X$ と、指定された許容拡張族を考える。
+$p$ が通常証明または反証を与えず、許容拡張を持たないことの有限導出を
+$p:P\rightsquigarrow\dfix$ とする。ここでも $X$ に新しい点を加えない。
+許容射を拡張関係に限定すれば、指示導出の制限と由来追跡が定義できる。
+\end{example}
+
+\subsection{保守性}
+
+\begin{theorem}[通常判断に対する相対保守性]\label{thm:conservative}
+対象理論 $T$ に、外点指示判断、由来保存および◎形成判断を加える。
+外点指示判断から通常命題を直接読み出す消去規則を置かず、通常結論を持つ
+各拡張規則が消去翻訳で $T$ の導出へ移るならば、拡張体系で得られた
+外点記号を含まない通常定理は $T$ でも証明される。
+\end{theorem}
+
+\begin{proof}
+拡張導出に現れる外点指示部分を消去する。外点指示で終わる枝は通常結論を
+持たず、通常結論への直接消去規則もない。残る通常規則は仮定により $T$ の
+規則へ翻訳される。したがって通常結論の導出は $T$ の導出へ変換される。
+\end{proof}
+
+この定理は、◎閉包消去によって得た大域切断を自動的に $T$ の証明へ変換する
+ものではない。もしその読出し規則を追加するなら、それは独立の実現・反映
+定理として健全性を証明しなければならない。
+
+\section{接着障害と構造的到達不能性}
+
+\subsection{証明束}
+
+\begin{definition}[局所証明束]
+$G$ を可換 diffeological group とする。局所証明書の選択が $G$ の自由かつ
+推移的な変更を許すとき、それらを主 $G$ 束
+\[
+ \pi:Q_{T,P}\longrightarrow X_T(P)
+\]
+として表す。局所自明化の重なり上の遷移関数を $g_{ij}:U_i\cap U_j\to G$
+とする。
+\end{definition}
+
+Diffeological space 上の主 $G$ 束は、適切なプロット被覆に対する Čech
+1次コホモロジーによって分類される \cite{KrepskiWattsWolbert2022}。
+したがって
+\[
+ \omega_T(P):=[g_{ij}]
+ \in\check H^1(X_T(P),\underline G)
+\]
+を局所証明書の接着障害と呼ぶことができる。「障害が無限大」という表現は
+用いず、零類か非零類かを区別する。
+
+\begin{definition}[証明実現写像]
+対象理論 $T$ の形式証明から局所証明束の大域切断への写像
+\begin{equation}\label{eq:realization}
+ \rho_{T,P}:\Prf_T(P)\longrightarrow
+ \Gamma(X_T(P),Q_{T,P})
+\end{equation}
+を証明実現写像と呼ぶ。$\rho_{T,P}$ が推論規則、代入および証明の合成と
+整合するとき、$Q_{T,P}$ は $T$ に関して実現健全であるという。
+\end{definition}
+
+\begin{theorem}[接着障害による到達不能性]\label{thm:obstruction}
+$Q_{T,P}$ が実現健全であり、
+\[
+ \omega_T(P)\ne0
+ \quad\text{in}\quad
+ \check H^1(X_T(P),\underline G)
+\]
+ならば $T\nvdash P$ である。
+\end{theorem}
+
+\begin{proof}
+$T\vdash P$ と仮定し、証明項 $\pi\in\Prf_T(P)$ を取る。実現写像
+\eqref{eq:realization} により $\rho_{T,P}(\pi)$ は $Q_{T,P}$ の大域切断を
+与える。主束が大域切断を持てば自明化され、その分類類は零である。
+これは $\omega_T(P)\ne0$ に反する。
+\end{proof}
+
+\begin{definition}[実現普遍性]
+対象理論 $T$ における $P$ の任意の証明が式 \eqref{eq:realization} の
+証明実現を通るとき、この実現を $P$ に関して普遍的と呼ぶ。
+\end{definition}
+
+\begin{corollary}[絶対的な体系内到達不能性の十分条件]
+実現が $P$ に関して普遍的で、$\omega_T(P)\ne0$ ならば、$T$ のいかなる
+形式の証明も $P$ に到達しない。
+\end{corollary}
+
+普遍性を示さずに、特定の有限証明書方式が接着しないことだけから
+$T\nvdash P$ と結論してはならない。その場合に排除されるのは、その証明
+方式を経由する証明だけである。
+
+\subsection{外点指示との対応}
+
+\begin{proposition}[障害から外点指示へ]
+実現健全な証明束について $\omega_T(P)\ne0$ が有限的または形式的に確認
+され、通常反証が存在しないとする。このとき
+\[
+ \mathfrak P_T(P)\rightsquigarrow\dfix
+\]
+を「局所証明は存在するが大域接着が対象理論内で実現されない」という
+外点指示判断として導入できる。
+\end{proposition}
+
+\begin{proof}
+非零障害は局所証明書の存在そのものではなく、それらを一つの大域切断へ
+接着することの失敗を表す。定理 \ref{thm:obstruction} により対象理論の
+証明実現は存在しない。一方、反証分離によりこれを $\neg P$ とは読まない。
+したがって結論は真理判断ではなく、指定された実現機構の境界を記録する
+外点指示判断となる。
+\end{proof}
+
+\section{コラッツ問題の局所証明幾何}
+
+\subsection{正規化写像と選択子}
+
+正規化コラッツ写像を
+\begin{equation}\label{eq:collatz}
+ T(n)=
+ \begin{cases}
+  n/2,&n\equiv0\pmod2,\\
+  (3n+1)/2,&n\equiv1\pmod2
+ \end{cases}
+\end{equation}
+とする。Chamberland の実解析的拡張は
+\begin{equation}\label{eq:chamberland}
+ f(x)=\frac{x}{2}\cos^2\!\left(\frac{\pi x}{2}\right)
+ +\frac{3x+1}{2}\sin^2\!\left(\frac{\pi x}{2}\right)
+\end{equation}
+であり、整数上では $f(n)=T(n)$ である \cite{Chamberland1996}。
+
+\begin{definition}[整数格子上の相補的選択子]
+\[
+ e_0(x)=\cos^2\!\left(\frac{\pi x}{2}\right),
+ \qquad
+ e_1(x)=\sin^2\!\left(\frac{\pi x}{2}\right).
+\]
+整数 $n$ に対して $e_i(n)\in\{0,1\}$、
+$e_0(n)+e_1(n)=1$、$e_0(n)e_1(n)=0$ が成立する。
+\end{definition}
+
+ここで $e_0,e_1$ が選択子であり、$x/2$ と $(3x+1)/2$ は選択される
+分岐写像である。両者を同一視してはならない。
+
+長さ $k$ のパリティ語 $w=(w_0,\ldots,w_{k-1})\in\{0,1\}^k$ に対して
+\begin{equation}\label{eq:selector}
+ \chi_w(x)=\prod_{j=0}^{k-1}e_{w_j}(f^j(x))
+\end{equation}
+と置く。整数 $n$ では実際のパリティ語に対応する一つの $w$ だけが
+$\chi_w(n)=1$ となる。
+
+\begin{proposition}[有限パリティ枝のアフィン表示]\label{prop:affine}
+$q(w)=\sum_jw_j$ とする。各有限語 $w$ に整数 $c(w)\ge0$ が存在し、
+$w$ に対応する整数合同類上で
+\begin{equation}\label{eq:affine}
+ T^k(n)=\frac{3^{q(w)}n+c(w)}{2^k}
+\end{equation}
+となる。
+\end{proposition}
+
+\begin{proof}
+式 \eqref{eq:collatz} の二つのアフィン分岐を語 $w$ に従って合成する。
+\end{proof}
+
+\subsection{有限証明書プロット}
+
+\begin{definition}[有限下降証明書]
+$n>1$ に対して、有限語 $w$ と長さ $k$ が
+\[
+ \chi_w(n)=1,
+ \qquad T^k(n)<n
+\]
+を満たすとき、$(n,w,k)$ を有限下降証明書と呼ぶ。
+\end{definition}
+
+有限下降性
+\begin{equation}\label{eq:fd}
+ \FD:\quad \forall n>1\ \exists k\ge1\quad T^k(n)<n
+\end{equation}
+は通常のコラッツ予想と同値である。実際、式 \eqref{eq:fd} から $n$ に
+関する強い帰納法によって周期 $1\leftrightarrow2$ への到達が従う。
+
+\begin{definition}[コラッツ証明書空間]
+$X_{\mathrm C}$ の点を有限軌道片、パリティ語、下降証明書、およびそれらの
+検証状態とする。各有限語 $w$ に対し、式 \eqref{eq:selector} と
+\eqref{eq:affine} から得られる実パラメータ付き証明族
+\[
+ p_w:U_w\longrightarrow X_{\mathrm C}
+\]
+を生成プロットとし、これらが生成する Diffeology を $X_{\mathrm C}$ に入れる。
+整数格子上の証明判断は $p_w$ の整数点への制限として読む。
+\end{definition}
+
+合同類そのものを実数の通常位相における開集合とみなすことはできない。
+したがって $U_w$ は合同類ではなく、解析的証明族をパラメータ化する
+ユークリッド開集合である。整数合同条件はそのプロット上の離散的な
+検証条件として保持する。
+
+\begin{definition}[有限証明書層]
+$\mathcal F_{\mathrm C}$ を $\Plot(X_{\mathrm C})$ 上の層とし、プロット
+$p:U\to X_{\mathrm C}$ 上の切断を、$U$ 上で同じ有限語と同じ有限不等式に
+よって検証される下降証明書族とする。異なる有限語による証明書の重なりでは、
+両者が同じ軌道判断を与える場合にのみ接着する。
+\end{definition}
+
+この層は有限深度の情報を正確に保持する。逆像木が無限深度を持つことや
+有限語の個数が指数的に増えることは、証明書空間の複雑さを示すが、それだけ
+で diffeological 次元が無限であるとは言えない。また Lagarias の逆像木の
+一般的研究 \cite{Lagarias1985} から、特定の証明書空間のフラクタル次元が
+$\log2/\log3$ であるという主張も直ちには従わない。
+
+\subsection{コラッツ証明束と障害類}
+
+有限下降証明書が存在する局所領域を $\{U_i\}$ とし、重なり上で二つの
+証明書を同じ到達証明へ変換する変換群を $G_{\mathrm C}$ とする。このデータが
+主 $G_{\mathrm C}$ 束 $Q_{\mathrm C}\to X_{\mathrm C}$ を与える場合、
+\begin{equation}\label{eq:collatz-obstruction}
+ \omega_{\mathrm C}
+ \in\check H^1(X_{\mathrm C},\underline{G_{\mathrm C}})
+\end{equation}
+をコラッツ有限証明書の接着障害と呼ぶ。
+
+\begin{theorem}[コラッツ到達不能性の判定原理]\label{thm:collatz-obstruction}
+$T_0$ を ZFC+U などの固定された形式理論とする。次を仮定する。
+\begin{enumerate}
+ \item $T_0$ のコラッツ予想の任意の証明から $Q_{\mathrm C}$ の大域切断を
+       与える普遍的な証明実現写像がある。
+ \item 障害類 $\omega_{\mathrm C}$ が非零である。
+\end{enumerate}
+このとき $T_0$ ではコラッツ予想を証明できない。
+\end{theorem}
+
+\begin{proof}
+定理 \ref{thm:obstruction} を $P=\FD$ と
+$Q_{T_0,P}=Q_{\mathrm C}$ に適用する。
+\end{proof}
+
+\begin{remark}[この定理が要求するもの]
+定理 \ref{thm:collatz-obstruction} は条件付き定理である。現在の構成だけから
+$\omega_{\mathrm C}\ne0$ は従わず、また任意の ZFC+U 証明が有限パリティ
+証明書束を経由することも自明ではない。したがって本稿は ZFC+U における
+コラッツ予想の無条件な独立性を主張しない。ここで得られたのは、何を示せば
+幾何学的到達不能性が形式的証明不能性へ移るかを明確にする判定原理である。
+\end{remark}
+
+\section{コラッツ◎閉包}
+
+\begin{definition}[コラッツ最大証明空間]
+初期値 $n$ に対する有限軌道探索、有限証明書、逆向き証明書および閉包への
+再検証を含む通常対象を
+\[
+ \mathcal O^\infty(n)
+ =\nu X\bigl(\mathcal S_{\mathrm C}(n)\cup T(X)\cup\Crit(X)\bigr)
+\]
+と書く。
+\end{definition}
+
+通常写像 $T$ を $\dfix$ へ値として拡張せず、軌道判断上の許容推移
+$T^\sharp$ に対して
+\begin{equation}\label{eq:collatz-origin}
+ \frac{\mathsf{Orb}(n)\rightsquigarrow\dfix}
+      {\mathsf{Orb}(T(n))\rightsquigarrow\dfix},
+ \qquad
+ \frac{\mathsf{Orb}(T(n))\rightsquigarrow\dfix}
+      {\mathsf{Orb}(n)\rightsquigarrow\dfix}
+\end{equation}
+を課す。これは $T(\dfix)=\dfix$ という値の等式ではない。
+
+\begin{definition}[コラッツ◎形成]
+定義 \ref{def:formation} の条件、とくに全最大互換枝の網羅性が
+$\mathcal O^\infty(n)$ について証明されたとき、
+\begin{equation}\label{eq:collatz-closure}
+ \Comp(\mathcal O^\infty(n)):
+ \left\langle
+   \Arr(n)
+   \ \middle\Vert\
+   \mathcal O^\infty(n)\rightsquigarrow\dfix
+ \right\rangle
+ \rightsquigarrow\udfix
+\end{equation}
+を形成する。
+\end{definition}
+
+\begin{theorem}[◎計算におけるコラッツ到着]\label{thm:ultimate-collatz}
+通常整数 $n>0$ について式 \eqref{eq:collatz-closure} の形成条件が証明され、
+文脈が○自由であるならば、◎計算において $\Arr(n)$ が導出される。
+\end{theorem}
+
+\begin{proof}
+式 \eqref{eq:collatz-origin} と定理 \ref{thm:no-origin} により、通常整数文脈
+から外点指示側は生成されない。形成条件の網羅性により二つの終端形式以外は
+残らないため、定理 \ref{thm:general-closure} の閉包消去から $\Arr(n)$ を得る。
+\end{proof}
+
+この定理で本質的なのは「形成条件が証明された」という仮定である。
+式 \eqref{eq:collatz-closure} を単に公理として宣言すれば、結論を閉包へ
+組み込んだだけになる。Diffeological 意味論の役割は、有限証明書プロットの
+接着、最大枝の分類、反証の不存在、および外点指示の由来を、一つの具体的
+モデルの中で検証可能にすることである。
+
+\section{既知の構成との比較}
+
+\begin{center}
+\begin{tabular}{p{0.20\linewidth}p{0.32\linewidth}p{0.37\linewidth}}
+\toprule
+構成 & 共通点 & 本稿との相違\\
+\midrule
+通常の Diffeology
+& プロット、制限、接着、商、写像空間を扱う
+& 真理判断や外点指示判断を単独では持たない\\
+主束と Čech $H^1$
+& 局所データの接着障害を分類する
+& 障害から証明不能性を得るには証明実現写像が必要\\
+領域理論の底要素
+& 非停止・近似情報を計算構造に保持する
+& $\dfix$ は値や順序の最小元ではなく指示判断である\\
+一点コンパクト化
+& 外向き挙動を一つの記法で閉じる
+& $\dfix$ は追加された点ではなく、$\udfix$ も空間の点ではない\\
+余帰納法
+& 無限過程を最大不動点として保持する
+& 最大不動点は通常対象、◎はその閉包を記録する判断\\
+強制法
+& 局所条件と大域的実現の差を扱う
+& ◎閉包をジェネリックフィルターと同一視せず、対応には別の関手が必要\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{example}[メビウス束]
+円周上のメビウス線束では局所切断が存在しても、向きを保存する大域的な
+自明化は存在しない。この障害はコラッツを証明しないが、「局所証明書が
+多数ある」ことと「一つの大域証明へ接着する」ことの差を示す標準模型である。
+\end{example}
+
+\begin{example}[離散証明空間]
+証明項集合に離散 Diffeology を入れれば、すべてのプロットは局所定数となる。
+これは正当なモデル選択だが、パラメータ付き証明族の幾何を忘れる。
+したがって ZFC+U の証明空間が「本質的に離散」であるとは、形式証明が有限で
+あることだけからは言えず、どの証明族をプロットに採用するかを指定する必要が
+ある。
+\end{example}
+
+\section{予想される反論}
+
+\subsection{「新しい記号で結論を仮定している」}
+
+$\dfix$ と $\udfix$ の導入だけから通常命題は得られない。閉包消去には、
+局所健全性、反証分離、由来保存、および全最大枝の網羅性が必要である。
+とりわけ網羅性を対象ごとに証明しない限り、式 \eqref{eq:ultimate} は形成
+できない。
+
+\subsection{「非零障害類は単なる別名ではないか」}
+
+障害類を定義するだけでは不十分である。係数群、証明束、被覆、遷移関数を
+明示し、具体的な Čech コサイクルがコボーダリでないことを示す必要がある。
+さらに、それが形式証明不能性を意味するには実現写像の健全性と普遍性が要る。
+
+\subsection{「次元差で十分ではないか」}
+
+十分ではない。低次元の diffeological space から高次元または無限次元の
+空間への滑らかな写像は存在し得る。用いるべきなのは、証明実現が保存する
+よう設計された具体的不変量であり、本稿では主束の自明化障害を採用した。
+
+\subsection{「これはコラッツ予想の証明か」}
+
+有限下降証明書の定理は通常算術の結果である。定理
+\ref{thm:ultimate-collatz} は形成条件の下での◎計算内部の定理である。
+定理 \ref{thm:collatz-obstruction} は非零障害類と普遍的実現を仮定した
+到達不能性定理である。これらの論理的地位を混同しないことが、本稿の
+枠組みの一部である。
+
+\section{結論}
+
+本稿では、Diffeology だけで証明判断を代替するのではなく、Diffeology を
+局所証明族の幾何学的意味論、最小EPMDTTを体系境界の判断層として組み合わせた。
+$\dfix$ は空間の点や発散値ではなく外点指示導出の終端記号であり、$\udfix$ は
+通常証明と外点指示によって最大証明空間全体が閉じられたことを記録する。
+
+一般理論として、○由来保存、反証分離、網羅性、有限制限整合性、および
+反射的閉包から、○非生成、◎冪等性、閉包消去および相対保守性を得た。
+また、局所証明束の Čech 障害類と形式証明の実現写像を導入し、非零障害類が
+対象理論における到達不能性を導く十分条件を示した。
+
+コラッツ問題では、Chamberland 選択子と有限パリティ語から証明書プロットを
+生成し、局所証明書の接着問題を明示した。この構成は、逆像木の複雑さを
+ただちに「無限次元」または「ZFC+Uで証明不能」と読み替えない。無条件の
+到達不能性を得るための残る数学的課題は、明示されたコラッツ証明束について
+障害類 $\omega_{\mathrm C}$ の非消滅を証明し、かつ任意の対象理論内証明が
+その実現を通るという普遍性を示すことである。
+
+以上により、Diffeological Proof Space は、有限証明族の局所構造、
+証明書間の接着障害、体系境界の外点指示、および証明空間全体の◎閉包を、
+型を混同せず統一的に記述する枠組みとして有効であることが示された。
+とくに、局所的な検証可能性と大域的な証明可能性の差を幾何学的不変量として
+定式化できる点に、この証明空間の意義がある。コラッツ問題への適用は、
+有限パリティ証明書の幾何と形式体系の到達範囲を同じ構造の中で比較する
+具体例を与え、他の無限分岐的な証明問題への展開可能性を示している。
+
+\begin{thebibliography}{99}
+
+\bibitem{BaezHoffnung2011}
+J.~C. Baez and A.~E. Hoffnung,
+``Convenient categories of smooth spaces,''
+\emph{Transactions of the American Mathematical Society},
+363 (2011), 5789--5825.
+
+\bibitem{Chamberland1996}
+M.~Chamberland,
+``A continuous extension of the $3x+1$ problem to the real line,''
+\emph{Dynamics of Continuous, Discrete and Impulsive Systems},
+2 (1996), 495--509.
+
+\bibitem{ChibaExternal2026}
+千葉将臣，
+「言語の外点：強制法と四重残余束による到達不能性の幾何学」，2026年．
+
+\bibitem{ChibaEPMDTT2026}
+千葉将臣，
+「Gödel 第二不完全性定理の肯定的転回：○依存型による証明論の外部化」，
+2026年．
+
+\bibitem{ChristensenWu2016}
+J.~D. Christensen and E.~Wu,
+``Tangent spaces and tangent bundles for diffeological spaces,''
+\emph{Cahiers de Topologie et Géométrie Différentielle Catégoriques},
+57 (2016), 3--50.
+
+\bibitem{IglesiasZemmour2013}
+P.~Iglesias-Zemmour,
+\emph{Diffeology},
+Mathematical Surveys and Monographs 185,
+American Mathematical Society, 2013.
+
+\bibitem{KrepskiWattsWolbert2022}
+D.~Krepski, J.~Watts and S.~Wolbert,
+``Sheaves, principal bundles, and Čech cohomology for diffeological spaces,''
+arXiv:2111.01032v2, 2022.
+
+\bibitem{Lagarias1985}
+J.~C. Lagarias,
+``The $3x+1$ problem and its generalizations,''
+\emph{American Mathematical Monthly}, 92 (1985), 3--23.
+
+\bibitem{Tao2022}
+T.~Tao,
+``Almost all orbits of the Collatz map attain almost bounded values,''
+\emph{Forum of Mathematics, Pi}, 10 (2022), e12.
+
+\end{thebibliography}
+
+\end{document}
