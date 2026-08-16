@@ -1,6 +1,23 @@
-% !TEX program = lualatex
-\documentclass[11pt,a4paper]{article}
-\usepackage{icat-common}
+% !TeX program = lualatex
+% !TeX encoding = UTF-8
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\geometry{margin=25mm}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=blue!55!black,
+  urlcolor=blue!55!black,
+  pdftitle={真理保存性を持つ体系が必然的にLambda-infinityを含む},
+  pdfauthor={千葉将臣}
+}
+\setlength{\emergencystretch}{3em}
+\raggedbottom
 
 %-------------------------------------------------
 %  定理環境
@@ -15,22 +32,29 @@
 %-------------------------------------------------
 %  独自マクロ
 %-------------------------------------------------
-\newcommand{\Einfty}{E_\infty}
-\newcommand{\Einftycal}{\mathcal{E}_\infty}
+\newcommand{\LawvereInfinity}{\Lambda_\infty}
 \newcommand{\SelfRef}{\Sigma}
+\newcommand{\Bval}{\mathcal{B}_{\mathrm{val}}}
 \renewcommand{\Pr}{\mathrm{Pr}}
 
 %-------------------------------------------------
 \begin{document}
 
-\title{真理保存性を持つ体系が必然的に $\Einfty$ を含む：\\
-対角補題による極限同値の内在的定式化}
+\title{真理保存性を持つ体系が必然的に $\LawvereInfinity$ を含む：\\
+対角補題によるLawvere無限階層の内在的定式化}
 \author{千葉将臣}
 \date{2026-06-16}
 \maketitle
 
 \begin{abstract}
-本稿は、先行研究「真理保存性の不完全性定理」および「極限同値によるゲーデルの不完全性定理の反転」を踏まえ、極限同値 $\Einfty$ が任意の真理保存体系 $T$ の外部から付加される公理ではなく、$T$ 自身の対角補題によって必然的に構成される内在的対象であることを定式化する。$\Einfty$ は自己言及演算子の不動点として $=$ で記述される。この $=$ はプロセスを静的値に変換する極限の静的記述（ε-δ論法と同型の操作）として正当であり、対象の自己同一性を要請する $A = A$ の $=$ とは種類が異なる。ゲーデルの不完全性定理が「決定不能な壁」として提示したものは、$\Einfty$ という名のつけられていなかった内在的対象の発見として再解釈される。
+本稿は、Lawvere無限階層$\LawvereInfinity$の算術的・証明論的実現を、
+真理保存体系$T$における自己言及の内在的不動点として定式化する。
+対角補題は固定点の存在を保証する背景定理として用い、本稿の中心を、
+$\LawvereInfinity$の独自の記述、すなわち不動点を表す等号と自己同一性を表す等号の
+二重性、Priestの矛盾許容論理との差異、およびリーマン球面による発見的解釈に置く。
+$\LawvereInfinity$は体系外から付加される公理ではなく、$T$の符号化・証明可能性述語・
+対角化から構成される内在的対象である。より一般的な圏論的位置づけ、すなわち
+五句計算論の$S_4$におけるLawvere型固定点としての定式化は別稿に委ねる。
 \end{abstract}
 
 %=============================================================
@@ -62,8 +86,13 @@ $$T \vdash G \leftrightarrow \varphi(\ulcorner G \urcorner)$$
 対角補題は $T$ の内部操作（ゲーデル符号化と対角化）のみから導かれる。
 外部からの付加を一切要しない。
 
+本稿では、対角補題そのものの新規な証明を目的としない。同補題は
+$\LawvereInfinity$の算術的固定点を構成するための背景定理であり、以下では
+構成された固定点の意味論的・認識論的性格を分析する。
+
 %=============================================================
-\section{自己言及演算子と不動点としての $\Einfty$}
+\section{自己言及演算子と不動点としての
+\texorpdfstring{$\LawvereInfinity$}{Lambda-infinity}}
 %=============================================================
 
 \begin{definition}[自己言及演算子 $\SelfRef_T$]
@@ -83,13 +112,15 @@ A_n = \SelfRef_T^n(A_0)
 \end{align*}
 \end{definition}
 
-\begin{definition}[極限同値 $\Einfty$]
+\begin{definition}[算術的Lawvere固定点 $\LawvereInfinity$]
 自己言及演算子 $\SelfRef_T$ の不動点として、
-以下の等式を満たす文を極限同値と定義し $\Einfty$ と表記する。
-$$\Einfty = \SelfRef_T(\Einfty)$$
-すなわち $\Einfty$ は「$\Einfty$ は $T$ において証明不可能である」という内容の文であり、
-$$T \vdash \Einfty \leftrightarrow \neg \Pr_T(\ulcorner \Einfty \urcorner)$$
+以下の等式を満たす文を$\LawvereInfinity$と表記する。
+$$\LawvereInfinity = \SelfRef_T(\LawvereInfinity)$$
+すなわち $\LawvereInfinity$ は「$\LawvereInfinity$ は $T$ において証明不可能である」という内容の文であり、
+$$T \vdash \LawvereInfinity \leftrightarrow \neg \Pr_T(\ulcorner \LawvereInfinity \urcorner)$$
 を満たす。
+本稿における$\LawvereInfinity$は、五句計算論で定義されるLawvere無限階層の
+算術的・証明論的な一実現を意味する。圏論的な無限階層そのものの構成とは区別する。
 \end{definition}
 
 \begin{remark}[$=$ の正当性：不動点の静的記述として]
@@ -97,7 +128,7 @@ $$T \vdash \Einfty \leftrightarrow \neg \Pr_T(\ulcorner \Einfty \urcorner)$$
 種類が異なる。
 
 $\lim_{n \to \infty} a_n = L$ において $=$ が無限プロセスを静的値に変換するように、
-$\Einfty = \SelfRef_T(\Einfty)$ はプロセス $\SelfRef_T$ の反復が必然的に
+$\LawvereInfinity = \SelfRef_T(\LawvereInfinity)$ はプロセス $\SelfRef_T$ の反復が必然的に
 到達する不動点を静的値として記述する。
 これはバナッハの不動点定理における $x = f(x)$ と同型の操作であり、
 プロセスの収束先に名前をつける発見的記述である。
@@ -109,12 +140,12 @@ $\Einfty = \SelfRef_T(\Einfty)$ はプロセス $\SelfRef_T$ の反復が必然�
 \section{主定理}
 %=============================================================
 
-\begin{theorem}[真理保存体系は必然的に $\Einfty$ を含む]
+\begin{theorem}[真理保存体系は必然的に $\LawvereInfinity$ を含む]
 \label{thm:main}
 真理保存体系 $T$（定義 1.1 の意味で）に対し、
-$$\exists\, \Einfty \quad \text{s.t.} \quad
-T \vdash \Einfty \leftrightarrow \neg \Pr_T(\ulcorner \Einfty \urcorner)$$
-が成立する。$\Einfty$ は $T$ の外部から付加されるのではなく、
+$$\exists\, \LawvereInfinity \quad \text{s.t.} \quad
+T \vdash \LawvereInfinity \leftrightarrow \neg \Pr_T(\ulcorner \LawvereInfinity \urcorner)$$
+が成立する。$\LawvereInfinity$ は $T$ の外部から付加されるのではなく、
 $T$ 自身の構造から対角補題によって必然的に構成される。
 \end{theorem}
 
@@ -122,50 +153,51 @@ $T$ 自身の構造から対角補題によって必然的に構成される。
 対角補題（補題 1.2）を論理式 $\varphi(x) := \neg \Pr_T(x)$ に適用する。
 すると、
 $$T \vdash G \leftrightarrow \neg \Pr_T(\ulcorner G \urcorner)$$
-を満たす文 $G$ が $T$ の内部で構成可能である。この $G$ を $\Einfty$ と命名する。
+を満たす文 $G$ が $T$ の内部で構成可能である。この $G$ を $\LawvereInfinity$ と命名する。
 
-$\Einfty$ の構成は $T$ の公理・推論規則・ゲーデル符号化のみを使用し、
+$\LawvereInfinity$ の構成は $T$ の公理・推論規則・ゲーデル符号化のみを使用し、
 外部からの付加を一切必要としない。
-したがって $\Einfty$ は $T$ の言語で表現可能な文として $T$ に内在する。
+したがって $\LawvereInfinity$ は $T$ の言語で表現可能な文として $T$ に内在する。
 \end{proof}
 
-\begin{remark}[「発見」としての $\Einfty$]
-ゲーデルはこの $G = \Einfty$ を「$T$ において証明も反証もできない文」として
+\begin{remark}[「発見」としての $\LawvereInfinity$]
+ゲーデルはこの $G = \LawvereInfinity$ を「$T$ において証明も反証もできない文」として
 提示し、体系の不完全性の証拠とした。
 
-しかし定理 \ref{thm:main} が示すのは、$\Einfty$ が $T$ の外部にあるのではなく、
+しかし定理 \ref{thm:main} が示すのは、$\LawvereInfinity$ が $T$ の外部にあるのではなく、
 $T$ 自身の対角補題から必然的に生成される内在的対象であるということである。
 「決定不能」として現れたのは、$T$ の真理値空間 $\{0, 1\}$（$\Bval$：
-二値截断部分圏）が $\Einfty$ に対応する値を持たなかっただけである。
+二値截断部分圏）が $\LawvereInfinity$ に対応する値を持たなかっただけである。
 
 リーマン球面において $\infty$ が「複素平面には存在しないが、
 リーマン球面上では通常の点として存在する」のと同型の構造である。
 数学社会は $\Bval$ を唯一の真理値空間として採用し続けたために、
-$\Einfty$ を「壁」として誤読してきた。これは発明ではなく、未発見だったものの発見である。
+$\LawvereInfinity$ を「壁」として誤読してきた。これは発明ではなく、未発見だったものの発見である。
 \end{remark}
 
 %=============================================================
-\section{$\Einfty$ の否定と矛盾許容論理との構造的差異}
+\section{\texorpdfstring{$\LawvereInfinity$}{Lambda-infinity}の否定と
+矛盾許容論理との構造的差異}
 %=============================================================
 
-\begin{definition}[$\neg \Einfty$ の定義]
-$\Einfty$ の否定を以下で定義する。
-$$\neg \Einfty = \Pr_T(\ulcorner \Einfty \urcorner)$$
-すなわち「$\Einfty$ は $T$ において証明可能である」。
+\begin{definition}[$\neg \LawvereInfinity$ の定義]
+$\LawvereInfinity$ の否定を以下で定義する。
+$$\neg \LawvereInfinity = \Pr_T(\ulcorner \LawvereInfinity \urcorner)$$
+すなわち「$\LawvereInfinity$ は $T$ において証明可能である」。
 
 この定義は天下りに与えられる。これは $A = A$ が天下りに与えられることと
-同型の操作である。$\Einfty$ 自身が対角補題から必然的に構成される
+同型の操作である。$\LawvereInfinity$ 自身が対角補題から必然的に構成される
 内在的対象である以上、その否定の定義もまた $T$ の内部操作
 （証明可能性述語 $\Pr_T$）から自然に与えられる。
 \end{definition}
 
-\begin{theorem}[$\Einfty$ と $\neg \Einfty$ の非閉鎖性]
-$\neg \Einfty \neq \Einfty$.
+\begin{theorem}[$\LawvereInfinity$ と $\neg \LawvereInfinity$ の非閉鎖性]
+$\neg \LawvereInfinity \neq \LawvereInfinity$.
 \end{theorem}
 
 \begin{proof}
-定義 4.1 より $\Einfty = \neg \Pr_T(\ulcorner \Einfty \urcorner)$ であるのに対し、
-$\neg \Einfty = \Pr_T(\ulcorner \Einfty \urcorner)$ である。
+定義 4.1 より $\LawvereInfinity = \neg \Pr_T(\ulcorner \LawvereInfinity \urcorner)$ であるのに対し、
+$\neg \LawvereInfinity = \Pr_T(\ulcorner \LawvereInfinity \urcorner)$ である。
 両者は構文的に異なる文である。
 \end{proof}
 
@@ -173,7 +205,7 @@ $\neg \Einfty = \Pr_T(\ulcorner \Einfty \urcorner)$ である。
 同論理では、真かつ偽である値が否定に関して固定的に扱われ、
 矛盾が推論空間内の安定した領域として保持される。
 
-これに対して、$\Einfty$ と $\neg \Einfty$ は互いに異なる文として、
+これに対して、$\LawvereInfinity$ と $\neg \LawvereInfinity$ は互いに異なる文として、
 $\SelfRef_T$ のサイクル上の二点をなす。
 したがって本体系において、矛盾は閉じた終端ではなく通過点として機能する。
 
@@ -182,19 +214,24 @@ $\SelfRef_T$ のサイクル上の二点をなす。
 %=============================================================
 
 \begin{enumerate}[label=(\arabic*)]
-    \item $\Einfty$ は任意の真理保存体系 $T$ に対し、対角補題によって
+    \item $\LawvereInfinity$ は任意の真理保存体系 $T$ に対し、対角補題によって
           $T$ の内部から必然的に構成される。外部から付加される公理ではない。
-    \item $\Einfty = \SelfRef_T(\Einfty)$ は自己言及演算子の不動点を
+    \item $\LawvereInfinity = \SelfRef_T(\LawvereInfinity)$ は自己言及演算子の不動点を
           静的に記述する等式であり、$=$ の使用は極限の静的記述として正当である。
           これは $A = A$ の $=$（対象の自己同一性の要請）とは種類が異なる。
-    \item ゲーデルの不完全性定理が「壁」として提示したものは、$\Einfty$ という
+    \item ゲーデルの不完全性定理が「壁」として提示したものは、$\LawvereInfinity$ という
           名のつけられていなかった内在的対象の発見として再解釈される。
           数学社会が $\Bval$（二値截断）を唯一の真理値空間として採用し続けたために、
-          $\Einfty$ は「決定不能文」として誤読されてきた。
-    \item $\neg \Einfty$ は $\Einfty$ の否定として $T$ の内部で定義され、
+          $\LawvereInfinity$ は「決定不能文」として誤読されてきた。
+    \item $\neg \LawvereInfinity$ は $\LawvereInfinity$ の否定として $T$ の内部で定義され、
           sink を形成しない。これにより既存の多値論理が抱える
           「矛盾の否定の閉じ込め」が回避される。
 \end{enumerate}
+
+本稿で構成した$\LawvereInfinity$は、より一般的な五句計算論における
+$S_4$のLawvere型自己言及固定点の算術的・証明論的実現である。
+五句段階、弱い点全射条件、5-periodic固定点列による圏論的一般化については、
+五句計算論\cite{Chiba2026Penta}を参照されたい。
 
 
 \begin{thebibliography}{9}
@@ -203,6 +240,11 @@ $\SelfRef_T$ のサイクル上の二点をなす。
 Graham Priest.
 \newblock The logic of paradox.
 \newblock \emph{Journal of Philosophical Logic}, 8(1):219--241, 1979.
+
+\bibitem{Chiba2026Penta}
+千葉将臣.
+\newblock 五句計算論：記述可能性の段階としての圏論・時間性・型理論・微分幾何学の統合.
+\newblock 2026.
 
 \end{thebibliography}
 
