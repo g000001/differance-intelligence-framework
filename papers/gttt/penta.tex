@@ -1,0 +1,823 @@
+% !TeX program = lualatex
+% !TeX encoding = UTF-8
+\documentclass[11pt,a4paper]{ltjsarticle}
+
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{amsthm}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{margin=25mm}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=blue!55!black,
+  urlcolor=blue!55!black,
+  pdftitle={五句計算論},
+  pdfauthor={千葉将臣}
+}
+\setlist{nosep}
+\setlength{\emergencystretch}{3em}
+\renewcommand{\arraystretch}{1.18}
+
+\newtheorem{definition}{定義}[section]
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{conjecture}[definition]{予想}
+\newtheorem{corollary}[definition]{系}
+\newtheorem{axiom}[definition]{公理}
+\theoremstyle{remark}
+\newtheorem*{remark}{注意}
+\renewcommand{\proofname}{証明}
+\renewcommand{\abstractname}{要旨}
+
+\newcommand{\HoTT}{\mathrm{HoTT}}
+\newcommand{\Maybe}{\mathsf{Maybe}}
+\newcommand{\List}{\mathsf{List}}
+\newcommand{\State}{\mathsf{State}}
+\newcommand{\Cont}{\mathsf{Cont}}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\isContr}{\mathrm{isContr}}
+\newcommand{\EM}{\mathrm{EM}}
+\newcommand{\LawvereInfinity}{\Lambda_\infty}
+\newcommand{\SelfRef}{\Sigma}
+\newcommand{\Skobs}{\mathop{\mathrm{Sk}}_{\mathrm{obs}}}
+\newcommand{\Skiso}{\mathop{\mathrm{Sk}}_{\mathrm{iso}}}
+
+\title{五句計算論：記述可能性の段階としての\\
+圏論・時間性・型理論・微分幾何学の統合}
+\author{千葉将臣}
+\date{2026-08-16}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本論文は、インド古代論理学のサンジャヤ五句否定
+（Pañca-mūla-avaktavya）を「記述可能性の段階（stages of
+describability）」として再解釈し、現代の圏論・ホモトピー型理論
+（HoTT）・計算論・微分幾何学（diffeology）・様相論理を統合する包括的枠組み
+「五句計算論（Penta-Computational Theory）」を提案する。五句分別の各句は、
+型理論におけるh-level階層、圏論における随伴・モナド・コモナド、
+微分幾何学における商空間・プロットの持ち上げ、様相論理における
+必然演算子□と可能演算子◇の時間構造と精密に対応する。特に、HoTTのパス構造は
+「時間の軌跡」として解釈され、truncationは「観測者の固定・証明の時間性の消去」
+として理解される。本論文は、これらの対応を公理化し、未解決課題を明示する。
+
+\medskip
+\noindent\textbf{キーワード：}
+五句分別、ホモトピー型理論、モナド、コモナド、様相論理、diffeology、
+記述可能性、時間性、商型、truncation、Lawvere--Tierney topology、計算論
+\end{abstract}
+
+\section{序論：問題提起}
+
+\subsection{五句分別の再解釈}
+
+サンジャヤ学派の五句否定は、一つの命題 $P$ に対して以下の五つの
+記述可能性を区別する。
+
+\begin{enumerate}
+  \item \textbf{$P$（構成的に真）}：証明 $p:P$ を持つ。
+  \item \textbf{$\neg_i\neg_i P$（構成的になくない）}：間接的に到達可能である。
+  \item \textbf{$\neg_c P$（非構成的にない）}：古典的否定（独立命題を含む）。
+  \item \textbf{$\neg_i\neg_c P$（非構成的になくない）}：古典的に二重否定
+  （証人を忘れた存在）。
+  \item \textbf{矛盾でない（整合性）}：体系の無矛盾性。
+\end{enumerate}
+
+本論文の主張は、これらは「真理の度合い」ではなく、
+\textbf{「記述可能性の段階（stage of describability）」}の区別である、
+というものである。
+
+\subsection{統合の動機}
+
+現代数学・論理学には、以下の断絶がある。
+
+\begin{itemize}
+  \item \textbf{圏論}：構造の保存と段階間の移行（随伴）を記述するが、
+  「何が記述されるか」の段階論を欠く。
+  \item \textbf{ホモトピー型理論（HoTT）}：証明のパス構造を幾何学的に
+  記述するが、時間性の哲学的解釈が分散している。
+  \item \textbf{計算論}：モナドとしての計算効果を記述するが、その
+  「段階的」構造が明示されていない。
+  \item \textbf{微分幾何学（diffeology）}：商空間と滑らか構造を記述するが、
+  論理的基礎との接続が未整備である。
+  \item \textbf{様相論理}：$\Box/\Diamond$による「必然／可能」を記述するが、
+  「世界」「到達可能性」などのメタファーが実装依存で曖昧である。
+\end{itemize}
+
+五句計算論は、これらを\textbf{「記述可能性の段階」という単一の軸}で統合する。
+
+\section{五句計算論の公理化}
+
+\subsection{基本定義}
+
+\begin{definition}[記述可能性の段階]
+命題 $P$ の記述可能性段階 $\delta(P)$ は、次の5値をとる。
+\[
+  \delta(P)\in\{S_1,S_2,S_3,S_4,S_5\}.
+\]
+各段階を表\ref{tab:stages}のように定義する。
+\end{definition}
+
+\begin{table}[htbp]
+\centering
+\caption{記述可能性の五段階}
+\label{tab:stages}
+\small
+\begin{tabularx}{\textwidth}{@{}c l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+記号 & 名称 & 型理論的定義 & 直観 \\
+\midrule
+$S_1$ & 構成的に真 & $\exists p:P$（要素を持つ） & 今ここに証明がある \\
+$S_2$ & 構成的になくない & $\neg\neg P$（二重否定） & 間接的に到達可能 \\
+$S_3$ & 非構成的になくない & $\lVert P\rVert_{-1}$（命題切捨て） & 証人を忘れた存在 \\
+$S_4$ & 非構成的にない & $\neg_cP$（古典的否定） & 体系内で証明不能 \\
+$S_5$ & 矛盾でない & $\isContr(\lVert P\rVert_{-1}+\lVert\neg P\rVert_{-1})$ & 体系の整合性 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{h-level階層との対応}
+
+HoTTのh-level階層は、五句分別を\textbf{無限に精密化}する
+（表\ref{tab:hlevel}）。
+
+\begin{table}[htbp]
+\centering
+\caption{h-level階層との対応}
+\label{tab:hlevel}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+h-level & 五句分別的読み & 具体例 \\
+\midrule
+$-2$ & $S_5$（矛盾でない／唯一の真理） & 可縮型 $\isContr(A)$ \\
+$-1$ & $S_3$（非構成的になくない） & 命題 $\lVert A\rVert_{-1}$ \\
+$0$ & $S_2$（構成的になくない／同一性証明が一意） & 集合 $\lVert A\rVert_0$ \\
+$1$ & $S_1$の豊かさ（パスが複数） & 群胚 \\
+$\geq 2$ & 記述可能性の完全展開 & 高次群胚、無限coherence \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{remark}
+$S_2$（$\neg\neg P$）と$S_3$（$\lVert P\rVert_{-1}$）の区別は、
+排中律（LEM）なしでのみ成立する。LEMのもとでは
+$\lVert P\rVert_{-1}\simeq\neg\neg P$となるが、構成的文脈では両者は
+\textbf{異なる段階}である。
+\end{remark}
+
+\section{Lawvere無限階層の五句計算論への統合}
+\label{sec:lambda-infinity}
+
+本節では$\LawvereInfinity$をLawvereの固定点定理の五句計算論的実装として、
+圏論的言語のみで定式化する。対角補題、証明可能性述語、等号の二重性、
+Priestの矛盾許容論理との差異、およびリーマン球面による解釈を含む
+算術的・証明論的構成については、$\LawvereInfinity$単独論文
+\cite{ChibaLambda2026}を参照されたい。
+
+\subsection{五句段階における位置づけ}
+
+\begin{definition}[Lawvere無限階層]
+各五句段階$S_i$を表す圏を$\mathcal{C}_i$とする。
+$\LawvereInfinity$は、$\mathcal{C}_4$（体系内不可記述）におけるLawvere固定点を、
+五句段階循環
+\[
+ S_1\longrightarrow S_2\longrightarrow S_3\longrightarrow S_4
+ \longrightarrow S_5\longrightarrow S_1
+\]
+の各周回に沿って集めた両立的な固定点族、またはその極限を表す記号である。
+\end{definition}
+
+\begin{table}[htbp]
+\centering
+\caption{$\LawvereInfinity$を構成する段階的構造}
+\label{tab:lambda-stage}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X c >{\raggedright\arraybackslash}X@{}}
+\toprule
+構造 & 五句段階 & 役割 \\
+\midrule
+対角写像$\Delta_i:X_i\to X_i\times X_i$ & $S_1$--$S_5$ & 各段階での自己適用の舞台 \\
+評価写像$\operatorname{eval}_i:X_i\times Y_i^{X_i}\to Y_i$ & $S_1$--$S_5$ & 指数対象の評価 \\
+Lawvere固定点$b_i=g_i(b_i)$ & $S_4\to S_5$ & 各周回における穴の検出と閉包 \\
+$\LawvereInfinity$ & $S_4$の無限階層化 & 5-periodic固定点列の極限的記述 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{段階的自己言及と5-periodic反復}
+
+\begin{definition}[段階的Lawvereデータ]
+各$\mathcal{C}_i$に対象$X_i,Y_i$と射
+\[
+ e_i:X_i\longrightarrow Y_i^{X_i}
+\]
+を置く。$e_i$が弱い点全射であるとは、任意の射$h:X_i\to Y_i$が、ある
+$x:1\to X_i$に対する$e_i\circ x$の評価によって表現されることをいう。
+自己写像$g_i:Y_i\to Y_i$へLawvereの対角構成を適用して得られる固定点を
+$b_i:1\to Y_i$と書く。
+\end{definition}
+
+\begin{definition}[5-periodic反復列]
+段階遷移関手$R_i:\mathcal{C}_i\to\mathcal{C}_{i+1}$（添字は5を法として読む）
+がLawvereデータを保存すると仮定する。$X_0\in\mathcal{C}_1$に対して
+\[
+\begin{aligned}
+X_1&=R_1(X_0)\in\mathcal{C}_2,&
+X_2&=R_2(X_1)\in\mathcal{C}_3,\\
+X_3&=R_3(X_2)\in\mathcal{C}_4,&
+X_4&=R_4(X_3)\in\mathcal{C}_5,\\
+X_5&=R_5(X_4)\in\mathcal{C}_1
+\end{aligned}
+\]
+を一周とする。各周回の$\mathcal{C}_4$成分に得られる固定点$b_4^{(k)}$が
+遷移関手と両立するとき、これらは固定点塔をなす。
+\end{definition}
+
+\begin{definition}[$\LawvereInfinity$の極限表示]
+$\mathcal{C}_4$における固定点塔$(b_4^{(k)})_{k\geq0}$の極限が存在するとき、
+\[
+ \LawvereInfinity:=\varprojlim_k b_4^{(k)}
+\]
+と定義する。各成分は対応する自己写像$g_4^{(k)}$に対して
+$g_4^{(k)}(b_4^{(k)})=b_4^{(k)}$を満たす。
+\end{definition}
+
+\begin{remark}[等号の意味]
+上式の等号は、$A=A$という対象の反射的自己同一性と区別される。
+ここでは$\lim_{n\to\infty}a_n=L$や$x=f(x)$と同様に、固定点塔の極限を
+静的に表示する。したがって、この等号は$S_3$から直接観測できない$S_4$の構造へ
+名前を与える圏論的な極限表示である。等号の証明論的二重性は
+\cite{ChibaLambda2026}で扱う。
+\end{remark}
+
+\subsection{存在条件と五句公理の拡張}
+
+\begin{axiom}[Lawvere点全射条件]
+$\mathcal{C}_4$における射$e_4:X_4\to Y_4^{X_4}$が、Lawvereの固定点定理に
+必要な弱い点全射条件を満たすと仮定する。
+\end{axiom}
+
+\begin{theorem}[$\LawvereInfinity$の内在的存在]
+五句公理C1--C5、$S_3\to S_4$の非可逆な段階移行、Lawvere点全射条件、
+および固定点塔の極限存在を
+満たす五句計算体系$\mathcal{K}$では、
+\[
+ \LawvereInfinity=\varprojlim_k b_4^{(k)}\in\mathcal{C}_4
+\]
+が成立する。
+\end{theorem}
+
+\begin{proof}[証明の概略]
+$S_3\to S_4$の非可逆性は、観測可能な商から失われる構造を生じさせる。
+ただし多対一性だけでは固定点の存在は従わないため、上の点全射条件を明示的に用いる。
+Lawvereの固定点定理を$\mathcal{C}_4$の対角写像と評価写像へ適用すると、
+各周回の自己写像$g_4^{(k)}$に固定点$b_4^{(k)}$が得られる。遷移関手との両立性に
+より固定点塔が形成され、仮定した極限の普遍性から$\LawvereInfinity$が得られる。
+\end{proof}
+
+\begin{axiom}[C4-$\Lambda$：$S_4$の自己言及公理]
+$\mathcal{C}_4$は弱い点全射なLawvereデータと、その固定点塔を内在的に含む。
+\[
+ \LawvereInfinity=\varprojlim_k b_4^{(k)}\in\mathcal{C}_4.
+\]
+\end{axiom}
+
+\begin{axiom}[C5-$\Lambda$：統制固定点との接続]
+$S_5$の統制固定点$T\cong F(T)$は、$S_4$の穴として現れる
+$\LawvereInfinity$を閉包へ統合し、次の周回$S'_1$への入口を生成する。
+\end{axiom}
+
+\subsection{既存構造との統合}
+
+\begin{table}[htbp]
+\centering
+\caption{$\LawvereInfinity$と五句計算論の既存構造}
+\label{tab:lambda-integration}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.29\textwidth} >{\raggedright\arraybackslash}X@{}}
+\toprule
+既存構造 & $\LawvereInfinity$との関係 \\
+\midrule
+$S_4$ & 体系内不可記述を具体化する自己言及固定点 \\
+フロベニウス条件$\sim$ & 非可逆性が固定点構成の背景を与えるが、存在には点全射条件を要する \\
+二諦公理 & $\LawvereInfinity$は$\Skobs$には現れず、$\Skiso$の外側を標示する \\
+バナッハ＝タルスキー接続 & 多対一の観測圧縮が残す不可視構造の$S_4$レベルでの表現 \\
+Frege--Lawvere接続 & SinnがBedeutungへ完全には潰れないことの固定点表示 \\
+計算の本質$S_1\to S_3$ & 計算の外側$S_4$における自己言及であり、継続領域の圏論的候補 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{圏論的基礎：随伴・モナド・コモナド}
+
+\subsection{随伴＝段階間の移行}
+
+Lawvereの\textit{Adjointness in Foundations}\cite{Lawvere1967}によれば、
+論理的基本操作（$\exists,\forall,\Rightarrow,\times,+$）は随伴として記述される。
+Rodin\cite{Rodin2013}の解釈によれば、これはヘーゲル的弁証法（正・反・合）の
+圏論的実現である。
+
+五句計算論では、\textbf{随伴は「記述可能性の段階間の移行」}として再解釈される。
+\[
+  F\dashv G:\mathcal{C}\longrightarrow\mathcal{D}.
+\]
+ここで、$F$は段階の「持ち上げ」（自由化）、$G$は段階の「忘却」（制限）を表す。
+
+\subsection{モナド＝段階の操作}
+
+Moggi\cite{Moggi1991}およびPlotkin--Power\cite{PlotkinPower2002}の
+「計算＝モナド」対応を五句分別軸で再解釈すると、表\ref{tab:monads}を得る。
+
+\begin{table}[htbp]
+\centering
+\caption{モナドと五句分別の対応}
+\label{tab:monads}
+\small
+\begin{tabularx}{\textwidth}{@{}c l >{\raggedright\arraybackslash}X@{}}
+\toprule
+モナド $T$ & 計算概念 & 五句分別対応 \\
+\midrule
+$\Maybe$ & 例外／部分性 & $S_1\to S_2$（失敗の可能性） \\
+$\List$ & 非決定性 & $S_1$の証人の多重化 \\
+$\State$ & 文脈依存 & $S_1$の時間的持続性 \\
+$\Cont$ & 二重否定 & $S_2$の直接実現（$\neg\neg A$） \\
+$\lVert\mathord{\cdot}\rVert_{-1}$ & 証人の忘却 & $S_1\to S_3$（段階上昇） \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{definition}[五句モナド]
+モナド$(T,\eta,\mu)$が\textbf{五句モナド}であるとは、以下を満たすことをいう。
+\begin{enumerate}
+  \item $\eta:\Id\Rightarrow T$は$S_1\to S_{\geq 2}$の段階上昇である。
+  \item $\mu:T^2\Rightarrow T$は「二重操作の単純化」、すなわち段階の準冪等性である。
+  \item Beck条件（余等化子保存）により、段階の「忠実性」が保証される。
+\end{enumerate}
+\end{definition}
+
+\subsection{コモナド＝必然性の固定}
+
+様相論理的$\Box$はコモナド$W$として記述される（表\ref{tab:comonad}）。
+
+\begin{table}[htbp]
+\centering
+\caption{コモナドと必然性}
+\label{tab:comonad}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+公理 & コモナド則 & 五句計算論的解釈 \\
+\midrule
+$\Box P\to P$（T） & 余単位 $\varepsilon:W\Rightarrow\Id$ & 固定の解除＝現在へ回帰 \\
+$\Box P\to\Box\Box P$（4） & 余乗法 $\delta:W\Rightarrow W^2$ & 固定の不変性 \\
+$\Box\Box P\to\Box P$ & 余乗法のcounit性 & 二重固定の単純化 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{時間性の定式化}
+
+\subsection{証明＝パス＝時間の軌跡}
+
+HoTTにおいて、同一性証明$p:x=_Ay$はパス$p:\mathbb{I}\to A$として解釈される。
+\begin{itemize}
+  \item $\operatorname{refl}_a:a=_Aa$： 「今」の定数パス。
+  \item $p\mathbin{\cdot}q:x=_Az$：未来の合成。
+  \item $p^{-1}:y=_Ax$：過去の逆パス。
+\end{itemize}
+
+\begin{definition}[時間的一貫性]
+Path induction（J rule）は、次の時間的一貫性の型理論的定式化である。
+\[
+J:\prod_{C:\prod_{y:A}(x=y)\to\mathcal{U}}
+\left(C(x,\operatorname{refl}_x)\to
+\prod_{y:A}\prod_{p:x=y}C(y,p)\right).
+\]
+これは「今の真理を未来に運ぶ」操作として解釈される。
+\end{definition}
+
+\subsection{観測者の固定＝truncation＝時間性の消去}
+
+古典数学的証明の「非時間性（atemporality）」は、propositional truncation
+$\lVert P\rVert_{-1}$による証明パスの同一視として記述される。
+\[
+ |p|:\lVert P\rVert_{-1},\quad |q|:\lVert P\rVert_{-1}
+ \quad\Longrightarrow\quad
+ |p|=_{\lVert P\rVert_{-1}}|q|.
+\]
+
+\begin{proposition}
+古典数学的証明は、五句計算論的に$S_1\to S_3$のtruncation操作によって
+得られる「時間性＝0」の対象である。
+\end{proposition}
+
+\begin{proof}[証明の概略]
+構成的証明$p:P$（$S_1$）から命題切捨て$\lVert P\rVert_{-1}$（$S_3$）への
+移行は、証明パス$p,q$の差異（時間性）を同一視する。これはproof irrelevanceの
+型理論的実現であり、「観測者（証明者・証明パス）の差異を固定・忘却する」操作に
+対応する。
+\end{proof}
+
+\section{HoTTとの接続}
+
+\subsection{パス構造と無限coherence}
+
+モナド則の厳密等式
+$\mu\circ T\mu=\mu\circ\mu_T$は、HoTT的にはホモトピー
+$\mu\circ T\mu\sim\mu\circ\mu_T$として緩和される。その上に2-cell、3-cell、
+さらに高次のセルからなる\textbf{無限coherence tower}が構築される
+\cite{RiehlVerity2015}。
+
+\begin{proposition}[coherence tower＝時間の解像度の精密化]
+モナドの無限coherence towerは、五句分別の$S_1\to S_5$の遷移を
+\textbf{無限に分解}する操作である。各h-level $n$は、時間の解像度の$n$次の
+微分に対応する。
+\end{proposition}
+
+\subsection{HITによる商型とdiffeology・EM圏の統合}
+
+Higher Inductive Type（HIT）による商型$\operatorname{Quotient}(A,R)$は、
+以下のconstructorを持つ。
+\begin{itemize}
+  \item point constructor：$|a|:\operatorname{Quotient}(A,R)$。
+  \item path constructor：$\operatorname{eq}(a,b,r):|a|=|b|$（$r:R(a,b)$）。
+\end{itemize}
+
+これはdiffeologyの商空間$X\to X/G$およびEM圏の商代数
+$T^2A\rightrightarrows TA\to A$（余等化子）と形式的に対応する。
+
+\begin{theorem}[van Doorn]
+HITsは商型に帰着可能である（HITs reduce to quotients）\cite{vanDoorn2016}。
+\end{theorem}
+
+\begin{corollary}
+diffeologyの商空間、HoTTのHIT、EM圏の商代数は、五句計算論的に
+\textbf{同一の段階操作}（$S_1\to S_3$の商同一視）の異なる実装である。
+\end{corollary}
+
+\subsection{Univalence＝米田的真理保存性}
+
+Univalence Axiom
+\[
+ (A=_{\mathcal{U}}B)\simeq(A\simeq B)
+\]
+は、\textbf{「等価な構造は同一の記述可能性段階に属する」}という
+五句計算論的原理の型理論的実現である\cite{HoTTBook2013}。
+
+\section{diffeologyとの接続}
+
+\subsection{商空間とプロットの持ち上げ}
+
+diffeologyの基本構造は、集合$X$上の\textbf{プロット（plot）}の族
+$dX\subset\{\mathbb{R}^n\to X\}$である\cite{IglesiasZemmour}。
+
+\begin{table}[htbp]
+\centering
+\caption{diffeology・五句計算論・圏論の対応}
+\label{tab:diffeology}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+diffeology & 五句計算論 & 圏論 \\
+\midrule
+自由プロット & $S_1$（構成的に真） & クライスリ圏$\mathcal{C}_T$ \\
+任意プロット（商の後） & $S_3$（非構成的になくない） & EM圏$\mathcal{C}^T$ \\
+D-topology & $S_3$の位相的実現 & 比較関手$K:\mathcal{C}_T\to\mathcal{C}^T$のfaithfulness \\
+不合理トーラス$\mathbb{T}_\theta$ & $S_4$（非構成的にない） & 記述可能性の境界 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Beck条件とsubductionの同値性（予想）}
+
+\begin{conjecture}
+モナド$T$がBeck条件（余等化子保存・忠実性）を満たすことと、
+diffeology的subduction（商写像の持ち上げ性質）が同値である。
+\end{conjecture}
+
+Beck条件は「段階の移行が情報を失わない」ことを保証し、subductionは
+「商空間の滑らか構造が原空間から持ち上げられる」ことを保証する。
+両者は五句計算論的に\textbf{「$S_1\to S_3$の移行の可逆性条件」}として
+同一視される。
+
+\section{様相論理との統合}
+
+\subsection{\texorpdfstring{$\Box/\Diamond$}{必然・可能演算子}の五句計算論的分解}
+
+様相論理の$\Box$（必然）と$\Diamond$（可能）は、
+\textbf{「記述可能性の段階を操作する普遍的演算子」}として再解釈される。
+
+\begin{table}[htbp]
+\centering
+\caption{様相演算子の五句計算論的分解}
+\label{tab:modal-op}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+演算子 & 圏論的対応 & 五句計算論的解釈 \\
+\midrule
+$\Box P$ & コモナド$W$ & 記述可能性の「固定・完備化」 \\
+$\Diamond P$ & モナド$M$ & 記述可能性の「拡張・持ち上げ」 \\
+$\Box\Box P\to\Box P$ & 余乗法のcounit & 二重固定の単純化＝段階の準冪等性 \\
+$\Diamond\Diamond P\to\Diamond P$ & 乗法$\mu$ & 二重拡張の平坦化 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{S4/S5の公理の五句計算論的読み}
+
+\begin{table}[htbp]
+\centering
+\caption{S4/S5公理の解釈}
+\label{tab:s4s5}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+公理 & 五句計算論的解釈 \\
+\midrule
+$\Box P\to P$（T） & 普遍的真理は現在の真理＝最上位段階からの回帰 \\
+$\Box P\to\Box\Box P$（4） & 固定の不変性＝段階の自己保存 \\
+$P\to\Box\Diamond P$（B） & 現在の真理は必然的に可能＝現在の記述はすべての未来から参照可能 \\
+$\Diamond\Box P\to\Box P$（5） & 可能性の必然性は必然性＝段階の最上位収束＝EM圏の完備性 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{「世界」メタファーの解消：時間差分の導入}
+
+Kripke意味論の「世界$w$」は、表\ref{tab:worlds}の三つの異なる概念を
+混同している。
+
+\begin{table}[htbp]
+\centering
+\caption{「世界」の三分類}
+\label{tab:worlds}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X c >{\raggedright\arraybackslash}X@{}}
+\toprule
+「世界」の型 & 時間差分$\Delta t$ & 五句分別 \\
+\midrule
+同時の反事実的可能性 & $\Delta t=0$ & $S_2$（$\neg\neg P$） \\
+分岐的未来 & $\Delta t>0$ & $S_1$のパス構造 \\
+形而上学的可能性 & $\Delta t=\mathrm{undefined}$ & $S_4$（体系外部） \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{proposition}
+様相論理の意味論が曖昧であるのは、「観測者を固定する」操作が
+$\Delta t=0$の仮定（同時の別可能性）のみを扱い、$\Delta t>0$（分岐的未来）と
+$\Delta t=\mathrm{undefined}$（形而上学）を区別しないためである。
+\end{proposition}
+
+五句計算論は、この区別を\textbf{h-levelの時間的拡張}として精密化する。
+
+\section{計算論的解釈}
+
+\subsection{Moggi--Plotkin--Powerの対応の再構成}
+
+Moggi\cite{Moggi1991}およびPlotkin--Power\cite{PlotkinPower2002}によれば、
+計算概念はモナドを決定する。五句計算論では、これは
+\textbf{「計算効果＝記述可能性段階の操作」}として再解釈される。
+
+\begin{table}[htbp]
+\centering
+\caption{計算概念と段階操作}
+\label{tab:computation}
+\small
+\begin{tabularx}{\textwidth}{@{}l c >{\raggedright\arraybackslash}X@{}}
+\toprule
+計算概念 & モナド & 五句分別的段階操作 \\
+\midrule
+例外 & $\Maybe$ & $S_1\to S_2$（失敗の可能性の導入） \\
+非決定性 & $\List$ & $S_1$の証人の多重化 \\
+状態 & $\State$ & $S_1$の時間的持続性（$\Delta t>0$のパス） \\
+継続 & $\Cont$ & $S_2$（$\neg\neg A$）の直接実現 \\
+証人忘却 & $\lVert\mathord{\cdot}\rVert_{-1}$ & $S_1\to S_3$（時間性の消去） \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Lawvereの「随伴の基礎」の五句計算論的再構成}
+
+Lawvere\cite{Lawvere1967}の命題「すべての論理的基本操作は随伴である」は、
+五句計算論的に次のように再解釈される。
+\begin{quote}
+\textbf{段階間の移行そのものが随伴として実現される。}
+\end{quote}
+正（$S_1$）・反（$S_4$）・合（$S_3$）の弁証法は、随伴の合成
+（モナド／コモナド）として記述される。
+
+\section{統合図式}
+
+\subsection{五句計算論の対応表（総合）}
+
+\begin{table}[htbp]
+\centering
+\caption{五句計算論の総合対応表}
+\label{tab:integrated}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\textwidth}{@{}c c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+五句 & h-level & HoTT & 圏論 & diffeology & 様相論理 & 計算論 \\
+\midrule
+$S_1$ & $\geq1$ & $p:P$（パス） & クライスリ圏 & 自由プロット & $\Diamond P$（$\Delta t>0$） & 純粋値 \\
+$S_2$ & $0$ & $\neg\neg P$ & 随伴の合成 & プロットの持ち上げ & $\Diamond P$（$\Delta t=0$） & 間接到達 \\
+$S_3$ & $-1$ & $\lVert P\rVert_{-1}$（HIT） & EM圏・商代数 & 任意プロット・D-topology & $\Box P$（$\Delta t=0$） & 証人忘却 \\
+$S_4$ & --- & 独立命題 & 比較関手の非faithfulness & 不合理トーラス & $\Box\neg P$ & 計算不能 \\
+$S_5$ & $-2$ & $\isContr$ & 圏の整合性 & 空のdiffeology & 体系の完全性 & 停止問題 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{三角対応（HoTT・diffeology・EM圏）}
+
+\begin{figure}[htbp]
+\centering
+\[
+\begin{array}{c}
+\text{HoTT（HIT）}\quad \operatorname{Quotient}(A,R)\\[4pt]
+\swarrow\quad\text{商同一視 }(S_1\to S_3)\quad\searrow\\[4pt]
+\text{diffeology（プロット）}\quad\longleftrightarrow\quad
+\text{EM圏（$T$-代数）}\\[4pt]
+\text{プロットの持ち上げ}\quad=\quad
+\text{比較関手 $K$}\quad=\quad\text{induction principle}
+\end{array}
+\]
+\caption{HoTT・diffeology・EM圏の三角対応}
+\label{fig:triangle}
+\end{figure}
+
+\section{未解決課題と今後の展望}
+
+\subsection{形式的未解決項目}
+
+\begin{table}[htbp]
+\centering
+\caption{形式的未解決項目（1--6）}
+\label{tab:open-problems}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}X l@{}}
+\toprule
+番号 & 課題 & 優先度 \\
+\midrule
+1 & HoTT・LT位相・五句分別の形式対応
+（$\lVert A\rVert$ vs. $\neg\neg A$ vs. $\Diamond A$） & 最高 \\
+2 & Beck条件とdiffeology的subductionの同値性の証明 & 最高 \\
+3 & クライスリ圏の4モナド（Maybe, List, State, Cont）のdiffeology/HoTT翻訳 & 最高 \\
+4 & HoTTでのモナド無限coherenceの具体的型項構築 & 高 \\
+5 & CLTL（計算樹状時相論理）との形式接続 & 高 \\
+6 & Berger--Melliès--WeberのNerve theoremと五句分別の定理的対応 & 中 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{形式的未解決項目（7--11）}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}X l@{}}
+\toprule
+番号 & 課題 & 優先度 \\
+\midrule
+7 & 実効的トポス（Hyland）と構成的側面の接続 & 中 \\
+8 & D-topologyとLT位相の同型／忠実埋め込みの証明 & 中 \\
+9 & 20状態$j_m(K_n)$の代数的・動的記述 & 低 \\
+10 & 様相論理S5への完全翻訳（五句計算論的語彙での公理化） & 低 \\
+11 & $S_4$におけるLawvere点全射条件と$\LawvereInfinity$存在条件のモデル構成 & 最高 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{哲学的未解決項目}
+
+\begin{enumerate}
+  \item \textbf{「観測者」の形式的定義}：truncationは「観測者の忘却」として
+  解釈されるが、「観測者」そのものを型理論的に定式化する必要がある。
+  \item \textbf{時間矢の非対称性}：コモナド（$\Box$）とモナド（$\Diamond$）の
+  非対称性が、熱力学的時間矢とどのように関係するか。
+  \item \textbf{第五句の幾何学的実現}：$S_5$（整合性）はh-level $-2$
+  （可縮型）に対応するが、これが「体系の完全性」とどのように幾何学的に対応するか。
+\end{enumerate}
+
+\section{結論}
+
+五句計算論は、サンジャヤ五句否定を「記述可能性の段階」として再解釈し、
+圏論・HoTT・diffeology・様相論理・計算論を統合する枠組みである。
+
+本論文の主たる貢献は以下のとおりである。
+\begin{enumerate}
+  \item \textbf{五句分別の型理論的精密化}：h-level階層との対応により、
+  5段階から無限連続体への精密化を実現した。
+  \item \textbf{モナド／コモナドの五句計算論的再解釈}：$\Box/\Diamond$、
+  計算効果、truncationを「段階の操作」として統一した。
+  \item \textbf{時間性の定式化}：証明＝パス＝時間の軌跡、
+  truncation＝時間性の消去＝観測者の固定として定式化した。
+  \item \textbf{様相論理の意味論の解消}：「世界」メタファーを
+  「記述可能性の段階の文脈」に置き換え、$\Delta t$（時間差分）による
+  三重分解を提示した。
+  \item \textbf{HoTT・diffeology・EM圏の三角統合}：商型（HIT）、商空間
+  （diffeology）、商代数（EM圏）の形式的対応を提示した。
+  \item \textbf{Lawvere無限階層の統合}：$\LawvereInfinity$を$S_4$の
+  Lawvere固定点塔の極限として定義し、その存在に必要な点全射条件を明示した。
+  真理保存体系における算術的固定点は、この圏論的一般構造の具体例として分離した。
+\end{enumerate}
+
+五句計算論は、単なる哲学的類比ではなく、
+\textbf{具体的な数学的対応（型・圏・幾何学）を伴う研究プログラム}として
+提示される。
+
+\begin{thebibliography}{99}
+
+\bibitem{Lawvere1967}
+F. W. Lawvere,
+``Adjointness in Foundations,''
+\textit{Reprints in Theory and Applications of Categories}, no.~16
+(original work published 1967).
+
+\bibitem{Moggi1991}
+E. Moggi,
+``Notions of Computation and Monads,''
+\textit{Information and Computation}, vol.~93, no.~1, pp.~55--92, 1991.
+
+\bibitem{PlotkinPower2002}
+G. Plotkin and J. Power,
+``Notions of Computation Determine Monads,''
+in \textit{Foundations of Software Science and Computation Structures}, 2002.
+
+\bibitem{RiehlVerity2015}
+E. Riehl and D. Verity,
+``Homotopy Coherent Adjunctions and the Formal Theory of Monads,''
+\textit{Advances in Mathematics}, 2015.
+
+\bibitem{vanDoorn2016}
+F. van Doorn,
+\textit{Constructing the Propositional Truncation using Non-recursive HITs},
+2016.
+
+\bibitem{HoTTBook2013}
+The Univalent Foundations Program,
+\textit{Homotopy Type Theory: Univalent Foundations of Mathematics},
+Institute for Advanced Study, 2013.
+
+\bibitem{IglesiasZemmour}
+P. Iglesias-Zemmour,
+\textit{Diffeology},
+American Mathematical Society, 2013.
+
+\bibitem{PfenningDavies2001}
+F. Pfenning and R. Davies,
+``A Judgmental Reconstruction of Modal Logic,''
+\textit{Mathematical Structures in Computer Science}, vol.~11, no.~4, 2001.
+
+\bibitem{dePaivaRitter2021}
+V. de Paiva and E. Ritter,
+``Doctrines, Modalities and Comonads,''
+\textit{Mathematical Structures in Computer Science}, 2021.
+
+\bibitem{Rodin2013}
+A. Rodin,
+``Categorical Logic and Hegelian Dialectics,''
+\textit{Philomatica}, 2013.
+
+\bibitem{Kavvos2024}
+G. A. Kavvos,
+``Two-dimensional Kripke Semantics I: Presheaves,''
+in \textit{FSCD}, 2024.
+
+\bibitem{Hyland}
+J. M. E. Hyland,
+``The Effective Topos,''
+in \textit{The L. E. J. Brouwer Centenary Symposium}, 1982.
+
+\bibitem{SEP}
+Stanford Encyclopedia of Philosophy,
+entries ``Branching Time,'' ``Temporal Logic,'' ``Modal Logic,''
+``Possible Worlds,'' and ``Two-Dimensional Semantics.''
+
+\bibitem{nLab}
+nLab,
+entries ``modal type theory,'' ``Lawvere--Tierney topology,''
+``double negation,'' ``BHK interpretation,'' ``identity type,'' and ``interval type.''
+
+\bibitem{ChibaLambda2026}
+千葉将臣，
+『真理保存性を持つ体系が必然的に$\LawvereInfinity$を含む：
+対角補題によるLawvere無限階層の内在的定式化』，2026．
+
+\end{thebibliography}
+
+\end{document}
