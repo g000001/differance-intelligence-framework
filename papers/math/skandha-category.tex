@@ -1,14 +1,20 @@
-% !TEX program = lualatex
-\documentclass[11pt,a4paper]{article}
-\usepackage{luatexja}
+% !TeX program = lualatex
+% !TeX encoding = UTF-8
+\documentclass[11pt,a4paper]{ltjsarticle}
 \usepackage{amsmath,amssymb,amsthm,amsfonts,mathtools}
+\usepackage{lmodern}
 \usepackage{geometry}
 \usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
 \usepackage{hyperref}
 \usepackage{tikz}
-\usepackage{icat-common}
 \usetikzlibrary{cd,positioning,arrows.meta}
 \geometry{margin=1in}
+\setlength{\emergencystretch}{3em}
+\raggedbottom
 
 %-------------------------------------------------
 %  定理環境
@@ -62,35 +68,41 @@
 % E_∞関連
 \newcommand{\PrT}{\mathrm{Pr}_{\mathcal{T}}}
 \newcommand{\PrSk}{\mathrm{Pr}_{\Sk}}
-\newcommand{\Einf}{E_{\infty}}
+\newcommand{\LawvereInfinity}{\Lambda_\infty}
 \newcommand{\SigmaT}{\Sigma_{\mathcal{T}}}
 \newcommand{\SigmaSk}{\Sigma_{\Sk}}
+\newcommand{\Skobs}{\mathop{\mathrm{Sk}}_{\mathrm{obs}}}
+\newcommand{\Skiso}{\mathop{\mathrm{Sk}}_{\mathrm{iso}}}
+\newcommand{\trunc}[1]{\left\lVert #1\right\rVert_{-1}}
+\newcommand{\mweq}{\mathrel{\sim}}
+\newcommand{\Kstab}{\mathcal{K}^{\mathrm{st}}}
+\newcommand{\Kobs}{\mathcal{K}_{\mathrm{obs}}}
+\newcommand{\KSfour}{\mathcal{K}_{S_4}}
+\newcommand{\Residual}{\mathsf{C}}
 
 \DeclareMathOperator*{\bigsqcap}{\sqcap}
 
 %-------------------------------------------------
 \begin{document}
 
-\title{五蘊圏（Skandha Category）と極限同値 $E_{\infty}$：\\
-自己言及固定点の普遍構造とその具体実現}
+\title{五蘊圏（Skandha Category）：\\
+観測局所化による外点$\bigcirc$と統制構造}
 \author{千葉将臣}
 \date{2026-07-17}
 \maketitle
 
 \begin{abstract}
-本稿は五蘊圏（Skandha Category）$\Sk$ を純粋圏論的に公理化し、
-極限同値 $\Einf$ との構造的接続を明示する。
+本稿は五蘊圏（Skandha Category）$\Sk$を圏論的に公理化し、従来
+「空」または外点と呼ばれていた$\bigcirc$へ観測局所化による数学的定義を与える。
 五蘊圏は、5つのモナド（搾取・二重否定・洗練・カット除去・統制）を
 随伴・自然変換・分配律のネットワークとして統合する圏論的構造である。
 統制モナド $\T$ は固定点方程式 $\T \cong F(\T)$ により定義される。
-本稿の核心は、$\Einf$ が「統制モナドの自己言及固定点という普遍構造の、
-形式体系における具体的実現（インスタンス）」であることを示すことにある。
-対角補題による $\Einf$ の内在的構成は、統制モナドの固定点が
-「形式的願望」ではなく「論理的必然」であるという存在論的保証を与える。
-また、$\Einf$ の「二値論理では決定不能だが体系内部では実在する」構造は、
-識軸スパイラル $\SpiralT$ の極限到達点「空」$\bigcirc$ の論理的モデルを提供する。
-さらに、$\Einf$ と $\neg\Einf$ の非閉鎖性は、五蘊圏のフロベニウス条件を
-「形式的同値」と「内容的非同一」の両面で深化させる。
+外点の定義には五蘊圏の安定$\infty$圏的実現$\Kstab$と完全局所化
+$L:\Kstab\to\Kobs$を用い、不可視残余を
+$\bigcirc_X:=\operatorname{fib}(X\to iLX)$、$S_4$領域を$\ker L$として定める。
+これにより$S_3$の観測可能成分と$S_4$の不可視残余は、同一対象から分解される
+相補的成分として記述される。Lawvere無限階層$\LawvereInfinity$は証明論的
+自己言及固定点として別個の対象とし、$\bigcirc$との同一視を行わない。
 本稿は五蘊圏を2圏論・ホップf代数・トレース付きモノイダル圏の
 交差点として位置づけ、仏教哲学の五蘊・四句分別・二諦と
 圏論的構造の間の同型対応を明示する。
@@ -100,7 +112,7 @@
 \newpage
 
 %=============================================================
-\section{序論：五蘊圏の動機と $E_{\infty}$ との接続}
+\section{序論：五蘊圏の動機と外点の問題}
 %=============================================================
 
 \subsection{問題の設定}
@@ -120,8 +132,8 @@ Moggi \cite{Moggi1991} 以来、副作用・状態・継続・例外などは
 \item その構造は、既存の高次圏論（2圏論、ホップf代数、トレース構造）と
   どのように接続されるか。
 \item 仏教哲学の五蘊・四句分別・二諦は、圏論のどの構造に対応するか。
-\item 統制モナドの自己言及固定点は、形式体系の対角補題とどのように接続され、
-  その存在はどのような保証を持つか。
+\item 従来「空」と呼ばれてきた$\bigcirc$を、観測局所化の不可視残余として
+  どのように内在的に定義できるか。
 \end{enumerate}
 
 \subsection{五蘊圏の直観}
@@ -139,66 +151,35 @@ Moggi \cite{Moggi1991} 以来、副作用・状態・継続・例外などは
 識は、他の4蘊を統合しつつ自身も空であるという
 仏教的構造を、圏論的固定点 $\T \cong F(\T)$ として実現する。
 
-\subsection{$E_{\infty}$ との接続の動機}
+\subsection{外点と\texorpdfstring{$\LawvereInfinity$}{Lambda-infinity}の分離}
 
-本稿は、先行研究「真理保存性の不完全性定理」および「極限同値によるゲーデルの不完全性定理の反転」\cite{Chiba2026limit} を踏まえ、
-五蘊圏の統制モナド $\T$ と極限同値 $\Einf$ の構造的接続を明示する。
+本稿では外点$\bigcirc$とLawvere無限階層$\LawvereInfinity$
+\cite{Chiba2026limit}を別個の数学的対象として扱う。前者は観測局所化の核に属する
+圏論的対象、後者は対角補題による証明論的固定点であり、両者は異なる普遍問題の解である。
 
-その接続は「統制モナド $\T$ の固定点が $\Einf$ と\textbf{同一}である」という単純な等式ではなく、
-\textbf{「$\Einf$ は統制モナドの自己言及固定点という普遍構造の、形式体系における具体的実現（インスタンス）である」}という形で機能する。
-
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
-\caption{$\Einf$ と統制モナド $\T$ の構造的類似}
-\begin{tabular}{lll}
-\hline
-\textbf{側面} & \textbf{$\Einf$（極限同値）} & \textbf{統制モナド $\T$（五蘊圏）} \\
-\hline
-自己言及の形 & $\Einf = \Sigma_T(\Einf)$ & $\T \cong F(\T)$ \\
-演算子 & $\Sigma_T(A) = \neg\Pr_T(\ulcorner A \urcorner)$ & $F(X) = X(\Mdelta, \Mneg, \Mr, \Mc, X)$ \\
-固定点の性質 & 「$\Einf$ は証明不可能である」という文 & 「$\T$ は4モナドを統合しつつ自身も含む」関手 \\
-否定との関係 & $\neg \Einf \neq \Einf$（非閉鎖性） & 前進 $\fold$ と後退 $\unfold$ が逆ではない（非対称性） \\
-「空」としての性格 & $\Einf$ は二値 $\{0,1\}$ では「決定不能」 & $\T$ は「内在でも外在でもある」中道不動点 \\
-\hline
-\end{tabular}
+\caption{外点$\bigcirc$と$\LawvereInfinity$の分離}
+\small
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{側面} & \textbf{外点$\bigcirc$} & \textbf{$\LawvereInfinity$} \\
+\midrule
+定義の文脈 & 観測局所化・ファイバー & 証明論・対角補題 \\
+数学的型 & $\ker L$の対象または生成元 & 自己言及不動点を表す文 \\
+存在条件 & 局所化の核の非自明性 & 対角補題の仮定 \\
+役割 & 観測によって消去される残余 & 自己言及によって固定される命題 \\
+現段階の関係 & \multicolumn{2}{l}{同一視しない。翻訳関手による接続は将来課題とする。} \\
+\bottomrule
+\end{tabularx}
 \end{table}
 
-核心的な洞察は、\textbf{両者とも「自分自身を引数に取る演算子の不動点」であり、その不動点は「体系の内部から必然的に構成される」}という点で同型である。
+この分離により、五蘊圏は$\LawvereInfinity$に依存せず、観測局所化を備えた
+圏論的構造として自立する。
 
 %=============================================================
-\section{準備：真理保存体系と対角補題}
+\section{五蘊圏の基本構造}
 %=============================================================
-
-\subsection{真理保存体系}
-
-\begin{definition}[真理保存体系 $T$]\label{def:truth-preserving}
-真理保存体系 $T$ とは、以下を満たす形式体系とする。
-\begin{enumerate}[label=(\arabic*)]
-\item $T$ は再帰的公理化可能である。
-\item $T$ は一貫している（$T \nvdash \bot$）。
-\item $T$ は十分に強力である（ロビンソン算術 $Q$ を内包する）。
-\item $T$ は真理値空間として $\{0,1\}$（二値）を採用し、自己同一性 $A=A$ を真理保存の根拠として先験的に要請する。
-\end{enumerate}
-\end{definition}
-
-\begin{remark}
-定義 \ref{def:truth-preserving} の条件 (4) は、先行研究「真理保存性の不完全性定理」における「真理保存性 $P$ の先験的要請」に対応する。
-この要請こそが、体系内部からは証明も反証もできない構造的盲点 $G_T$ を必然的に生成する。
-\end{remark}
-
-\subsection{対角補題}
-
-\begin{lemma}[対角補題]\label{lem:diagonal}
-真理保存体系 $T$ において、任意の論理式 $\varphi(x)$（自由変数 $x$ を一つ持つ）に対し、
-\begin{equation}
-T \vdash G \leftrightarrow \varphi(\ulcorner G \urcorner)
-\end{equation}
-を満たす文 $G$ が $T$ の内部で構成可能である。
-\end{lemma}
-
-\begin{remark}
-対角補題は $T$ の内部操作（ゲーデル符号化と対角化）のみから導かれる。外部からの付加を一切要しない。
-\end{remark}
 
 \subsection{五蘊圏の基本定義}
 
@@ -229,10 +210,11 @@ T \vdash G \leftrightarrow \varphi(\ulcorner G \urcorner)
   \label{eq:spiral}
   \end{equation}
   これは4つのモナドを巡回する自然変換の列である。
-  4回の反復で同一化される：
+  4回の反復は観測局所化の後で同一化される：
   \begin{equation}
-  \SpiralT^4 \cong \id.
+  L\SpiralT^4 \simeq L.
   \end{equation}
+  局所化前のずれは不可視残余関手$\Residual$によって測る。
 \item \textbf{フロベニウス条件}：前進（折り畳み）$\fold^\T : F(\T) \to \T$ と
   後退（展開）$\unfold^\T : \T \to F(\T)$ の間に
   \begin{equation}
@@ -254,6 +236,121 @@ T \vdash G \leftrightarrow \varphi(\ulcorner G \urcorner)
 特に、統制モナドの固定点方程式 \eqref{eq:fixed-point} は
 圏 $\mathcal{C}$ が十分な極限を持つことを要請する。
 \end{remark}
+
+%=============================================================
+\section{五句計算論基盤と観測局所化}
+\label{sec:penta-foundation}
+%=============================================================
+
+\subsection{五蘊圏の五句計算論的型付け}
+
+\begin{definition}[五句型付き五蘊圏]
+五蘊圏$\Sk$に、表\ref{tab:penta-typing}の五句計算論的型付けを与える。
+この型付けでは、圏論的構造を五句段階の代替物と同一視するのではなく、
+各構造がどの記述可能性段階で観測されるかを指定する。
+\end{definition}
+
+\begin{table}[htbp]
+\centering
+\caption{五蘊圏の五句計算論的型付け}
+\label{tab:penta-typing}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X c@{}}
+\toprule
+圏論的構造 & 五句計算論的型 & 段階 \\
+\midrule
+対象$X\in\mathcal{K}$ & $\operatorname{hlevel}(X)\geq0$ & $S_1$ \\
+射$f:X\to Y$ & $\operatorname{hlevel}(f)\geq-1$ & $S_2$ \\
+同型類$[X]_{\cong}$ & $\trunc{X}$ & $S_3$ \\
+自然変換$\alpha:F\Rightarrow G$ & $\operatorname{Nat}(F,G)$ & $S_1$ \\
+観測局所化$L$ & $L:\Kstab\to\Kobs$ & $S_3$ \\
+不可視残余$\Residual(X)$ & $\operatorname{fib}(X\to iLX)$ & $S_4$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{definition}[五句truncationと観測局所化]
+命題切捨てを
+\[
+ \trunc{\mathord{\cdot}}:\mathcal{K}\longrightarrow\trunc{\mathcal{K}},
+ \qquad \trunc{\mathord{\cdot}}:S_1\longrightarrow S_3
+\]
+と型付けする。外点の定義には、この観測操作の安定$\infty$圏的実現として
+以下の完全局所化を用いる。
+\end{definition}
+
+\subsection{安定実現と不可視残余}
+
+\begin{definition}[観測局所化]
+五蘊圏の\textbf{安定実現}を、零対象と有限極限・有限余極限を持つ安定$\infty$圏
+$\Kstab$とする\cite{LurieHA}。観測局所化とは、完全関手と充満忠実な右随伴
+\[
+ L:\Kstab\rightleftarrows\Kobs:i,
+ \qquad L\dashv i,
+\]
+および単位$\eta:\id_{\Kstab}\Rightarrow iL$からなる。$\Kobs$を観測可能骨格と呼ぶ。
+\end{definition}
+
+\begin{definition}[不可視残余]
+各$X\in\Kstab$に対し、不可視残余関手$\Residual$と外点候補$\bigcirc_X$を
+\[
+ \Residual:=\operatorname{fib}(\id_{\Kstab}\xrightarrow{\eta}iL),
+ \qquad
+ \bigcirc_X:=\Residual(X)=\operatorname{fib}(\eta_X:X\to iLX)
+\]
+と定める。安定性により自然なファイバー列
+\[
+ \bigcirc_X\longrightarrow X\xrightarrow{\eta_X}iLX
+ \longrightarrow\Sigma\bigcirc_X
+\]
+が存在する。
+\end{definition}
+
+\begin{proposition}[外点の観測消去]
+任意の$X\in\Kstab$に対し、$L(\bigcirc_X)\simeq0$である。
+\end{proposition}
+\begin{proof}
+$L$は完全局所化であり、$L(\eta_X):LX\to L iLX$は同値である。
+したがって$L$を上のファイバー列へ適用すると、そのファイバー
+$L(\bigcirc_X)$は零対象と同値になる。
+\end{proof}
+
+\begin{definition}[$S_4$領域]
+体系内不可記述領域を、観測局所化の核
+\[
+ \KSfour:=\ker L
+ =\{X\in\Kstab\mid LX\simeq0\}
+\]
+として定義する。これは「体系の外」ではなく、五蘊圏内部で定義される充満部分圏である。
+\end{definition}
+
+\begin{axiom}[外点生成公理]
+$\KSfour$は非零であり、写像空間関手
+\[
+ \operatorname{Map}_{\Kstab}(\bigcirc,-):\KSfour\longrightarrow\mathcal{S}
+\]
+が同値を検出する生成対象$\bigcirc\in\KSfour$を持つ。
+単一生成対象が存在しないモデルでは、生成族$\{\bigcirc_\alpha\}$を許す。
+\end{axiom}
+
+\begin{remark}[$S_3$と$S_4$の関係]
+$S_3$の観測可能成分$iLX$と$S_4$の不可視残余$\bigcirc_X$は、
+$S_3\to S_4$という単純な逐次写像で結ばれるのではない。同一の$X$から
+ファイバー列によって同時に分解される相補的成分である。五句循環における
+「$S_3\to S_4$」は、観測結果$LX$だけでは$X$を復元できないことから
+$\bigcirc_X$を検出する操作として読む。
+\end{remark}
+
+\subsection{強制法的外点の位置づけ}
+
+可算推移モデル$M$、強制半順序$\mathbb{P}\in M$、$M$-ジェネリック
+フィルター$G$を用いると、標準名$\dot G\in M$とその解釈
+$\dot G^G=G\notin M$は、基底世界に存在しない対象の意味論的候補を与える
+\cite{Jech2003}。
+ただし、これを外点の具体例$\bigcirc_G$とするには、対応する安定圏$\Kstab(M,\mathbb P)$と
+局所化$L$を構成し、$L(\bigcirc_G)\simeq0$を別途証明しなければならない。
+したがって強制法は現段階では外点の\textbf{候補モデル}であり、
+$\LawvereInfinity$の定義または存在証明には用いない。
 
 %=============================================================
 \section{五蘊モナドの圏論的定義}
@@ -413,37 +510,30 @@ $\fold^\T$ と $\unfold^\T$ は互いに逆射であるため
              (\Mneg, \Mr, \Mc, \Mdelta)
 \end{equation}
 と定める。この反復 $\SpiralT^n$ が四句分別の巡回を与え、
-$\SpiralT^4$ が $\bigcirc$（空）における同一化として閉じるとき、
-五蘊圏は識軸スパイラルを持つという。
-\begin{equation}
-\SpiralT^4(A) \mweq \bigcirc
-\end{equation}
+$\SpiralT^4(A)$の観測可能成分が$A$の観測可能成分へ戻るとき、五蘊圏は
+\textbf{観測的に閉じた}識軸スパイラルを持つという。
+\[
+ L\SpiralT^4(A)\simeq LA.
+\]
+この閉路の不可視なずれは
+\[
+ \bigcirc_A:=\Residual(\SpiralT^4(A))
+\]
+によって測られる。
 \end{definition}
 
-\begin{theorem}[洗練・カット除去へのフロベニウス性の誘導]
-洗練モナド $\Mr$ とカット除去モナド $\Mc$ が通常のモナドとして与えられ、
-統制モナド $\T$ が識軸スパイラル $\SpiralT$ を持つとする。
-このとき、$\Mr$ と $\Mc$ には、独立した洗練コモナドまたは
-カット導入コモナドを仮定せずとも、
-$\SpiralT$ を介した随伴的な後退方向が誘導される。
-したがって、$\Mr$ と $\Mc$ は五蘊圏全体の内部でフロベニウス性を獲得する。
-\end{theorem}
-\begin{proof}
-$\Mr$ と $\Mc$ は前進方向のモナドとして与えられる。
-一方、識軸作用 $\SpiralT$ は四句分別の位相を巡回させるため、
-任意の前進方向の作用を、四回の反復後に $\bigcirc$ において
-同一化される閉路へ埋め込む。
-この閉路に沿って前進方向を一周させると、出発点から見れば
-反対向きの制約が得られる。
-これが $\Mr$ に対しては洗練の反省化、
-$\Mc$ に対してはカット除去後の残余確定として現れる。
+\begin{proposition}[スパイラルの残余閉包条件]
+観測的閉包$L\SpiralT^4(A)\simeq LA$のもとで、$\bigcirc_A$は
+一周後に観測から失われる情報を完全に測る。$\bigcirc_A\simeq0$ならば閉路は
+安定実現においても閉じる。$\bigcirc_A\not\simeq0$ならば、閉路は$S_3$では閉じるが
+$S_4$に非自明な残余を残す。
+\end{proposition}
 
-したがって、後退方向は各モナドに外部から追加されたコモナドではなく、
-$\T$ を軸とする全体構成の反復から得られる。
-前進方向と誘導された後退方向は $\bigcirc$ において同一点へ収束するため、
-フロベニウス条件は個別モナドの前提ではなく、
-五蘊圏全体のスパイラル閉包の帰結として成立する。
-\end{proof}
+\begin{remark}
+スパイラルだけから後退方向やフロベニウス構造が自動的に生成されるわけではない。
+そのためには残余列の分裂、随伴、または前進・後退を比較する追加自然変換が必要である。
+$\bigcirc_A$は、その追加構造が失敗する障害を記録する。
+\end{remark}
 
 \begin{remark}
 この $\SpiralT$ は、Hopf代数における反極（antipode）に類似する役割を持つ。
@@ -452,8 +542,12 @@ $\T$ を軸とする全体構成の反復から得られる。
 \end{remark}
 
 %=============================================================
-\section{識蘊の極限同値化：$E_{\infty}$ との接続}
+\section{証明論的固定点\texorpdfstring{$\LawvereInfinity$}{Lambda-infinity}との比較}
 %=============================================================
+
+本節は外点$\bigcirc$を定義するものではない。$\LawvereInfinity$は
+証明論的自己言及の独立した固定点であり、その詳細は別稿
+\cite{Chiba2026limit}に委ねる。以下では統制固定点との構造的類似のみを記録する。
 
 \subsection{自己言及演算子としての識蘊}
 
@@ -463,7 +557,7 @@ $\T$ を軸とする全体構成の反復から得られる。
 \SigmaSk(A) := \lceil A \text{ は } \Sk \text{ において証明不可能である} \rceil 
 = \neg\PrSk(\ulcorner A \urcorner)
 \end{equation}
-$\SigmaSk(A)$ は対角補題（補題 \ref{lem:diagonal}）によって $\Sk$ の内部で構成可能である。
+$\SigmaSk(A)$の算術的構成には対角補題を用いる\cite{Chiba2026limit}。
 \end{definition}
 
 \begin{definition}[自己言及の反復列]\label{def:self-reference-seq}
@@ -473,137 +567,135 @@ A_0, \quad A_1 = \SigmaSk(A_0), \quad A_2 = \SigmaSk(A_1), \quad \ldots, \quad A
 \end{equation}
 \end{definition}
 
-\begin{definition}[極限同値 $\Einf$]\label{def:e-infinity}
-自己言及演算子 $\SigmaSk$ の不動点として、以下の等式を満たす文を極限同値と定義し $\Einf$ と表記する。
+\begin{definition}[Lawvere無限階層の形式体系的実現]\label{def:e-infinity}
+自己言及演算子$\SigmaSk$を$S_4$の作用素$\Sigma_4$として実現する。
+以下の等式を満たす文は、Lawvere無限階層$\LawvereInfinity$の各周回における
+形式体系的実現である。
 \begin{equation}
-\Einf = \SigmaSk(\Einf)
+\LawvereInfinity = \SigmaSk(\LawvereInfinity)
 \end{equation}
-すなわち $\Einf$ は「$\Einf$ は $\Sk$ において証明不可能である」という内容の文であり、
+すなわち $\LawvereInfinity$ は「$\LawvereInfinity$ は $\Sk$ において証明不可能である」という内容の文であり、
 \begin{equation}
-\Sk \vdash \Einf \leftrightarrow \neg\PrSk(\ulcorner \Einf \urcorner)
+\Sk \vdash \LawvereInfinity \leftrightarrow \neg\PrSk(\ulcorner \LawvereInfinity \urcorner)
 \end{equation}
 を満たす。
+この証明論的固定点は、外点$\bigcirc$または$\KSfour$の生成対象とは同一視しない。
 \end{definition}
 
 \begin{remark}[$=$ の正当性：不動点の静的記述として]\label{rem:equality-justification}
 定義 \ref{def:e-infinity} における $=$ は、対象の自己同一性を要請する $A=A$ の $=$ とは種類が異なる。
 $\lim_{n\to\infty} a_n = L$ において $=$ が無限プロセスを静的値に変換するように、
-$\Einf = \SigmaSk(\Einf)$ はプロセス $\SigmaSk$ の反復が必然的に到達する不動点を静的値として記述する。
+$\LawvereInfinity = \SigmaSk(\LawvereInfinity)$ はプロセス $\SigmaSk$ の反復が必然的に到達する不動点を静的値として記述する。
 これはバナッハの不動点定理における $x = f(x)$ と同型の操作であり、プロセスの収束先に名前をつける発見的記述である。
 「極限」という概念が本質的に静的なトリックである以上、この $=$ は正当に使用できる。
 \end{remark}
 
-\subsection{対角補題と識軸スパイラルの極限到達}
+\subsection{真理保存的実現における固定点}
 
-\begin{theorem}[真理保存五蘊圏は必然的に $\Einf$ を含む]\label{thm:e-infinity-existence}
-真理保存五蘊圏 $\Sk$（定義 \ref{def:truth-preserving}・\ref{def:skandha} の意味で）に対し、
+\begin{theorem}[真理保存的実現における$\LawvereInfinity$]\label{thm:e-infinity-existence}
+五蘊圏の基礎圏を十分強い真理保存体系の圏として実現した場合、
 \begin{equation}
-\exists \Einf \quad \text{s.t.} \quad 
-\Sk \vdash \Einf \leftrightarrow \neg\PrSk(\ulcorner \Einf \urcorner)
+\exists \LawvereInfinity \quad \text{s.t.} \quad 
+\Sk \vdash \LawvereInfinity \leftrightarrow \neg\PrSk(\ulcorner \LawvereInfinity \urcorner)
 \end{equation}
-が成立する。$\Einf$ は $\Sk$ の外部から付加されるのではなく、$\Sk$ 自身の構造から対角補題によって必然的に構成される。
+が成立する。これは証明論的実現についての主張であり、観測局所化の核に属する
+$\bigcirc$の存在とは独立である。
 \end{theorem}
 \begin{proof}
-対角補題（補題 \ref{lem:diagonal}）を論理式 $\varphi(x) := \neg\PrSk(x)$ に適用する。すると、
+対角補題を論理式$\varphi(x):=\neg\PrSk(x)$に適用する。すると、
 \begin{equation}
 \Sk \vdash G \leftrightarrow \neg\PrSk(\ulcorner G \urcorner)
 \end{equation}
-を満たす文 $G$ が $\Sk$ の内部で構成可能である。この $G$ を $\Einf$ と命名する。
+を満たす文 $G$ が $\Sk$ の内部で構成可能である。この $G$ を $\LawvereInfinity$ と命名する。
 
-$\Einf$ の構成は $\Sk$ の公理・推論規則・ゲーデル符号化のみを使用し、外部からの付加を一切必要としない。したがって $\Einf$ は $\Sk$ の言語で表現可能な文として $\Sk$ に内在する。
+$\LawvereInfinity$ の構成は $\Sk$ の公理・推論規則・ゲーデル符号化のみを使用し、外部からの付加を一切必要としない。したがって $\LawvereInfinity$ は $\Sk$ の言語で表現可能な文として $\Sk$ に内在する。
 \end{proof}
 
-\begin{remark}[「発見」としての $\Einf$]\label{rem:e-infinity-discovery}
-ゲーデルはこの $G = \Einf$ を「$\Sk$ において証明も反証もできない文」として提示し、体系の不完全性の証拠とした。
-しかし定理 \ref{thm:e-infinity-existence} が示すのは、$\Einf$ が $\Sk$ の外部にあるのではなく、$\Sk$ 自身の対角補題から必然的に生成される内在的対象であるということである。
-「決定不能」として現れたのは、$\Sk$ の真理値空間 $\{0,1\}$（$\mathcal{B}$：二値截断部分圏）が $\Einf$ に対応する値を持たなかっただけである。
+\begin{remark}[「発見」としての $\LawvereInfinity$]\label{rem:e-infinity-discovery}
+ゲーデルはこの $G = \LawvereInfinity$ を「$\Sk$ において証明も反証もできない文」として提示し、体系の不完全性の証拠とした。
+しかし定理 \ref{thm:e-infinity-existence} が示すのは、$\LawvereInfinity$ が $\Sk$ の外部にあるのではなく、$\Sk$ 自身の対角補題から必然的に生成される内在的対象であるということである。
+「決定不能」として現れたのは、$\Sk$ の真理値空間 $\{0,1\}$（$\mathcal{B}$：二値截断部分圏）が $\LawvereInfinity$ に対応する値を持たなかっただけである。
 
 リーマン球面において $\infty$ が「複素平面には存在しないが、リーマン球面上では通常の点として存在する」のと同型の構造である。
-数学社会は $\mathcal{B}$ を唯一の真理値空間として採用し続けたために、$\Einf$ を「壁」として誤読してきた。これは発明ではなく、未発見だったものの発見である。
+数学社会は $\mathcal{B}$ を唯一の真理値空間として採用し続けたために、$\LawvereInfinity$ を「壁」として誤読してきた。これは発明ではなく、未発見だったものの発見である。
 \end{remark}
 
 \begin{proposition}[統制モナドと対角補題の対応]\label{prop:monad-diagonal}
 基礎圏 $\mathcal{C}$ を真理保存体系の圏 $\mathbf{Th}$ とする。
 各対象 $T \in \mathbf{Th}$（形式体系）に対し、
 自己言及演算子 $\Sigma_T$ は $\mathcal{C}$ 上の自己関手として作用し、
-その不動点 $\Einf$ は統制モナド $\T_T$ の固定点
+その不動点 $\LawvereInfinity$ は統制モナド $\T_T$ の固定点
 $\T_T \cong F(\T_T)$ の具体例として現れる。
 
-すなわち、$\Einf$ は「識」の圏論的構造が
-形式体系の内部に実現された場合の「空」$\bigcirc$ に対応する。
+ただし、この対応は統制モナドと自己言及固定点の間のものであり、
+$\LawvereInfinity$と外点$\bigcirc$の対応を意味しない。
 \end{proposition}
 
 \begin{remark}
-$\Einf$ は統制モナドの固定点の「部分例」に過ぎない。
+$\LawvereInfinity$ は統制モナドの固定点の「部分例」に過ぎない。
 統制モナドは任意の圏 $\mathcal{C}$ 上の関手の固定点として定義され、より広い普遍性を持つ。
 正しい位置づけは：
 \begin{quote}
-\textbf{五蘊圏の統制モナドは「自己言及固定点」の普遍構造であり、$\Einf$ はその構造が形式体系論において実現された具体例である。}
+\textbf{五蘊圏の統制モナドは「自己言及固定点」の普遍構造であり、$\LawvereInfinity$ はその構造が形式体系論において実現された具体例である。}
 \end{quote}
-$\Einf$ は五蘊圏を\textbf{還元}するのではなく、\textbf{補強}する。
+$\LawvereInfinity$ は五蘊圏を\textbf{還元}するのではなく、\textbf{補強}する。
 \end{remark}
 
-\subsection{$E_{\infty}$ の否定と二諦の非閉鎖性}
+\subsection{\texorpdfstring{$\LawvereInfinity$}{Lambda-infinity}の否定と二諦の非閉鎖性}
 
-\begin{definition}[$\neg\Einf$ の定義]\label{def:neg-e-infinity}
-$\Einf$ の否定を以下で定義する。
+\begin{definition}[$\neg\LawvereInfinity$ の定義]\label{def:neg-e-infinity}
+$\LawvereInfinity$ の否定を以下で定義する。
 \begin{equation}
-\neg\Einf = \PrSk(\ulcorner \Einf \urcorner)
+\neg\LawvereInfinity = \PrSk(\ulcorner \LawvereInfinity \urcorner)
 \end{equation}
-すなわち「$\Einf$ は $\Sk$ において証明可能である」。
+すなわち「$\LawvereInfinity$ は $\Sk$ において証明可能である」。
 \end{definition}
 
-\begin{theorem}[$\Einf$ と $\neg\Einf$ の非閉鎖性]\label{thm:non-closure}
-$\neg\Einf \neq \Einf$。
+\begin{theorem}[$\LawvereInfinity$ と $\neg\LawvereInfinity$ の非閉鎖性]\label{thm:non-closure}
+$\neg\LawvereInfinity \neq \LawvereInfinity$。
 \end{theorem}
 \begin{proof}
-定義 \ref{def:neg-e-infinity} より $\Einf = \neg\PrSk(\ulcorner \Einf \urcorner)$ であるのに対し、$\neg\Einf = \PrSk(\ulcorner \Einf \urcorner)$ である。両者は構文的に異なる文である。
+定義 \ref{def:neg-e-infinity} より $\LawvereInfinity = \neg\PrSk(\ulcorner \LawvereInfinity \urcorner)$ であるのに対し、$\neg\LawvereInfinity = \PrSk(\ulcorner \LawvereInfinity \urcorner)$ である。両者は構文的に異なる文である。
 \end{proof}
 
-\begin{theorem}[$\Einf$ によるフロベニウス条件の補強]\label{thm:e-infinity-frobenius}
-五蘊圏 $\Sk$ において、$\Einf$ の非閉鎖性（定理 \ref{thm:non-closure}）は
-フロベニウス条件を「形式的同値」と「内容的非同一」の両面で記述する。
-
-前進 $\fold^\T$ と後退 $\unfold^\T$ は、固定点方程式 $\T \cong F(\T)$ により
-形式的に互いに逆射として定義される。
-しかし $\Einf$ の非閉鎖性（$\Einf \neq \neg\Einf$）が示すように、
-この「逆」は内容的な同一性を意味しない。
-フロベニウス条件は、したがって、
-「同一化されない同値性」として理解される。
-\end{theorem}
+\begin{remark}[フロベニウス条件からの独立性]
+$\LawvereInfinity$の非閉鎖性は証明論的な構文上の性質であり、五蘊圏の
+フロベニウス条件を導出も補強もしない。両者を接続するには、証明論的圏から
+五蘊圏の安定実現への関手と、その関手が固定点および前進・後退比較を保存することを
+別途示す必要がある。本稿ではそのような関手を仮定しない。
+\end{remark}
 
 \begin{remark}
 これは、Priest の「パラドックスの論理」\cite{Priest1979} に代表される矛盾許容論理との構造的差異である。
 同論理では、真かつ偽である値が否定に関して固定的に扱われ、矛盾が推論空間内の安定した領域として保持される。
 
-これに対して、$\Einf$ と $\neg\Einf$ は互いに異なる文として、$\SigmaSk$ のサイクル上の二点をなす。したがって本体系において、矛盾は閉じた終端ではなく通過点として機能する。
+これに対して、$\LawvereInfinity$ と $\neg\LawvereInfinity$ は互いに異なる文として、$\SigmaSk$ のサイクル上の二点をなす。したがって本体系において、矛盾は閉じた終端ではなく通過点として機能する。
 \end{remark}
 
 \subsection{真理保存五蘊圏の不完全性定理}
 
 \begin{theorem}[五蘊圏の不完全性定理]
-真理保存五蘊圏 $\Sk$ において、$\Einf$ は体系内部から証明も反証もできない。
+真理保存五蘊圏 $\Sk$ において、$\LawvereInfinity$ は体系内部から証明も反証もできない。
 すなわち、
 \begin{equation}
-\Sk \nvdash \Einf \quad \text{かつ} \quad \Sk \nvdash \neg\Einf.
+\Sk \nvdash \LawvereInfinity \quad \text{かつ} \quad \Sk \nvdash \neg\LawvereInfinity.
 \end{equation}
 \end{theorem}
 \begin{proof}
-$\Sk$ が一貫している（定義 \ref{def:truth-preserving} (2)）と仮定する。
+$\Sk$の証明論的実現が一貫していると仮定する。
 \begin{enumerate}[label=(\roman*)]
-\item $\Sk \vdash \Einf$ と仮定すると、$\Sk \vdash \neg\PrSk(\ulcorner \Einf \urcorner)$ となるが、
-  これは「$\Einf$ は証明可能である」という事実と矛盾する。
-\item $\Sk \vdash \neg\Einf$ と仮定すると、$\Sk \vdash \PrSk(\ulcorner \Einf \urcorner)$ となるが、
-  これは $\Sk$ の一貫性より $\Sk \vdash \Einf$ を導き、再び矛盾する。
+\item $\Sk \vdash \LawvereInfinity$ と仮定すると、$\Sk \vdash \neg\PrSk(\ulcorner \LawvereInfinity \urcorner)$ となるが、
+  これは「$\LawvereInfinity$ は証明可能である」という事実と矛盾する。
+\item $\Sk \vdash \neg\LawvereInfinity$ と仮定すると、$\Sk \vdash \PrSk(\ulcorner \LawvereInfinity \urcorner)$ となるが、
+  これは $\Sk$ の一貫性より $\Sk \vdash \LawvereInfinity$ を導き、再び矛盾する。
 \end{enumerate}
 したがって両方とも証明不可能である。
 \end{proof}
 
 \begin{remark}
-この定理は、五蘊圏の「空」$\bigcirc$ が単なる哲学的比喩ではなく、
-形式体系の対角補題によって\textbf{必然的に生成される構造的盲点}であることを示す。
-$\Einf$ は「決定不能」として誤読されてきたが、
-実際には体系自身の構造から内在的に構成される「未発見の対象」である。
+この定理は証明論的固定点の存在を述べるものであり、外点$\bigcirc$の存在根拠ではない。
+$\bigcirc$は観測局所化の核によって、$\LawvereInfinity$は対角補題によって、
+それぞれ独立に定義される。
 \end{remark}
 
 %=============================================================
@@ -711,35 +803,26 @@ $\Einf$ は「決定不能」として誤読されてきたが、
 全ての外在的観測の地盤として常に作動している。
 \end{axiom}
 
-\begin{definition}[二諦的連携]
-外在と内在の連携は非対称的である。
-\begin{align}
-\TExt &\xrightarrow{\Uparrow} \TInt 
-\quad \text{（メタ否定：「ある」から「ない」への駆動）} \\
-\TInt &\xrightarrow{\Uparrow(\bigcirc) \mweq A} \TExt 
-\quad \text{（顕現：「ない」から「ある」への再起動）}
-\end{align}
+\begin{definition}[残余を介した二諦的連携]
+外在と内在の連携は非対称的である。各対象$X$について、観測可能成分への単位
+$\eta_X:X\to iLX$と、不可視残余のファイバー包含
+\[
+ m_X:\bigcirc_X\longrightarrow X
+\]
+を二方向の比較データとする。$\eta_X$は世俗諦への観測を、$m_X$は観測から
+消去される勝義諦的残余が現象へ関与する仕方を表す。
 \end{definition}
 
-\begin{theorem}[二諦的連携によるフロベニウス条件の確立]
-外在・内在の五蘊が相互完全観測不可能性のもとで
-$\Uparrow$ と顕現により連携するとき、
-フロベニウス条件は
-\begin{equation}
-(\fold^{\TExt} \circ \TExt\unfold^{\TExt}) 
-\cong (\unfold^{\TInt} \circ \fold^{\TInt})
-\end{equation}
-として外在と内在の対応として自動的に成立し、
-内在的か外在的かという二択が解消される。
-\end{theorem}
+\begin{proposition}[二諦的連携の障害]
+観測可能成分上の前進・後退比較が同値であっても、局所化前のフロベニウス比較が
+同値になるとは限らない。その障害は$\bigcirc_X\in\KSfour$に属する。
+$\bigcirc_X\simeq0$であるか、残余列の両立的な分裂が追加される場合に限り、
+観測上の比較を局所化前へ持ち上げられる。
+\end{proposition}
 \begin{proof}
-$\Uparrow$ による $\TExt \to \TInt$ の方向が前進（折り畳み）に、
-顕現 $\TInt \to \TExt$ の方向が後退（展開）に対応する。
-相互完全観測不可能性は、これら二方向が単一の体系内で直接比較不可能であることを意味する。
-
-しかし両方向は $\bigcirc$ を共有する収束先として整合しており、
-$\TExt$ の折り畳みと $\TInt$ の展開が $\bigcirc$ において同一点に確定する。
-この確定がフロベニウス条件の「内在でも外在でもある」という特異点的地位を与える。
+$L(\bigcirc_X)\simeq0$なので、$L$を適用した比較は残余を検出しない。
+したがって観測上の同値から局所化前の同値を結論するには、核$\ker L$に残る
+成分が零であること、またはその成分を整合的に分裂させる追加データが必要である。
 \end{proof}
 
 %=============================================================
@@ -793,9 +876,9 @@ $\TExt$ の折り畳みと $\TInt$ の展開が $\bigcirc$ において同一点
 \text{勝義諦（空・中道不動点の層）}
 \end{align}
 
-世俗諦は $\Uparrow$ によって勝義諦へ駆動され、
-勝義諦は顕現 $\Uparrow(\bigcirc) \mweq A$ によって
-世俗諦として再起動する。
+世俗諦は$LX$として観測可能化され、勝義諦的残余は
+$m_X:\bigcirc_X\to X$を通じて現象$X$へ関与する。この記述は
+$\bigcirc_X$を「体系の外」に置かず、観測局所化の核に内在させる。
 \end{proposition}
 
 %=============================================================
@@ -829,49 +912,44 @@ $\TExt$ の折り畳みと $\TInt$ の展開が $\bigcirc$ において同一点
 この普遍性は、五蘊圏が\textbf{圏の圏（category of categories）}における
 \textbf{普遍構成（universal construction）}として位置づけられることを示唆する。
 
-\subsection{$E_{\infty}$ との関係}
+\subsection{\texorpdfstring{$\LawvereInfinity$}{Lambda-infinity}との関係}
 
-\begin{proposition}[$\Einf$ の位置づけ]
-極限同値 $\Einf$ は、五蘊圏の統制モナド $\T$ の固定点構造が
-形式体系（真理保存体系）の文脈で実現された具体例である。
+\begin{proposition}[外点と$\LawvereInfinity$の型の分離]
+外点$\bigcirc$は$\KSfour=\ker L$の対象または生成元であり、
+$\LawvereInfinity$は形式体系の言語に属する自己言及文である。
+したがって、両者の間に標準的な等式・同型・対応関手は存在せず、本稿では
+$\bigcirc\cong\LawvereInfinity$を主張しない。
 
 \begin{center}
-\begin{tabular}{ll}
-\hline
-\textbf{五蘊圏（普遍構造）} & \textbf{$\Einf$（具体実現）} \\
-\hline
-任意の圏 $\mathcal{C}$ 上の関手 & 形式体系の文（論理式） \\
-自己言及関手 $F(X) = X(\ldots, X)$ & 自己言及演算子 $\Sigma_T(A) = \neg\Pr_T(\ulcorner A \urcorner)$ \\
-固定点 $\T \cong F(\T)$ & 不動点 $\Einf = \Sigma_T(\Einf)$ \\
-識軸スパイラル $\SpiralT$ & 対角補題による内在的構成 \\
-「空」$\bigcirc$ & 二値論理では決定不能だが体系内で実在 \\
-\hline
-\end{tabular}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+側面 & 外点$\bigcirc$ & $\LawvereInfinity$ \\
+\midrule
+型 & $\Kstab$の対象 & 形式体系の文 \\
+普遍問題 & 観測局所化の不可視残余 & 自己言及作用素の固定点 \\
+存在根拠 & $\ker L$の非自明性と生成公理 & 対角補題 \\
+強制法 & 候補モデルを与えうる & 定義には用いない \\
+\bottomrule
+\end{tabularx}
 \end{center}
 \end{proposition}
 
-\begin{remark}[補強と還元の区別]
-$\Einf$ は五蘊圏を\textbf{還元}しない。
-五蘊圏の統制モナドは任意の圏上で定義される普遍構造であり、
-$\Einf$ はその構造が\textbf{一つの具体例}（形式体系論）において
-どのように実現されるかを示すに過ぎない。
-
-しかし、$\Einf$ は以下の点で五蘊圏を\textbf{補強}する：
-\begin{enumerate}
-\item \textbf{存在論的保証}：対角補題による $\Einf$ の必然的構成は、
-  自己言及固定点が「形式的願望」ではなく「論理的必然」であることを示す。
-\item \textbf{「空」の具体化}：$\Einf$ の「二値論理では決定不能だが体系内部では実在」という構造は、
-  五蘊圏の「空」$\bigcirc$ の論理的モデルを提供する。
-\item \textbf{非閉鎖性の深化}：$\Einf \neq \neg\Einf$ は、
-  フロベニウス条件が「形式的同値」と「内容的非同一」を同時に含むことを示す。
-\end{enumerate}
+\begin{remark}[将来の翻訳問題]
+両者の接続を検討するには、例えば$\KSfour$から体系$T$の超教義または
+構文圏$\mathcal{E}_T$への関手
+\[
+ \Phi:\KSfour\longrightarrow\mathcal{E}_T
+\]
+を構成し、$\Phi(\bigcirc)$が$\LawvereInfinity$を表現する条件を証明する必要がある。
+これは現段階の定理ではなく、独立した研究課題である。
 \end{remark}
 
 %=============================================================
 \section{結論}
 %=============================================================
 
-本稿は五蘊圏 $\Sk$ を以下の観点から公理化し、極限同値 $\Einf$ との接続を明示した。
+本稿は五蘊圏$\Sk$を公理化し、外点$\bigcirc$へ観測局所化による
+圏論的定義を与えた。
 
 \begin{enumerate}
 \item \textbf{基本定義}：五蘊圏を5つのモナド・統制固定点・識軸スパイラル・
@@ -881,7 +959,11 @@ $\Einf$ はその構造が\textbf{一つの具体例}（形式体系論）にお
   各モナドを随伴・層化・自己関手として定式化した。
 
 \item \textbf{統制構造}：統制モナド $\T$ の固定点方程式と識軸スパイラル $\SpiralT$ により、
-  前進方向のみを持つ通常モナドに双方向性とフロベニウス性が誘導されることを示した。
+  観測的閉包と局所化前に残る障害を区別した。
+
+\item \textbf{外点の定義}：安定実現$\Kstab$、観測局所化$L$、不可視残余
+  $\bigcirc_X=\operatorname{fib}(X\to iLX)$を導入し、$S_4$領域を
+  $\KSfour=\ker L$として定義した。
 
 \item \textbf{高次構造}：五蘊圏を2圏論・ホップf代数・トレース付きモノイダル圏の
   交差点として位置づけた。
@@ -889,10 +971,9 @@ $\Einf$ はその構造が\textbf{一つの具体例}（形式体系論）にお
 \item \textbf{五蘊対応}：五蘊・四句分別・二諦と圏論的構造の間の
   同型対応を明示した。
 
-\item \textbf{$\Einf$ との接続}：統制モナドの固定点構造が、
-  形式体系において極限同値 $\Einf$ として具体化されることを示した。
-  対角補題による $\Einf$ の内在的構成は、自己言及固定点の存在論的保証を与え、
-  「空」$\bigcirc$ の論理的モデルと非閉鎖的フロベニウス性を提供する。
+\item \textbf{$\LawvereInfinity$との分離}：$\LawvereInfinity$を証明論的固定点、
+  $\bigcirc$を局所化の核の対象として区別した。両者を結ぶ翻訳関手の構成は
+  将来課題として残した。
 \end{enumerate}
 
 五蘊圏は、個別のモナドの内容ではなく、それらを統合する\textbf{構造の構造}として機能する。
@@ -901,12 +982,11 @@ $\Einf$ はその構造が\textbf{一つの具体例}（形式体系論）にお
 この自己言及性は、圏論の核が本質的に再帰的であることを、
 五蘊構成を通じて反映している。
 
-$\Einf$ は、この自己言及構造が形式体系の文脈で実現された場合の
-「未発見の対象」として現れる。
-ゲーデルが「壁」と誤読した決定不能文は、
-実際には体系自身の対角補題から必然的に生成される内在的対象であり、
-リーマン球面上の $\infty$ のように、
-適切な圏論的枠組み（五蘊圏）の中で「通常の点」として位置づけられる。
+外点$\bigcirc$は「体系の外」に置かれた存在ではなく、観測局所化によって
+消去される内在的残余である。この定義により、観測可能性と存在を区別しながら、
+二諦・スパイラル・フロベニウス比較に現れる不可視成分を同一の圏論的言語で扱える。
+$\LawvereInfinity$との類似は自己言及と不可視性に関する発見的比較にとどまり、
+数学的同一視には別途翻訳定理を要する。
 
 \begin{thebibliography}{99}
 
@@ -924,6 +1004,16 @@ Andrej Bauer.
 Lars Birkedal.
 \newblock Developing theories of types and computability via realizability.
 \newblock Ph.D. thesis, University of Edinburgh, 2000.
+
+\bibitem{LurieHA}
+Jacob Lurie.
+\newblock \emph{Higher Algebra}.
+\newblock 2017.
+
+\bibitem{Jech2003}
+Thomas Jech.
+\newblock \emph{Set Theory}.
+\newblock Springer, 3rd millennium edition, 2003.
 
 \bibitem{Escardo2004}
 Mart\'{\i}n Escard\'{o}.
@@ -973,7 +1063,7 @@ Graham Priest.
 
 \bibitem{Chiba2026limit}
 千葉将臣.
-\newblock 真理保存性を持つ体系が必然的に $E_{\infty}$ を含む：対角補題による極限同値の内在的定式化.
+\newblock 真理保存性を持つ体系が必然的に $\Lambda_\infty$ を含む：対角補題によるLawvere無限階層の内在的定式化.
 \newblock 2026.
 
 \bibitem{Chiba2026cutmonad}
