@@ -1,0 +1,662 @@
+% !TeX program = lualatex
+% !TeX encoding = UTF-8
+\documentclass[11pt,a4paper]{ltjsarticle}
+
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{amsthm}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{margin=25mm}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=blue!55!black,
+  urlcolor=blue!55!black,
+  pdftitle={五句計算論：普遍認識論への展開と科学的基礎問題への形式的回答},
+  pdfauthor={千葉将臣}
+}
+\setlist{nosep}
+\setlength{\emergencystretch}{3em}
+\renewcommand{\arraystretch}{1.18}
+\raggedbottom
+
+\newtheorem{definition}{定義}[section]
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{axiom}[definition]{公理}
+\theoremstyle{remark}
+\newtheorem*{remark}{注意}
+\renewcommand{\proofname}{証明}
+\renewcommand{\abstractname}{摘要}
+
+\newcommand{\trunc}[1]{\left\lVert #1\right\rVert_{-1}}
+\newcommand{\Skobs}{\mathop{\mathrm{Sk}}_{\mathrm{obs}}}
+\newcommand{\Skiso}{\mathop{\mathrm{Sk}}_{\mathrm{iso}}}
+\newcommand{\End}{\operatorname{End}}
+\newcommand{\dt}{\Delta t}
+\newcommand{\LawvereInfinity}{\Lambda_\infty}
+\newcommand{\SelfRef}{\Sigma}
+
+\title{五句計算論：普遍認識論への展開と\\
+科学的基礎問題への形式的回答}
+\author{千葉将臣}
+\date{2026-08-17}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+五句計算論は、圏論・ホモトピー型理論・Diffeology・様相論理を
+統合した認識活動の構造論として構築されてきた。本稿では、前稿以降の議論に
+おいて確立した三つの核心的合意を形式的に展開する。第一は、Fregeの
+Sinn/Bedeutung区別とLawvereのFormal--Conceptual Dualityを、truncation
+（観測者固定）の多対一性・非可逆性によって統一する「合意17」である。第二は、
+計算の本質を「モナド$T$の副作用」ではなく「$S_1\to S_3$のtruncation移行」
+として再定義する「合意18」である。第三は、時間性を$\dt$の三値性
+（$\dt>0$, $\dt=0$, $\dt=\mathrm{undefined}$）として五句段階に分配する
+「合意19」である。第四に、Lawvere無限階層$\LawvereInfinity$を$S_4$の
+自己言及固定点として五句計算論へ内在化する。さらに、五句計算論が計算論を超えて「普遍認識論」である
+ことを示し、秩序の根源、ベルの不等式、確率・統計・情報の本質、熱力学第2法則、
+コルモゴロフ複雑性、生命の自己保存と制御、数学的実在性など、自然科学・哲学の
+基礎問題に対する統一的な回答を与える。核心命題は、あらゆる認識活動の結果の
+本質が、$S_1$（構成的に真＝「中身」）から$S_3$（非構成的になくない＝「結果」）
+へのtruncationによる情報の忘却と、顕現による不完全な回復との非対称的循環に
+ある、というものである。この構造は、計算・証明・哲学・知覚・科学のいずれに
+おいても同一である。
+
+\medskip
+\noindent\textbf{キーワード：}
+五句計算論、普遍認識論、truncation、観測者固定、Sinn/Bedeutung、
+計算効果、時間性、Lawvere無限階層、情報、エントロピー、コルモゴロフ複雑性
+\end{abstract}
+
+\section{導入：前稿からの差分と拡張}
+
+前稿では、五蘊圏（5モナド・固定点・スパイラル・フロベニウス条件・二諦公理）
+を圏論的内核として、五句分別（$S_1$から$S_5$）を記述可能性段階として確立した。
+本稿では、以下の拡張を行う。
+
+\begin{enumerate}[label=\textbf{差分\arabic*：},leftmargin=6em]
+  \item \textbf{Frege--Lawvere接続の確立（第\ref{sec:frege-lawvere}節）}：
+  FregeのSinn/Bedeutung区別の根源的理由を、truncationの多対一性・非可逆性
+  として圏論的に解明する。Lawvereの「型システムから命題システムへの崩壊は
+  同型ではない」という見方を、五句計算論のフロベニウス条件に現れる
+  $\sim$と対応させる。
+  \item \textbf{計算の本質の再定義（第\ref{sec:computation}節）}：
+  Plotkin--Powerの「計算の概念はモナドを決定する」を五句計算論的に精製する。
+  計算を$S_1\to S_3$のtruncation移行、エフェクトを$S_3$の「影」、継続を
+  $S_4$の「外側」として捉える。
+  \item \textbf{普遍認識論としての五句計算論（第\ref{sec:epistemology}節）}：
+  証明論（Curry--Howard/BHK）、哲学（Kantの現象／物自体、Husserlの
+  Noesis/Noema）、言語（FregeのSinn/Bedeutung）を統一する。
+  \item \textbf{科学的基礎問題への統一回答（第\ref{sec:foundations}節）}：
+  秩序、非決定性、ベルの不等式、確率、情報、熱力学、生命など20の基礎問題に
+  対する五句計算論的回答を提示する。
+  \item \textbf{Lawvere無限階層の上位統合（第\ref{sec:lambda-perspective}節）}：
+  $\LawvereInfinity$を$S_4$におけるLawvere固定点定理の圏論的実装として定式化し、
+  算術的固定点をその具体例として位置づける。
+\end{enumerate}
+
+\section{五蘊圏の形式的構造}
+
+五蘊圏$\mathcal{K}$は以下の構造を持つ。
+\begin{itemize}
+  \item \textbf{五モナド}：$M_{\neg\neg}$（二重否定）、$T$（五蘊モナド）、
+  $T_{\mathrm{cont}}$（継続）、$T_{\mathrm{fix}}$（固定点）、
+  $T_h$（h-level）。
+  \item \textbf{スパイラル構造}：
+  $S_T:\mathbb{Z}\to\End(\mathcal{K})$かつ
+  $S_T(n+5)\cong T\circ S_T(n)$。
+  \item \textbf{フロベニウス条件}：
+  \[
+    (\mu_T\circ T\delta_T)\sim(\delta_T\circ\mu_T),
+  \]
+  ここで$\sim$は「体積保存の失敗」を示す非同型の随伴関係である。
+  \item \textbf{二諦公理}：$\Skobs$（観測可能骨格）と
+  $\Skiso$（同型骨格）の二重化。
+\end{itemize}
+
+\section{五句分別の記述可能性段階}
+
+\begin{table}[htbp]
+\centering
+\caption{五句分別の記述可能性段階}
+\label{tab:stages-perspective}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}X c l >{\raggedright\arraybackslash}X@{}}
+\toprule
+段階 & 記述可能性 & h-level & 論理 & 時間性 \\
+\midrule
+$S_1$ & 構成的に真 & $h\geq0$ & 直観主義 & $\dt>0$（微分） \\
+$S_2$ & 構成的になくない & $h\geq-1$ & 二重否定変換 & $\dt\to0$（極限） \\
+$S_3$ & 非構成的になくない & $h=-1$ & 古典論理 & $\dt=0$（観測） \\
+$S_4$ & 非構成的にない & $h\leq-2$ & 体系内不可記述 & $\dt=\mathrm{undefined}$ \\
+$S_5$ & 矛盾でない & $h=-2$ & 整合性 & $\dt=0$（固定点） \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Lawvere無限階層と不可記述性の固定点}
+\label{sec:lambda-perspective}
+
+本節では$\LawvereInfinity$の圏論的一般構造のみを扱う。対角補題による
+算術的構成、証明可能性述語、等号の二重性、Priestの論理との差異、
+リーマン球面による比喩的解釈については単独論文\cite{ChibaLambda2026}を参照されたい。
+
+\begin{definition}[Lawvere無限階層]
+各五句周回の$S_4$を表す圏$\mathcal{C}_4^{(k)}$において、弱い点全射な射
+$e_4^{(k)}:X_4^{(k)}\to(Y_4^{(k)})^{X_4^{(k)}}$と自己写像
+$g_4^{(k)}:Y_4^{(k)}\to Y_4^{(k)}$からLawvere固定点$b_4^{(k)}$を構成する。
+これらが段階遷移と両立し、その極限が存在するとき、
+\[
+ \LawvereInfinity:=\varprojlim_k b_4^{(k)}
+\]
+をLawvere無限階層と呼ぶ。
+\end{definition}
+
+\begin{axiom}[C4-$\Lambda$]
+$S_4$を表す圏は弱い点全射なLawvereデータと、段階遷移に両立する固定点塔を
+内在的に含む。
+\end{axiom}
+
+\begin{axiom}[C5-$\Lambda$]
+$S_5$の統制固定点$T\cong F(T)$は、$\LawvereInfinity$が示す$S_4$の穴を
+閉包へ統合し、次の五句周回への入口を生成する。
+\end{axiom}
+
+\begin{proposition}[$\LawvereInfinity$の認識論的位置]
+$\LawvereInfinity$は、$S_1$のSinnが$S_3$のBedeutungへtruncationされる際に
+完全には回収されない差異を、$S_4$における自己言及固定点として表示する。
+したがって、計算に対しては継続の外側、科学的観測に対しては観測不能な残余、
+普遍認識論に対しては記述行為そのものの限界を表す。
+\end{proposition}
+
+\begin{remark}
+truncationの多対一性だけから固定点の存在は導かれない。$\LawvereInfinity$の
+定理的存在には、Lawvereの固定点定理が要求する弱い点全射性、またはそれと同等の
+自己適用可能性を$S_4$のモデルに課す必要がある。この条件のモデル構成は、本稿の
+最優先課題である。真理保存体系における算術的固定点は、この一般構造の
+証明論的具体例である\cite{ChibaLambda2026}。
+\end{remark}
+
+\section{時間性と時間差分の三値性（合意19）}
+
+前稿では$\dt$を$S_1\to S_3$の極限として扱ったが、本稿では
+\textbf{$\dt$の三値性}を導入する。
+
+\begin{table}[htbp]
+\centering
+\caption{時間差分の三値性}
+\label{tab:delta-t}
+\small
+\begin{tabularx}{\textwidth}{@{}c c >{\raggedright\arraybackslash}X@{}}
+\toprule
+$\dt$ & 五句段階 & 解釈 \\
+\midrule
+$\dt>0$ & $S_1$ & 計算の「中身」＝微分的$\lambda$計算の微分演算子領域 \\
+$\dt=0$ & $S_3$ & 計算の「結果」＝エフェクトの「影」 \\
+$\dt=\mathrm{undefined}$ & $S_4$ & 計算の「外側」＝継続の領域 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+微分的$\lambda$計算\cite{EhrhardRegnier2003}の「微分演算子＝自然変換」は
+$S_1$（$\dt>0$）に位置し、「Taylor展開＝五蘊モナド合成」は
+$S_1\to S_3$の移行に対応する。
+
+\section{バナッハ＝タルスキーと二重化（合意16）}
+
+五蘊圏の二重化$\Skobs$対$\Skiso$は、バナッハ＝タルスキーの
+「一つから二つへ」という増殖と構造的に同型である。共通メカニズムは、
+\textbf{truncation（観測者固定）の非可逆な多対一の崩壊}である。
+
+\section{Frege--Lawvere接続：Sinn/Bedeutungのtruncation論的解明}
+\label{sec:frege-lawvere}
+
+\subsection{問題の所在}
+
+Fregeの「Über Sinn und Bedeutung」\cite{Frege1892}における核心の問いは、
+「明けの明星＝宵の明星」が同一のBedeutung（金星）を持つにもかかわらず、
+なぜこの同一性が情報的、すなわち認識論的であるのか、という点にある。
+
+\subsection{五句計算論的回答}
+
+本稿は次の対応を提案する。
+\begin{align*}
+ \mathrm{Sinn}
+   &\quad=\quad S_1
+   &&\text{（構成的に真＝具体的証明パス・自然変換 $\alpha:F\Rightarrow G$）},\\
+ \mathrm{Bedeutung}
+   &\quad=\quad S_3
+   &&\text{（非構成的になくない＝truncation後の対象 $\trunc{P}$）}.
+\end{align*}
+
+truncation $\trunc{P}$は多対一の写像であり、異なる自然変換（Sinn）が
+同一のtruncation後対象（Bedeutung）へ圧縮される。
+
+\begin{table}[htbp]
+\centering
+\caption{Frege・Lawvere・五句計算論の対応}
+\label{tab:frege-lawvere}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+Frege & Lawvere & 五句計算論 \\
+\midrule
+Sinn（意味） & Formal（型システム） & $S_1$＝自然変換 \\
+Bedeutung（指示） & Conceptual（崩壊後） & $S_3$＝truncation後 \\
+明星同一性の情報性 & 崩壊は同型ではない & 顕現による完全復元の不可能性（$\sim$） \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{三現象の統一}
+
+\begin{table}[htbp]
+\centering
+\caption{三現象に共通する分岐のメカニズム}
+\label{tab:three-phenomena}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+現象 & 「一つから二つへ」のメカニズム \\
+\midrule
+バナッハ＝タルスキー & 選択公理による非可測集合の生成＝$S_3$でのtruncation後の非可測化 \\
+五蘊圏の二重化 & truncationによる2-射の消去＝$\Skobs(S_1)$と$\Skiso(S_3)$への分岐 \\
+Sinn/Bedeutungの区別 & 同一のBedeutungを持つ異なるSinnの存在＝truncationの多対一性 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{theorem}[合意17]
+SinnとBedeutungが二つに分かれて把握されざるを得ない根源的理由は、
+truncation（観測者固定）の\textbf{多対一性}と\textbf{非可逆性}である。
+\end{theorem}
+
+\section{計算の本質の再定義}
+\label{sec:computation}
+
+\subsection{現在の計算論の限界}
+
+Plotkin--Power\cite{PlotkinPower2002}は、計算の概念がモナドを決定するが、
+両者は同一視されないことを示した。しかし「エフェクト」概念はなお曖昧であり、
+Bauer\cite{Bauer2008}が論じるように、すべてのエフェクトがモナドで捉えられる
+わけではない。
+
+\subsection{五句計算論的再定義}
+
+\begin{table}[htbp]
+\centering
+\caption{計算概念の再定義}
+\label{tab:computation-redefinition}
+\small
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+概念 & 旧定義（現在の計算論） & 新定義（五句計算論） \\
+\midrule
+計算の本質 & モナド$T$の副作用 & $S_1\to S_3$のtruncation移行＝情報変換 \\
+エフェクト & モナドの副作用 & $S_3$の「影」＝truncation後に見える痕跡 \\
+継続 & 代数的でないエフェクト & $S_4$（体系内不可記述）の領域 \\
+時間性 & $\varepsilon$--$\delta$極限（$S_3$的） & $\dt$の三値性（$S_1/S_3/S_4$） \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{計算の五句公理}
+
+\begin{table}[htbp]
+\centering
+\caption{計算の五句公理}
+\label{tab:computation-axioms}
+\small
+\begin{tabularx}{\textwidth}{@{}c c >{\raggedright\arraybackslash}X@{}}
+\toprule
+公理 & 内容 & 計算論的解釈 \\
+\midrule
+(C1) & $S_1$の存在 & 計算の「中身」が具体的に記述可能 \\
+(C2) & $S_1\to S_2$ & 計算の「可能性」が保証される \\
+(C3) & $S_2\to S_3$ & 計算の「結果」が観測可能になる \\
+(C4) & $S_3\to S_4$ & 計算の「外側」（継続・メタ計算） \\
+(C5) & $S_4\to S_5$ & 計算の「停止」と「整合性」 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{proposition}[合意18]
+計算の本質はモナド$T$の副作用ではなく、$S_1$（構成的に真＝具体的証明パス）
+から$S_3$（非構成的になくない＝truncation後の結果）へのtruncation操作による
+情報の忘却と、顕現による不完全回復との非対称循環である。
+\end{proposition}
+
+\section{普遍認識論としての五句計算論}
+\label{sec:epistemology}
+
+\subsection{核心命題}
+
+\begin{proposition}[認識活動の結果の本質]
+認識活動の結果の本質は、$S_1$（「中身」）から$S_3$（「結果」）への
+truncationによる情報の忘却と、顕現による不完全な回復との非対称的循環である。
+\end{proposition}
+
+\subsection{分野間対応}
+
+\begin{table}[htbp]
+\centering
+\caption{認識活動の分野間対応}
+\label{tab:epistemology-domains}
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+領域 & $S_1$（中身） & $S_3$（結果） & truncation \\
+\midrule
+計算 & 具体的証明パス・自然変換 & プログラムの出力・値 & 観測者固定による実行結果の取得 \\
+証明（BHK/CH） & 具体的な構成手続き & 定理・真理値 & 証明の正規化・検証 \\
+哲学（Kant） & 物自体（Ding an sich） & 現象（Erscheinung） & 超越論的観念論的「構成」 \\
+現象学（Husserl） & Noesis（意向的行為） & Noema（意向的対象） & 現象学的還元の「前」 \\
+言語（Frege） & Sinn（意味・提示の仕方） & Bedeutung（指示・対象） & 文脈からの抽象化 \\
+科学 & 実験手続き・測定プロセス & 測定結果・データ & 測定装置の固定化 \\
+知覚 & 感覚データの処理過程 & 知覚対象・「見え」 & 注意の固定・対象化 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{普遍構造の核心}
+
+\begin{proposition}[普遍性]
+あらゆる認識活動は、$S_1$から$S_3$へのtruncation（観測者固定）による
+情報変換として記述可能である。この変換の非対称性、すなわちフロベニウス条件の
+$\sim$が、FregeのSinn/Bedeutung、Kantの現象／物自体、Husserlの
+Noesis/Noema、BHKの証明／定理という各区別に共通する形式的根拠である
+\cite{Wadler2015,Schwichtenberg2019,Kant,Husserl}。
+\end{proposition}
+
+\section{科学的基礎問題への五句計算論的回答}
+\label{sec:foundations}
+
+以下では20の基礎問題に対する統一的な回答を示す。核心は、
+\textbf{$S_1$の構造が$S_3$へ投影される際に残す「潰れない痕跡」のパターン}
+である。
+
+\subsection{秩序の根源}
+
+\textbf{秩序とは、$S_1$の構造が$S_3$へ投影された際の不変パターンである。}
+世界が完全な混沌でないのは、truncationがすべてを混沌にするのではなく、
+潰れない構造を$S_3$に痕跡として残すからである。
+
+\subsection{非決定性}
+
+\textbf{非決定性とは、$S_2$（構成的になくない）、すなわち「どれか一つは
+存在するが、どれかは分からない」領域である。} $S_2$が複数の可能性の空間を
+開き、truncation（$S_2\to S_3$）がそれを一つの結果へ収束させる。この収束が
+再現的であるとき、それが秩序として$S_3$に現れる。
+
+\subsection{ベルの不等式と実験値}
+
+\textbf{ベルの不等式の違反は、$S_1$（量子もつれ＝自然変換）の構造が
+$S_3$（局所実在論）へ完全には投影されないことの証拠である。}
+局所実在論は$S_3$の世界観であり、量子もつれは$S_1$の自然変換レベルでの
+関係性である。truncation（測定）はこの関係性を変化させ、$S_3$では独立した
+確率として現す。ベルの不等式の違反は、$S_1$の構造が$S_3$で完全には
+潰れないことの実験的証拠として解釈される\cite{Bell1964}。
+
+\subsection{確率}
+
+\textbf{確率とは、$S_1\to S_3$の移行における投影の重みであり、$S_2$の
+可能性空間がtruncationによって頻度として現れる統計的記述である。}
+$S_1$では確率は存在せず、すべてが決定論的である。$S_3$で確率が現れるのは、
+$S_1$の構造がtruncationを通過する際の情報の漏れ出しを統計的に記述するためである。
+
+\subsection{自然科学的確率}
+
+\textbf{自然科学的確率とは、$S_3$におけるtruncationの相対的頻度である。}
+相対頻度説・傾向説・主観確率説の対立は、$S_1/S_2/S_3$のどの段階を確率の
+根拠とするかの違いとして整理できる。五句計算論はこれらを、$S_1\to S_3$の
+移行における構造の投影の重みとして統一する。
+
+\subsection{統計}
+
+\textbf{統計とは、$S_3$における多数のtruncation結果の集積、すなわち
+$S_1$の構造の痕跡の集計である。} 統計は$S_3$から$S_1$の構造を逆推する
+道具であるが、フロベニウス条件の$\sim$が示すように、完全な逆推は不可能である。
+
+\subsection{情報}
+
+\textbf{情報とは、truncation後も潰れない差異の構造である。}
+$S_1$では情報は無限の微分構造そのものであり、truncation後の$S_3$では
+その大部分が潰れる。圧縮を通過しても残る差異の構造が情報である。
+
+\subsection{熱力学第2法則}
+
+\textbf{熱力学第2法則とは、truncationの非可逆性、すなわち$S_1\to S_3$の
+移行における情報の単方向的な潰れである。} $S_1$（微視的）から$S_3$
+（巨視的）へのtruncationは情報を失う多対一の圧縮である。この圧縮は非可逆であり、
+エントロピー増大は$S_3$で観測可能な情報の減少として表現される
+\cite{DuncanSemura2007}。
+
+\subsection{圧縮可能性と規則}
+
+\textbf{圧縮可能性とは、$S_1$の構造が$S_3$の簡潔な記述へ還元可能である
+ことである。規則とは、$S_1$の自然変換の再現的パターンがtruncation後も
+潰れずに残す不変構造である。} ランダムとは、$S_1$の構造が$S_3$に簡潔な
+痕跡を残さないことである。
+
+\subsection{規則と論理}
+
+\textbf{規則は$S_1$の自然変換のパターン（中身）であり、論理は$S_3$の
+truncation後の真理値の代数（結果）である。} 論理は規則の影であり、$S_1$の
+パターンが$S_3$へ投影された際に保存される真理値操作の代数である。
+
+\subsection{脳・統計・認識メカニズム}
+
+\textbf{脳とは、$S_1\to S_3$の移行を物理的に実装したtruncation装置である。}
+感覚入力は$S_1$の生の微分構造、知覚は$S_2\to S_3$のtruncation、統計的学習は
+$S_3$の痕跡から$S_1$の構造を逆推する過程である。認識メカニズムは、
+フロベニウス条件の$\sim$を物理的に実装したものと解釈される。
+
+\subsection{数学}
+
+\textbf{数学とは、$S_1$の構造を$S_5$（矛盾でない＝整合性）において
+固定したものである。} 数学的対象はtruncation後も潰れない構造の形式的抽象であり、
+$S_1$の構造を$S_5$で固定化したものと位置づけられる。
+
+\subsection{記述と存在}
+
+\textbf{記述とは、$S_1\to S_3$の移行が残す痕跡である。}
+記述は$S_3$（truncation後）にのみ存在する。$S_1$には記述される前の構造があり、
+$S_4$には記述不能なものがある。
+
+\subsection{表象の可能性}
+
+\textbf{表象とは、$S_1$（物質の微分構造）が$S_3$（観測可能世界）へ
+投影された痕跡である。} 表象が可能なのは、truncationが潰れない構造を痕跡として
+残すからである。物質は表象可能な構造（$S_1\to S_3$）と表象不能な構造
+（$S_4$）の双方を含む。
+
+\subsection{法則のまとめられ方}
+
+\textbf{法則とは、$S_1$の自然変換の再現的パターンが$S_3$へ投影された際の、
+不変な操作の記述である。} 秩序を法則としてまとめられるのは、$S_1$の
+パターンが$S_3$へ体系的に投影されるからである。
+
+\subsection{数学的実在性}
+
+\textbf{数学は$S_5$（整合性）の固定点として実在する。}
+数学は$S_3$（truncation後）ではなく$S_5$（整合性）に位置するため自然科学ではない。
+一方、自然科学は数学的構造の$S_3$への投影として理解される。
+
+\subsection{Wolframの計算する宇宙モデル}
+
+\textbf{Wolframのモデルは、$S_1$の構造的複雑性を$S_3$へ投影する一つの
+実現である。} この意味で現実と関係するが、$S_4$（体系内不可記述）の領域が
+存在するため、現実はこのモデルよりも大きい\cite{Wolfram2020}。
+
+\subsection{コルモゴロフ複雑性}
+
+\textbf{$K(x)$は、$S_1$から$S_3$への最短記述、すなわちtruncationの
+効率性である。} 規則的であることは低コルモゴロフ複雑性、すなわち$S_1$の
+構造が$S_3$へ簡潔に投影されることを意味する。ランダムであることは高い
+コルモゴロフ複雑性、すなわち簡潔な痕跡を残さないことを意味する
+\cite{LiVitanyi2008,GrunwaldVitanyi2008}。
+
+\subsection{生命の自己保存}
+
+\textbf{自己保存とは、$S_1$の構造（自己同一性）が$S_3$に痕跡として残り続ける
+動的過程であり、truncationの非可逆性に対する抵抗である。}
+生物は、熱力学第2法則による情報の潰れに抗して、$S_1$の構造を$S_3$へ投影し
+続けるシステムである。
+
+\subsection{生命の制御能力}
+
+\textbf{制御とは、$S_1$の構造（内部モデル）を用いた$S_3$（外界）への
+予測的truncationである。} 生物は$S_1$の構造を内部モデルとして蓄積する
+truncation装置である。制御が部分的であるのは、フロベニウス条件の$\sim$、
+すなわちtruncationの非可逆性による必然的限界のためである。
+
+\section{統一的結論}
+
+\begin{proposition}[統一命題]
+世界のあらゆる現象は、$S_1$（構成的に真＝無限の微分構造）が$S_3$
+（truncation後＝有限の観測可能世界）へ投影される際の「潰れない痕跡」の
+パターンとして記述可能である。truncation（観測者固定）の多対一性・非可逆性と、
+フロベニウス条件の$\sim$が、秩序と混沌、確率と法則、情報とエントロピー、
+生命と死、数学と自然科学の共通の根源である。
+\end{proposition}
+
+五句計算論は「計算論」という名を持ちながら、実際には計算・証明・哲学・知覚・
+科学のあらゆる認識活動が共有する、truncationによる$S_1\to S_3$の移行という
+普遍構造を形式的に記述する\textbf{普遍認識論}である。
+$\LawvereInfinity$はこの普遍構造の$S_4$成分を圏論的に表し、真理保存体系における
+算術的固定点はその証明論的具体例を与える\cite{ChibaLambda2026}。
+
+\section{未解決課題（更新版）}
+
+\begin{table}[htbp]
+\centering
+\caption{未解決課題（優先度A）}
+\label{tab:open-problems-perspective}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{0.18\textwidth}@{}}
+\toprule
+優先度 & 課題 & ステータス \\
+\midrule
+A & フロベニウス条件の五句計算論的証明（$\mu_T$と$\delta_T$の非完全可逆性） & 継続 \\
+A & Lawvereのhyperdoctrine（$\Sigma_f\dashv f^*\dashv\Pi_f$）の五句計算論的埋込み証明 & 新規最高優先 \\
+A & 微分的$\lambda$計算の微分演算子と五句計算論の自然変換の形式的同値証明 & 新規最高優先 \\
+A & 「すべてのエフェクトの空間」＝五句段階間の移行の断片としての圏論的定義 & 新規最高優先 \\
+A & $X\to X/G$のDiffeologyが$T(X)=X/G$のEM圏と同値になる条件 & 継続 \\
+A & $S_4$のLawvere点全射モデルと$\LawvereInfinity$存在定理の完全形式化 & 新規最高優先 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{未解決課題（優先度B--G）}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{0.18\textwidth}@{}}
+\toprule
+優先度 & 課題 & ステータス \\
+\midrule
+B & 五句段階間$S_1\leftrightarrow S_2\leftrightarrow S_3\leftrightarrow S_4\leftrightarrow S_5\leftrightarrow S_1$の具体的随伴対の明示 & 継続 \\
+B & 統制固定点$T\cong F(T)$のHoTT的型記述 & 継続 \\
+C & 継続を$S_4$の領域として形式化し、$S_3$エフェクトとの境界条件を明示 & 新規高優先 \\
+D & FregeのSinnの合成性を五句計算論的段階合成として再構成 & 新規高優先 \\
+E & Isbell双対性と五蘊圏二重化の形式的同値性／差異の精査 & 継続 \\
+F & pentagon identity（5頂点＝五句5段階）の対応の定理化 & 継続 \\
+G & CLTLとの形式接続 & 未解決 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section*{改訂情報}
+\addcontentsline{toc}{section}{改訂情報}
+
+\noindent\textbf{改訂日：}2026年8月17日
+
+\noindent\textbf{前稿からの差分：}
+合意17（Frege--Lawvere接続）、合意18（計算の本質の再定義）、
+合意19（$\dt$の三値性）、$\LawvereInfinity$の$S_4$への統合、
+第\ref{sec:epistemology}節（普遍認識論）、
+第\ref{sec:foundations}節（科学的基礎問題への統一回答）、未解決課題の更新。
+
+\begin{thebibliography}{99}
+
+\bibitem{Frege1892}
+G. Frege,
+``Über Sinn und Bedeutung,''
+\textit{Zeitschrift für Philosophie und philosophische Kritik}, 1892.
+
+\bibitem{Lawvere1969}
+F. W. Lawvere,
+``Adjointness in Foundations,'' 1969.
+
+\bibitem{PlotkinPower2002}
+G. Plotkin and J. Power,
+``Notions of Computation Determine Monads,'' 2002.
+
+\bibitem{EhrhardRegnier2003}
+T. Ehrhard and L. Regnier,
+``The Differential $\lambda$-Calculus,'' 2003.
+
+\bibitem{Bauer2008}
+A. Bauer,
+``Not All Computational Effects Are Monads,'' 2008.
+
+\bibitem{Wadler2015}
+P. Wadler,
+``Propositions as Types,''
+\textit{Communications of the ACM}, 2015.
+
+\bibitem{Schwichtenberg2019}
+H. Schwichtenberg,
+\textit{Computational Content of Proofs}, 2019.
+
+\bibitem{Kant}
+I. Kant,
+\textit{Kritik der reinen Vernunft}, 1781/1787.
+
+\bibitem{Husserl}
+E. Husserl,
+\textit{Ideen zu einer reinen Phänomenologie}, 1913.
+
+\bibitem{Bell1964}
+J. S. Bell,
+``On the Einstein Podolsky Rosen Paradox,'' 1964.
+
+\bibitem{DuncanSemura2007}
+T. L. Duncan and J. S. Semura,
+``Information Loss as a Foundational Principle for the Second Law of
+Thermodynamics,'' 2007.
+
+\bibitem{LiVitanyi2008}
+M. Li and P. Vitányi,
+\textit{An Introduction to Kolmogorov Complexity and Its Applications}, 2008.
+
+\bibitem{Wolfram2020}
+S. Wolfram,
+``Finally We May Have a Path to the Fundamental Theory of Physics,'' 2020.
+
+\bibitem{GrunwaldVitanyi2008}
+P. Grünwald and P. Vitányi,
+``Algorithmic Information Theory,'' 2008.
+
+\bibitem{PentaPrevious}
+千葉将臣，『五句計算論：五蘊圏・五句分別・時間性$\dt$・
+バナッハ＝タルスキー接続』，前稿．
+
+\bibitem{ChibaLambda2026}
+千葉将臣，『真理保存性を持つ体系が必然的に$\LawvereInfinity$を含む：
+対角補題によるLawvere無限階層の内在的定式化』，2026．
+
+\end{thebibliography}
+
+\end{document}

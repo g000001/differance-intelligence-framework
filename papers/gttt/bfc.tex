@@ -1,0 +1,878 @@
+% !TeX program = lualatex
+% !TeX encoding = UTF-8
+\documentclass[11pt,a4paper]{ltjsarticle}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{margin=25mm}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=blue!55!black,
+  urlcolor=blue!55!black,
+  pdftitle={境界フロベニウス条件論：五句計算論における「成立とされないもの」の幾何学},
+  pdfauthor={千葉将臣}
+}
+\setlist{nosep}
+\setlength{\emergencystretch}{3em}
+\renewcommand{\arraystretch}{1.18}
+\raggedbottom
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{corollary}[definition]{系}
+\newtheorem{example}[definition]{例}
+\theoremstyle{remark}
+\newtheorem{remark}[definition]{注意}
+\renewcommand{\proofname}{証明}
+\renewcommand{\abstractname}{摘要}
+
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\Cloc}{\mathcal{C}_{\mathrm{loc}}}
+\newcommand{\Cacyc}{\mathcal{C}_{\mathrm{acyc}}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\fib}{\operatorname{fib}}
+\newcommand{\cofib}{\operatorname{cofib}}
+\newcommand{\Map}{\operatorname{Map}}
+\newcommand{\im}{\operatorname{Im}}
+\newcommand{\Boundary}{\partial_L}
+\newcommand{\Obs}{\mathsf{L}}
+\newcommand{\Residual}{\Gamma}
+\newcommand{\Avyakata}{\mathsf{Avy}}
+\newcommand{\Kzero}{K_0}
+\newcommand{\Tree}{\mathsf{Tree}}
+\newcommand{\Eff}{\mathsf{Eff}}
+
+\title{境界フロベニウス条件論：\\
+五句計算論における「成立とされないもの」の幾何学}
+\author{千葉将臣}
+\date{2026-08-17}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本稿は、観測局所化とテンソル積の交換可能性を、成立か不成立かという二値ではなく、
+交換比較射が残す\textbf{境界対象}によって測る「境界フロベニウス条件」
+（Boundary Frobenius Condition; BFC）を提案する。基礎として、テンソル積が各変数で
+完全な安定対称モノイダル$\infty$圏$\C$、完全な冪等局所化$L:\C\to\C$、
+および余モノイダル比較
+\[
+ \mu_{X,Y}:L(X\otimes Y)\longrightarrow LX\otimes LY
+\]
+を仮定する。境界対象を
+\[
+ \Boundary(X,Y):=\cofib(\mu_{X,Y})
+\]
+と定義し、$L\mu_{X,Y}$が同値であること、同値な言い方では
+$\Boundary(X,Y)\in\ker L$であることをBFCと呼ぶ。この条件の下で比較射は
+観測可能圏またはVerdier商では同値になる一方、元の圏では非零の不可視残余を
+持ちうる。したがってBFCは、通常の強い交換条件
+$L(X\otimes Y)\simeq LX\otimes LY$を、境界を保存したまま弱める。
+
+安定圏ではファイバーと余ファイバーは懸垂を介して同じ情報を持つため、
+両者の直和を新たな境界とする必要はない。また一般の局所化では
+$X\simeq LX\oplus\Residual X$という分裂も、境界をテンソル因子として補う等式も
+自動的には成立しない。本稿はこれらを完全三角、分裂条件、Grothendieck群上の
+加法公式として修正する。最後に、五句計算論の$S_3=\im L$と
+$S_4=\ker L$、外点$\bigcirc$、無記、および実現可能性・関係代数・証明論との
+照応を、定理と研究上の類比を区別して整理する。さらに$n$項比較射の境界として
+高次境界フロベニウス条件（HOBFC）を導入し、境界を効果等級へ抽象化して
+条件・ハンドラ・再開点を生成するプログラミング言語設計の枠組みを提示する。
+
+\medskip
+\noindent\textbf{キーワード：}
+境界フロベニウス条件、安定$\infty$圏、観測局所化、余モノイダル関手、
+外点、Verdier商、五句計算論、無記、高次境界、効果ハンドラ
+\end{abstract}
+
+\tableofcontents
+
+\section{導入}
+
+\subsection{問題設定}
+
+局所化$L$とテンソル積$\otimes$が与えられたとき、二つの操作順序
+\[
+ L(X\otimes Y),\qquad LX\otimes LY
+\]
+を比較することは、安定ホモトピー論、テンソル三角幾何、層論、計算意味論に
+共通する問題である。両者を結ぶ比較射が同値であれば、観測は結合を完全に保存する。
+しかし非同値の場合に、その差を単なる「失敗」と呼ぶだけでは、失われた成分の
+型、函手性、反復可能性を記述できない。
+
+本稿の基本的着想は、比較射の非可逆性を対象として内部化することである。
+安定圏では任意の射がファイバー列および余ファイバー列を持つ。そこで比較射の
+余ファイバーを境界と定め、局所化後に境界が消えることをBFCとする。
+
+\subsection{「フロベニウス」という名称について}
+
+標準的なFrobenius monoidal functorは、lax monoidal構造とoplax monoidal構造を
+同時に持ち、それらがFrobenius型の整合式を満たす関手である
+\cite{DayPastro2008}。本稿のBFCはその標準定義そのものではない。
+本稿では、五句計算論で反復して現れる「結合と観測の順序交換」を
+\textbf{フロベニウス比較}と呼び、その比較の境界を研究する。
+標準的Frobenius monoidal構造との完全な関係づけは今後の課題である。
+
+\subsection{主結果}
+
+本稿の主結果は次の三点である。
+
+\begin{enumerate}
+ \item BFCは$L\mu_{X,Y}$が同値であることと
+ $\Boundary(X,Y)\in\ker L$であることの同値として定式化できる。
+ \item 修正フロベニウス則の普遍的な形はテンソル積による補正式ではなく、完全三角
+ \[
+ L(X\otimes Y)\to LX\otimes LY\to\Boundary(X,Y)
+ \to\Sigma L(X\otimes Y)
+ \]
+ である。
+ \item 外点$\bigcirc$が$\ker L$の生成対象であれば、境界は写像スペクトル
+ $\Map(\bigcirc,\Boundary(X,Y))$によって検出できる。
+ \item $n$項比較の境界$\partial_{L,\tau}^{(n)}$と局所化後のcoherenceを
+ HOBFCとして定式化できる。
+ \item 境界を計算可能な効果等級へ抽象化すれば、条件・ハンドラ・再開点を生成する
+ コンパイラ設計を、健全性スキーマとして記述できる。
+\end{enumerate}
+
+\section{観測局所化と外点圏}
+
+\subsection{安定対称モノイダル圏}
+
+\begin{axiom}[基礎圏]
+$\C$を安定な可呈示$\infty$圏とし、対称モノイダル積
+$\otimes:\C\times\C\to\C$は各変数で余極限を保存し、したがって各変数で完全であるとする。
+\end{axiom}
+
+安定$\infty$圏ではファイバー列と余ファイバー列が一致し、射$f:A\to B$に対して
+自然な完全三角
+\[
+ \fib(f)\longrightarrow A\xrightarrow{f}B
+ \longrightarrow\cofib(f)\simeq\Sigma\fib(f)
+\]
+が存在する\cite{LurieHA}。
+
+\subsection{完全局所化}
+
+\begin{definition}[観測局所化]
+観測局所化とは、自然変換$\eta:\id_{\C}\Rightarrow L$を伴う完全関手
+$L:\C\to\C$であって、$L\eta$および$\eta L$が同値となるものをいう。
+その局所対象圏と非可視対象圏を
+\[
+ \Cloc:=\im L,
+ \qquad
+ \Cacyc:=\ker L=\{A\in\C\mid LA\simeq0\}
+\]
+と書く。五句計算論では$\Cloc$を$S_3$、$\Cacyc$を$S_4$に対応させる。
+\end{definition}
+
+この定義はBousfield局所化の安定圏的形式である
+\cite{Lawson2022,Mantovani2024}。
+
+\begin{definition}[不可視残余]
+各$X\in\C$に対し
+\[
+ \Residual X:=\fib(\eta_X:X\to LX)
+\]
+を不可視残余と呼ぶ。
+\end{definition}
+
+\begin{proposition}[局所成分と残余の完全三角]
+任意の$X\in\C$に対し
+\[
+ \Residual X\longrightarrow X\xrightarrow{\eta_X}LX
+ \longrightarrow\Sigma\Residual X
+\]
+は完全三角であり、$\Residual X\in\Cacyc$である。
+\end{proposition}
+
+\begin{proof}
+第一の主張は定義による。完全関手$L$を適用すると、$L\eta_X$は冪等性により
+同値である。したがって$L\Residual X\simeq0$である。
+\end{proof}
+
+\begin{remark}[直和分解は追加条件である]
+一般には$X\simeq LX\oplus\Residual X$とは限らない。この直和分解が得られるのは、
+上の完全三角が自然に分裂する場合に限られる。本稿では局所化の冪等性から分裂を仮定しない。
+\end{remark}
+
+\subsection{外点}
+
+\begin{definition}[外点生成対象]
+$\Cacyc$が生成対象$\bigcirc$を持ち、
+\[
+ \Map_{\C}(\bigcirc,-):\Cacyc\longrightarrow\mathrm{Sp}
+\]
+が零対象を検出するとき、$\bigcirc$を外点と呼ぶ。単一生成対象が存在しない場合は
+生成族$\{\bigcirc_\alpha\}$を用いる。
+\end{definition}
+
+外点は「体系の外」の対象ではなく、$\C$内部にありながら$L$によって零化される対象である。
+
+\section{フロベニウス比較と境界対象}
+
+\subsection{余モノイダル比較}
+
+\begin{axiom}[比較射]
+$L$は自然な余モノイダル比較
+\[
+ \mu_{X,Y}:L(X\otimes Y)\longrightarrow LX\otimes LY
+\]
+を持つとする。比較射は$X,Y$について自然であり、結合子・対称性・単位子と整合する。
+\end{axiom}
+
+左随伴に余モノイダル構造が生じる典型的状況はあるが、本稿では比較射の存在を
+明示的なデータとして仮定する。これにより、比較射の向きやモノイダル性を
+局所化の冪等性だけから導いたかのように扱うことを避ける。
+
+\subsection{境界対象}
+
+\begin{definition}[境界対象]
+フロベニウス比較の境界対象を
+\[
+ \Boundary(X,Y):=\cofib(\mu_{X,Y})
+\]
+と定義する。
+\end{definition}
+
+\begin{proposition}[ファイバー表示]
+自然な同値
+\[
+ \fib(\mu_{X,Y})\simeq\Omega\Boundary(X,Y)
+\]
+がある。したがって
+$\fib(\mu_{X,Y})\oplus\cofib(\mu_{X,Y})$は境界情報を二重に記録する。
+\end{proposition}
+
+\begin{proof}
+安定性により$\cofib(f)\simeq\Sigma\fib(f)$が任意の射$f$について成立する。
+\end{proof}
+
+\begin{theorem}[境界完全三角]
+任意の$X,Y\in\C$に対し、自然な完全三角
+\begin{equation}
+ L(X\otimes Y)\xrightarrow{\mu_{X,Y}}LX\otimes LY
+ \longrightarrow\Boundary(X,Y)
+ \longrightarrow\Sigma L(X\otimes Y)
+ \label{eq:boundary-triangle}
+\end{equation}
+が存在する。
+\end{theorem}
+
+これは追加公理ではなく、境界の定義から得られる普遍的な「修正フロベニウス則」である。
+
+\section{境界フロベニウス条件}
+
+\subsection{定義と同値条件}
+
+\begin{definition}[境界フロベニウス条件]
+組$(\C,L,\mu)$が\textbf{境界フロベニウス条件}（BFC）を満たすとは、
+任意の$X,Y\in\C$について
+\[
+ L(\mu_{X,Y}):L^2(X\otimes Y)\longrightarrow L(LX\otimes LY)
+\]
+が同値であることをいう。
+\end{definition}
+
+\begin{theorem}[BFCの境界判定]
+次は同値である。
+\begin{enumerate}[label=(\roman*)]
+ \item $(\C,L,\mu)$はBFCを満たす。
+ \item 任意の$X,Y$について$L\Boundary(X,Y)\simeq0$である。
+ \item 任意の$X,Y$について$\Boundary(X,Y)\in\Cacyc$である。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+$L$は完全なので、式\eqref{eq:boundary-triangle}へ$L$を適用して得る余ファイバーは
+$L\Boundary(X,Y)$である。したがって$L\mu_{X,Y}$が同値であることと
+$L\Boundary(X,Y)\simeq0$は同値である。(ii)と(iii)は$\Cacyc=\ker L$の定義による。
+\end{proof}
+
+\begin{definition}[強境界フロベニウス条件]
+任意の$X,Y$について$\Boundary(X,Y)\simeq0$であるとき、強BFCと呼ぶ。
+\end{definition}
+
+\begin{corollary}
+強BFCは、すべての比較射$\mu_{X,Y}$が同値であることと同値である。
+\end{corollary}
+
+したがってBFCは、強いテンソル保存を「観測後には同値」という条件へ弱めたものである。
+
+\subsection{Verdier商での意味}
+
+\begin{proposition}[観測商での交換可能性]
+BFCの下で、$\mu_{X,Y}$の像はVerdier商$\C/\Cacyc$において同値である。
+\end{proposition}
+
+\begin{proof}
+安定圏のVerdier商では、余ファイバーが商で零になる射が同値になる。
+BFCにより$\cofib(\mu_{X,Y})=\Boundary(X,Y)$は$\Cacyc$に属する。
+\end{proof}
+
+この命題が「$S_3$では成立して見えるが、$S_4$に境界を残す」という直観の
+正確な圏論的内容である。
+
+\subsection{加法的な修正式}
+
+\begin{proposition}[Grothendieck群上の境界公式]
+式\eqref{eq:boundary-triangle}の各項が$\Kzero(\C)$を定義できる部分圏に属するとき、
+\[
+ [LX\otimes LY]
+ = [L(X\otimes Y)]+[\Boundary(X,Y)]
+\]
+が$\Kzero(\C)$で成立する。
+\end{proposition}
+
+\begin{corollary}[分裂する場合]
+境界完全三角が分裂するならば
+\[
+ LX\otimes LY\simeq L(X\otimes Y)\oplus\Boundary(X,Y)
+\]
+である。
+\end{corollary}
+
+\begin{remark}[テンソル補正式について]
+草稿段階の式
+\[
+ L(X\otimes Y)\otimes\Boundary(X,Y)\simeq LX\otimes LY
+\]
+は、境界の定義や安定性からは導かれない。境界は一般に「掛け合わせる補正因子」ではなく、
+比較射の余ファイバーである。追加の可逆対象、作用、拡大構造がある特殊モデルでのみ、
+テンソル補正式を別公理として検討できる。
+\end{remark}
+
+\section{外点による境界の検出}
+
+\subsection{境界プロファイル}
+
+\begin{definition}[外点境界プロファイル]
+BFCを仮定し、$\bigcirc$を$\Cacyc$の外点生成対象とする。境界プロファイルを
+\[
+ \mathcal{B}_{X,Y}:=\Map_{\C}(\bigcirc,\Boundary(X,Y))
+\]
+と定義する。
+\end{definition}
+
+\begin{theorem}[外点による強BFC判定]
+外点$\bigcirc$が$\Cacyc$の零対象を検出するならば、BFCの下で次は同値である。
+\begin{enumerate}[label=(\roman*)]
+ \item $\mu_{X,Y}$は同値である。
+ \item $\Boundary(X,Y)\simeq0$である。
+ \item $\mathcal{B}_{X,Y}$は可縮である。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i)と(ii)は余ファイバーの性質による。(ii)ならば(iii)は明らかである。
+BFCの下で$\Boundary(X,Y)\in\Cacyc$なので、外点の検出性から(iii)は(ii)を導く。
+\end{proof}
+
+この結果により、外点は単一の象徴ではなく、境界の非零性を検出する試験対象として働く。
+
+\subsection{\texorpdfstring{$S_3$と$S_4$}{S3とS4}の同時性}
+
+$S_3$と$S_4$は単純な逐次写像$S_3\to S_4$ではない。対象$X$に対する
+$LX$と$\Residual X$、比較射に対する観測可能な同値と$\Boundary(X,Y)$は、
+それぞれ一つの完全三角の相補的成分である。この意味でBFCは、観測結果と
+観測不能残余を同時に保持する。
+
+\section{テンソルイデアル、smashing局所化、反復境界}
+
+\subsection{核のテンソル閉性}
+
+\begin{definition}[テンソルイデアル核]
+$\Cacyc$がテンソルイデアルであるとは、任意の$A\in\Cacyc$と$Z\in\C$について
+$A\otimes Z\in\Cacyc$となることをいう。
+\end{definition}
+
+\begin{remark}
+BFCだけから$\Cacyc$のテンソルイデアル性は従わない。BFCが制御するのは
+特定の比較射$\mu_{X,Y}$の余ファイバーであり、任意の非可視対象と任意対象との
+テンソル積ではない。
+\end{remark}
+
+\begin{proposition}[smashing局所化]
+可換冪等代数対象$E$が存在して$LX\simeq E\otimes X$であり、
+$E\otimes E\simeq E$とする。冪等構造から誘導される比較射を選べば強BFCが成立し、
+$\Cacyc$はテンソルイデアルである。
+\end{proposition}
+
+\begin{proof}
+冪等性により
+\[
+ L(X\otimes Y)\simeq E\otimes X\otimes Y
+ \simeq E\otimes E\otimes X\otimes Y
+ \simeq LX\otimes LY
+\]
+である。また$EA\simeq0$ならば$E(A\otimes Z)\simeq(EA)\otimes Z\simeq0$である。
+\end{proof}
+
+これは、非零境界を持つBFCモデルが非smashingな現象を必要とすることを示唆する。
+テンソル三角圏におけるsmashing局所化とテンソルイデアルについては
+\cite{BalmerFavi2011}を参照されたい。
+
+\subsection{境界の反復}
+
+比較射の自然性から、単位$X\to LX$, $Y\to LY$は境界間の射
+\[
+ \Boundary(X,Y)\longrightarrow\Boundary(LX,LY)
+\]
+を誘導する。
+
+\begin{definition}[二次境界]
+この射の余ファイバー
+\[
+ \Boundary^{(2)}(X,Y)
+ :=\cofib\bigl(\Boundary(X,Y)\to\Boundary(LX,LY)\bigr)
+\]
+を二次境界と呼ぶ。
+\end{definition}
+
+\begin{proposition}[局所化入力での安定化]
+冪等性の同値$L^2\simeq L$が比較射と整合するならば、$n\geq1$について
+\[
+ \Boundary(L^nX,L^nY)\simeq\Boundary(LX,LY)
+\]
+である。
+\end{proposition}
+
+\begin{proof}
+$L^nX\simeq LX$および$L^nY\simeq LY$を比較射の自然性へ代入する。
+\end{proof}
+
+\begin{remark}[非冪等性は定理ではない]
+$\Boundary(LX,LY)\not\simeq\Boundary(X,Y)$は一般には証明できず、等しいモデルも
+異なるモデルもありうる。無記の非冪等性との接続は、二次境界が非零となるモデルを
+構成した後に主張すべき性質である。
+\end{remark}
+
+\section{高次境界フロベニウス条件}
+
+\subsection{\texorpdfstring{$n$項}{n項}比較射}
+
+\begin{definition}[$n$項フロベニウス比較]
+$n\geq2$とし、$\tau\in\Tree_n$を$n$個の入力を括弧づける平面二分木とする。
+二項比較$\mu$を$\tau$に沿って反復して得られる射を
+\[
+ \mu^{(n)}_{\tau;X_1,\ldots,X_n}:
+ L(X_1\otimes\cdots\otimes X_n)
+ \longrightarrow LX_1\otimes\cdots\otimes LX_n
+\]
+と書く。対応する$n$次境界を
+\[
+ \partial_{L,\tau}^{(n)}(X_1,\ldots,X_n)
+ :=\cofib\bigl(\mu^{(n)}_{\tau;X_1,\ldots,X_n}\bigr)
+\]
+と定義する。
+\end{definition}
+
+\begin{definition}[高次境界フロベニウス条件]
+組$(\C,L,\mu)$が次数$n$のHOBFCを満たすとは、すべての$\tau\in\Tree_n$と
+$X_1,\ldots,X_n\in\C$について
+\[
+ L\mu^{(n)}_{\tau;X_1,\ldots,X_n}
+\]
+が同値であり、異なる括弧づけから得られる局所化後の比較射が指定された
+高次ホモトピーによって整合することをいう。すべての$n\geq2$について成立するとき、
+単にHOBFCと呼ぶ。
+\end{definition}
+
+次数2のHOBFCはBFCに一致する。次数3以上では、境界対象だけでなく、異なる
+括弧づけの比較が局所化後にどのように同一視されるかというcoherenceデータも必要になる。
+
+\begin{theorem}[二項BFCから高次BFCへの伝播]
+$\Cacyc$がテンソルイデアルであり、$\mu$が余モノイダル関手のcoherenceを満たすとする。
+このときBFCが成立すれば、すべての$n\geq2$についてHOBFCが成立する。
+\end{theorem}
+
+\begin{proof}
+$n$について帰納する。$n=2$はBFCである。$n$項比較は、ある$k<n$について
+$k$項比較と$(n-k)$項比較をテンソルし、最後に二項比較を合成した射へ分解できる。
+帰納法の仮定により各比較の余ファイバーは$\Cacyc$に属する。核がテンソルイデアルなので、
+それらを局所対象または任意対象とテンソルしても$\Cacyc$に留まる。安定圏における
+合成射の余ファイバー列から、合成比較の余ファイバーも$\Cacyc$に属する。
+括弧づけ間の整合性は余モノイダルcoherenceから従う。
+\end{proof}
+
+\begin{remark}[モナド結合則との区別]
+真のモナド$(T,\eta,\mu)$では
+$\mu\circ T\mu=\mu\circ\mu T$は公理であり、その「失敗」を非零境界として
+定義することはできない。結合則の境界を研究するならば、$A_n$モナド、相対モナド、
+または結合coherenceがまだ与えられていない前モナドへ構造を弱め、二つの合成の差を
+写像スペクトル内の障害類として定義する必要がある。本稿のHOBFCは、まず
+テンソル比較の$n$項化として定義し、モナド障害理論との同一視を行わない。
+\end{remark}
+
+\subsection{高次境界と無記}
+
+$\partial_{L,\tau}^{(n)}$の列は、結合文脈が増えるにつれて観測不能な差がどの次数で
+初めて出現するかを記録する。無記の反復との対応を主張するには、少なくとも
+\[
+ \Avyakata^n(\varphi)
+ \longmapsto
+ \partial_{L,\tau}^{(n)}(X_1,\ldots,X_n)
+\]
+を自然に与える意味論的関手と、非同値性を検出する外点生成族が必要である。
+したがって「高次境界は常に非冪等である」という主張はHOBFCの公理には含めない。
+
+\section{五句的解釈と無記}
+
+\subsection{比較射の五句的配置}
+
+\begin{table}[htbp]
+\centering
+\caption{フロベニウス比較の五句的配置}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}p{0.24\textwidth} >{\raggedright\arraybackslash}X@{}}
+\toprule
+句 & 数学的状態 & 解釈 \\
+\midrule
+$S_1$ & 比較データ$\mu_{X,Y}$の構成 & 結合と観測の二経路を形成する \\
+$S_2$ & 同値性が未判定 & 比較射と境界候補を保持する \\
+$S_3$ & $L\mu_{X,Y}$が同値 & 観測商では交換可能である \\
+$S_4$ & $\Boundary(X,Y)\in\ker L$ & 観測に消える差が対象として残る \\
+$S_5$ & 強BFCまたは追加の統制条件 & 境界の消滅・分裂・反復を判定する \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+この表は五句を真理値として同一視するものではなく、比較問題に必要なデータと
+記述可能性の段階を整理するものである。
+
+\subsection{無記の幾何学的候補}
+
+BFCの下では、$\mu_{X,Y}$を単に「同型である／ない」と分類する代わりに、
+$\Boundary(X,Y)$を保存することができる。これを無記の幾何学的候補として
+\[
+ \Avyakata(\mu_{X,Y})\rightsquigarrow\Boundary(X,Y)\in\ker L
+\]
+と表す。ただし、これは無記の論理体系とBFCの圏論が同値であるという定理ではない。
+完全な接続には、無記判断を対象または射へ送る意味論的関手が必要である。
+
+\section{関連する三領域との照応}
+
+\subsection{照応と同値の区別}
+
+次の表は研究プログラム上の対応候補を示す。各行は構造的類比であり、関手的同値や
+表現定理が既に証明されたことを意味しない。
+
+\begin{table}[htbp]
+\centering
+\caption{境界生成機序の照応候補}
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+領域 & 二つの経路 & 境界候補 & 必要な証明 \\
+\midrule
+五蘊圏 & $L(X\otimes Y)$と$LX\otimes LY$ & $\Boundary(X,Y)$ & 本稿のBFC \\
+Allegory/CRL & 合成後の制約と引戻し後の制約 & モジュラー比較の残余 & 残余を余ファイバーへ送る関手 \\
+実現可能性 & ペア形成後の外延化と外延化後の積 & 内包的実現子の差 & 指定した反射関手のBFC判定 \\
+証明論 & 動的導出と静的含意 & 逆方向導出の障害 & 構文圏から$\Cacyc$への意味論 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Allegoryと残余}
+
+Allegoryのモジュラー則は、関係の合成・交叉・反転の順序を比較する
+\cite{FreydScedrov1990}。その不等式の差をCRLの継続残余として定量化する構想は、
+BFCと同じく「二経路の比較を残余へ送る」という形を持つ。ただし、順序豊穣圏の
+不等式から安定圏の余ファイバーを得るには、安定化または導来化の構成が必要である。
+
+\subsection{実現可能性}
+
+実現可能性では、同じ外延的振る舞いを持つ異なる実現子が存在しうる
+\cite{Kleene1952}. これをBFCの具体例にするには、assemblyの圏または実現可能性トポス上に
+完全局所化$L$と余モノイダル比較$\mu$を構成し、その余ファイバーが$\ker L$に
+入ることを示さなければならない。単なる「内包／外延」の類比だけでは定理にならない。
+
+\subsection{Direct Logic型の双方向条件}
+
+順方向導出と逆方向導出の双方を静的含意の成立条件とする論理は、二つの比較経路の
+一致を要求する点でBFCと類似する。しかし論理式の不成立と安定圏の非零対象は
+異なる型を持つ。両者の接続には構文圏、証明障害対象、および
+その障害を$\Boundary(X,Y)$へ送る意味論が必要である。
+
+\section{プログラミング言語設計への応用}
+
+\subsection{境界から効果等級への抽象化}
+
+境界対象は一般にコンパイラが直接決定できる有限データではない。実装へ接続するには、
+$\Cacyc$の対象を計算可能な効果等級へ送る抽象化が必要である。
+
+\begin{definition}[境界効果抽象化]
+$(\Eff,\leq,\vee,\mathbf{0})$を有限結合を持つ効果順序とする。
+境界効果抽象化とは、対象の同値で不変な写像
+\[
+ q:\operatorname{Obj}(\Cacyc)/{\simeq}\longrightarrow\Eff
+\]
+であって、$q(0)=\mathbf{0}$かつ
+\[
+ q(A\oplus B)\leq q(A)\vee q(B)
+\]
+を満たすものをいう。
+\end{definition}
+
+$q(\Boundary(X,Y))$は境界そのものではなく、その静的に扱える上界または要約である。
+効果の細部を等級で追跡し、ハンドラで解釈する考え方は、graded monadおよび
+category-graded effect systemと接続しうる\cite{OrchardWadlerEades2020,Sanada2023}。
+
+\begin{definition}[境界注釈付き判断]
+式$e$の評価が値型$A$と境界等級$\varepsilon$を持つことを
+\[
+ \Gamma\vdash e:A\;!\;\varepsilon
+\]
+と書く。実行時意味論が境界対象$\partial(e)\in\Cacyc$を生成する場合、解析が健全であるとは
+\[
+ q(\partial(e))\leq\varepsilon
+\]
+が成立することをいう。
+\end{definition}
+
+\subsection{条件・ハンドラ・再開点}
+
+境界等級$\varepsilon$に対して、コンパイラは次の三層を生成できる。
+
+\begin{enumerate}
+ \item \textbf{condition}：予想された境界等級と診断情報を運ぶ通知。
+ \item \textbf{handler}：等級を値、別の効果、または上位の境界へ翻訳する解釈。
+ \item \textbf{restart}：継続可能な操作点と、その選択が満たす事前・事後条件。
+\end{enumerate}
+
+これはCommon Lispのcondition/restart機構から着想を得るが、BFCはその既存機構の
+意味論そのものではない。また代数的効果とハンドラは、効果を操作として表し、
+ハンドラをその解釈として与える確立した設計領域を持つ
+\cite{BrachthaeuserEtAl2018,VanDenBergSchrijvers2023}。BFCの役割は、
+どの効果を生成すべきかを境界解析から供給する点にある。
+
+\begin{proposition}[境界ハンドリングの健全性スキーマ]
+境界注釈解析が健全であり、式$e$に付与された等級$\varepsilon$以下のすべての
+原子的等級に対してハンドラ環境$H$が全域的な解釈を持つとする。さらに、操作的意味論と
+境界意味論の適切性を仮定する。このとき$e$の評価は、$H$の外へ未処理の境界等級を放出しない。
+\end{proposition}
+
+\begin{proof}
+健全性より、実行時に生成される境界の等級は$\varepsilon$以下である。
+$H$はその各原子的等級に全域的な解釈を与えるため、評価規則の各境界発生ステップは
+ハンドラ遷移へ移される。評価導出についての帰納法により、未処理等級は$H$の外へ現れない。
+\end{proof}
+
+この命題は言語非依存の証明スキーマである。具体的な言語については、型保存、進行、
+ハンドラの全域性、境界意味論との適切性を個別に証明しなければならない。
+
+\subsection{コンパイル時condition生成}
+
+境界解析器が除算式に$\mathsf{division\mbox{-}by\mbox{-}zero}$という等級を付与した場合、
+生成コードの概形は次のようになる。
+
+\begin{verbatim}
+(restart-case
+    (evaluate-division numerator denominator)
+  (return-default (value) value)
+  (use-limit-value () +infinity)
+  (abort-boundary () (signal 'unhandled-boundary)))
+\end{verbatim}
+
+各restartは任意に生成してよいわけではない。例えば`return-default'には戻り値が
+期待型を満たすこと、`use-limit-value'には対象数体系が無限大を持つこと、
+`abort-boundary'には継続を破棄しても資源安全性が保たれることが必要である。
+したがって$F_0=\{0,1,\infty,\bigcirc\}$を再開点の候補集合として用いる場合も、
+各元の型と操作的意味を別途与えなければならない。
+
+\begin{remark}[ゼロ除算の位置づけ]
+`(/ 1 0)'は、それだけでは圏論的な$\Boundary(X,Y)$の具体例ではない。
+部分演算の意味論をモナドまたは部分写像圏で与え、コンパイラの比較射と局所化を構成して
+初めてBFC境界として解釈できる。上のコードは設計例であり、同型定理ではない。
+\end{remark}
+
+\subsection{検証の非停止と保留}
+
+HOBFC的コンパイラは停止問題を決定しない。静的検証に資源上限を設け、上限内で
+結論が得られない場合に$\mathsf{verification\mbox{-}inconclusive}$という境界等級を
+生成する。その安全な再開方針は例えば次の三つである。
+
+\begin{enumerate}
+ \item \textbf{defer}：実行時契約へ移し、未証明であることを成果物に記録する。
+ \item \textbf{reject}：検証済み成果物を要求するビルドではコンパイルを拒否する。
+ \item \textbf{assume}：信頼境界を明示した公理・外部証明として受理し、監査情報を残す。
+\end{enumerate}
+
+`assume'は証明を生成せず、信頼基盤を拡張する操作である。この区別を消すと、
+検証不能性を解決したのではなく、未証明の命題を証明済みと誤表示することになる。
+
+\subsection{既存の言語機構との接続候補}
+
+\begin{table}[htbp]
+\centering
+\caption{BFC境界解析と既存機構の接続候補}
+\small
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+機構 & BFC的読み & 実装上の義務 \\
+\midrule
+漸進的型付け & 未確定な境界を動的検査へ移す & castとblameの健全性 \\
+効果システム & $q(\Boundary)$を効果注釈として追跡 & 効果合成とハンドラ適切性 \\
+契約 & 境界が観測層へ現れる条件を実行時検査 & 事前・事後条件と責任追跡 \\
+condition/restart & 境界通知と継続点を分離 & restartの型・資源・制御安全性 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+この枠組みにおける安全性は「境界が存在しないこと」ではなく、指定された抽象化の範囲で
+\textbf{未処理の境界が観測層へ漏出しないこと}である。ただし抽象化$q$が粗すぎれば
+診断精度が落ち、細かすぎれば解析が停止しない。この精度と停止性の交換条件自体が、
+実装上の境界問題となる。
+
+\section{例と非自明モデルの条件}
+
+\begin{example}[恒等局所化]
+$L=\id_{\C}$かつ$\mu$を恒等比較とすると$\Boundary(X,Y)\simeq0$であり、強BFCが成立する。
+\end{example}
+
+\begin{example}[smashing局所化]
+前節の冪等代数$E$による局所化では、標準比較に対して境界は零になる。
+これはBFCが通常のテンソル保存を含むことを示すが、非零境界の例ではない。
+\end{example}
+
+\begin{proposition}[非自明BFCモデルの必要条件]
+非零境界を持つBFCモデルでは、ある$X,Y$について
+\[
+ \mu_{X,Y}\text{は非同値},
+ \qquad
+ L\mu_{X,Y}\text{は同値}
+\]
+でなければならない。特に$LX\otimes LY$は、局所成分
+$L(X\otimes Y)$に加えて非零の$L$-acyclic成分を含む必要がある。
+\end{proposition}
+
+\begin{proof}
+第一式は$\Boundary(X,Y)\not\simeq0$と同値であり、第二式はBFCそのものである。
+境界完全三角が二成分の差を表す。
+\end{proof}
+
+非自明な具体例の構成は、局所対象のテンソル積が再び局所対象になる強い状況を避け、
+それでも比較射が局所化後には同値となる圏を探す問題へ帰着される。
+
+\section{結論と今後の課題}
+
+\subsection{結論}
+
+本稿は、境界フロベニウス条件を
+\[
+ L\mu_{X,Y}\text{が同値}
+ \quad\Longleftrightarrow\quad
+ \Boundary(X,Y)=\cofib(\mu_{X,Y})\in\ker L
+\]
+として定式化した。これにより、観測商では消えるが元の圏では非零でありうる差を、
+標準的な安定圏の対象として保存できる。
+
+本稿の意味で、フロベニウス比較の対象は成立／不成立だけではない。
+比較射、その観測像、および境界完全三角の三者である。境界は「成立とされないもの」を
+神秘的な外部へ置くのではなく、$\ker L$に属する内在的対象として記述する。
+
+さらに、$n$項比較射の余ファイバー$\partial_{L,\tau}^{(n)}$と局所化後のcoherenceを
+HOBFCとして定式化した。これは真のモナド結合則を破るものではなく、テンソル比較の
+高次化と、部分的なcoherence構造を完成させる障害とを区別する。また境界を効果等級へ
+抽象化することで、condition、handler、restartを生成する言語設計を、停止問題の
+決定不能性を保存したまま記述した。
+
+\subsection{今後の課題}
+
+\begin{enumerate}
+ \item 非零の$\Boundary(X,Y)$を持つ具体的な安定対称モノイダル$\infty$圏と
+ 余モノイダル局所化の構成。
+ \item BFCと標準的Frobenius monoidal functorの整合式との関係の定理化。
+ \item $\Cacyc$がテンソルイデアルとなるための必要十分条件と、Balmer--Favi支持との接続。
+ \item 二次境界$\Boundary^{(2)}$が非零になるモデルと無記の非冪等性との形式的比較。
+ \item Allegory、CRL、実現可能性、証明論からBFCモデルへの意味論的関手の構成。
+ \item 外点生成族による境界プロファイルの完全性と計算可能性。
+ \item $n$項境界と$A_n$モナド・高次モノイダルcoherenceの障害理論との接続。
+ \item 境界効果抽象化$q$を備えた小核言語の構文・操作的意味論・型安全性の構築。
+ \item Common Lispまたは効果ハンドラ言語上でのcondition生成器の試作と、
+ 誤検出・見逃し・解析停止性の評価。
+\end{enumerate}
+
+\begin{thebibliography}{99}
+
+\bibitem{BalmerFavi2011}
+P. Balmer and G. Favi,
+``Generalized Tensor Idempotents and the Telescope Conjecture,''
+\textit{Proceedings of the London Mathematical Society},
+102(6), 1161--1185, 2011.
+
+\bibitem{DayPastro2008}
+B. Day and C. Pastro,
+``Note on Frobenius Monoidal Functors,''
+\textit{New York Journal of Mathematics}, 14, 733--742, 2008.
+
+\bibitem{FreydScedrov1990}
+P. J. Freyd and A. Scedrov,
+\textit{Categories, Allegories}, North-Holland, 1990.
+
+\bibitem{Kleene1952}
+S. C. Kleene,
+\textit{Introduction to Metamathematics}, North-Holland, 1952.
+
+\bibitem{BrachthaeuserEtAl2018}
+J. I. Brachthäuser, P. Schuster, and K. Ostermann,
+``Effect Handlers for the Masses,''
+\textit{Proceedings of the ACM on Programming Languages},
+2(OOPSLA), Article 111, 2018.
+
+\bibitem{OrchardWadlerEades2020}
+D. Orchard, P. Wadler, and H. Eades III,
+``Unifying Graded and Parameterised Monads,''
+\textit{Proceedings of the ACM on Programming Languages},
+4(ICFP), Article 117, 2020.
+
+\bibitem{Sanada2023}
+T. Sanada,
+``Category-Graded Algebraic Theories and Effect Handlers,''
+\textit{Electronic Notes in Theoretical Informatics and Computer Science},
+1, 2023.
+
+\bibitem{VanDenBergSchrijvers2023}
+B. van den Berg and T. Schrijvers,
+``A Framework for Higher-Order Effects and Handlers,''
+arXiv:2302.01415, 2023.
+
+\bibitem{Lawson2022}
+T. Lawson,
+``An Introduction to Bousfield Localization,'' in
+\textit{Stable Categories and Structured Ring Spectra},
+Cambridge University Press, pp.~300--344, 2022.
+
+\bibitem{LurieHA}
+J. Lurie,
+\textit{Higher Algebra}, 2017.
+
+\bibitem{Mantovani2024}
+L. Mantovani,
+``Localizations and Completions of Stable $\infty$-Categories,''
+\textit{Rendiconti del Seminario Matematico della Università di Padova},
+151, 1--62, 2024.
+
+\bibitem{ChibaSkandha2026}
+千葉将臣，
+『五蘊圏（Skandha Category）：観測局所化による外点$\bigcirc$と統制構造』，2026．
+
+\bibitem{ChibaPenta2026}
+千葉将臣，
+『五句計算論：普遍認識論への展開と科学的基礎問題への形式的回答』，2026．
+
+\end{thebibliography}
+
+\end{document}
