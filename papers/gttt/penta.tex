@@ -47,6 +47,7 @@
 \newcommand{\isContr}{\mathrm{isContr}}
 \newcommand{\EM}{\mathrm{EM}}
 \newcommand{\LawvereInfinity}{\Lambda_\infty}
+\newcommand{\ArithmeticFixedPoint}{\Lambda_T}
 \newcommand{\SelfRef}{\Sigma}
 \newcommand{\Skobs}{\mathop{\mathrm{Sk}}_{\mathrm{obs}}}
 \newcommand{\Skiso}{\mathop{\mathrm{Sk}}_{\mathrm{iso}}}
@@ -54,7 +55,7 @@
 \title{五句計算論：記述可能性の段階としての\\
 圏論・時間性・型理論・微分幾何学の統合}
 \author{千葉将臣}
-\date{2026-08-16}
+\date{2026-08-17}
 
 \begin{document}
 
@@ -183,7 +184,7 @@ $\lVert P\rVert_{-1}\simeq\neg\neg P$となるが、構成的文脈では両者�
 本節では$\LawvereInfinity$をLawvereの固定点定理の五句計算論的実装として、
 圏論的言語のみで定式化する。対角補題、証明可能性述語、等号の二重性、
 Priestの矛盾許容論理との差異、およびリーマン球面による解釈を含む
-算術的・証明論的構成については、$\LawvereInfinity$単独論文
+算術的・証明論的構成については、算術的固定点$\ArithmeticFixedPoint$を扱う単独論文
 \cite{ChibaLambda2026}を参照されたい。
 
 \subsection{五句段階における位置づけ}
@@ -196,7 +197,7 @@ $\LawvereInfinity$は、$\mathcal{C}_4$（体系内不可記述）におけるLa
  S_1\longrightarrow S_2\longrightarrow S_3\longrightarrow S_4
  \longrightarrow S_5\longrightarrow S_1
 \]
-の各周回に沿って集めた両立的な固定点族、またはその極限を表す記号である。
+の各周回に沿って集めた両立的な固定点族の極限を表す記号である。
 \end{definition}
 
 \begin{table}[htbp]
@@ -210,7 +211,7 @@ $\LawvereInfinity$は、$\mathcal{C}_4$（体系内不可記述）におけるLa
 \midrule
 対角写像$\Delta_i:X_i\to X_i\times X_i$ & $S_1$--$S_5$ & 各段階での自己適用の舞台 \\
 評価写像$\operatorname{eval}_i:X_i\times Y_i^{X_i}\to Y_i$ & $S_1$--$S_5$ & 指数対象の評価 \\
-Lawvere固定点$b_i=g_i(b_i)$ & $S_4\to S_5$ & 各周回における穴の検出と閉包 \\
+Lawvere固定点$g_i\circ b_i=b_i$ & $S_4\to S_5$ & 各周回における穴の検出と閉包 \\
 $\LawvereInfinity$ & $S_4$の無限階層化 & 5-periodic固定点列の極限的記述 \\
 \bottomrule
 \end{tabularx}
@@ -229,7 +230,7 @@ $x:1\to X_i$に対する$e_i\circ x$の評価によって表現されること�
 $b_i:1\to Y_i$と書く。
 \end{definition}
 
-\begin{definition}[5-periodic反復列]
+\begin{definition}[5-periodic反復列と固定点塔]
 段階遷移関手$R_i:\mathcal{C}_i\to\mathcal{C}_{i+1}$（添字は5を法として読む）
 がLawvereデータを保存すると仮定する。$X_0\in\mathcal{C}_1$に対して
 \[
@@ -241,22 +242,56 @@ X_4&=R_4(X_3)\in\mathcal{C}_5,\\
 X_5&=R_5(X_4)\in\mathcal{C}_1
 \end{aligned}
 \]
-を一周とする。各周回の$\mathcal{C}_4$成分に得られる固定点$b_4^{(k)}$が
-遷移関手と両立するとき、これらは固定点塔をなす。
+を一周とする。第$k$周回の$\mathcal{C}_4$成分に対象$Y_4^{(k)}$と固定点
+$b_4^{(k)}:1\to Y_4^{(k)}$が得られるとする。さらに結合射
+\[
+ q_k:Y_4^{(k+1)}\longrightarrow Y_4^{(k)}
+\]
+があり、$q_k\circ b_4^{(k+1)}=b_4^{(k)}$を満たすとき、
+\[
+ \cdots\longrightarrow(Y_4^{(2)},b_4^{(2)})
+ \longrightarrow(Y_4^{(1)},b_4^{(1)})
+ \longrightarrow(Y_4^{(0)},b_4^{(0)})
+\]
+をpointed objectsの圏$(\mathcal{C}_4)_*$における固定点塔と呼ぶ。
 \end{definition}
 
 \begin{definition}[$\LawvereInfinity$の極限表示]
-$\mathcal{C}_4$における固定点塔$(b_4^{(k)})_{k\geq0}$の極限が存在するとき、
+上の固定点塔の極限が$(\mathcal{C}_4)_*$に存在するとき、
 \[
- \LawvereInfinity:=\varprojlim_k b_4^{(k)}
+ (Y_4^{(\infty)},\LawvereInfinity)
+ :=\varprojlim_k (Y_4^{(k)},b_4^{(k)})
 \]
-と定義する。各成分は対応する自己写像$g_4^{(k)}$に対して
-$g_4^{(k)}(b_4^{(k)})=b_4^{(k)}$を満たす。
+と定義する。したがって$\LawvereInfinity:1\to Y_4^{(\infty)}$は極限錐が誘導する
+点である。各成分は対応する自己写像$g_4^{(k)}$に対して
+$g_4^{(k)}\circ b_4^{(k)}=b_4^{(k)}$を満たし、結合射$q_k$はこの固定点構造を保存する。
 \end{definition}
+
+\begin{definition}[算術的固定点の段階的実現]
+真理保存体系$T$の構文圏における真理値対象を$\Omega_T$とし、対角補題から
+構成される算術的固定点文を表す大域点を
+$\ArithmeticFixedPoint:1\to\Omega_T$と書く。$\ArithmeticFixedPoint$の第$k$段階に
+おける\textbf{証明論的実現}とは、終対象と固定点データを保存する関手
+$\Phi_{T,k}$および同型$\Phi_{T,k}(\Omega_T)\cong Y_4^{(k)}$であって、
+\[
+ \Phi_{T,k}(\ArithmeticFixedPoint)=b_4^{(k)}
+\]
+を満たすものをいう。$T$を初期周回に対応させる場合は$k=0$とする。
+$\ArithmeticFixedPoint$は固定点塔の一成分の実現であり、塔全体の極限
+$\LawvereInfinity$とは同一視しない。
+\end{definition}
+
+\begin{remark}[極限の証明論的実現]
+体系族$(T_k)_{k\geq0}$、算術的固定点$\ArithmeticFixedPoint^{(k)}$、および
+実現関手$\Phi_{T_k,k}$が結合射$q_k$と両立する場合に限り、
+$(\Phi_{T_k,k}(\ArithmeticFixedPoint^{(k)}))_k$は固定点塔をなし、その極限が
+$\LawvereInfinity$の証明論的実現を与える。単独の$\ArithmeticFixedPoint$から
+この極限的実現が自動的に従うとは仮定しない。
+\end{remark}
 
 \begin{remark}[等号の意味]
 上式の等号は、$A=A$という対象の反射的自己同一性と区別される。
-ここでは$\lim_{n\to\infty}a_n=L$や$x=f(x)$と同様に、固定点塔の極限を
+ここでは$\lim_{n\to\infty}a_n=L$と同様に、pointed objectsの固定点塔の極限を
 静的に表示する。したがって、この等号は$S_3$から直接観測できない$S_4$の構造へ
 名前を与える圏論的な極限表示である。等号の証明論的二重性は
 \cite{ChibaLambda2026}で扱う。
@@ -274,7 +309,8 @@ $\mathcal{C}_4$における射$e_4:X_4\to Y_4^{X_4}$が、Lawvereの固定点定
 および固定点塔の極限存在を
 満たす五句計算体系$\mathcal{K}$では、
 \[
- \LawvereInfinity=\varprojlim_k b_4^{(k)}\in\mathcal{C}_4
+ (Y_4^{(\infty)},\LawvereInfinity)
+ =\varprojlim_k(Y_4^{(k)},b_4^{(k)})\in(\mathcal{C}_4)_*
 \]
 が成立する。
 \end{theorem}
@@ -284,13 +320,15 @@ $S_3\to S_4$の非可逆性は、観測可能な商から失われる構造を�
 ただし多対一性だけでは固定点の存在は従わないため、上の点全射条件を明示的に用いる。
 Lawvereの固定点定理を$\mathcal{C}_4$の対角写像と評価写像へ適用すると、
 各周回の自己写像$g_4^{(k)}$に固定点$b_4^{(k)}$が得られる。遷移関手との両立性に
-より固定点塔が形成され、仮定した極限の普遍性から$\LawvereInfinity$が得られる。
+よりpointed objectsの固定点塔が形成され、仮定した極限の普遍性から
+$\LawvereInfinity:1\to Y_4^{(\infty)}$が得られる。
 \end{proof}
 
 \begin{axiom}[C4-$\Lambda$：$S_4$の自己言及公理]
 $\mathcal{C}_4$は弱い点全射なLawvereデータと、その固定点塔を内在的に含む。
 \[
- \LawvereInfinity=\varprojlim_k b_4^{(k)}\in\mathcal{C}_4.
+ (Y_4^{(\infty)},\LawvereInfinity)
+ =\varprojlim_k(Y_4^{(k)},b_4^{(k)})\in(\mathcal{C}_4)_*.
 \]
 \end{axiom}
 
@@ -732,8 +770,10 @@ $S_5$ & $-2$ & $\isContr$ & 圏の整合性 & 空のdiffeology & 体系の完全
   \item \textbf{HoTT・diffeology・EM圏の三角統合}：商型（HIT）、商空間
   （diffeology）、商代数（EM圏）の形式的対応を提示した。
   \item \textbf{Lawvere無限階層の統合}：$\LawvereInfinity$を$S_4$の
-  Lawvere固定点塔の極限として定義し、その存在に必要な点全射条件を明示した。
-  真理保存体系における算術的固定点は、この圏論的一般構造の具体例として分離した。
+  pointed objectsからなるLawvere固定点塔の極限として定義し、その存在に必要な
+  点全射条件と結合射を明示した。真理保存体系における算術的固定点
+  $\ArithmeticFixedPoint$は塔の一成分$b_4^{(k)}$の証明論的実現として分離し、
+  極限$\LawvereInfinity$そのものとは同一視しない。
 \end{enumerate}
 
 五句計算論は、単なる哲学的類比ではなく、
@@ -815,8 +855,8 @@ entries ``modal type theory,'' ``Lawvere--Tierney topology,''
 
 \bibitem{ChibaLambda2026}
 千葉将臣，
-『真理保存性を持つ体系が必然的に$\LawvereInfinity$を含む：
-対角補題によるLawvere無限階層の内在的定式化』，2026．
+『真理保存性を持つ体系が必然的に$\ArithmeticFixedPoint$を含む：
+対角補題による算術的Lawvere固定点の内在的定式化』，2026．
 
 \end{thebibliography}
 
