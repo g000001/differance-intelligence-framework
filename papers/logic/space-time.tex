@@ -1,0 +1,792 @@
+% !TEX program = lualatex
+% コンパイル例:
+%   lualatex spacetime_frame_theory_chiba.tex
+%   lualatex spacetime_frame_theory_chiba.tex
+\documentclass[a4paper,11pt]{ltjsarticle}
+
+\usepackage{amsmath,amssymb,mathtools,amsthm,bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage[unicode,pdfencoding=auto,colorlinks=true,
+  linkcolor=blue!45!black,citecolor=green!35!black,urlcolor=blue!55!black]{hyperref}
+
+\setlength{\textwidth}{155mm}
+\setlength{\textheight}{235mm}
+\setlength{\oddsidemargin}{2mm}
+\setlength{\evensidemargin}{2mm}
+\setlength{\topmargin}{-8mm}
+\setlength{\parindent}{1\zw}
+\setlength{\parskip}{0.25em}
+\allowdisplaybreaks
+
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{corollary}[definition]{系}
+\theoremstyle{remark}
+\newtheorem{remark}[definition]{注意}
+\newtheorem{conjecture}[definition]{予想}
+\newtheorem{example}[definition]{例}
+
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\CP}{\mathbb{CP}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\Proj}{\operatorname{Proj}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\End}{\operatorname{End}}
+\newcommand{\colim}{\operatorname*{colim}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\Cur}{\operatorname{Cur}}
+\newcommand{\Obs}{\operatorname{Obs}}
+\newcommand{\Frame}{\mathsf{Frame}}
+\newcommand{\Proc}{\mathsf{Proc}}
+\newcommand{\St}{\mathsf{St}}
+\newcommand{\Kern}{\mathsf{Kern}}
+\newcommand{\dd}{\,\mathrm{d}}
+
+\title{非可換量子時空におけるフレーム不定性・観測的離散化・時間流\\
+\large 時空ランダム相補性とフラクタル四則に基づく公理的試論}
+\author{千葉将臣}
+\date{2026-08-22}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、現在を「空間的命題は確定しているが、それが属する時間フレームは確定していない状態」として捉え、そこから観測不能性、操作的な時間離散化、フレーム間の断絶、および観測に現れる時間流を統一的に記述するための公理的骨組を提示する。基礎となる物理的動機は、Doplicher--Fredenhagen--Roberts（DFR）量子時空における時空座標の非可換性である。ただし、DFR模型そのものから時間の離散性、時間の矢、フラクタル性、あるいはフレーム間の確率的独立性が直ちに従うわけではない。本稿ではこれらを明確に区別し、追加公理として導入する。
+
+現在の観測情報を、フレーム添字を忘却する商写像によって定義すると、次フレームの予測が現在の空間情報だけから一意に定まるための必要十分条件は、遷移核が忘却写像の各ファイバー上で一定になること、すなわち lumpability（可約集約可能性）である。この条件が破れる場合、次フレームは単に未知なのではなく、現在の観測代数からは同定不能となる。離散フレームは、最小長だけからではなく、離散的時計 POVM、スペクトル間隙、または有限分解能の粗視化を通して操作的に導入される。フレーム間の「断絶」は、内部幾何の圏では標準的な継続射が存在しない一方、より大きな過程圏では完全正写像または量子インストゥルメントが外部的遷移を与える、という二層構造として定式化される。
+
+さらに、忠実正規状態と von Neumann 代数から得られるモジュラー自己同型群をフレーム内部の時間パラメータとし、観測者を意識主体ではなく「部分代数・状態・インストゥルメント」の組として定義する。モジュラー流はそれ自体では可逆であり時間の矢を与えないため、非可逆な粗視化、条件付け、または環境との情報交換を合成する必要がある。最後に、自己相似性、尺度不変性、収束性、非対称性からなる「フラクタル四則」を、非可逆な繰返し半群の公理として組み込み、時間の矢とスケール横断的構造を表現する。本稿の結論は、時間流は DFR 非可換性のみからではなく、\emph{フレーム不定性、操作的離散化、非 lumpability、観測者境界、および非可逆なスケール半群}の合成として条件付きで導出される、というものである。
+\end{abstract}
+
+\tableofcontents
+
+\section{序論}
+
+時間を連続実数の外在的パラメータとして先に置くと、「現在が生じること」「次の現在への移行」「時間の向き」は、理論の外部に残されやすい。これに対して本稿は、まず観測可能な現在の構造を定義し、そこから時間フレームの同定可能性、離散性、断絶、流れを順に検討する。
+
+中心となる直観は次である。
+\begin{quote}
+現在とは、空間的には真であるが、それがどの時間フレームに属するかは不定である命題の集合である。
+\end{quote}
+この直観を数学に移す際には、少なくとも次の五段階を区別しなければならない。
+\begin{enumerate}
+  \item 時空座標の同時局在不能性。
+  \item フレーム添字を忘れた現在情報による次状態の同定不能性。
+  \item 時計の観測結果としての操作的離散化。
+  \item フレーム間に標準的・可逆的な継続が存在しないという断絶。
+  \item 観測者境界を介した非可逆過程の反復としての流れ。
+\end{enumerate}
+これらは同義ではない。とりわけ、非可換性は不確定性を与えるが、それだけで離散性や不可逆性を与えない。また、離散的な点列は順序を持ちうるが、それだけでは「点列が進行する」ことを意味しない。本稿の目的は、この論理的空隙を追加公理と条件付き命題によって埋めることである。
+
+\subsection{主張の認識論的地位}
+本稿は完成した量子重力理論ではなく、既存の数学的構造を接続するための公理的研究計画である。以下を区別する。
+\begin{itemize}
+  \item DFR の交換関係と時空不確定性：既存理論。
+  \item Tomita--Takesaki モジュラー流：既存の作用素環論。
+  \item 観測情報の商と lumpability 条件：確率過程として厳密に定式化可能。
+  \item 離散時計 POVM と量子インストゥルメント：標準的な量子測定論の形式。
+  \item これらを時空のフレーム生成論として統合すること：本稿の提案。
+  \item DFR スペクトル上のフラクタル力学や螺旋収束：追加力学を必要とする予想的部分。
+\end{itemize}
+
+\section{DFR 量子時空と相補的局在}
+
+\subsection{基本交換関係}
+DFR 量子時空では、座標を可換な数ではなく自己共役演算子 $q^\mu$ として扱い、概略的に
+\begin{equation}
+ [q^\mu,q^\nu]=i\lambda_P^2 Q^{\mu\nu},
+ \label{eq:dfr}
+\end{equation}
+と書く。$\lambda_P$ は Planck 長であり、$Q^{\mu\nu}$ は反対称で、標準 DFR 模型では座標代数の中心に属する。さらに Lorentz 共変な量子条件が課される。DFR の主要な帰結は、時空座標を同時に任意精度で局在できないことであり、代表的な不確定性関係は
+\begin{align}
+ \Delta q^0\sum_{j=1}^3\Delta q^j &\gtrsim \lambda_P^2,
+ \label{eq:stu1}\\
+ \sum_{1\leq j<k\leq 3}\Delta q^j\Delta q^k &\gtrsim \lambda_P^2
+ \label{eq:stu2}
+\end{align}
+の形を持つ\cite{DFR1995}。
+
+式\eqref{eq:stu1}は、空間三方向を同時に鋭く固定しようとすれば時間座標の不確定性が増大することを示す。また DFR 模型では、時間を鋭く定める代わりに少なくとも一つの空間方向を大きく不確定にする状態が許される。したがって本稿でいう「空間を固定すれば時間が開き、時間を固定すれば空間が開く」は、絶対的な二項対立ではなく、時空局在の総合的制約として理解されるべきである。
+
+\begin{remark}[DFR から直ちには従わないこと]
+式\eqref{eq:dfr}から、次の性質は単独では導かれない。
+\begin{enumerate}
+  \item 時間スペクトルが離散的であること。
+  \item 時間反転対称性が破れ、時間の矢が存在すること。
+  \item $Q^{\mu\nu}$ がフレームごとに独立に再標本化されること。
+  \item DFR スペクトルが力学的フラクタルであること。
+  \item 観測によって必ず客観的な波束収縮が起こること。
+\end{enumerate}
+標準 DFR 模型はむしろ完全 Poincar\'e 対称性を重視し、基礎的な量子時空自体には空間反転・時間反転を含む反射対称性を要求する\cite{DFR1995}。したがって時間の向は、状態、境界条件、粗視化、観測過程などの追加構造から導入しなければならない。
+\end{remark}
+
+\subsection{$Q$ のスペクトルと球面成分}
+反対称テンソル $Q^{\mu\nu}$ を電場型成分 $\bm e$ と磁場型成分 $\bm m$ に分けると、Lorentz 不変量は概略的に
+\begin{equation}
+ I_1=\bm m^2-\bm e^2,\qquad I_2=\bm e\cdot\bm m
+\end{equation}
+で記述される。標準 DFR の中心スペクトル $\Sigma$ は二成分を持ち、各成分は $TS^2$ と同相である\cite{DFR1995}。$S^2\simeq\CP^1$ の複素座標を用いることは可能であるが、そこに収縮流や螺旋流が存在することは DFR の静的スペクトル構造からは従わない。後述する螺旋収束は、$\Sigma$ 上の追加力学として導入される。
+
+\section{現在を「空間的真理の集合」として定義する}
+
+\subsection{観測文脈}
+全観測量を含む von Neumann 代数を $\M$ とし、観測者がアクセスできる部分代数を $\N\subseteq\M$ とする。ここで観測者とは人間の意識ではなく、系と環境の間に設定された操作的境界である。
+
+\begin{definition}[構造的観測者]
+構造的観測者を三つ組
+\begin{equation}
+ \mathfrak O=(\N,\omega,\mathfrak I)
+\end{equation}
+として定義する。$\N$ はアクセス可能な観測代数、$\omega$ は $\N$ 上の状態、$\mathfrak I=\{\mathcal I_a\}_{a\in\mathsf A}$ は観測結果 $a$ に対応する量子インストゥルメントである。
+\end{definition}
+
+時計を表す POVM を $\{E_n\}_{n\in I}$ とする。$I$ は有限集合、$\Z$、または $\mathbb N$ としてよい。$E_n\geq0$、$\sum_nE_n=1$ であり、$E_n$ は「観測されたフレームが $n$ である」という効果を表す。
+
+\begin{definition}[フレーム不定な現在]
+状態 $\omega$ における現在の空間的真理集合を
+\begin{equation}
+ \Cur(\omega;\N_{\mathrm{sp}})
+ :=\{p\in\Proj(\N_{\mathrm{sp}})\mid \omega(p)=1\}
+ \label{eq:current}
+\end{equation}
+とする。ここで $\N_{\mathrm{sp}}\subseteq\N$ は空間的にアクセス可能な部分代数である。さらに
+\begin{equation}
+ 0<\omega(E_n)<1
+ \quad\text{となる }n\text{ が複数存在する}
+ \label{eq:frameindef}
+\end{equation}
+とき、この現在を\emph{フレーム不定}と呼ぶ。
+\end{definition}
+
+式\eqref{eq:current}は「空間的に真」を射影命題の確率一として表現し、式\eqref{eq:frameindef}はその真理が単一の時計結果に属していないことを表す。実際の測定では確率一を閾値 $1-\varepsilon$ に緩めてもよい。
+
+\subsection{商としての現在}
+より古典的な表示では、フレームごとの状態空間を $\Omega_n$ として
+\begin{equation}
+ \Omega=\bigsqcup_{n\in I}\Omega_n
+\end{equation}
+を考える。観測者が取得する空間記録の空間を $X$ とし、フレーム添字を忘れる観測写像
+\begin{equation}
+ \pi:\Omega\longrightarrow X,
+ \qquad \pi(n,\xi)=x
+ \label{eq:forget}
+\end{equation}
+を置く。同じ $x$ を与える全状態
+\begin{equation}
+ \pi^{-1}(x)=\{(n,\xi)\mid \pi(n,\xi)=x\}
+\end{equation}
+が、「空間的には同一だが、どのフレームかは不定」という現在のファイバーである。
+
+\section{現在情報から次フレームを同定できない条件}
+
+\subsection{予測可能性と lumpability}
+現在の完全状態 $\omega=(n,\xi)\in\Omega$ から次状態空間 $Y$ への遷移を Markov 核
+\begin{equation}
+ K:\Omega\times\mathcal B(Y)\longrightarrow[0,1]
+\end{equation}
+で表す。観測者が知るのは $\omega$ ではなく $x=\pi(\omega)$ だけである。したがって、空間記録だけに依存する予測核 $\bar K$ が存在するかが問題となる。
+
+\begin{theorem}[フレーム忘却による予測の同定条件]
+観測可能な核
+\begin{equation}
+ \bar K:X\times\mathcal B(Y)\longrightarrow[0,1]
+\end{equation}
+が存在し、すべての $\omega\in\Omega$ と $B\in\mathcal B(Y)$ に対して
+\begin{equation}
+ K(\omega,B)=\bar K(\pi(\omega),B)
+ \label{eq:factor}
+\end{equation}
+が成り立つための必要十分条件は、$K$ が $\pi$ の各ファイバー上で一定、すなわち
+\begin{equation}
+ \pi(\omega)=\pi(\omega')
+ \quad\Longrightarrow\quad
+ K(\omega,\cdot)=K(\omega',\cdot)
+ \label{eq:lumpability}
+\end{equation}
+となることである。
+\end{theorem}
+
+\begin{proof}
+式\eqref{eq:factor}が成り立てば、同じ $x$ を持つ $\omega,\omega'$ に対して右辺が一致するので式\eqref{eq:lumpability}を得る。逆に式\eqref{eq:lumpability}が成り立つなら、各 $x\in\pi(\Omega)$ について任意の $\omega_x\in\pi^{-1}(x)$ を選び、$\bar K(x,B):=K(\omega_x,B)$ と定義できる。ファイバー上の一定性により、この定義は代表元の選択に依存しない。
+\end{proof}
+
+\begin{corollary}[次フレームの非同定可能性]
+ある $\omega,\omega'$ が同一の空間記録を与えるにもかかわらず、次フレーム分布が異なるならば、現在の空間情報だけから次フレーム分布を一意に構成することはできない。
+\end{corollary}
+
+これは「計算能力が不足している」という意味の予測困難ではない。入力情報が同じ観測値へ商化されているため、予測規則そのものが観測情報上へ降下しないのである。ただし、フレームについて事前分布 $\mu(n\mid x)$ を別に与えれば、混合予測
+\begin{equation}
+ K_\mu(B\mid x)
+ =\sum_n\int_{\Omega_n}K((n,\xi),B)\,\mu(\dd\xi,n\mid x)
+\end{equation}
+は構成できる。したがって「条件付き確率が存在しない」と一般に断言するのではなく、\emph{事前分布に依存しない一意な予測が存在しない}と述べるのが正確である。
+
+\subsection{量子版}
+量子系では完全正規完全正写像 $\Phi:\M_{\mathrm{next}}\to\M$ を Heisenberg 描像の遷移とする。観測者が $\N\subseteq\M$ のみを見るとき、次状態の予測が $\N$ 上へ閉じるためには、適切な条件付き期待値 $\mathbb E_\N:\M\to\N$ と写像 $\bar\Phi$ が存在して
+\begin{equation}
+ \mathbb E_\N\circ\Phi
+ =\bar\Phi\circ\mathbb E_{\N_{\mathrm{next}}}
+ \label{eq:quantumlump}
+\end{equation}
+となる必要がある。式\eqref{eq:quantumlump}が破れると、捨てられたフレーム自由度が次状態へ影響し、現在の観測代数は力学的に閉じない。これは量子版の非 lumpability である。
+
+\section{観測不能性から離散性へ}
+
+\subsection{論理的非含意}
+同時局在不能性は連続スペクトル上でも成立するため、観測不能性だけから存在論的な時間離散性は従わない。また、最小の測定可能間隔が存在することと、時間演算子のスペクトルそのものが離散であることも異なる。
+
+\begin{definition}[操作的時間離散性]
+時計 POVM が可算族 $\{E_n\}_{n\in I}$ として与えられ、すべての実行で時計記録が $n\in I$ のいずれかとして出力されるとき、時間は観測者 $\mathfrak O$ に対して\emph{操作的に離散}であるという。
+\end{definition}
+
+操作的離散化には次の三つの実装がありうる。
+\begin{enumerate}
+  \item 時計演算子が離散スペクトルまたはスペクトル間隙を持つ。
+  \item 連続時間を幅 $\tau$ の窓 $[n\tau,(n+1)\tau)$ に分ける有限分解能測定を行う。
+  \item 環境との相互作用により、安定な記録状態（pointer states）が離散的に選択される。
+\end{enumerate}
+DFR の $\lambda_P$ は局在限界の自然な尺度を与えるが、$\tau=\lambda_P/c$ を時計刻みと同一視するには追加の時計模型が必要である。
+
+\begin{axiom}[離散時計公理]
+観測者 $\mathfrak O$ に対して、可算な時計 POVM $\{E_n\}$ と正数 $\tau$ が存在し、観測可能な時間記録は $t_n=n\tau$ によってラベル付けされる。
+\end{axiom}
+
+この公理のもとで「フレーム」は物理的実体の最小断片というより、まず観測・記録可能な時間セルである。存在論的離散性を主張するためには、異なる時計や観測文脈に対しても同じ $\tau$ とフレーム構造が再現されることを示さなければならない。
+
+\section{フレーム間の断絶：二層圏による定式化}
+
+\subsection{内部断絶と外部遷移}
+フレームが完全に無関係で $\Hom(F_n,F_{n+1})=\varnothing$ なら、そこから流れを構成することもできない。したがって本稿では、断絶を「一切の関係の欠如」ではなく「内部記述から標準的な継続射が選べないこと」と定義する。
+
+\begin{definition}[フレーム断絶]
+フレーム $F_n$ と $F_{n+1}$ が断絶しているとは、空間的現在のデータだけから定まる可逆かつ標準的な写像
+\begin{equation}
+ U_n:F_n\longrightarrow F_{n+1}
+\end{equation}
+が存在しないことをいう。確率核、完全正写像、またはインストゥルメントによる外部的遷移の存在は排除しない。
+\end{definition}
+
+この定義を圏論的に表すため、二つの圏を区別する。
+\begin{itemize}
+  \item $\Frame$：対象を各フレームの内部幾何とし、標準的な内部同型のみを射とする圏。
+  \item $\Proc$：対象を状態空間または作用素代数とし、Markov 核、確率写像、あるいは正規完全正写像を射とする過程圏。
+\end{itemize}
+$\Frame$ では隣接フレーム間に選好された射がなくても、$\Proc$ では観測者に依存する遷移
+\begin{equation}
+ \Phi_{n,a}:F_n\rightsquigarrow F_{n+1}
+ \label{eq:externaltransition}
+\end{equation}
+が存在しうる。記号 $\rightsquigarrow$ は、決定論的写像ではなく確率的または量子的過程であることを表す。
+
+\subsection{断絶の強さ}
+\begin{longtable}{>{\raggedright\arraybackslash}p{28mm}>{\raggedright\arraybackslash}p{48mm}>{\raggedright\arraybackslash}p{63mm}}
+\toprule
+段階 & 数学的状態 & 意味 \\
+\midrule
+連続的継続 & 可逆群または一意な決定論的写像 & 過去から未来が一意に復元可能 \\
+確率的不定 & Markov 核は存在するが非退化 & 次は分布としてのみ与えられる \\
+観測的断絶 & 核が観測商へ降下しない & 現在の空間情報だけでは次分布を同定不能 \\
+構造的断絶 & 内部圏に標準射がなく、外部過程のみ存在 & フレーム間接続が観測者境界に依存 \\
+絶対的断絶 & いかなる過程圏でも射がない & 流れを定義できず、本稿の目的には強すぎる \\
+\bottomrule
+\end{longtable}
+本稿が採用するのは、主として観測的断絶と構造的断絶である。
+
+\section{観測者と時間流}
+
+\subsection{モジュラー流}
+$\M$ を von Neumann 代数、$\omega$ を忠実正規状態とする。Tomita--Takesaki 理論により、モジュラー演算子 $\Delta_\omega$ と一径数自己同型群
+\begin{equation}
+ \sigma_t^\omega(A)
+ =\Delta_\omega^{it}A\Delta_\omega^{-it},
+ \qquad A\in\M,
+ \label{eq:modularflow}
+\end{equation}
+が得られる。Connes--Rovelli の熱的時間仮説は、一般共変な理論における物理的時間流を状態により定まるモジュラー流と結び付ける\cite{ConnesRovelli1994}。
+
+ただし、$\{\sigma_t^\omega\}_{t\in\R}$ は自己同型\emph{群}であり、
+\begin{equation}
+ \sigma_{t+s}^\omega=\sigma_t^\omega\circ\sigma_s^\omega,
+ \qquad (\sigma_t^\omega)^{-1}=\sigma_{-t}^\omega
+\end{equation}
+を満たす。したがってモジュラー流単独は可逆であり、時間の矢や測定不可逆性を自動的には与えない。
+
+\subsection{観測者が与えるもの}
+観測者 $\mathfrak O=(\N,\omega,\mathfrak I)$ の役割は三つに分解される。
+\begin{enumerate}
+  \item $\N$ が、何を現在情報として残し、何をフレーム自由度として捨てるかを決める。
+  \item $\omega$ が、モジュラー流と期待値を決める。
+  \item $\mathfrak I$ が、離散的記録、条件付け、および非可逆な状態更新を与える。
+\end{enumerate}
+したがって「観測者が時間を創る」というより、\emph{観測者境界が、潜在的な代数的流れを、離散的で方向を持つ記録系列として顕在化する}と表現する方が正確である。
+
+\subsection{一ステップの時間更新}
+フレーム内部の可逆発展を $\alpha_\tau^{(n)}$、観測結果 $a_{n+1}$ に対応する Schr\"odinger 描像の完全正写像を $\mathcal I_{a_{n+1},*}$ とする。正規化後の状態更新を
+\begin{equation}
+ \rho_{n+1}
+ =\frac{\mathcal I_{a_{n+1},*}
+ \bigl(\alpha_{\tau,*}^{(n)}(\rho_n)\bigr)}
+ {\Tr\!\left[\mathcal I_{a_{n+1},*}
+ \bigl(\alpha_{\tau,*}^{(n)}(\rho_n)\bigr)\right]}
+ \label{eq:update}
+\end{equation}
+とする。結果 $a_{n+1}$ の確率は分母で与えられる。式\eqref{eq:update}には、
+\begin{itemize}
+  \item フレーム内部の流れ $\alpha_\tau^{(n)}$、
+  \item 結果の選択 $a_{n+1}$、
+  \item 条件付けによる非可逆更新、
+  \item 次フレームの再初期化
+\end{itemize}
+が同時に含まれる。
+
+\begin{definition}[顕在的時間流]
+顕在的時間流を、観測記録と状態の列
+\begin{equation}
+ (\rho_0,a_0)\longmapsto(\rho_1,a_1)
+ \longmapsto(\rho_2,a_2)\longmapsto\cdots
+ \label{eq:manifestflow}
+\end{equation}
+として定義する。各矢印は式\eqref{eq:update}で与えられ、一般には可逆でない。
+\end{definition}
+
+この意味で「流れ」は、離散フレームの集合そのものではなく、\emph{順序付けられたインストゥルメントの合成}である。
+
+\section{時間の矢と情報損失}
+
+\subsection{完全正写像による識別可能性の減少}
+状態間の量子相対エントロピー $D(\rho\Vert\sigma)$ は、完全正トレース保存写像 $\Phi_*$ に対してデータ処理不等式
+\begin{equation}
+ D(\rho\Vert\sigma)
+ \geq D(\Phi_*(\rho)\Vert\Phi_*(\sigma))
+ \label{eq:dpi}
+\end{equation}
+を満たす。したがって粗視化された観測過程は、一般に過去の状態を区別する能力を増加させない。等号回復条件が満たされないとき、失われた区別は観測代数内では完全には回復できない。
+
+\begin{proposition}[操作的時間の矢]
+各ステップの無条件更新 $\Phi_{n,*}=\sum_a\mathcal I_{n,a,*}\circ\alpha_{\tau,*}^{(n)}$ が、許容状態族上で可逆な十分統計量を持たず、ある状態対について式\eqref{eq:dpi}が真に減少するならば、観測記録の力学には操作的な向きが存在する。
+\end{proposition}
+
+この向きは基礎方程式の時間反転非対称性と同一ではない。環境自由度を捨てること、結果を記録すること、条件付けを行うことによって生じる有効的な非対称性である。
+
+\subsection{「過去がゼロになる」ことの限定的定式化}
+現在の観測状態を完全履歴 $h_n=(a_0,\ldots,a_n)$ の圧縮
+\begin{equation}
+ c_n:h_n\longmapsto s_n
+\end{equation}
+として表す。異なる履歴 $h_n\neq h'_n$ が同じ $s_n$ に写るなら、現在状態は過去を忠実には保持しない。ここで「過去がゼロになる」とは、過去が存在しなかったことではなく、現在の観測代数において履歴差が核
+\begin{equation}
+ \ker c_n=\{(h,h')\mid c_n(h)=c_n(h')\}
+\end{equation}
+へ落ちることを意味する。この圧縮が非 lumpability と組み合わさると、同じ現在状態から異なる次分布が生じうる。
+
+\section{フラクタル四則の力学的定式化}
+
+本稿では、自己相似性、尺度不変性、収束性、非対称性を「フラクタル四則」と呼ぶ。ただし幾何学的フラクタルの標準定義と同一視せず、スケール力学を特徴付ける公理群として用いる。
+
+\subsection{スケール半群}
+尺度パラメータを $s\geq0$ とし、状態または有効理論に作用する粗視化写像
+\begin{equation}
+ \mathcal R_s:\St(\M)\longrightarrow\St(\M_s)
+\end{equation}
+を考える。
+
+\begin{axiom}[自己相似性]
+各 $s$ に対し、適切な再埋込み $J_s$ が存在し、選ばれた観測量族 $\mathcal O$ 上で
+\begin{equation}
+ J_s\circ\mathcal R_s\simeq S_s
+\end{equation}
+となる。$S_s$ は形を保つスケール変換であり、$\simeq$ は厳密同型または制御された近似同型を表す。
+\end{axiom}
+
+\begin{axiom}[尺度半群性]
+\begin{equation}
+ \mathcal R_{s+t}=\mathcal R_s\circ\mathcal R_t,
+ \qquad \mathcal R_0=\id
+ \label{eq:rgsemigroup}
+\end{equation}
+が成り立つ。
+\end{axiom}
+
+\begin{axiom}[収束性]
+ある固定点またはアトラクター集合 $\mathfrak A$ が存在し、許容初期状態 $\rho$ に対して
+\begin{equation}
+ \operatorname{dist}(\mathcal R_s\rho,\mathfrak A)
+ \longrightarrow0\qquad(s\to\infty)
+ \label{eq:convergence}
+\end{equation}
+となる。
+\end{axiom}
+
+\begin{axiom}[非対称性]
+$s>0$ に対する $\mathcal R_s$ は、観測可能な状態空間上で一般に可逆でない。特に、異なる $\rho,\sigma$ が
+\begin{equation}
+ \mathcal R_s\rho=\mathcal R_s\sigma
+\end{equation}
+となることを許す。
+\end{axiom}
+
+四則の役割は次のように整理できる。
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+四則 & 数学的役割 & 時間論的解釈 \\
+\midrule
+自己相似性 & スケール間の形の保存 & 各フレームに反復される生成規則 \\
+尺度不変性 & 半群・固定点・共変性 & 時間刻みの変更に対する構造安定性 \\
+収束性 & アトラクターへの接近 & 過去差の忘却と大域的秩序 \\
+非対称性 & 逆写像の欠如 & 操作的な時間の矢 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+収束性だけでは未来の不確定性は生じない。決定論的収縮写像は完全に予測可能である。次フレームの非退化な不確定性には、複数の分枝、外部入力、量子インストゥルメントの結果、または確率的 innovation が必要である。
+\end{remark}
+
+\subsection{リーマン球上の螺旋収束模型}
+$S^2\simeq\CP^1$ の局所複素座標を $z$ とする。最も単純な離散力学
+\begin{equation}
+ z_{n+1}=\alpha z_n,
+ \qquad \alpha=re^{i\theta},\quad 0<r<1,
+ \label{eq:spiral}
+\end{equation}
+は
+\begin{equation}
+ z_n=r^ne^{in\theta}z_0\longrightarrow0
+\end{equation}
+を与える。$\theta\not\equiv0\pmod{2\pi}$ なら軌道は螺旋状に原点へ収束する。$\CP^1$ 上では $0$ が吸引固定点、$\infty$ が反発固定点である。
+
+式\eqref{eq:spiral}は、収束性と非対称性を最小限に表すが、単一軌道は通常フラクタルではない。フラクタルな不変集合を得るには、複数の収縮写像
+\begin{equation}
+ z_{n+1}=f_{a_{n+1}}(z_n),
+ \qquad a_{n+1}\in\mathsf A
+ \label{eq:ifs}
+\end{equation}
+からなる反復関数系を導入し、像の分離条件や確率規則を指定する必要がある。$a_{n+1}$ を観測結果と同一視すれば、式\eqref{eq:ifs}はフレーム更新式\eqref{eq:update}の低次元模型となる。
+
+\begin{remark}[DFR との関係]
+DFR の $\Sigma\simeq TS^2\times\{\pm1\}$ は球面成分を持つため、$\CP^1$ 座標を導入する幾何学的余地はある。しかし、式\eqref{eq:spiral}または\eqref{eq:ifs}の力学は DFR 交換関係から導出されたものではない。$Q^{\mu\nu}$ の中心スペクトル上に、状態依存または観測依存の追加作用を定義する必要がある。
+\end{remark}
+
+\section{統一モデルの公理系}
+
+以上を、最小限の公理系としてまとめる。
+
+\begin{axiom}[非可換時空]
+時空座標代数は式\eqref{eq:dfr}型の交換関係を満たし、時空局在に非零の相補的制約が存在する。
+\end{axiom}
+
+\begin{axiom}[現在のフレーム不定性]
+観測可能な現在は空間部分代数 $\N_{\mathrm{sp}}$ 上では確定命題を持つが、時計 POVM に関しては式\eqref{eq:frameindef}を満たす。
+\end{axiom}
+
+\begin{axiom}[操作的離散化]
+時計記録は可算なフレーム族 $\{F_n\}$ として得られる。
+\end{axiom}
+
+\begin{axiom}[非 lumpability]
+完全状態の遷移は、フレーム添字を忘れる観測写像のファイバー上で一定ではない。
+\end{axiom}
+
+\begin{axiom}[観測者境界]
+フレーム間遷移は、部分代数・状態・インストゥルメントの組 $\mathfrak O$ により、$\Proc$ 内の外部過程として与えられる。
+\end{axiom}
+
+\begin{axiom}[内部流]
+各フレーム内部には、Hamilton 流、モジュラー流、または他の一径数自己同型群 $\alpha_t$ が存在する。
+\end{axiom}
+
+\begin{axiom}[非可逆なスケール構造]
+有効記述にはフラクタル四則を満たす粗視化半群 $\mathcal R_s$ が作用する。
+\end{axiom}
+
+\begin{axiom}[innovation]
+各ステップで、現在の観測代数から決定されない非退化な結果変数 $a_{n+1}$ が存在する。すなわち、ある履歴に対し
+\begin{equation}
+ H(a_{n+1}\mid\N_n)>0
+\end{equation}
+またはその量子版が成立する。
+\end{axiom}
+
+\section{条件付き導出}
+
+\begin{proposition}[空間的真理とフレーム不定性]
+非可換時空公理と現在のフレーム不定性公理のもとで、同一の空間的真理集合 $\Cur(\omega;\N_{\mathrm{sp}})$ に複数の時計フレーム成分が対応しうる。
+\end{proposition}
+
+\begin{proposition}[次フレームの非同定可能性]
+現在のフレーム不定性と非 lumpability のもとで、空間的現在だけに依存する事前分布非依存の次フレーム予測核は存在しない。
+\end{proposition}
+
+\begin{proposition}[離散フレームの断絶]
+操作的離散化、非 lumpability、および観測者境界公理のもとで、隣接フレーム間には現在の内部データから一意に選ばれる可逆継続は存在せず、遷移は $\Proc$ における観測者依存過程としてのみ与えられる。
+\end{proposition}
+
+\begin{proposition}[顕在的流れ]
+内部流、観測者境界、操作的離散化のもとで、式\eqref{eq:update}を逐次合成することにより、観測記録としての時間流\eqref{eq:manifestflow}が構成される。
+\end{proposition}
+
+\begin{proposition}[時間の矢]
+さらに各無条件更新が許容状態族上で回復不能な情報圧縮を含むなら、データ処理不等式により、顕在的流れには過去方向と未来方向を区別する操作的非対称性が生じる。
+\end{proposition}
+
+\begin{proposition}[フラクタル的時間生成]
+スケール半群が自己相似性、尺度半群性、収束性、非対称性を満たし、innovation が複数の収縮分枝を選択するなら、フレーム系列はスケール横断的な反復構造と非可逆なアトラクター力学を持ちうる。
+\end{proposition}
+
+これらの命題をまとめると、提案する導出鎖は
+\begin{equation}
+\begin{split}
+ &\text{非可換局在制約}
+ \;\Longrightarrow\;
+ \text{空間的真理とフレーム不定性の両立}
+ \\
+ &\xRightarrow{\text{忘却・非 lumpability}}
+ \text{次フレームの非同定可能性}
+ \\
+ &\xRightarrow{\text{離散時計}}
+ \text{操作的に離散なフレーム}
+ \\
+ &\xRightarrow{\text{観測者インストゥルメント}}
+ \text{外部過程によるフレーム接続}
+ \\
+ &\xRightarrow{\text{非可逆粗視化・innovation}}
+ \text{方向を持つ顕在的時間流}
+\end{split}
+\label{eq:chain}
+\end{equation}
+となる。
+
+\section{随伴性による概念整理}
+
+空間的記述の圏を $\mathcal C_{\mathrm{sp}}$、過程的記述の圏を $\mathcal C_{\mathrm{tm}}$ とする。空間化と時間化の対応を関手
+\begin{equation}
+ F:\mathcal C_{\mathrm{tm}}\to\mathcal C_{\mathrm{sp}},
+ \qquad
+ G:\mathcal C_{\mathrm{sp}}\to\mathcal C_{\mathrm{tm}}
+\end{equation}
+で表し、理想化された領域で随伴
+\begin{equation}
+ \Hom_{\mathcal C_{\mathrm{sp}}}(F A,B)
+ \cong
+ \Hom_{\mathcal C_{\mathrm{tm}}}(A,G B)
+ \label{eq:adjunction}
+\end{equation}
+を仮定することができる。
+
+しかし現実の観測更新は情報を捨てるため、厳密な同型\eqref{eq:adjunction}よりも、Markov 圏、豊穣圏、profunctor、lax 随伴などの弱い構造が適切である可能性が高い。空間情報から時間過程への変換 $G$ は、フレーム添字の忘却により一意でなく、観測者の状態または事前分布でパラメータ化される。このため「時空の随伴性」は完成した定理というより、次の研究課題を指示する原理である。
+
+\begin{conjecture}[観測者相対的 lax 随伴]
+構造的観測者 $\mathfrak O$ ごとに、空間的現在から過程的予測への対応 $G_{\mathfrak O}$ が存在し、厳密な Hom 集合同型ではなく、確率順序または情報順序に豊穣化された lax 随伴をなす。laxity のずれが、フレーム不定性と予測不能性の定量値を与える。
+\end{conjecture}
+
+\section{観測者は「流れの原因」か}
+
+本稿の立場は、次の三つを区別する。
+\begin{enumerate}
+  \item \textbf{代数的時間パラメータの存在：}状態と代数からモジュラー流が構成されうる。この段階で意識的観測者は不要である。
+  \item \textbf{離散的フレームの顕在化：}部分代数、時計 POVM、記録装置が必要である。この意味で構造的観測者が必要である。
+  \item \textbf{時間の矢：}環境自由度の消去、非可逆な粗視化、境界条件、または条件付けが必要である。
+\end{enumerate}
+したがって、観測者は無から時間を創造するのではない。観測者は、可逆な潜在流を有限情報の記録列へ変換し、その変換に伴う情報損失によって操作的な向きを生成する。観測者を「境界と情報選択の構造」と定義する限り、これは主観主義ではない。
+
+\section{検証可能性と未解決問題}
+
+\subsection{理論を閉じるために必要なデータ}
+本枠組みを物理理論へ進めるには、少なくとも次を明示する必要がある。
+\begin{enumerate}
+  \item 具体的な時空代数 $\A_{\mathrm{st}}$ と表現 Hilbert 空間。
+  \item 物質場代数 $\A_{\mathrm{field}}$ および合成代数。
+  \item 忠実正規状態または重み $\omega$。
+  \item 時計 POVM $\{E_n\}$ と刻み $\tau$ の力学的起源。
+  \item インストゥルメント $\{\mathcal I_a\}$ と環境相互作用。
+  \item $Q$ のスペクトル上に作用するスケール半群 $\mathcal R_s$。
+  \item 連続 Lorentz 対称性と操作的離散フレームの整合条件。
+  \item 観測結果列が定める経路測度、その不変状態、およびエルゴード性・混合性。
+\end{enumerate}
+
+\subsection{反証可能な方向}
+理論が単なる比喩に留まらないためには、以下の量を計算しなければならない。
+\begin{itemize}
+  \item フレーム条件付きエントロピー $H(F_{n+1}\mid\N_n)$。
+  \item lumpability の破れを測る距離
+  \begin{equation}
+   \delta_{\mathrm{lump}}
+   :=\sup_{\pi(\omega)=\pi(\omega')}
+   \lVert K(\omega,\cdot)-K(\omega',\cdot)\rVert_{\mathrm{TV}}.
+  \end{equation}
+  \item 量子版では、縮約後チャネル間の diamond norm または相対エントロピー損失。
+  \item スケール写像の固有値、複素臨界指数、アトラクター次元。
+  \item 時計分解能 $\tau$ に依存する相関関数と、その連続極限。
+\end{itemize}
+$\delta_{\mathrm{lump}}=0$ なら、フレーム添字を忘れても予測は閉じ、本理論が想定する断絶は現れない。逆に $\delta_{\mathrm{lump}}>0$ は、空間的現在だけでは次フレームの力学が閉じないことの定量的指標となる。
+
+\subsection{局所的非同定可能性から統計的安定性へ}
+非 lumpability は、一つの現在記録から次フレームの分布を一意に同定できないことを意味するが、長い観測記録の経験平均が安定しないことまでは意味しない。この区別は、局所的な予測不能性と巨視的な統計法則が両立する機序を考えるうえで重要である。
+
+具体的なインストゥルメントと初期状態が、観測結果列
+\begin{equation}
+ \bm a=(a_1,a_2,\ldots)\in\mathsf A^{\mathbb N}
+\end{equation}
+上の経路測度 $\mathbb P$ を定めるとする。左シフト $S(a_1,a_2,\ldots)=(a_2,a_3,\ldots)$ に対して $\mathbb P$ が不変かつエルゴード的であり、観測量 $f:\mathsf A\to\R$ が一時点周辺分布について可積分なら、Birkhoff の個別エルゴード定理により
+\begin{equation}
+ \frac{1}{N}\sum_{n=1}^{N}f(a_n)
+ \longrightarrow
+ \mathbb E_{\mathbb P}[f]
+ \qquad\mathbb P\text{-a.s.}
+ \label{eq:frameergodic}
+\end{equation}
+が成り立つ\cite{Birkhoff1931}。これは独立同分布を要求する通常の大数則より広く、フレーム間に相関が残る場合にも適用可能である。
+
+\begin{proposition}[エルゴード的巨視安定性]
+観測インストゥルメントが生成する経路測度がシフト不変かつエルゴード的であるなら、各フレームの結果が現在の観測代数から一意に予測できなくても、可積分な観測量の時間平均は式\eqref{eq:frameergodic}の意味で状態平均へ収束する。
+\end{proposition}
+
+したがって本枠組みは、\emph{局所的な非同定可能性と長期的な統計安定性の共存}を記述しうる。ただし、エルゴード性は非 lumpability、innovation、あるいは粗視化の非可逆性だけからは従わない。複数の不変成分、長距離相関、またはフラクタルな間欠性が残る場合、極限は初期成分に依存し、収束速度の低下や通常とは異なる極限定理が生じうる。ゆえにエルゴード性は本稿の結論ではなく、具体的模型ごとに検証すべき追加力学である。
+
+\subsection{主要な未解決問題}
+\begin{enumerate}
+  \item DFR の中心変数 $Q^{\mu\nu}$ を動的にする一貫した作用または量子チャネルは存在するか。
+  \item $TS^2$ 上の追加力学を Poincar\'e 共変性と両立させられるか。
+  \item 時計 POVM の離散性は観測者依存か、それとも全観測者に共通する不変量か。
+  \item モジュラー時間と物理的固有時の対応を、どの状態族で証明できるか。
+  \item フラクタル四則の非対称性を、単なる粗視化依存性ではなく基礎的な物理量として定義できるか。
+  \item フレーム断絶と相対論的因果性、局所可換性、no-signalling 条件を同時に満たせるか。
+  \item 非 lumpable な観測過程が、どの条件で一意な不変状態とエルゴード性を持つか。
+\end{enumerate}
+
+\section{結論}
+
+本稿は、「現在が空間的に真でありながら、どのフレームに属するかは不定である」という直観を、観測代数とフレーム忘却写像によって定式化した。現在の空間情報から次フレームを予測できるか否かは、遷移核が忘却写像のファイバー上で一定になか、すなわち lumpability を満たすかによって判定できる。非 lumpability の場合、次フレームは単に確率的であるだけでなく、現在の観測情報のみからは一意に同定できない。
+
+一方、観測不能性から時間の存在論的離散性が自動的に従うわけではない。離散フレームを得るには、離散的時計 POVM、スペクトル間隙、または有限分解能の記録機構が必要である。また、フレームが絶対的に無関係なら流れも構成できないため、断絶は「内部に標準的継続がないが、外部の過程圏には観測者依存の遷移がある」という二層構造として定義した。
+
+時間流は、モジュラー流などのフレーム内部の可逆発展と、観測者境界におけるインストゥルメントの非可逆更新を合成することで顕在化する。したがって観測者は意識として時間を創るのではなく、代数、状態、境界、記録の組として、潜在流を離散的な現在系列へ翻訳する。フラクタル四則は、この系列に自己相似的なスケール構造、収束、情報忘却、非対称性を与える追加力学として位置付けられる。
+
+さらに、観測結果列が不変かつエルゴード的な経路測度を持つ具体的模型では、各フレームの局所的な非同定可能性にもかかわらず、観測量の長時間平均は状態平均へ収束しうる。この統計的安定性は非 lumpability から自動的に従うものではなく、不変状態と混合性を含む追加力学の検証課題である。
+
+最終的な統一像は、
+\begin{equation*}
+ \boxed{
+ \begin{gathered}
+ \text{時空非可換性}
+ \;\Rightarrow\;
+ \text{フレーム不定な現在}
+ \;\Rightarrow\;
+ \text{観測商上の非同定可能性},\\
+ \text{離散時計}+\text{観測者境界}
+ \;\Rightarrow\;
+ \text{断絶したフレームの外部的接続},\\
+ \text{内部流}+\text{非可逆更新}+\text{フラクタル半群}
+ \;\Rightarrow\;
+ \text{方向を持つ顕在的時間流}
+ \end{gathered}}
+\end{equation*}
+である。ただし各矢印は無条件の論理必然ではなく、本稿で明示した公理と力学を必要とする。この条件の明示こそが、直観的統一像を検証可能な理論へ移行させる第一歩である。
+
+\begin{thebibliography}{99}
+
+\bibitem{DFR1995}
+S.~Doplicher, K.~Fredenhagen, and J.~E.~Roberts,
+``The Quantum Structure of Spacetime at the Planck Scale and Quantum Fields,''
+\textit{Communications in Mathematical Physics} \textbf{172} (1995), 187--220.
+\href{https://doi.org/10.1007/BF02104515}{doi:10.1007/BF02104515};
+\href{https://arxiv.org/abs/hep-th/0303037}{arXiv:hep-th/0303037}.
+
+\bibitem{ConnesRovelli1994}
+A.~Connes and C.~Rovelli,
+``Von Neumann Algebra Automorphisms and Time--Thermodynamics Relation in General Covariant Quantum Theories,''
+\textit{Classical and Quantum Gravity} \textbf{11} (1994), 2899--2918.
+\href{https://doi.org/10.1088/0264-9381/11/12/007}{doi:10.1088/0264-9381/11/12/007};
+\href{https://arxiv.org/abs/gr-qc/9406019}{arXiv:gr-qc/9406019}.
+
+\bibitem{Takesaki2003}
+M.~Takesaki,
+\textit{Theory of Operator Algebras II},
+Springer, 2003.
+
+\bibitem{BratteliRobinson1997}
+O.~Bratteli and D.~W.~Robinson,
+\textit{Operator Algebras and Quantum Statistical Mechanics 2}, 2nd ed.,
+Springer, 1997.
+
+\bibitem{Davies1976}
+E.~B.~Davies,
+\textit{Quantum Theory of Open Systems},
+Academic Press, 1976.
+
+\bibitem{Lindblad1976}
+G.~Lindblad,
+``On the Generators of Quantum Dynamical Semigroups,''
+\textit{Communications in Mathematical Physics} \textbf{48} (1976), 119--130.
+\href{https://doi.org/10.1007/BF01608499}{doi:10.1007/BF01608499}.
+
+\bibitem{GKS1976}
+V.~Gorini, A.~Kossakowski, and E.~C.~G.~Sudarshan,
+``Completely Positive Dynamical Semigroups of $N$-Level Systems,''
+\textit{Journal of Mathematical Physics} \textbf{17} (1976), 821--825.
+\href{https://doi.org/10.1063/1.522979}{doi:10.1063/1.522979}.
+
+\bibitem{Zurek2003}
+W.~H.~Zurek,
+``Decoherence, Einselection, and the Quantum Origins of the Classical,''
+\textit{Reviews of Modern Physics} \textbf{75} (2003), 715--775.
+\href{https://doi.org/10.1103/RevModPhys.75.715}{doi:10.1103/RevModPhys.75.715}.
+
+\bibitem{Fritz2020}
+T.~Fritz,
+``A Synthetic Approach to Markov Kernels, Conditional Independence and Theorems on Sufficient Statistics,''
+\textit{Advances in Mathematics} \textbf{370} (2020), 107239.
+\href{https://doi.org/10.1016/j.aim.2020.107239}{doi:10.1016/j.aim.2020.107239}.
+
+\bibitem{KemenySnell1976}
+J.~G.~Kemeny and J.~L.~Snell,
+\textit{Finite Markov Chains},
+Springer, 1976.
+
+\bibitem{Birkhoff1931}
+G.~D.~Birkhoff,
+``Proof of the Ergodic Theorem,''
+\textit{Proceedings of the National Academy of Sciences of the United States of America}
+\textbf{17} (1931), 656--660.
+\href{https://doi.org/10.1073/pnas.17.2.656}{doi:10.1073/pnas.17.2.656}.
+
+\bibitem{MacLane1998}
+S.~Mac Lane,
+\textit{Categories for the Working Mathematician}, 2nd ed.,
+Springer, 1998.
+
+\bibitem{Connes1994}
+A.~Connes,
+\textit{Noncommutative Geometry},
+Academic Press, 1994.
+
+\bibitem{Falconer2014}
+K.~Falconer,
+\textit{Fractal Geometry: Mathematical Foundations and Applications}, 3rd ed.,
+Wiley, 2014.
+
+\bibitem{Lapidus2013}
+M.~L.~Lapidus and M.~van Frankenhuijsen,
+\textit{Fractal Geometry, Complex Dimensions and Zeta Functions}, 2nd ed.,
+Springer, 2013.
+
+\end{thebibliography}
+
+\end{document}

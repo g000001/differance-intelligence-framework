@@ -1,0 +1,839 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{example}[definition]{例}
+\newtheorem{conjecture}[definition]{予想}
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{corollary}[definition]{系}
+
+\newcommand{\Madh}{\mathrm{Madh}}
+\newcommand{\CoInt}{\mathrm{CoInt}}
+\newcommand{\Desc}{\operatorname{Desc}}
+\newcommand{\EssIm}{\operatorname{EssIm}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\Nat}{\operatorname{Nat}}
+\newcommand{\Dir}{\operatorname{Dir}}
+\newcommand{\Sh}{\operatorname{Sh}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\FinSet}{\mathbf{FinSet}}
+\newcommand{\Bdy}{\mathcal B}
+\newcommand{\Ty}{\mathsf{Ty}}
+\newcommand{\Tm}{\mathsf{Tm}}
+\newcommand{\DEq}{\equiv}
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\sem}[1]{\mathopen{[\![}#1\mathclose{]\!]}}
+
+\title{中観主義論理の基礎\\[0.2em]
+  {\Large ---構文・証明論・非表現可能な境界方向---}\\[0.4em]
+  {\large Foundations of Madhyic Logic}}
+\author{千葉将臣}
+\date{2026-08-24}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、形式体系の外部を内部対象として所有することなく、その\textbf{方向}を型付き判断として記述する枠組みを\textbf{中観主義論理}（Madhyic logic）として提案する。基底となる観点圏 $\mathcal C_i$、共通拡大圏 $\mathcal D$、解釈関手 $j_i:\mathcal C_i\to\mathcal D$、および各 $j_i$ の本質像へ降下しない境界代表 $\gamma\in\mathcal D$ を取る。観点 $i$ から見た境界方向を前層
+\[
+ \partial_\gamma^{(i)}(X)
+ :=\Hom_{\mathcal D}(j_iX,\gamma)
+\]
+として定義し、$\alpha\in\partial_\gamma^{(i)}(X)$ を
+\[
+ \alpha:X\rightsquigarrow_i\dfix
+\]
+と記す。外点記号 $\dfix$ は $\mathcal C_i$ の対象でも $\gamma$ の別名でもなく、非降下な境界代表によって誘導される方向プロファイルの役割を表す判断記号である。
+
+本稿ではまず、観点ごとの型と内部射、境界ラベル、境界移送、方向証拠項からなるMadhyic計算を意味論から独立に定義する。方向証拠の代入、境界移送、構造的等式を与え、方向カットの許容性、構造的正規形、純粋な基底判断に対する保守性を示す。次に、この計算を圏と前層によって解釈し、健全性および自由構文モデルに相対的な完全性を示す。また、$\partial_\gamma^{(i)}$ が $\mathcal C_i$ で表現可能でないことを外部方向性の主要条件とする。二つの観点から同じ境界代表へ向かう一対の射は、共観主義論理の非降下な比較余剰を境界方向へ拡張する。
+
+有限集合圏 $\FinSet$ の集合圏 $\Set$ への包含と無限集合 $\mathbb N$ は、非降下性と非表現可能性を満たす完全な初等例を与える。層・トポス意味論では、方向の存在を大域点ではなく局所切断として解釈できる。一方、四句分別との対応、無限パス空間の一点コンパクト化、Gödelの不完全性定理や真理論のリベンジ問題の解消は、本稿の定理とはせず解釈的展望からも分離する。
+
+\medskip
+\noindent\textbf{キーワード：} 中観主義論理、Madhyic logic、外部方向、非表現可能性、非降下性、前層、共観主義論理、トポス、外点
+\end{abstract}
+
+\tableofcontents
+
+\part{問題設定と形式構文}
+
+\section{序論}
+
+\subsection{外部を点として定義することの問題}
+
+形式体系 $T$ の内部で定数 $a$ を定義すれば、$a$ は既に $T$ の内部記号である。したがって「体系外部の対象を体系内部の対象として定義する」という要求は、そのままでは達成できない。Gödelの不完全性定理、Tarskiの真理定義不可能性、真理理論におけるリベンジ問題はそれぞれ異なる内容を持つが、内部言語とそのメタ水準を同一視できないことを示している\cite{godel,tarski,kripke,Beall2007}。
+
+この区別から、次の二つを分ける必要がある。
+\begin{enumerate}
+ \item 外部を内部対象として\textbf{所有する}こと。
+ \item 内部対象から外部側へ向かう関係を\textbf{指示する}こと。
+\end{enumerate}
+
+本稿が形式化するのは第二の可能性である。ただし、通常の圏において $X\to\dfix$ と書くには $\dfix$ も同じ圏の対象でなければならない。この型の問題を避けるため、基底圏と拡大圏を明示的に分離し、射は拡大圏で形成し、その射の族を基底圏上の前層として読む。
+
+\subsection{共観主義論理から中観主義論理へ}
+
+共観主義論理（Cotuitionistic logic）は、二つの直観主義的観点を共通比較層へ写し、同じ段階で支持される命題を比較する体系として構成された\cite{ChibaCotuition2026}。その中心は
+\[
+ \text{二観点}
+ \longrightarrow
+ \text{共通比較層}
+ \longrightarrow
+ \text{非降下な比較余剰}
+\]
+という構造である。
+
+しかし、共通比較層の段階は依然として比較層の内部対象である。中観主義論理はこの段階を直ちに外点と同一視せず、非降下な境界代表が各観点へ誘導する\textbf{非表現可能な方向プロファイル}を扱う。したがって本稿における発展順序は
+\[
+ \text{共観}
+ \longrightarrow
+ \text{非降下}
+ \longrightarrow
+ \text{非表現可能な方向}
+ \longrightarrow
+ \text{外点指示}
+\]
+である。
+
+\subsection{名称と主張範囲}
+
+英語名を\textbf{Madhyic logic} とする。名称は中観思想に動機を得るが、本稿はNāgārjunaの思想を数理論理へそのまま翻訳したと主張しない\cite{Garfield1995,Westerhoff2009}。固定された内部表現へ回収されない関係を中心に置くという限定された構造的類比だけを採用する。
+
+本稿の数学的主張は、圏、関手、前層、非降下性、非表現可能性および型付き判断に関するものである。次は主張しない。
+\begin{enumerate}
+ \item $\dfix$ が基底圏の新しい対象または真理値であること。
+ \item 射より根源的な「端なき方向」が公理なしに存在すること。
+ \item 無限パス化または一点コンパクト化から $\dfix$ が自動的に生じること。
+ \item 不完全性定理またはリベンジ問題が一般に解消されること。
+ \item 共観主義論理、直観主義論理、古典論理および本論理が四句分別と一対一に対応すること。
+\end{enumerate}
+
+\section{Madhyicシグネチャ}
+
+\subsection{三種類の構文データ}
+
+圏論的意味論に先立って、方向判断を形成するための構文を定める。添字集合 $I$ を観点の集合とする。
+
+\begin{definition}[Madhyicシグネチャ]
+\textbf{Madhyicシグネチャ} $\Sigma$ は次のデータから成る。
+\begin{enumerate}
+ \item 各 $i\in I$ に対する型記号の集合 $\Ty_i$。
+ \item $X,Y\in\Ty_i$ に対する内部射生成子
+ \[
+  f:X\longrightarrow_i Y.
+ \]
+ \item 境界ラベルを対象、境界移送生成子 $h:b\to c$ を射とする圏表示 $\Bdy$。
+ \item $X\in\Ty_i$ と $b\in\Bdy$ に対する原始方向証拠生成子
+ \[
+  a:X\rightsquigarrow_i b.
+ \]
+\end{enumerate}
+\end{definition}
+
+境界ラベル $b$ は内部型ではない。したがって $b\in\Ty_i$ や内部射 $X\to_i b$ は形成されない。$X\rightsquigarrow_i b$ は内部射とは異なる種類の判断である。
+
+\begin{definition}[外点マーカー]
+$\dfix$ は特定の境界ラベルではなく、境界ラベルを明示しない方向判断の表示マーカーとする。すなわち
+\[
+ a:X\rightsquigarrow_i\dfix\,[b]
+\]
+は $a:X\rightsquigarrow_i b$ の表示上の別記であり、$\dfix$ を型として構文へ追加しない。
+\end{definition}
+
+\subsection{内部射項と方向証拠項}
+
+各観点の内部射項は、生成子、恒等射および合成によって生成する。方向証拠項は次の文法による。
+
+\begin{definition}[方向証拠項]
+方向証拠項 $d$ を帰納的に
+\begin{equation}
+ d::=a\mid d[f]\mid h_*d
+ \label{eq:direction-term-grammar}
+\end{equation}
+と定める。
+\begin{enumerate}
+ \item $a:X\rightsquigarrow_i b$ が原始方向証拠なら $a$ は方向証拠項である。
+ \item $d:X\rightsquigarrow_i b$ と $f:Y\to_i X$ から
+ \[
+  d[f]:Y\rightsquigarrow_i b
+ \]
+を形成する。
+ \item $d:X\rightsquigarrow_i b$ と $h:b\to c$ から
+ \[
+  h_*d:X\rightsquigarrow_i c
+ \]
+を形成する。
+\end{enumerate}
+\end{definition}
+
+$d[f]$ は内部側の代入、$h_*d$ は境界側の移送である。両者を区別することで、内部対象の精密化と境界代表の変更を別々に追跡できる。
+
+\subsection{判断の種類}
+
+最小Madhyic計算は次の判断を持つ。
+\begin{align*}
+ X\ \mathsf{type}_i,
+ &\qquad
+ f:X\to_iY,\\
+ b\ \mathsf{boundary},
+ &\qquad
+ h:b\to_{\Bdy}c,\\
+ d:X\rightsquigarrow_i b,
+ &\qquad
+ d\DEq d':X\rightsquigarrow_i b.
+\end{align*}
+最後の判断は方向証拠項の構造的同一性を表す。基底論理が命題、文脈または依存型を持つ場合、それらの判断は各観点 $i$ の純粋判断としてこの構文へ併置される。
+
+\part{Madhyic計算の証明論}
+
+\section{形成規則と構造的等式}
+
+\subsection{方向規則}
+
+方向証拠項の形成規則を次で与える。
+\begin{align}
+\frac{a:X\rightsquigarrow_i b\text{ is primitive}}
+     {a:X\rightsquigarrow_i b}
+&\quad\mathrm{Dir\mbox{-}Gen},
+\label{rule:syn-dir-gen}\\[0.8em]
+\frac{d:X\rightsquigarrow_i b\qquad f:Y\to_iX}
+     {d[f]:Y\rightsquigarrow_i b}
+&\quad\mathrm{Dir\mbox{-}Subst},
+\label{rule:syn-dir-subst}\\[0.8em]
+\frac{d:X\rightsquigarrow_i b\qquad h:b\to_{\Bdy}c}
+     {h_*d:X\rightsquigarrow_i c}
+&\quad\mathrm{Dir\mbox{-}Map}.
+\label{rule:syn-dir-map}
+\end{align}
+
+方向判断から純粋な内部判断を取り出す除去規則は置かない。この非点化原則は後の保守性定理を支える。
+
+\subsection{等式規則}
+
+内部射と境界射の通常の圏等式に加えて、方向証拠について次を課す。
+\begin{align}
+ d[\mathrm{id}_X]&\DEq d,
+ \label{eq:dir-id}\\
+ (d[f])[g]&\DEq d[f\circ g],
+ \label{eq:dir-assoc}\\
+ (\mathrm{id}_b)_*d&\DEq d,
+ \label{eq:bdy-id}\\
+ k_*(h_*d)&\DEq(k\circ h)_*d,
+ \label{eq:bdy-assoc}\\
+ h_*(d[f])&\DEq(h_*d)[f].
+ \label{eq:interchange}
+\end{align}
+さらに $\DEq$ は反射律、対称律、推移律および各項形成子に関する合同律を満たす。
+
+式\eqref{eq:interchange}は、内部側で先に精密化してから境界を変更しても、境界を変更してから内部側で精密化しても同じ方向証拠になることを表す。
+
+\section{代入、方向カットおよび正規形}
+
+\subsection{方向カット}
+
+方向判断
+\[
+ d:X\rightsquigarrow_i b
+\]
+と内部射 $f:Y\to_iX$ の合成 $d[f]$ を\textbf{方向カット}と呼ぶ。
+
+\begin{theorem}[方向カットの許容性]
+$d:X\rightsquigarrow_i b$ と $f:Y\to_iX$ が導出可能なら、$d[f]:Y\rightsquigarrow_i b$ は導出可能である。さらに恒等射および内部射の合成に対し
+\[
+ d[\mathrm{id}_X]\DEq d,
+ \qquad
+ (d[f])[g]\DEq d[f\circ g]
+\]
+である。
+\end{theorem}
+
+\begin{proof}
+導出可能性は規則\textup{\eqref{rule:syn-dir-subst}}による。整合性は式\eqref{eq:dir-id}と\eqref{eq:dir-assoc}である。
+\end{proof}
+
+通常のシークエント計算におけるカット除去と異なり、方向カットは消去されるべき中間命題ではなく、反変関手作用に対応する構造的代入である。ここで示したのはその許容性と結合性である。
+
+\subsection{構造的正規形}
+
+\begin{definition}[方向正規形]
+方向証拠項が
+\begin{equation}
+ h_*a[f]
+ \label{eq:direction-normal-form}
+\end{equation}
+の形にあるとき、これを\textbf{構造的正規形}と呼ぶ。ここで $a$ は原始方向証拠、$f$ は一つに合成された内部射、$h$ は一つに合成された境界射であり、恒等射は省略してよい。
+\end{definition}
+
+\begin{theorem}[構造的正規化]
+すべての方向証拠項 $d$ は、構造的等式 $\DEq$ に関して式\eqref{eq:direction-normal-form}の形に変形できる。
+\end{theorem}
+
+\begin{proof}
+$d$ の構成に関する帰納法による。$d=a$ は恒等射を補えば正規形である。$d=e[g]$ の場合、帰納法の仮定から $e\DEq h_*a[f]$ とできる。式\eqref{eq:interchange}と\eqref{eq:dir-assoc}により
+\[
+ e[g]\DEq(h_*a[f])[g]
+ \DEq h_*a[f\circ g]
+\]
+となる。$d=k_*e$ の場合は式\eqref{eq:bdy-assoc}により
+\[
+ k_*e\DEq k_*(h_*a[f])
+ \DEq(k\circ h)_*a[f]
+\]
+である。
+\end{proof}
+
+\begin{remark}[一意性の範囲]
+正規形の存在は上で示したが、その構文的一意性には内部射表示と境界圏表示それぞれの等式決定性が必要である。本稿は一般のシグネチャに対する決定可能性を主張しない。
+\end{remark}
+
+\section{非点化と保守性}
+
+\begin{definition}[純粋判断]
+観点 $i$ の基底体系 $T_i$ の記号だけからなり、境界ラベル、方向証拠または $\dfix$ を含まない判断を\textbf{純粋判断}と呼ぶ。
+\end{definition}
+
+\begin{theorem}[構文的保守性]
+\label{thm:syntactic-conservativity}
+$\Madh_\Sigma(T_i)$ を、$T_i$ にMadhyicシグネチャ、方向形成規則および構造的等式だけを追加した体系とする。方向判断を前提として純粋判断を結論する規則を持たないなら、任意の純粋判断 $J$ について
+\[
+ \Madh_\Sigma(T_i)\vdash J
+ \quad\Longrightarrow\quad
+ T_i\vdash J
+\]
+である。
+\end{theorem}
+
+\begin{proof}
+$J$ の導出木に関する帰納法による。方向規則の結論は方向判断または方向等式であり、純粋判断ではない。純粋判断を結論する規則の前提も純粋判断だけであるという層分離の仮定から、$J$ の導出に寄与する部分木はすべて $T_i$ の規則だけで構成される。
+\end{proof}
+
+保守性は、方向判断を加えても基底体系の定理が自動的に増えないことを示す。一方、将来方向証拠から内部命題を生成する効果的除去規則を加える場合、この定理は再検討しなければならない。
+
+\section{代数的モデルとメタ定理}
+
+\subsection{Madhyicモデル}
+
+\begin{definition}[構文の圏論的モデル]
+シグネチャ $\Sigma$ の\textbf{Madhyicモデル} $\mathcal M$ は次から成る。
+\begin{enumerate}
+ \item 各観点 $i$ に対する圏 $\mathcal C_i$ と、型・内部射生成子の解釈。
+ \item 一つの圏 $\mathcal D$ と関手 $j_i:\mathcal C_i\to\mathcal D$。
+ \item 境界圏表示 $\Bdy$ の関手的解釈 $G:\Bdy\to\mathcal D$。
+ \item 各原始方向証拠 $a:X\rightsquigarrow_i b$ に対する射
+ \[
+  \sem a:j_i\sem X\longrightarrow G(b).
+ \]
+\end{enumerate}
+複合方向項を
+\begin{align*}
+ \sem{d[f]}&:=\sem d\circ j_i\sem f,\\
+ \sem{h_*d}&:=G(h)\circ\sem d
+\end{align*}
+と解釈する。
+\end{definition}
+
+\begin{theorem}[証明論の健全性]
+$d\DEq d':X\rightsquigarrow_i b$ がMadhyic計算で導出可能なら、すべてのMadhyicモデルで
+\[
+ \sem d=\sem{d'}:
+ j_i\sem X\longrightarrow G(b)
+\]
+である。
+\end{theorem}
+
+\begin{proof}
+等式導出に関する帰納法による。式\eqref{eq:dir-id}--\eqref{eq:bdy-assoc}は圏の単位律と結合律から従う。式\eqref{eq:interchange}の両辺はとも
+\[
+ G(h)\circ\sem d\circ j_i\sem f
+\]
+へ解釈される。合同律も射の合成が等式を保存することから従う。
+\end{proof}
+
+\subsection{自由構文モデル}
+
+\begin{definition}[自由Madhyicモデル]
+シグネチャ $\Sigma$ から、各観点の対象を型記号、射を内部射項の構造的等式類とする構文圏 $\mathcal C_i^\Sigma$ を作る。境界圏を $\Bdy^\Sigma$ とし、方向証拠項の等式類を
+\[
+ \Hom_{\mathcal D^\Sigma}
+ (j_iX,G(b))
+\]
+として持つ自由な多対象圏 $\mathcal D^\Sigma$ を生成する。これを\textbf{自由Madhyicモデル}と呼ぶ。
+\end{definition}
+
+\begin{theorem}[構造的完全性]
+同じ型を持つ方向証拠項 $d,d'$ について、すべてのMadhyicモデルで $\sem d=\sem{d'}$ ならば、自由Madhyicモデルにおいて一致し、したがって
+\[
+ d\DEq d'
+\]
+が構造的等式から導出可能である。
+\end{theorem}
+
+\begin{proof}
+自由Madhyicモデル自身がMadhyicモデルである。仮定をこのモデルへ適用すると、$d,d'$ は構造的等式で割った同じ射を表す。自由モデルの定義により、これは $d\DEq d'$ が生成された合同関係に属することと同値である。
+\end{proof}
+
+この完全性は、方向項の純粋に構造的な断片に対するものである。基底論理の含意、量化、依存型、または局所存在を含む完全性は別問題である。
+
+\part{圏論・前層・トポス意味論}
+
+\section{観点圏と拡大圏}
+
+\subsection{Madhyic文脈}
+
+\begin{definition}[Madhyic文脈]
+添字集合 $I$ に対する\textbf{Madhyic文脈}とは、次のデータ
+\begin{equation}
+ \mathfrak M=
+ \bigl((\mathcal C_i)_{i\in I},\mathcal D,
+       (j_i)_{i\in I},\gamma\bigr)
+ \label{eq:madhyic-context}
+\end{equation}
+から成る。
+\begin{enumerate}
+ \item 各 $\mathcal C_i$ は一つの内部的観点を表す局所小圏である。
+ \item $\mathcal D$ は共通拡大意味論を表す局所小圏である。
+ \item $j_i:\mathcal C_i\to\mathcal D$ は観点 $i$ の解釈関手である。
+ \item $\gamma\in\mathcal D$ は境界比較に用いる対象である。
+\end{enumerate}
+\end{definition}
+
+$\gamma$ はメタ理論から見れば $\mathcal D$ の通常の対象である。「外部」という語は絶対的な圏外存在を意味せず、各 $\mathcal C_i$ と解釈 $j_i$ に相対的な非降下性を意味する。
+
+\begin{definition}[非降下な境界代表]
+$\gamma$ が観点 $i$ へ\textbf{降下可能}であるとは、ある $A\in\mathcal C_i$ が存在して
+\[
+ \gamma\cong j_iA
+\]
+となることをいう。すべての $i\in I$ に対して
+\begin{equation}
+ \gamma\notin\EssIm(j_i)
+ \label{eq:non-descent-gamma}
+\end{equation}
+であるとき、$\gamma$ を\textbf{非降下な境界代表}と呼ぶ。
+\end{definition}
+
+非降下性は、$\gamma$ が数学的に記述不能であることを意味しない。それは選択した観点圏の対象としては回収できないという相対的条件である。
+
+\subsection{境界方向前層}
+
+\begin{definition}[境界方向前層]
+Madhyic文脈と $i\in I$ に対し
+\begin{equation}
+ \partial_\gamma^{(i)}:
+ \mathcal C_i^{\mathrm{op}}\longrightarrow\Set,
+ \qquad
+ \partial_\gamma^{(i)}(X)
+ :=\Hom_{\mathcal D}(j_iX,\gamma)
+ \label{eq:boundary-presheaf}
+\end{equation}
+と定める。射 $f:Y\to X$ に対して
+\[
+ \partial_\gamma^{(i)}(f)(\alpha)
+ :=\alpha\circ j_i(f)
+\]
+とする。これを観点 $i$ の\textbf{境界方向前層}と呼ぶ。
+\end{definition}
+
+\begin{proposition}
+式\eqref{eq:boundary-presheaf}は前層を定める。
+\end{proposition}
+
+\begin{proof}
+$\partial_\gamma^{(i)}(\mathrm{id}_X)(\alpha)=\alpha$ である。また $Z\xrightarrow{g}Y\xrightarrow{f}X$ に対し
+\[
+ (\alpha\circ j_i(f))\circ j_i(g)
+ =\alpha\circ j_i(f\circ g)
+\]
+なので反変関手の法則を満たす。
+\end{proof}
+
+この前層が「方向」の数学的実体である。$\gamma$ を $\mathcal C_i$ へ追加せず、各内部対象 $X$ から $\gamma$ へ到達する拡大圏上の射だけを $\mathcal C_i$ 上に記録する。
+
+\section{外点記号と方向判断}
+
+\subsection{対象記号ではなく判断記号}
+
+\begin{definition}[証拠付きMadhyic方向判断]
+$\alpha\in\partial_\gamma^{(i)}(X)$、すなわち
+\[
+ \alpha:j_iX\longrightarrow\gamma
+\]
+であるとき
+\begin{equation}
+ \alpha:X\rightsquigarrow_i\dfix
+ \label{eq:witnessed-direction}
+\end{equation}
+と記す。
+\end{definition}
+
+\begin{definition}[外点記号の意味]
+$\dfix$ は $\mathcal C_i$ または $\mathcal D$ の対象名ではない。そのMadhyic文脈における意味を
+\begin{equation}
+ \sem{\dfix}_{\mathfrak M}
+ :=\bigl(\partial_\gamma^{(i)}\bigr)_{i\in I}
+ \label{eq:external-marker-semantics}
+\end{equation}
+とする。すなわち $\dfix$ は、境界代表 $\gamma$ 自体ではなく、各観点に現れる方向プロファイルの族を表す。
+\end{definition}
+
+したがって
+\[
+ \dfix\in\mathcal C_i,
+ \qquad
+ 1\to\dfix,
+ \qquad
+ X=\dfix
+\]
+といった式は形成しない。式\eqref{eq:witnessed-direction}の右端の $\dfix$ は射の余域ではなく、$\alpha$ が非降下境界への方向証拠として読まれることを示す判断マーカーである。実際の射の余域は拡大圏の対象 $\gamma$ である。
+
+\subsection{方向形成と代入}
+
+方向判断には次の基本規則がある。
+
+\begin{equation}
+ \frac{\alpha:j_iX\to\gamma}
+      {\alpha:X\rightsquigarrow_i\dfix}
+ \quad\mathrm{Dir\mbox{-}Form}
+ \label{rule:dir-form}
+\end{equation}
+
+\begin{equation}
+ \frac{\alpha:X\rightsquigarrow_i\dfix
+       \qquad f:Y\to X}
+      {\alpha\circ j_i(f):Y\rightsquigarrow_i\dfix}
+ \quad\mathrm{Dir\mbox{-}Subst}
+ \label{rule:dir-subst}
+\end{equation}
+
+\begin{proposition}[代入安定性]
+$\mathrm{Dir\mbox{-}Subst}$ は恒等射と射の合成に関して整合的である。
+\end{proposition}
+
+\begin{proof}
+境界方向前層の関手性そのものである。
+\end{proof}
+
+この規則は、ある対象から外部方向が指示されたなら、その対象へ写る任意の内部対象からも方向を引き戻せることを示す。方向は内部構造の精密化に対して持続する。
+
+\subsection{境界変更}
+
+\begin{proposition}[境界代表に関する共変性]
+$h:\gamma\to\delta$ を $\mathcal D$ の射とする。このとき
+\[
+ h_*:\partial_\gamma^{(i)}\Longrightarrow
+      \partial_\delta^{(i)},
+ \qquad
+ h_*(\alpha)=h\circ\alpha
+\]
+は自然変換を定める。
+\end{proposition}
+
+したがって境界代表間の射は、方向判断の翻訳を与える。ただし $h$ が同型でない限り、逆方向の翻訳は保証されない。この非対称性を外部方向の重要な特徴とする。
+
+\section{非表現可能性}
+
+\subsection{内部代表への回収}
+
+非降下性だけでは方向前層が内部対象によって偶然表現される可能性を排除できない。
+
+\begin{definition}[内部表現可能性]
+$\partial_\gamma^{(i)}$ が観点 $i$ で\textbf{内部表現可能}であるとは、ある $R_i\in\mathcal C_i$ と自然同型
+\begin{equation}
+ \partial_\gamma^{(i)}
+ \cong\Hom_{\mathcal C_i}(-,R_i)
+ \label{eq:internal-representability}
+\end{equation}
+が存在することをいう。
+\end{definition}
+
+\begin{definition}[Madhyic外部方向条件]
+Madhyic文脈が観点 $i$ について\textbf{外部方向条件}を満たすとは、次の二条件が成立することをいう。
+\begin{enumerate}
+ \item $\gamma\notin\EssIm(j_i)$。
+ \item $\partial_\gamma^{(i)}$ は $\mathcal C_i$ で表現可能でない。
+\end{enumerate}
+すべての $i\in I$ について成立するとき、$\mathfrak M$ を\textbf{Madhyic枠}と呼ぶ。
+\end{definition}
+
+非表現可能性により、方向証拠の族全体を一つの内部対象 $R_i$ への通常の射として置き換えることができない。これが「点として所有せず、方向としてのみ扱う」という主張の厳密な内容である。
+
+\begin{remark}[Yoneda補題との関係]
+$\gamma$ が $j_iR_i$ に同型なら、$j_i$ が充満忠実である限り $\partial_\gamma^{(i)}$ は $R_i$ によって表現される。逆は追加条件なしには必ずしも成立しないため、本稿では非降下性と非表現可能性を別々に要求する\cite{MacLane1998,Riehl2016}。
+\end{remark}
+
+\subsection{方向の同値}
+
+\begin{definition}[観測的境界同値]
+二つの境界代表 $\gamma,\delta\in\mathcal D$ が\textbf{観測的に同値}であるとは、すべての $i\in I$ について
+\[
+ \partial_\gamma^{(i)}
+ \cong
+ \partial_\delta^{(i)}
+\]
+となることをいう。
+\end{definition}
+
+$\dfix$ の意味を方向前層の族としたため、Madhyic logicは観測的に同値な境界代表を区別しない。これは $\dfix$ を特定の外部実体の固有名にしないための外延性原則である。
+
+\section{非点化原則と保守性}
+
+\subsection{採用しない除去規則}
+
+方向判断から内部対象を回収する次の形式の規則は採用しない。
+\begin{equation}
+ \frac{\alpha:X\rightsquigarrow_i\dfix}
+      {r_\alpha:X\to R_i}
+ \quad\mathrm{Out\mbox{-}Elim}
+ \label{rule:forbidden-elim}
+\end{equation}
+ここで $R_i$ は方向前層全体を表現すると仮定された内部対象である。外部方向条件の下では、そのような一様な $R_i$ は存在しない。
+
+同様に、方向判断から成分論理の任意の命題を導く規則も持たない。方向証拠は内部命題の証明ではなく、拡大意味論への関係証拠だからである。
+
+この非点化原則は、第II部の定理\ref{thm:syntactic-conservativity}を意味論側から説明する。境界方向前層が非表現可能である場合、方向証拠を一様な内部対象の要素へ変換する意味論的候補そのものが存在しない。ただし、非表現可能性だけで任意の拡張規則の保守性が従うわけではなく、保守性には方向判断から純粋判断への除去規則を置かないという構文上の層分離も必要である。
+
+\section{共観主義論理との接続}
+
+\subsection{共有境界方向}
+
+二つの観点 $\mathcal C_0,\mathcal C_1$ が同じ拡大圏 $\mathcal D$ と境界代表 $\gamma$ を持つとする。
+
+\begin{definition}[共有境界判断]
+$\alpha:j_0X\to\gamma$ と $\beta:j_1Y\to\gamma$ の組を
+\begin{equation}
+ (\alpha,\beta):X\bowtie_\gamma Y
+ \label{eq:shared-boundary}
+\end{equation}
+と書き、$X$ と $Y$ の\textbf{共有境界判断}と呼ぶ。
+\end{definition}
+
+これは拡大圏におけるコスパン
+\[
+ j_0X\xrightarrow{\alpha}\gamma
+ \xleftarrow{\beta}j_1Y
+\]
+である。共観主義論理が共通段階での同時支持を扱うのに対し、共有境界判断は二観点から同じ非降下境界へ向かう方向を扱う。
+
+\begin{proposition}[両側代入]
+$f:X'\to X$ と $g:Y'\to Y$ に対し
+\[
+ (\alpha\circ j_0f,\beta\circ j_1g):
+ X'\bowtie_\gamma Y'
+\]
+である。
+\end{proposition}
+
+共有境界判断は、共観の「同じものを見る」という直観を保ちながら、その同じものを両観点の内部対象として同定しない。この意味でMadhyic logicは共観主義論理の置換ではなく、その境界拡張である。
+
+\subsection{比較余剰から方向への条件}
+
+共観枠の非降下段階 $u$ とMadhyic枠の境界代表 $\gamma$ を接続するには、例えば各観点の方向フィルターと境界方向前層の間の自然な対応が必要である。これは一般には自動的に存在しない。
+
+\begin{conjecture}[共観--Madhyic接続]
+共観枠
+\[
+ (H_0,H_1,K,e_0,e_1)
+\]
+の厳密共観段階 $u\in K$ とMadhyic枠 $\mathfrak M$ に対し、$u$ が定める方向フィルター
+\[
+ \Dir_i(u)=\{a\in H_i\mid u\leq e_i(a)\}
+\]
+を $\partial_\gamma^{(i)}$ の局所可居住性へ送る健全な比較写像を持つ具体例が存在する。
+\end{conjecture}
+
+この予想を証明するまでは、非降下な共観段階と外点方向を同一視しない。
+
+\section{初等的な完全例}
+
+\subsection{有限集合から無限集合への方向}
+
+\begin{example}[有限観点に対する自然数境界]
+包含関手
+\[
+ j:\FinSet\hookrightarrow\Set
+\]
+と境界代表 $\gamma=\mathbb N$ を考える。このとき $\mathbb N$ は有限集合ではないので
+\[
+ \mathbb N\notin\EssIm(j).
+\]
+境界方向前層は
+\begin{equation}
+ \partial_{\mathbb N}(X)
+ =\Hom_{\Set}(X,\mathbb N)
+ \qquad(X\in\FinSet)
+ \label{eq:finset-boundary}
+\end{equation}
+である。
+\end{example}
+
+\begin{theorem}[非表現可能性]
+前層 $\partial_{\mathbb N}:\FinSet^{\mathrm{op}}\to\Set$ は $\FinSet$ で表現可能でない。
+\end{theorem}
+
+\begin{proof}
+表現可能であると仮定し、ある有限集合 $R$ について
+\[
+ \Hom_{\Set}(X,\mathbb N)
+ \cong\Hom_{\FinSet}(X,R)
+\]
+が $X$ に自然であるとする。$X=1$ と置けば
+\[
+ \mathbb N\cong R
+\]
+を集合として得る。しかし $R$ は有限であり $\mathbb N$ は無限なので矛盾する。
+\end{proof}
+
+したがって
+\[
+ \mathfrak M=(\FinSet,\Set,j,\mathbb N)
+\]
+はMadhyic外部方向条件を満たす。有限集合 $X$ と写像 $\alpha:X\to\mathbb N$ は
+\[
+ \alpha:X\rightsquigarrow\dfix
+\]
+という方向判断を与えるが、これらすべての方向を表現する有限集合は存在しない。
+
+この例の重要点は、外部方向が神秘的対象を必要としないことである。$\mathbb N$ は拡大圏 $\Set$ では通常の対象だが、有限集合という観点からは非降下であり、その方向前層は非表現可能である。外部性は絶対的性質ではなく、観点と拡大の組に相対的である。
+
+\subsection{二観点版}
+
+$\mathcal C_0=\FinSet$ とし、$\mathcal C_1$ を有限点付き集合の圏、$j_1$ を基点を忘れて $\Set$ へ送る関手とする。$\gamma=\mathbb N$ を取れば、有限集合 $X$ からの写像と有限点付き集合 $Y$ の台集合からの写像は、同じ無限境界へ向かう共有境界判断を形成する。両観点は異なる内部構造を持つが、境界代表をどちらの有限対象にも回収できない。
+
+\section{層・トポス意味論}
+
+\subsection{局所方向}
+
+$\mathcal D$ をトポス、$j_i:\mathcal C_i\to\mathcal D$ を有限極限を保つ解釈とする。方向の集合を外部Hom集合だけで扱う代わりに、指数対象が存在する場合は
+\[
+ [j_iX,\gamma]:=\gamma^{j_iX}
+\]
+を方向対象として用いることができる。段階 $U$ 上の方向証拠は
+\[
+ U\longrightarrow\gamma^{j_iX}
+\]
+すなわち
+\[
+ U\times j_iX\longrightarrow\gamma
+\]
+である。
+
+\begin{definition}[局所Madhyic判断]
+$\mathcal D=\Sh(\mathcal S,J)$ とする。被覆 $\{U_a\to U\}$ 上で方向証拠
+\[
+ \alpha_a:U_a\times j_iX\to\gamma
+\]
+が存在するとき、Kripke--Joyal型に
+\[
+ U\Vdash X\rightsquigarrow_i\dfix
+\]
+と書く。
+\end{definition}
+
+局所判断は、$\gamma^{j_iX}$ の大域点を要求しない。方向が被覆上でのみ構成できる場合も扱えるため、直観主義的意味論と整合する\cite{FourmanScott1979,Grayson1979,johnstone}。
+
+\subsection{局所可居住性と大域点}
+
+直観主義的には、次を区別しなければならない。
+\begin{enumerate}
+ \item ある被覆上で方向証拠が存在すること。
+ \item 方向対象が正の内容を持つこと。
+ \item 一つの大域方向証拠が存在すること。
+\end{enumerate}
+一般に局所的存在から指定された大域点は従わない。Madhyic logicが必要とするのは第一の段階付き判断であり、境界対象の大域点化ではない。
+
+\section{自己言及とリベンジ問題の射程}
+
+\subsection{型障壁}
+
+$\dfix$ は基底言語の項でも述語でもないため、基底体系の対角線補題へそのまま代入できない。例えば「この文は $\dfix$ に向かう」という文を形成するには、方向判断をコード化して基底言語へ戻す追加の引用・評価機構が必要である。
+
+\begin{proposition}[固定構文内の非形成性]
+基底言語 $\mathcal L_i$ の式形成規則に $\dfix$、$\rightsquigarrow_i$ または方向証拠のコードが含まれないなら、$\mathcal L_i$ の対角化によって $\dfix$ を含む文は生成されない。
+\end{proposition}
+
+\begin{proof}
+対角線補題が生成する固定点は、与えられた言語の式に対する代入によって形成される。言語の記号でない $\dfix$ または方向判断は、その代入結果に出現できない。
+\end{proof}
+
+これはリベンジ問題の一般的解決ではない。方向判断を対象言語へ再導入すれば、拡張言語に対する新しい自己言及問題が生じ得る。本稿が示すのは、内部言語と境界判断を型で分離している限り、元の言語の自己言及が境界記号へ自動的に到達しないという限定的事実だけである。
+
+\subsection{不完全性定理について}
+
+Madhyic logicはGödelの第二不完全性定理の仮定を無効化したり、一貫性を証明したりしない。方向判断を追加しても、基底体系が再帰的に公理化され十分な算術を含むなら、基底体系に関する通常の不完全性現象は残る。構文的保守性はむしろ、方向層が基底体系の証明能力を密かに増強しないことを表す。
+
+\section{哲学的解釈との境界}
+
+\subsection{四句分別}
+
+外部方向を固定された内部対象へ還元しないという構造は、「是」「非」のいずれにも対象を固定しない中観思想と類比的に読むことができる。しかし、古典論理、直観主義論理、共観主義論理、Madhyic logicが四句分別の四項と数学的に同値であるとは本稿から従わない。
+
+\subsection{パスと無限遠点}
+
+高次圏、HoTT、$\infty$-トポスは、方向間の同一視や高次整合性を扱う有力な候補である\cite{HoTT2013,KapulkinLumsdaine2021}。しかし一般のパス空間は標準的な一点コンパクト化を持つとは限らず、その無限遠点を論理体系の外点と同一視するには追加の位相的・意味論的構成が必要である。本稿の $\dfix$ はそのような一点ではなく、非表現可能な方向プロファイルの判断記号である。
+
+\subsection{「向」をプリミティブとする可能性}
+
+射は始域と終域を必要とする。本稿は型の明確性を優先し、方向を拡大圏の射とその前層として形式化した。「端なき向」を射より根源的なプリミティブとして導入する理論は、合成、同一性、同値およびモデルを新たに公理化しなければならず、本稿の範囲外である。
+
+\section{限界と今後の課題}
+
+\subsection{拡大圏はメタ水準に残る}
+
+Madhyic logicはメタ理論を消去しない。$\mathcal C_i,\mathcal D,j_i,\gamma$ と非表現可能性を記述する周囲の数学が必要である。本稿の主張は、外部代表を各基底圏の内部対象として追加せずに、方向判断を体系的に扱えるということである。
+
+\subsection{境界代表の選択依存性}
+
+異なる $\gamma$ は異なる方向プロファイルを与える。観測的境界同値より強い同値概念、境界代表間の普遍性、最小性または終性は未定義である。$\dfix$ を唯一の絶対的外点と呼ぶには、そのような普遍的特徴づけが必要になる。
+
+\subsection{完全性と正規化}
+
+本稿は方向判断の意味論と基本規則を与えたが、独立した証明項計算、カット除去、正規化、完全性は示していない。これらには境界証拠を含む構文圏と標準モデルの構成が必要である。
+
+\subsection{共観およびQRBとの具体的接続}
+
+共観主義論理の方向フィルターからMadhyic境界前層への比較写像、および四重残余束（QRB）が検出する残余から境界方向への写像は未構成である。したがってQRB、forcing、部分演算の未定義性を $\dfix$ と同一視しない。各接続には独立の健全性定理が必要である。
+
+\section{結論}
+
+本稿は、中観主義論理（Madhyic logic）を、外部対象を内部に追加する論理ではなく、非降下な境界代表が誘導する非表現可能な方向を扱う型付き判断体系として定式化した。中心となる意味論は
+\[
+ \boxed{
+ \partial_\gamma^{(i)}(X)
+ =\Hom_{\mathcal D}(j_iX,\gamma)
+ }
+\]
+であり、$\alpha\in\partial_\gamma^{(i)}(X)$ を
+\[
+ \boxed{
+ \alpha:X\rightsquigarrow_i\dfix
+ }
+\]
+と記す。
+
+ここで $\dfix$ は射の余域ではなく、方向証拠を外部指示として読むための判断マーカーである。実際の射は拡大圏 $\mathcal D$ の中で $j_iX\to\gamma$ として型付けされる。$\gamma$ の非降下性と $\partial_\gamma^{(i)}$ の非表現可能性により、方向の族を一つの内部対象へ回収できない。
+
+方向判断は前合成に関して安定であり、境界代表間の射に沿って自然に移送される。一方、方向から内部対象や内部定理を回収する除去規則を持たないため、基底体系に対する構文的保守性が成立する。また
+\[
+ \FinSet\hookrightarrow\Set,
+ \qquad
+ \gamma=\mathbb N
+\]
+は、非降下性と非表現可能性を同時に満たす具体例を与えた。
+
+以上により、「外部を点として所有できなくても、その方向を指示できる」という命題には、限定された厳密な意味を与えられる。ただし外部性は観点と拡大意味論に相対的であり、絶対的外点の存在を証明したわけではない。今後の課題は、共観主義論理の非降下な比較余剰から境界方向前層を生成する具体例、層意味論における局所方向の完全性、および境界代表の普遍的特徴づけを構成することである。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}

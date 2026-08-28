@@ -1,0 +1,823 @@
+% !TEX program = lualatex
+% コンパイル例:
+%   lualatex timed-category.tex
+%   lualatex timed-category.tex
+\documentclass[a4paper,11pt]{ltjsarticle}
+
+\usepackage{amsmath,amssymb,mathtools,amsthm,bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage[unicode,pdfencoding=auto,colorlinks=true,
+  linkcolor=blue!45!black,citecolor=green!35!black,urlcolor=blue!55!black]{hyperref}
+
+\setlength{\textwidth}{155mm}
+\setlength{\textheight}{235mm}
+\setlength{\oddsidemargin}{2mm}
+\setlength{\evensidemargin}{2mm}
+\setlength{\topmargin}{-8mm}
+\setlength{\parindent}{1\zw}
+\setlength{\parskip}{0.25em}
+\allowdisplaybreaks
+
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}[definition]{公理}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{corollary}[definition]{系}
+\theoremstyle{remark}
+\newtheorem{remark}[definition]{注意}
+\newtheorem{conjecture}[definition]{予想}
+\newtheorem{example}[definition]{例}
+
+\newcommand{\C}{\mathcal C}
+\newcommand{\D}{\mathcal D}
+\newcommand{\T}{\mathbb T}
+\newcommand{\N}{\mathbb N}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\End}{\operatorname{End}}
+\newcommand{\Trc}{\mathsf{Tr}}
+\newcommand{\Proc}{\mathsf{Proc}}
+\newcommand{\Stat}{\mathsf{Stat}}
+\newcommand{\Comp}{\mathsf{Comp}}
+\newcommand{\Obs}{\mathsf{Obs}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\colim}{\operatorname*{colim}}
+\newcommand{\liminv}{\operatorname*{lim}}
+\newcommand{\ev}{\operatorname{ev}}
+\newcommand{\dd}{\,\mathrm{d}}
+
+\title{圏論的普遍性の時間論的再構成\\
+\large 保守的零時間化・履歴忘却・計算・凝集的モダリティに関する公理的試論}
+\author{千葉将臣}
+\date{2026-08-22}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、通常の圏論が対象や射の生成履歴を明示しないという事実を、単なる記法上の省略ではなく、時間的過程から履歴非依存な外延的構造への忘却として再解釈する。出発点は、時間フレームの内部構造とフレーム間過程を分離する時空フレーム理論である。しかし本稿の目的は物理理論から圏論を直接導出することではない。順序付き可換モノイドを時間基底とし、各射に持続時間または資源量を割り当てる時間付き圏、射の合成履歴を保持するトレース圏、および履歴を商化する時間零化関手を導入する。ただし外延的数学の圏そのものには新しい対象や真理を付加せず、時間は補助的な生成表示にのみ現れるものとする。
+
+時間的過程の圏 $\C_{\mathrm{tm}}$ と外延的構造の圏 $\C_0$ の間に反射
+\begin{equation*}
+ Q:\C_{\mathrm{tm}}\rightleftarrows\C_0:I,
+ \qquad Q\dashv I
+\end{equation*}
+が存在するとき、$Q$ は生成履歴を忘れて普遍的結果を取り出し、$I$ は数学的対象を時間変化しない過程として埋め込む。さらに時間並進 $\Theta_t$ に対して
+\begin{equation*}
+ Q\Theta_t\cong Q
+\end{equation*}
+を要求する。この条件のもとで時間は履歴表示を変えるが、外延的数学的対象を変えない。本稿ではこの構造を\emph{保守的零時間化}と呼ぶ。「数学は時間 $=0$ である」とは、物理時間が停止しているという意味ではなく、時間並進、再パラメータ化、または構成順序の差が外延的同値として常に零化されるという意味である。随伴は向きを持つため時間反転そのものではないが、その自然な Hom 集合同型は対象の発見順序や構成履歴に依存しない。この履歴不変な普遍性を、数学の特殊な時間性の中核とする。
+
+さらに、極限・余極限を時間極限と同一視せず、時間的図式の制約または生成を履歴非依存な普遍対象へ圧縮する操作として位置付ける。計算論では、構成状態の系列とその外延的意味を分離し、同じ観測結果に異なる内部履歴が対応する非 lumpability を、計算の未来が外延的現在だけには降下しない条件として定式化する。最後に、Homotopy Type Theory、凝集的 Homotopy Type Theory、synthetic $\infty$-category theory、guarded type theory、および condensed mathematics を比較する。これらは一様に物理的時間を導入する体系ではないが、経路、方向付き区間、随伴モダリティ、later モダリティ、局所大域原理を通して、外延的数学を変更せず生成表示だけを時間化するための異なる技術を与える。本稿は完成した基礎論ではなく、圏論的普遍性を「時間的に生成可能だが、外延的成立は常に時間零である構造」として再構成する研究計画である。
+\end{abstract}
+
+\tableofcontents
+
+\section{序論}
+
+圏論は対象そのものよりも対象間の射、変換、合成を中心に据えるため、しばしば「過程の数学」と呼ばれる。しかし通常の圏では、射 $f:A\to B$ がどのような中間状態を経て構成されたか、どれだけの時間または計算資源を要したか、同じ合成射に至る別の履歴が存在したかは記録されない。結合律
+\begin{equation}
+ h\circ(g\circ f)=(h\circ g)\circ f
+ \label{eq:assoc}
+\end{equation}
+は合成の括弧付けを消去し、射の等式は異なる導出系列を一つの外延的結果へ同一視しうる。
+
+この性質を「圏論には時間がない」と要約するだけでは不十分である。圏論は有向射を持ち、図式には順序があり、反復、モナド、余代数、遷移系などの動的構造を扱える。問題は時間の有無ではなく、\emph{どの時間情報が保持され、どの時間情報が普遍性によって忘却されるか}である。
+
+本稿の中心命題は次である。
+\begin{quote}
+通常の数学的対象は時間の外部に存在するのではなく、生成履歴の差を商化し、時間的再パラメータ化に不変な外延的構造として記述される。
+\end{quote}
+この意味での「時間零化」は消滅ではなく忘却である。計算、証明探索、物理的実装は時間を持つが、計算結果、証明された命題、普遍対象は、それらの生成順序とは独立に特徴づけられうる。
+
+本稿はさらに強く、外延的数学そのものを時間変数によって拡張しない。時間は対象の新しい座標ではなく、同じ外延的対象の複数の生成表示を区別する補助変数である。したがって、時間を付与しても静的圏 $\C_0$ の対象、射、普遍性は変化せず、すべての時間並進は時間零化関手の核に留まる。
+
+\subsection{時空フレーム理論からの動機}
+本稿の背景では、一つの時間フレーム内部の確定構造と、フレーム間を接続する確率的・量子的過程を区別する。内部圏には標準的な継続射がなくても、より大きな過程圏には Markov 核、完全正写像、または観測インストゥルメントが存在しうる。この二層性を抽象化すると、静的・外延的記述と、時間的・生成的記述の分離になる。
+
+ただし、非可換時空、DFR 模型、モジュラー流などの物理的構造から、本稿の圏論的公理が論理的に導かれるわけではない。物理理論は、なぜ履歴と現在、内部構造と外部過程を分けるべきかという動機を与える。本稿の時間付き圏は、その動機を数学基礎論と計算論へ移すための独立した抽象模型である。
+
+\subsection{主張の認識論的地位}
+以下を区別する。
+\begin{itemize}
+  \item 圏、随伴、豊穣圏、極限・余極限：既存の圏論。
+  \item Lawvere 距離空間、Markov 圏、計算モナド：既存の応用的枠組み。
+  \item HoTT、凝集的 HoTT、directed type theory、guarded type theory：既存の型理論。
+  \item 外延的数学を変更しない保守的零時間化として、時間付き表示から時間零圏への反射を解釈すること：本稿の提案。
+  \item 物理時間、計算時間、証明時間を単一の時間基底で統合できること：未解決の予想。
+\end{itemize}
+
+\section{通常の圏論が忘れるもの}
+
+\subsection{射と履歴の区別}
+圏 $\C$ の射 $f:A\to B$ は始点と終点、および他の射との合成可能性を持つ。しかし $f$ が原子的操作なのか、長い合成の結果なのかは、圏のデータだけからは判定できない。そこで射そのものと、射を生成する履歴を分離する。
+
+\begin{definition}[有限トレース圏]
+圏 $\C$ の有限トレース圏 $\Trc(\C)$ を次で定義する。対象は $\C$ の対象と同じとし、$A$ から $B$ への射は有限な可合成列
+\begin{equation}
+ \gamma=(A=A_0\xrightarrow{f_1}A_1\xrightarrow{f_2}\cdots
+ \xrightarrow{f_n}A_n=B)
+ \label{eq:trace}
+\end{equation}
+とする。合成は列の連結、恒等射は長さ零の列とする。
+\end{definition}
+
+評価関手
+\begin{equation}
+ \ev:\Trc(\C)\longrightarrow\C,
+ \qquad
+ \ev(\gamma)=f_n\circ\cdots\circ f_1
+ \label{eq:evaluation}
+\end{equation}
+は履歴を合成結果へ送る。異なる $\gamma,\gamma'$ が $\ev(\gamma)=\ev(\gamma')$ を満たすとき、通常の圏 $\C$ は両者の時間的・計算的差異を識別しない。
+
+\begin{definition}[外延的履歴同値]
+同じ始点と終点を持つトレース $\gamma,\gamma'$ に対し、
+\begin{equation}
+ \gamma\sim_{\mathrm{ext}}\gamma'
+ \quad\Longleftrightarrow\quad
+ \ev(\gamma)=\ev(\gamma')
+ \label{eq:extensional-equivalence}
+\end{equation}
+と定める。この同値関係を\emph{外延的履歴同値}と呼ぶ。
+\end{definition}
+
+これはすべての数学的同値を表すものではないが、「同じ結果へ至る異なる履歴」を形式化する最小模型である。
+
+\subsection{自然性と発見順序}
+自然変換や随伴の定義は、対象が歴史的にどの順序で発見されたか、射がどのアルゴリズムで構成されたかを参照しない。自然性は恣意的選択への依存を排し、すべての対象と射に対する一様性を要求する。この一様性は時間反転対称性ではないが、成立の経緯から独立した数学的必然性を表す。
+
+\begin{remark}[存在論ではなく記述形式]
+本稿は、数学的対象が文字どおり物理時間の外部に存在すると主張しない。主張するのは、通常の外延的数学が、構成時間を記述変数として採用せず、履歴に不変な性質を選択しているということである。
+\end{remark}
+
+\section{時間基底と時間付き圏}
+
+\subsection{時間基底}
+時間を実数直線に固定すると、離散計算、因果順序、資源量、確率的待ち時間を同じ枠組みで扱いにくい。そこで抽象的な時間基底を用いる。
+
+\begin{definition}[時間基底]
+時間基底を順序付き可換モノイド
+\begin{equation}
+ \T=(T,\oplus,0,\preceq)
+\end{equation}
+とする。$0$ は零時間、$s\oplus t$ は時間または資源の合成、$\preceq$ は比較可能性を表し、モノイド演算は順序を保存すると仮定する。
+\end{definition}
+
+代表例は $(\N,+,0,\leq)$、$([0,\infty],+,0,\leq)$、または多資源ベクトル $\R_{\geq0}^k$ である。部分順序を用いれば、必ずしも全イベントが一列に並ばない因果的時間も表現できる。
+
+\begin{definition}[時間付き圏]
+時間付き圏とは、圏 $\C$ と各射への長さ写像
+\begin{equation}
+ \ell:\operatorname{Mor}(\C)\longrightarrow T
+\end{equation}
+の組 $(\C,\ell)$ であって、
+\begin{align}
+ \ell(\id_A)&=0,\\
+ \ell(g\circ f)&\preceq \ell(f)\oplus\ell(g)
+ \label{eq:lax-duration}
+\end{align}
+を満たすものとする。常に等号が成り立つ場合を\emph{厳密時間付き圏}と呼ぶ。
+\end{definition}
+
+不等式を許す理由は、合成後の最適化、並列化、キャッシュ、情報消去などにより、全体の実効時間が部分時間の単純和より短くなりうるからである。長さ写像は、モノイド $\T$ を一対象圏と見たときの lax functor と解釈できる。
+
+\subsection{豊穣化による時間}
+別の方法は、Hom 集合ではなく Hom 対象自体を時間量で置き換えることである。Lawvere は $[0,\infty]$ 上の豊穣圏として一般化距離空間を記述した\cite{Lawvere1973,Kelly1982}。三角不等式は合成則になり、非対称距離は到達時間や一方向コストを表しうる。
+
+\begin{remark}[二つの時間化]
+射ごとの持続時間 $\ell(f)$ と、対象間の最小到達時間 $d(A,B)$ は異なる。前者は複数の実行履歴を保持できるが、後者はしばしば最適値だけを残す。本稿では履歴を扱うため前者を基本とし、豊穣化を外延的圧縮の一形式として用いる。
+\end{remark}
+
+\subsection{時間並進作用}
+時間の経過が対象の状態を変える場合、モノイド作用
+\begin{equation}
+ \Theta:T\longrightarrow\End(\C),
+ \qquad
+ \Theta_0\cong\id_\C,
+ \quad
+ \Theta_{s\oplus t}\cong\Theta_s\circ\Theta_t
+ \label{eq:time-action}
+\end{equation}
+を導入する。$\Theta_tA$ は $A$ を時間 $t$ だけ進めた対象である。作用が弱い同型までしか成り立たない場合、擬関手または lax action を用いる。
+
+\begin{definition}[並進不変対象]
+対象 $A$ が並進不変であるとは、すべての $t\in T$ に対して整合的な同型
+\begin{equation}
+ \vartheta_t:A\xrightarrow{\cong}\Theta_tA
+\end{equation}
+が存在することをいう。
+\end{definition}
+
+並進不変性は「何も起こらない」というより、時間を進めても外延的同型類が変化しないことを意味する。
+
+\section{時間零化と反射}
+
+\subsection{履歴忘却関手}
+時間的過程の圏を $\C_{\mathrm{tm}}$、履歴に不変な外延的構造の圏を $\C_0$ とする。本稿の中心構造は次である。
+
+\begin{axiom}[時間零反射]
+関手
+\begin{equation}
+ Q:\C_{\mathrm{tm}}\rightleftarrows\C_0:I
+ \label{eq:reflection}
+\end{equation}
+が存在し、$Q\dashv I$ かつ $I$ は充満忠実である。$Q$ を\emph{時間零化関手}、$I$ を\emph{静的埋込み}と呼ぶ。
+\end{axiom}
+
+随伴は自然同型
+\begin{equation}
+ \Hom_{\C_0}(QX,A)
+ \cong
+ \Hom_{\C_{\mathrm{tm}}}(X,IA)
+ \label{eq:zero-adjunction}
+\end{equation}
+によって特徴づけられる。時間的対象 $X$ から静的対象 $A$ への記述は、$X$ の時間零化 $QX$ から $A$ への写像として一意に因子化される。
+
+\subsection{保守的零時間化}
+時間を付与しながら数学を時間零のまま保つためには、時間的構造を外延的対象の追加属性としてではなく、同じ対象の表示・履歴・実装を区別する補助層として置かなければならない。
+
+\begin{definition}[保守的零時間化]
+圏 $\C_0$ の\emph{保守的零時間化}とは、時間的表示圏 $\C_{\mathrm{tm}}$、反射 $Q\dashv I$、および時間並進作用 $\Theta_t$ の組であって、次を満たすものをいう。
+\begin{enumerate}
+  \item $I$ は充満忠実であり、余単位は自然同型
+  \begin{equation}
+   QI\cong\id_{\C_0}
+   \label{eq:conservative-counit}
+  \end{equation}
+  を与える。
+  \item すべての $t\in T$ に対して整合的な自然同型
+  \begin{equation}
+   \zeta_t:Q\Theta_t\xRightarrow{\cong}Q
+   \label{eq:zero-time-invariance}
+  \end{equation}
+  が存在する。
+  \item 数学的対象と数学的主張の外延的意味は $\C_0$ で評価され、$\C_{\mathrm{tm}}$ は $Q$ を通じて新しい外延的同型類を付加しない。
+\end{enumerate}
+\end{definition}
+
+式\eqref{eq:zero-time-invariance}は、時間発展が存在しないことではなく、時間発展のすべてが外延化によって同じ対象へ戻ることを表す。時間は $\C_{\mathrm{tm}}$ では非自明でも、$\C_0$ では常に零である。
+
+\begin{definition}[時間履歴ファイバー]
+$A\in\C_0$ に対し、
+\begin{equation}
+ \mathsf{Hist}(A)
+ :=\{X\in\C_{\mathrm{tm}}\mid QX\cong A\}
+ \label{eq:history-fiber}
+\end{equation}
+を $A$ の\emph{時間履歴ファイバー}と呼ぶ。
+\end{definition}
+
+式\eqref{eq:zero-time-invariance}により、$X\in\mathsf{Hist}(A)$ なら $\Theta_tX\in\mathsf{Hist}(A)$ である。したがって時間並進は数学的対象を別の対象へ動かすのではなく、同一の外延的対象の履歴ファイバー内部を動く。
+
+\begin{proposition}[外延的無拡張性]
+保守的零時間化のもとで、任意の $A\in\C_0$ と $t\in T$ に対して
+\begin{equation}
+ QI(A)\cong A,
+ \qquad
+ Q\Theta_tI(A)\cong A
+ \label{eq:no-extensional-extension}
+\end{equation}
+が成り立つ。したがって時間並進は $\C_0$ に新しい対象を生成しない。
+\end{proposition}
+
+\begin{proof}
+第一の同型は式\eqref{eq:conservative-counit}である。第二の同型は式\eqref{eq:zero-time-invariance}と第一の同型を合成すればよい。
+\end{proof}
+
+\begin{remark}[「一切拡張しない」の意味]
+時間履歴を記述する以上、補助的な圏、トレース、添字、長さ写像は導入される。したがって形式言語まで文字どおり無変更という意味での無拡張ではない。本稿が要求するのは、\emph{外延的数学 $\C_0$ に関する保守性}である。すなわち時間的表示を追加しても、$Q$ を通した数学的対象と静的主張は増減しない。
+\end{remark}
+
+\begin{definition}[時間零対象]
+$X\in\C_{\mathrm{tm}}$ に対する随伴の単位を
+\begin{equation}
+ \eta_X:X\longrightarrow IQX
+\end{equation}
+とする。$\eta_X$ が同型であるとき、$X$ を\emph{時間零対象}または\emph{履歴中立対象}と呼ぶ。
+\end{definition}
+
+\begin{proposition}[時間零化の普遍性]
+任意の $X\in\C_{\mathrm{tm}}$ と時間零対象 $IA$ に対し、射 $f:X\to IA$ は一意な射 $\bar f:QX\to A$ を用いて
+\begin{equation}
+ f=I(\bar f)\circ\eta_X
+ \end{equation}
+と表される。
+\end{proposition}
+
+\begin{proof}
+随伴同型\eqref{eq:zero-adjunction}の定義そのものである。
+\end{proof}
+
+この命題は、時間零化が情報を無差別に捨てる操作ではなく、静的対象から観測できる情報をすべて保つ最良近似であることを示す。
+
+\subsection{数学は時間 $=0$ か}
+本稿では
+\begin{equation}
+ \text{数学的対象}=\text{時間的生成履歴の反射像}
+ \label{eq:mathematics-zero}
+\end{equation}
+という作業仮説を採用する。これはすべての数学が単一の圏 $\C_0$ に還元されるという意味ではない。理論ごとに異なる過程圏、異なる観測可能性、異なる反射がありうる。
+
+また「時間 $=0$」は長さ写像が数値ゼロになることだけを意味しない。より本質的なのは、次である。
+\begin{enumerate}
+  \item 時間並進によって外延的同型類が変わらない。
+  \item 再パラメータ化された履歴が同一視される。
+  \item 対象の普遍的特徴づけが構成順序に依存しない。
+\end{enumerate}
+
+\begin{conjecture}[二つの時間零性の一致]
+時間並進作用 $\Theta$ と反射 $Q\dashv I$ が適切に両立し、$Q(\Theta_tX)\cong QX$ が自然に成り立つなら、反射的な時間零対象と並進不変対象は適切な完備化のもとで一致する。
+\end{conjecture}
+
+\section{随伴の時間性}
+
+\subsection{随伴は無方向ではない}
+随伴 $F\dashv G$ には左と右の区別があり、単位と余単位
+\begin{equation}
+ \eta:\id\Rightarrow GF,
+ \qquad
+ \varepsilon:FG\Rightarrow\id
+\end{equation}
+が存在する。したがって随伴を時間反転対称性や可逆性と同一視してはならない。随伴同値でない限り、情報量や構造量は左右で異なりうる。
+
+随伴の時間論的特徴は、向きがないことではなく、Hom 集合の対応が自然であり、特定の構成履歴を参照しないことにある。
+
+\begin{definition}[履歴中立な普遍対応]
+時間的圏の間の対応が履歴中立であるとは、トレースの再分割、恒等的待機の挿入、または許容された再パラメータ化によって代表元を変えても、その普遍射の外延的同値類が変化しないことをいう。
+\end{definition}
+
+この定義のもとで、随伴は「前と後を交換する構造」ではなく、「前後の構成履歴を越えて成立する最適な翻訳」と解釈される。
+
+\subsection{時間と空間の随伴}
+空間的・静的記述の圏を $\C_{\mathrm{sp}}$、時間的・過程的記述の圏を $\C_{\mathrm{tm}}$ とし、
+\begin{equation}
+ F:\C_{\mathrm{tm}}\to\C_{\mathrm{sp}},
+ \qquad
+ G:\C_{\mathrm{sp}}\to\C_{\mathrm{tm}}
+\end{equation}
+を考える。$F$ は履歴を空間配置、結果、または不変量へ変換し、$G$ は静的構造から許容過程を生成する。理想化された領域で
+\begin{equation}
+ \Hom_{\C_{\mathrm{sp}}}(FA,B)
+ \cong
+ \Hom_{\C_{\mathrm{tm}}}(A,GB)
+ \label{eq:space-time-adjunction}
+\end{equation}
+が成り立つなら、空間的制約を満たすことと、対応する時間過程を与えることが同じ普遍問題の二つの表示になる。
+
+現実の観測、確率分枝、情報消去を含む場合、集合の同型は強すぎる可能性がある。順序豊穣圏、Markov 圏、profunctor、lax 随伴へ弱める必要がある。
+
+\begin{conjecture}[観測者相対的時間空間随伴]
+観測者境界 $\mathfrak O$ ごとに、時間過程と空間的現在の間に lax な対応
+\begin{equation}
+ F_{\mathfrak O}\dashv_{\mathrm{lax}}G_{\mathfrak O}
+\end{equation}
+が存在し、その laxity が忘却された履歴、非 lumpability、または予測誤差を測る。
+\end{conjecture}
+
+\section{極限・余極限の時間論的解釈}
+
+\subsection{圏論的極限と時間極限の区別}
+圏論的な極限 $\liminv D$ は、時間変数を無限大へ送る解析的極限とは異なる。極限は図式 $D:J\to\C$ へのすべての整合的円錐を代表する普遍対象であり、余極限は図式から出るすべての余円錐を代表する普遍対象である\cite{MacLane1998}。
+
+それでも、時間的図式
+\begin{equation}
+ X_0\xrightarrow{u_0}X_1\xrightarrow{u_1}X_2\longrightarrow\cdots
+ \label{eq:sequential-diagram}
+\end{equation}
+の余極限
+\begin{equation}
+ X_\infty:=\colim_{n\in\N}X_n
+ \label{eq:temporal-colimit}
+\end{equation}
+は、各段階の生成履歴を一つの普遍的受け皿へまとめる。この意味で余極限は時間の終点ではなく、全段階と両立する外延的完成である。
+
+\begin{proposition}[再パラメータ化への不変性]
+$u:J'\to J$ が終対象的関手であり、必要な余極限が存在するなら、任意の図式 $D:J\to\C$ に対して標準射
+\begin{equation}
+ \colim_{J'}D\circ u\longrightarrow\colim_JD
+\end{equation}
+は同型である。
+\end{proposition}
+
+この標準的な共終性定理は、同じ生成過程を十分に細かい別の添字系列で表しても、普遍的完成が変わらない条件を与える。これは時間再パラメータ化不変性の一つの圏論的模型である。
+
+\subsection{反射と普遍構成の保存}
+$Q\dashv I$ なら、左随伴 $Q$ は存在する余極限を保存し、右随伴 $I$ は存在する極限を保存する。
+
+\begin{corollary}[生成と制約の分業]
+時間零化 $Q$ は時間的生成の余極限を外延的生成へ移し、静的埋込み $I$ は外延的制約の極限を時間的圏へ保つ。すなわち、適切な図式 $D$ に対して
+\begin{align}
+ Q\left(\colim D\right)&\cong\colim(QD),\\
+ I\left(\liminv D\right)&\cong\liminv(ID)
+\end{align}
+が成り立つ。
+\end{corollary}
+
+この非対称性は、時間的生成と静的整合性が同じ役割を持たないことを示す。随伴は時間を消すだけでなく、どの普遍構成がどちら側で安定するかを規定する。
+
+\section{計算・証明・外延的意味}
+
+\subsection{構成状態の圏}
+計算機 $M$ の構成状態を対象、一ステップ遷移を生成射とする自由圏を $\Comp(M)$ とする。各生成射の長さを $1$ とすれば、$\Comp(M)$ は $\N$ 時間付き圏になる。有限計算
+\begin{equation}
+ c_0\to c_1\to\cdots\to c_n
+\end{equation}
+の長さは $n$ である。
+
+出力または意味を与える関手
+\begin{equation}
+ Q_M:\Comp(M)\longrightarrow\Stat(M)
+ \label{eq:computation-semantics}
+\end{equation}
+は、レジスタ配置、評価順序、キャッシュ、証明探索の分枝などを忘れ、外延的結果を残す。計算効果をモナドで表す方法は Moggi の計算意味論と整合する\cite{Moggi1991}。
+
+\begin{definition}[計算的時間零]
+結果 $v\in\Stat(M)$ を、停止状態そのものではなく、すべての許容実装・評価戦略から観測される外延的同値類として定義するとき、$v$ を計算的時間零対象と呼ぶ。
+\end{definition}
+
+ここで停止と時間零は異なる。停止状態にも到達時刻、消費エネルギー、残留メモリがありうる。時間零化は、それらを意味論から忘れる操作である。
+
+\subsection{非 lumpability と計算の未来}
+完全な内部構成の空間を $\Omega$、観測可能な表示または出力の空間を $X$ とし、観測写像を
+\begin{equation}
+ \pi:\Omega\to X
+\end{equation}
+とする。次状態の遷移核を $K$ としたとき、
+\begin{equation}
+ \pi(c)=\pi(c')
+ \quad\text{かつ}\quad
+ K(c,\cdot)\neq K(c',\cdot)
+ \label{eq:computational-nonlump}
+\end{equation}
+なら、同じ外延的現在から異なる計算的未来が生じる。
+
+\begin{proposition}[外延的意味への力学の降下]
+観測結果だけに依存する遷移核 $\bar K$ が存在して
+\begin{equation}
+ K(c,B)=\bar K(\pi(c),B)
+\end{equation}
+がすべての $c,B$ について成り立つための必要十分条件は、$K$ が $\pi$ の各ファイバー上で一定になることである。
+\end{proposition}
+
+これは lumpability の標準的因子化条件である。破れがある場合、数学的に同じ出力を持つ二状態が、計算論的には同じ現在ではない。
+
+\subsection{真理、証明、証明探索}
+命題の真理値、証明項、証明探索過程は区別されるべきである。
+\begin{itemize}
+  \item 真理または型の居住可能性：外延的・時間零的側面。
+  \item 証明項：構造を持つ数学的対象。
+  \item 正規化、型検査、探索：時間・資源を持つ計算過程。
+\end{itemize}
+同じ定理に異なる証明が存在し、同じ証明項に異なる評価戦略が存在しうる。したがって時間零化は、証明をすべて真理値へ潰す一段階だけではなく、どの履歴情報を保持するかに応じた多層の反射として構成されるべきである。
+
+\section{確率的・量子的過程}
+
+\subsection{Markov 圏と観測商}
+決定論的射だけでは、分枝、測定結果、ランダム化された計算を扱えない。Markov 圏は確率核、条件付き独立性、十分統計量などを合成的に扱う枠組みを与える\cite{Fritz2020}。時間的圏を Markov 圏として構成すると、履歴忘却 $Q$ は一般には通常の関手より弱い確率的対応になる可能性がある。
+
+観測者が部分情報しか保持しない場合、時間零化は単なる商ではなく条件付き期待値または十分統計量に近い。非 lumpability は、観測商が力学について十分でないことを意味する。
+
+\subsection{局所的不定性と統計的安定性}
+個々の次状態が観測現在から同定できなくても、経路測度がシフト不変かつエルゴード的なら、可積分観測量の時間平均は状態平均へ収束しうる。したがって
+\begin{equation}
+ \text{局所的非同定可能性}
+ \quad+\quad
+ \text{長期的エルゴード性}
+ \quad\Longrightarrow\quad
+ \text{巨視的統計安定性}
+\end{equation}
+という構造が可能である。ただし、エルゴード性は非 lumpability や innovation から自動的には従わない。
+
+\subsection{量子過程}
+量子系では、完全正写像、量子インストゥルメント、観測可能部分代数への条件付き期待値が時間的射と忘却を担う。モジュラー自己同型群は状態依存の内部時間を与えうるが、それ自体は可逆群であり、時間零化や不可逆な観測更新とは区別される\cite{ConnesRovelli1994}。
+
+\section{凝集数学・HoTT・時間モダリティ}
+
+\subsection{用語上の区別}
+日本語の「凝集数学」は、ここでは cohesive mathematics または cohesive homotopy type theory を指すものとする。これは Clausen--Scholze の condensed mathematics（凝縮数学）とは別の体系である。両者はいずれも局所的データと大域的構造の関係を扱うが、用いる圏、目的、モダリティは異なる。
+
+また、以下の諸体系を「物理時間を導入しようとした理論」と一括することは正確でない。本稿では、それぞれが通常の外延的数学に欠けている経路、方向、段階、凝集性を内部化する点を、時間論的再構成の先行技術として読む。
+
+\subsection{Homotopy Type Theory}
+HoTT では恒等型を経路空間として解釈し、高次の恒等証明をホモトピーとして組織する。univalence は同値な構造を恒等視する原理を与える\cite{HoTT2013}。これは「同じ対象へ至る変形履歴」を豊かに保持するため、集合論的な外延性よりも過程的に見える。
+
+しかし HoTT の経路は通常可逆であり、$\infty$-groupoid 的である。したがって、経路パラメータを物理的時間、不可逆な計算順序、熱力学的時間の矢と同一視することはできない。HoTT が提供するのは時間そのものというより、同一性が点ではなく高次経路構造を持ちうるという基礎である。
+
+本稿の観点では、univalence は「外延的に同値な構造を、履歴に依存せず同じものとして扱う」時間零化の強い原理と解釈できる。ただし、これは本稿独自の解釈であり、univalence の標準的意味から物理時間が導かれるわけではない。
+
+\subsection{凝集的 HoTT}
+凝集的 HoTT は、shape、flat、sharp に対応する随伴モダリティ
+\begin{equation}
+ \int\dashv\flat\dashv\sharp
+ \label{eq:cohesive-modalities}
+\end{equation}
+を HoTT に加え、ホモトピー的同一性と位相的・滑らかな凝集構造を分離する\cite{SchreiberShulman2014,Shulman2015}。実凝集性では実数からの連続経路によって shape を検出する。
+
+この随伴列は、本稿の時間零反射に直接一致するわけではない。しかし、同じ対象を
+\begin{equation}
+ \text{shape},\qquad
+ \text{discrete},\qquad
+ \text{codiscrete}
+\end{equation}
+という異なるモードで観測し、その間を随伴で結ぶ構造は、時間的履歴、外延的結果、完全に可能な関係をモダリティとして分離するための重要な模型になる。
+
+\begin{conjecture}[時間凝集性]
+適切な時間付き $\infty$-トポスにおいて、履歴の shape、時間零化、静的埋込み、全履歴化を結ぶ随伴列
+\begin{equation}
+ \mathsf{HistShape}\dashv Q\dashv I\dashv\mathsf{CoHist}
+ \end{equation}
+が存在し、凝集的モダリティの時間版を与える。
+\end{conjecture}
+
+\subsection{方向付き HoTT と synthetic $\infty$-category theory}
+通常の HoTT の可逆経路に対し、Riehl--Shulman の synthetic $\infty$-category theory は方向付き区間型を公理化し、Segal 型と Rezk 型によって非可逆な射を内部化する\cite{RiehlShulman2017}。これは本稿の時間性に近いが、方向付き射はなお物理的持続時間を自動的には持たない。
+
+したがって、方向付き区間に長さ、因果順序、観測者依存の粗視化を付加することが、本稿の時間付き圏と directed type theory を接続する課題になる。
+
+\subsection{guarded type theory}
+guarded dependent type theory は later モダリティ $\triangleright$ と clock quantifier を導入し、再帰呼出しが少なくとも一段階後に利用されることを型で保証する\cite{BizjakEtAl2016}。これは本節で扱う理論のうち、離散的な計算ステップを最も明示的に内部化する。
+
+later モダリティは
+\begin{equation}
+ A\longmapsto\triangleright A
+\end{equation}
+として「$A$ が次段階で利用可能である」ことを表す。本稿の $\Theta_1$ と形式的に近いが、guarded recursion の目的は生産性と余帰納的定義の健全性であり、物理時間全般を記述するものではない。
+
+重要な接続課題は、guarded な内部時計と観測者の操作的時計を区別しつつ、時間零化 $Q$ が clock irrelevance または clock quantification とどのように関係するかを調べることである。
+
+\subsection{condensed mathematics}
+condensed mathematics は、位相空間や位相群を profinite 集合上の層として置き換え、関数解析・代数幾何に適した圏論的基盤を構築する\cite{Scholze2026}。これは時間理論ではなく、位相的対象をより良いアーベル圏的・層論的環境へ移す理論である。
+
+本稿との関連は限定的だが示唆的である。第一に、対象を点集合そのものではなく、すべてのテスト対象からの応答として記述する。第二に、局所データの層条件によって大域的一貫性を課す。第三に、完備化や位相的病理を別の圏へ移すことで外延的計算を改善する。これらは時間履歴をテスト過程から再構成する将来の「condensed process」の発想を促すが、condensed mathematics 自体を時間性の導入と呼ぶべきではない。
+
+\subsection{比較表}
+\begin{longtable}{>{\raggedright\arraybackslash}p{31mm}>{\raggedright\arraybackslash}p{45mm}>{\raggedright\arraybackslash}p{65mm}}
+\toprule
+体系 & 内部化する構造 & 本稿から見た時間論的地位 \\
+\midrule
+通常の圏論 & 射・合成・普遍性 & 履歴を外延的射へ圧縮する基準層 \\
+HoTT & 可逆な高次経路・univalence & 同一性の履歴を保持するが、方向的時間ではない \\
+凝集的 HoTT & shape/flat/sharp の随伴モダリティ & 時間モードを分離する随伴列の模型 \\
+synthetic $\infty$-category theory & 方向付き区間、Segal/Rezk 型 & 非可逆な方向を内部化するが、持続時間は別途必要 \\
+guarded type theory & later モダリティ、clock & 離散的計算段階を最も直接に内部化 \\
+condensed mathematics & profinite テスト対象上の層 & 時間理論ではないが、テストと局所大域原理を提供 \\
+本稿の時間付き圏 & 履歴、持続時間、観測商、時間零反射 & 外延的数学を変えず、表示層だけを時間化する提案 \\
+\bottomrule
+\end{longtable}
+
+\section{例}
+
+\subsection{離散計算の時間零化}
+自然数式の評価器を考える。構文木の簡約を一ステップ射とし、異なる評価順序を異なるトレースとして保持する。加算の結合律によって
+\begin{equation}
+ ((a+b)+c)\longrightarrow a+(b+c)
+\end{equation}
+を許容し、すべての正常終了トレースを同じ数値へ送る $Q$ を定める。このとき数値は時間零対象だが、評価器の実行時間は時間付き圏に残る。
+
+短絡評価、副作用、例外がある場合、同じ構文の異なる評価順序は同じ結果を与えない可能性がある。ここでは単純な時間零化は定義できず、効果モナドまたは観測者を含む $Q$ が必要になる。
+
+\subsection{Lawvere 到達時間}
+状態集合 $X$ に対し、$d(x,y)$ を $x$ から $y$ へ到達する最小時間とする。すると
+\begin{equation}
+ d(x,z)\leq d(x,y)+d(y,z)
+\end{equation}
+が成立し、$X$ は Lawvere 距離空間になる。一般に $d(x,y)\neq d(y,x)$ でよく、時間の矢や不可逆障壁を表せる。
+
+しかし最小時間 $d$ は、同じ最小値を与える複数の経路や、最適でないが物理的に重要な経路を忘れる。したがって Lawvere 距離は時間付きトレース圏の外延的影であり、完全な履歴模型ではない。
+
+\subsection{観測者依存の静的対象}
+完全状態 $c$ から観測記録 $x=\pi_{\mathfrak O}(c)$ を得る観測者 $\mathfrak O$ を考える。観測者ごとに商が異なれば、時間零化も
+\begin{equation}
+ Q_{\mathfrak O}:\C_{\mathrm{tm}}\to\C_{0,\mathfrak O}
+\end{equation}
+と相対化される。一人の観測者には静的に見える対象が、より精密な観測者には内部時間を持つ場合がある。時間零性は絶対的性質ではなく、観測代数に相対的な反射である可能性がある。
+
+\section{公理系の要約}
+
+本稿の最小公理系をまとめる。
+
+\begin{axiom}[時間基底]
+順序付き可換モノイド $\T$ が存在する。
+\end{axiom}
+
+\begin{axiom}[時間付き過程]
+過程圏 $\C_{\mathrm{tm}}$ の射には、合成に対して劣加法的な長さ $\ell$ が与えられる。
+\end{axiom}
+
+\begin{axiom}[履歴保持]
+射の外延的合成とは別に、有限または無限の生成トレースを保持する圏または高次圏が存在する。
+\end{axiom}
+
+\begin{axiom}[時間零反射]
+静的圏 $\C_0$ と反射 $Q\dashv I$ が存在し、$Q$ は静的対象から観測可能な情報について普遍的である。
+\end{axiom}
+
+\begin{axiom}[外延的保守性]
+時間並進 $\Theta_t$ に対して $QI\cong\id_{\C_0}$ および $Q\Theta_t\cong Q$ が自然に成り立つ。したがって時間的表示は、$\C_0$ の対象、射、静的真理の新しい外延的同型類を生成しない。
+\end{axiom}
+
+\begin{axiom}[観測者相対性]
+必要に応じて $Q$ は観測者境界、利用可能なテスト対象、または意味論に依存する。
+\end{axiom}
+
+\begin{axiom}[非退化性]
+$Q$ が恒等関手でも零関手でもない模型が存在し、時間的差異の一部を忘れ、一部を保持する。
+\end{axiom}
+
+\section{条件付き帰結}
+
+\begin{proposition}[数学的対象の履歴中立性]
+時間零反射のもとで、静的対象へのすべての射は $Q$ を通じて一意に因子化する。したがって静的対象から見て識別不能な履歴差は、数学的意味に影響しない。
+\end{proposition}
+
+\begin{proposition}[零時間の保存]
+外延的保守性のもとで、任意の時間的表示 $X$ と時間 $t$ に対して $Q\Theta_tX\cong QX$ が成り立つ。したがって時間は履歴ファイバー内の差としてのみ存在し、外延的数学では常に零化される。
+\end{proposition}
+
+\begin{proposition}[普遍性の時間非依存性]
+普遍対象が存在し、図式の再パラメータ化が共終的であるなら、その普遍対象は選ばれた時間添字の細分化に依存しない。
+\end{proposition}
+
+\begin{proposition}[計算と意味の分離]
+計算意味関手 $Q_M$ が時間零反射をなすなら、外延的意味への写像は計算履歴を通じて普遍的に因子化する。一方、非 lumpability がある場合、外延的意味だけから次の計算状態を閉じて定義することはできない。
+\end{proposition}
+
+\begin{proposition}[随伴の非可逆性]
+時間零化が反射であって圏同値でないなら、$Q\dashv I$ は履歴情報を完全には回復しない。したがって随伴の存在だけから時間反転可能性は従わない。
+\end{proposition}
+
+\begin{proposition}[型理論的時間化の分業]
+HoTT は高次経路、凝集的 HoTT はモダリティ間随伴、directed type theory は方向、guarded type theory は段階を内部化する。これらを時間付き圏へ統合するには、持続時間、観測商、不可逆性を結ぶ追加意味論が必要である。
+\end{proposition}
+
+\section{本稿が主張しないこと}
+
+本稿の射程を明確にする。
+\begin{enumerate}
+  \item 圏論が隠れた物理時間を必ず持つとは主張しない。
+  \item すべての随伴が時間と空間の対応を表すとは主張しない。
+  \item 圏論的極限を物理的未来または解析的時間極限と同一視しない。
+  \item HoTT の経路を粒子の世界線や意識的時間と同一視しない。
+  \item 凝集的 HoTT や condensed mathematics が本来時間理論として提案されたとは主張しない。
+  \item 物理時間、計算時間、証明時間が単一のスカラー時間で測れるとは仮定しない。
+  \item 履歴忘却が常に望ましい、または情報損失が時間の矢の唯一の起源だとは主張しない。
+  \item 「外延的数学を拡張しない」ことを、補助的な表示圏や履歴データさえ導入しないこととは解釈しない。
+\end{enumerate}
+
+\section{研究課題}
+
+\subsection{時間付き高次圏}
+トレース間の書換え、再パラメータ化、並列計算の交換を二次射として保持するには、通常の圏より bicategory、double category、$\infty$-category が自然である。時間零化は二次射を単に潰すのではなく、どの変形を同値とするかを指定する局所化として定義されるべきである。
+
+\subsection{多時間と因果性}
+物理時間、論理ステップ、通信遅延、エネルギーを一つの数へ潰すと重要な構造が失われる。量子化モノイド、部分順序、因果圏、ベクトル値時間を用い、比較不能な過程を扱う必要がある。
+
+\subsection{時間凝集的型理論}
+凝集的モダリティと later モダリティを同一の multimodal type theory 内で扱い、
+\begin{equation}
+ \text{shape},\quad
+ \text{static},\quad
+ \text{later},\quad
+ \text{observable}
+\end{equation}
+を区別する型システムが望まれる。その意味論は時間付き $\infty$-トポスまたは豊穣 Markov $\infty$-category になる可能性がある。
+
+\subsection{反証可能性}
+提案を比喩から理論へ進めるには、少なくとも次を具体模型で計算する必要がある。
+\begin{itemize}
+  \item 反射 $Q\dashv I$ の存在条件と非自明性。
+  \item $QI\cong\id$ と $Q\Theta_t\cong Q$ による外延的保守性、および静的主張に新定理を加えないことの意味論的証明。
+  \item $Q$ が忘れる履歴情報のエントロピーまたは計算量。
+  \item 時間並進不変性と反射的時間零性の一致条件。
+  \item 観測商に対する lumpability の破れ。
+  \item 余極限の再パラメータ化不変性が破れる例。
+  \item guarded clock と物理時計の比較写像。
+  \item HoTT 的経路、方向付き射、確率的過程を同時に持つモデル。
+\end{itemize}
+
+\section{結論}
+
+本稿は、圏論的普遍性を時間の欠如ではなく、時間的生成履歴から外延的構造への普遍的忘却として再構成した。時間付き圏は射の持続時間または資源量を保持し、トレース圏は同じ合成結果へ至る異なる履歴を区別する。しかし時間は数学的対象の新しい座標ではない。保守的零時間化は
+\begin{equation*}
+ Q:\C_{\mathrm{tm}}\rightleftarrows\C_0:I,
+ \qquad
+ Q\dashv I,
+ \qquad
+ QI\cong\id_{\C_0},
+ \qquad
+ Q\Theta_t\cong Q
+\end{equation*}
+によって、時間的対象から静的対象へのすべての記述を普遍的に因子化する。この意味で数学的対象は、時間の外にあるものでも、時間変数によって拡張されたものでもなく、生成時間の差が常に零化されるものとして特徴づけられる。時間並進は同一の外延的対象に属する履歴ファイバー内部だけを動く。
+
+随伴は向きを持つため、時間反転や可逆性ではない。その時間論的意義は、自然な対応が発見順序、証明探索、計算履歴に依存しない点にある。極限・余極限も時間の終端ではなく、時間的図式の制約または生成を普遍対象へ圧縮する。計算論では、構成状態の系列と外延的意味を分離し、非 lumpability によって、同じ外延的現在が異なる計算的未来を持つ条件を表した。
+
+HoTT、凝集的 HoTT、synthetic $\infty$-category theory、guarded type theory、condensed mathematics は、それぞれ高次経路、凝集的随伴、方向、段階、局所大域原理を提供する。これらは一様な時間理論ではないが、外延的数学の同型類を増やさず、生成表示に履歴とモードを与えるための構成要素として再解釈できる。
+
+提案する統一像は
+\begin{equation*}
+ \boxed{
+ \begin{gathered}
+ \text{時間的生成・計算・観測}
+ \xrightarrow{\ Q\ }
+ \text{履歴に不変な数学的対象},\\
+ Q\Theta_t\cong Q
+ \quad\Longrightarrow\quad
+ \text{時間は外延的には常に零},\\
+ \text{静的普遍性}
+ \xrightarrow{\ I\ }
+ \text{時間変化しない過程としての埋込み},\\
+ \text{随伴・極限・モダリティ}
+ \Longrightarrow
+ \text{時間的生成と時間零的成立の翻訳}
+ \end{gathered}}
+\end{equation*}
+である。今後の課題は、この図式を時間付き高次圏、型理論、確率過程、物理時計の具体模型において実現し、どの履歴が数学的に消去可能で、どの履歴が未来の力学に不可欠であるかを判定することである。
+
+\begin{thebibliography}{99}
+
+\bibitem{MacLane1998}
+S.~Mac Lane,
+\textit{Categories for the Working Mathematician}, 2nd ed.,
+Springer, 1998.
+
+\bibitem{Kelly1982}
+G.~M.~Kelly,
+\textit{Basic Concepts of Enriched Category Theory},
+London Mathematical Society Lecture Note Series 64,
+Cambridge University Press, 1982;
+reprinted in \textit{Reprints in Theory and Applications of Categories}
+\textbf{10} (2005), 1--136.
+\href{https://www.tac.mta.ca/tac/reprints/articles/10/tr10abs.html}{reprint}.
+
+\bibitem{Lawvere1973}
+F.~W.~Lawvere,
+``Metric Spaces, Generalized Logic, and Closed Categories,''
+\textit{Rendiconti del Seminario Matematico e Fisico di Milano}
+\textbf{43} (1973), 135--166;
+reprinted in \textit{Reprints in Theory and Applications of Categories}
+\textbf{1} (2002), 1--37.
+\href{https://www.tac.mta.ca/tac/reprints/articles/1/tr1abs.html}{reprint}.
+
+\bibitem{Moggi1991}
+E.~Moggi,
+``Notions of Computation and Monads,''
+\textit{Information and Computation} \textbf{93} (1991), 55--92.
+\href{https://doi.org/10.1016/0890-5401(91)90052-4}{doi:10.1016/0890-5401(91)90052-4}.
+
+\bibitem{Fritz2020}
+T.~Fritz,
+``A Synthetic Approach to Markov Kernels, Conditional Independence and Theorems on Sufficient Statistics,''
+\textit{Advances in Mathematics} \textbf{370} (2020), 107239.
+\href{https://doi.org/10.1016/j.aim.2020.107239}{doi:10.1016/j.aim.2020.107239}.
+
+\bibitem{HoTT2013}
+The Univalent Foundations Program,
+\textit{Homotopy Type Theory: Univalent Foundations of Mathematics},
+Institute for Advanced Study, 2013.
+\href{https://homotopytypetheory.org/book/}{official edition}.
+
+\bibitem{SchreiberShulman2014}
+U.~Schreiber and M.~Shulman,
+``Quantum Gauge Field Theory in Cohesive Homotopy Type Theory,''
+2014.
+\href{https://arxiv.org/abs/1408.0054}{arXiv:1408.0054}.
+
+\bibitem{Shulman2015}
+M.~Shulman,
+``Brouwer's Fixed-Point Theorem in Real-Cohesive Homotopy Type Theory,''
+2015.
+\href{https://arxiv.org/abs/1509.07584}{arXiv:1509.07584}.
+
+\bibitem{RiehlShulman2017}
+E.~Riehl and M.~Shulman,
+``A Type Theory for Synthetic $\infty$-Categories,''
+\textit{Higher Structures} \textbf{1} (2017), 147--224.
+\href{https://arxiv.org/abs/1705.07442}{arXiv:1705.07442}.
+
+\bibitem{BizjakEtAl2016}
+A.~Bizjak, H.~B.~Grathwohl, R.~Clouston, R.~E.~M\o gelberg, and L.~Birkedal,
+``Guarded Dependent Type Theory with Coinductive Types,''
+2016.
+\href{https://arxiv.org/abs/1601.01586}{arXiv:1601.01586}.
+
+\bibitem{Scholze2026}
+P.~Scholze,
+\textit{Lectures on Condensed Mathematics},
+joint work with D.~Clausen, 2026.
+\href{https://arxiv.org/abs/2605.03658}{arXiv:2605.03658}.
+
+\bibitem{ConnesRovelli1994}
+A.~Connes and C.~Rovelli,
+``Von Neumann Algebra Automorphisms and Time--Thermodynamics Relation in General Covariant Quantum Theories,''
+\textit{Classical and Quantum Gravity} \textbf{11} (1994), 2899--2918.
+\href{https://doi.org/10.1088/0264-9381/11/12/007}{doi:10.1088/0264-9381/11/12/007}.
+
+\end{thebibliography}
+
+\end{document}

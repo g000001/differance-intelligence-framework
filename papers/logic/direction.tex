@@ -1,0 +1,1112 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{example}[definition]{例}
+\newtheorem{conjecture}[definition]{予想}
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{corollary}[definition]{系}
+
+\newcommand{\Dir}{\mathsf{Dir}}
+\newcommand{\Mark}{\mathsf{Mark}}
+\newcommand{\Evt}{\mathsf{Evt}}
+\newcommand{\Seg}{\mathsf{Seg}}
+\newcommand{\Path}{\mathsf{Path}}
+\newcommand{\Ray}{\mathsf{Ray}}
+\newcommand{\Inc}{\operatorname{Inc}}
+\newcommand{\In}{\operatorname{In}}
+\newcommand{\Out}{\operatorname{Out}}
+\newcommand{\Fut}{\operatorname{Fut}}
+\newcommand{\Def}{\operatorname{Def}}
+\newcommand{\Hol}{\operatorname{Hol}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\Ob}{\operatorname{Ob}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\sem}[1]{\mathopen{[\![}#1\mathclose{]\!]}}
+\newcommand{\dline}{\mathrel{\rule[0.55ex]{1.6em}{0.4pt}}}
+
+\title{向の形式理論\\[0.2em]
+  {\Large ---過程表示、圏論的外延化および非対象化境界---}\\[0.4em]
+  {\large A Formal Theory of Direction}}
+\author{千葉将臣}
+\date{2026-08-26}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+圏論の射 $f:A\to B$ は、始域 $A$ と終域 $B$ が既に対象として切り分けられた後の関係を表す。本稿は、端を指定されていない\textbf{向}を、射一般の代替や物理的時間そのものではなく、過程が対象間の射へ外延化される以前の表示、および現在の対象世界では終域を形成できない境界接続を記述するためのデータとして置く。向の形式を
+\[
+ \delta\ \mathsf{direction}
+\]
+とし、各向 $\delta$ には順序づけられた局所刻印の集合 $M_\delta$ を付随させる。異なる向上の刻印が同一の事象を指示することを一致関係 $\sim$ で表し、対象を刻印の同値類として定義する。二つの刻印 $s\leq_\delta t$ による向の切断
+\[
+ \delta[s,t]:[\delta,s]\longrightarrow[\delta,t]
+\]
+を基本区間とし、区間列を接合して射を構成する。
+
+基礎構成として、基本区間を生成辺とする生経路圏 $\mathcal P(\mathfrak D)$ を作り、零区間の消去と同一向上の隣接区間の融合による商
+\[
+ Q_{\mathfrak D}:\mathcal P(\mathfrak D)\longrightarrow
+ \mathcal C(\mathfrak D)
+\]
+によって標準的な圏を復元する。$Q_{\mathfrak D}$ は過程表示を圏論的射へ送る外延化であり、細分、刻印履歴および表示差の一部を忘れる。さらに、各経路が構造的正規形を持つこと、反対向系が反対圏を復元すること、向系の写像が復元圏の関手を誘導することを示す。方向順序層を各 $M_\delta$ の順序、一致層を刻印間の一致関係として分離し、その上に観測者による粗視化を導入する。粗視化後の未来遷移が代表刻印によらないことを方向的lumpabilityと呼び、履歴忘却による予測欠損をその破れとして記述する。
+
+本稿の中心的な型分離は、既に対象化された世界内部の遷移 $A\to B$ と、その世界では終域を形成できない半開方向 $A\dline\dfix$ との区別である。刻印集合の順序完備化に属するが実在刻印ではない理想刻印 $\omega$ を導入し、$A$ から $\omega$ へ向かう方向前層 $\partial_\omega$ を定義する。$\partial_\omega$ が復元圏で表現可能でないとき、境界方向は一つの内部対象への射の族へ回収されない。十分大きな拡大圏ではこれを射として表現できるが、その場合は外部性が消滅するのではなく、選択した観点に相対化される。境界からの帰還とホロノミーは、正負の境界プロファイルを内部自己射へ送る追加の境界ペアリングとして分離する。これにより、中観主義論理の外点判断 $A\rightsquigarrow\dfix$ を、外点を射の終域として所有せずに記述できる。
+
+本理論は、時間過程一般を向で置き換えるものではない。状態と終域が内部対象として与えられた後の時間発展は通常の射で扱える。向が固有の役割を持つのは、過程表示とその外延化の差、および対象化された世界と非対象化境界との接面である。
+
+\medskip
+\noindent\textbf{キーワード：} 向、方向、射、圏、外延化、刻印、観測者、lumpability、境界方向、中観主義論理
+\end{abstract}
+
+\tableofcontents
+
+\section{序論}
+
+\subsection{射が前提とするもの}
+
+圏論は対象の内部構造よりも射を重視する。しかし射
+\[
+ f:A\longrightarrow B
+\]
+は、方向を表すと同時に、始域 $A$ と終域 $B$ が既に切り分けられていることを前提とする。恒等射、合成可能性および結合律も、射の端が型付けされていることによって形成される。このため、「対象が方向の交点として生じる」と考える場合、通常の圏の定義をそのまま出発点にはできない。
+
+対象を省略し、恒等射によって対象の役割を回収する対象なし圏論は知られている\cite{HellerKról2016}。しかしこの方法でも、始域・終域と合成可能性を担う射はプリミティブとして残る。本稿が問うのはさらに前の水準である。
+\begin{quote}
+端を指定されていない方向的な連続性から、観測によって対象と射を切り出すことはできるか。
+\end{quote}
+
+本稿では、この端なき方向を\textbf{向}と呼び、図示するとき記号 ``---'' を用いる。向は矢印 $\to$ ではない。矢尻は終域を指定するが、向そのものには指定された端がない。向に刻印を置き、二つの刻印の間を切り取ったとき、初めて矢印としての射が形成される。
+
+ただし、既に状態空間と終域が対象として与えられている時間発展を、すべて向へ置き換える必要はない。その場合は射、関係、確率遷移または豊穣圏など既存の構造で十分である。本稿で向を区別する理由は、第一に同じ外延的射へ送られる以前の過程表示を保持すること、第二に選択した対象世界では終域を形成できない境界への接続を、無理に内部射として型付けしないことにある。
+
+\subsection{内部遷移と境界接続}
+
+対象化された世界を圏 $\mathcal C$ とする。$A,B\in\mathcal C$ が既に与えられているなら、内部遷移は
+\[
+ f:A\longrightarrow B
+\]
+として記述できる。ここには計算時間、因果順序または履歴を追加構造として付与できるが、終域 $B$ の型そのものは確定している。
+
+これに対し、現在の観点から終域を内部対象として形成できない接続を
+\[
+ A\dline\dfix
+\]
+と書く。この記号は未知一般や未証明命題一般を表さない。未知が既存の可能性空間の内部に置けるなら、それは内部対象と射によって扱える。向が必要になるのは、候補となる終域の族全体が一つの内部対象へ自然に回収されない場合である。本稿はこの差を、後に境界方向前層の表現可能性と非表現可能性によって定式化する。
+
+任意の境界方向も、より大きな圏を選べば射として表現できる場合がある。しかし、その操作は境界を新しい対象として所有する意味論的拡大であり、元の観点における非表現可能性を否定しない。したがって向の必要性は絶対的ではなく、観点と内部対象の範囲に相対的である。
+
+\subsection{既存の有向理論との違い}
+
+有向代数的位相では、空間に逆行可能とは限らない有向路の族を加え、連結、ホモトピーおよび基本圏を研究する\cite{Grandis2003Directed}。合成的 $\infty$-圏論では、有向区間を型理論へ追加し、Segal型によって合成の高次整合性を内部化する\cite{RiehlShulman2017}。これらは本稿に重要な先例を与える。
+
+ただし、有向空間では点と路が、合成的高次圏論では型と有向区間が既に与えられる。本稿では、点に相当する対象を向上の刻印の一致類として後から構成する。したがって目的は既存の有向位相または有向型理論を置き換えることではなく、それらの前段階となり得る最小の切断構造を分離することである。
+
+\subsection{本稿の主張範囲}
+
+本稿は次を示す。
+\begin{enumerate}
+ \item 端なき向、局所刻印、順序および一致関係からなる向系を定義する。
+ \item 対象を刻印の一致類、基本射を向の閉区間として構成する。
+ \item 区間の接合から圏を復元する。
+ \item 生経路圏から復元圏への商関手、経路の構造的正規形および向系の写像の関手性を示す。
+ \item 方向的先後と刻印間の一致を異なる型のデータとして分離する。
+ \item 観測者による粗視化と方向的lumpabilityを定義する。
+ \item 理想刻印への半開方向を前層とし、非表現可能な外部方向を定義する。
+\end{enumerate}
+
+一方、向が物理的時間、意識、縁起または存在そのものと同一であるとは主張しない。また、すべての時間発展を射ではなく向で記述すべきだとも、すべての圏論的構造が本稿の向系から一意に生じるとも主張しない。本理論は、過程表示が内部射へ外延化される前後、および内部対象と非対象化境界の接面を区別するための最小模型である。
+
+\section{向、刻印および事象}
+
+\subsection{端なき向}
+
+\begin{definition}[向族]
+\textbf{向族}とは集合 $D$ である。その元 $\delta\in D$ を\textbf{向}と呼び
+\[
+ \delta\ \mathsf{direction}
+\]
+と書く。向それ自体には始点、終点または対象型を指定しない。
+\end{definition}
+
+向を単なる無構造な元として置くだけでは、方向性を読み取れない。そこで向を観測するときに現れる局所位置を刻印として与える。
+
+\begin{definition}[刻印付き向]
+向 $\delta$ に対する\textbf{刻印構造}とは、非空集合 $M_\delta$ と前順序
+\[
+ \leq_\delta\ \subseteq M_\delta\times M_\delta
+\]
+の組である。$s\in M_\delta$ を $\delta$ 上の\textbf{刻印}と呼ぶ。
+\end{definition}
+
+前順序は向の局所的な先後だけを表す。最小理論では反対称性を要求しない。同じ向上で $s\leq_\delta t$ かつ $t\leq_\delta s$ となる二刻印は、異なる観測表示を持ちながら方向的には区別不能であり得る。
+
+向自体と刻印付き向を区別することが重要である。$\delta$ は端を持たないが、$M_\delta$ の部分を二つの刻印で切り取れば局所区間が得られる。刻印は向の端ではなく、観測による切断位置である。
+
+\subsection{刻印の一致と対象の生成}
+
+全刻印集合を
+\[
+ \widetilde M
+ :=\coprod_{\delta\in D}M_\delta
+\]
+とする。その元を $(\delta,s)$ と書く。
+
+\begin{definition}[一致関係]
+$\widetilde M$ 上の同値関係 $\sim$ が\textbf{分離的一致関係}であるとは
+\begin{equation}
+ (\delta,s)\sim(\delta,t)
+ \quad\Longrightarrow\quad
+ s=t
+ \label{eq:separated-coincidence}
+\end{equation}
+を満たすことをいう。
+\end{definition}
+
+条件\eqref{eq:separated-coincidence}は、同じ向上の異なる刻印を一つの事象へ潰さないことを要求する。異なる向上の刻印は同一事象として一致してよい。これにより、交差、同期または同一観測位置を表現できる。
+
+\begin{definition}[向系]
+\textbf{向系}とは
+\begin{equation}
+ \mathfrak D=
+ \bigl(D,(M_\delta,\leq_\delta)_{\delta\in D},\sim\bigr)
+ \label{eq:direction-system}
+\end{equation}
+からなる。ただし $\sim$ は分離的一致関係である。
+\end{definition}
+
+\begin{definition}[事象]
+向系 $\mathfrak D$ の\textbf{事象集合}を
+\begin{equation}
+ \Evt(\mathfrak D):=\widetilde M/{\sim}
+ \label{eq:event-set}
+\end{equation}
+と定める。刻印 $(\delta,s)$ の同値類を $[\delta,s]$ と書く。
+\end{definition}
+
+本稿における対象は原始的な点ではない。それは一つ以上の向に置かれた刻印が、同じ場所または同じ出来事として読まれた一致類である。単一の向しか通らない事象も許されるため、「交点」は必ずしも幾何学的な横断交差を意味しない。
+
+\subsection{事象の入射プロファイル}
+
+事象を同値類として構成した後も、どの向のどの刻印がその事象に入射するかという情報は保持できる。
+
+\begin{definition}[入射プロファイル]
+事象 $A\in\Evt(\mathfrak D)$ に対し
+\begin{equation}
+ \Inc(A)
+ :=\{(\delta,s)\in\widetilde M
+       \mid[\delta,s]=A\}
+ \label{eq:incidence-profile}
+\end{equation}
+を $A$ の\textbf{入射プロファイル}と呼ぶ。
+\end{definition}
+
+\begin{definition}[流入・流出区間]
+刻印 $m=(\delta,s)$ に対し
+\begin{align}
+ \In(m)
+ &:={\{(t,\delta[t,s])\mid t\leq_\delta s\}},
+ \label{eq:incoming-profile}\\
+ \Out(m)
+ &:={\{(t,\delta[s,t])\mid s\leq_\delta t\}}
+ \label{eq:outgoing-profile}
+\end{align}
+と定める。事象 $A$ の流入・流出プロファイルは
+\[
+ \In(A):=\coprod_{m\in\Inc(A)}\In(m),
+ \qquad
+ \Out(A):=\coprod_{m\in\Inc(A)}\Out(m)
+\]
+とする。
+\end{definition}
+
+$\In(A),\Out(A)$ は単なる濃度ではなく、向ラベル、刻印順序、基本区間および到達事象を伴うプロファイルとして扱う。後に観測者が刻印を粗視化するとき、これらの構造を忘れて集合の濃度だけを比較することはしない。
+
+\begin{remark}[芽との区別]
+式\eqref{eq:incoming-profile}と\eqref{eq:outgoing-profile}は有限区間の族であり、位相的な芽ではない。真の方向芽を定義するには、刻印の右近傍または左近傍からなる共濾過系と、区間間の制限写像が追加で必要である。一般の前順序に可算列を一律に要求せず、この局所化は後続研究へ残す。
+\end{remark}
+
+\subsection{一致層と方向順序層}
+
+向系には二種類の構造がある。
+\begin{center}
+\begin{tabular}{p{0.24\textwidth} p{0.30\textwidth} p{0.34\textwidth}}
+\toprule
+層 & データ & 役割 \\
+\midrule
+方向順序層 & $(M_\delta,\leq_\delta)$ & 一つの向に沿う先後と継続 \\
+一致層 & $\sim$ & 異なる向上の刻印の一致と同期 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+方向順序層は物理的時間を直ちに意味せず、計算段階、因果的先後、証明探索または尺度変化として解釈してもよい。一致層も物理空間そのものではなく、異なる向上の刻印を同じ事象表示として読むためのデータである。順序と一致を一つのパス概念へ潰さず、異なる型として保持する点に理論的意義がある。
+
+\begin{proposition}[層分離]
+刻印集合を固定したとき、前順序 $\leq_\delta$ の変更は事象集合\eqref{eq:event-set}を変えず、一致関係 $\sim$ の変更は各向内部の前順序を変えない。
+\end{proposition}
+
+\begin{proof}
+事象集合は $\sim$ の商だけから定まり、各前順序はそれぞれの $M_\delta$ 上に定義されるためである。
+\end{proof}
+
+ただし復元される射と合成可能性は両方のデータに依存する。方向順序層は区間を作り、一致層は異なる向の区間を接合可能にする。
+
+\section{向の切断と射の形成}
+
+\subsection{基本区間}
+
+\begin{definition}[基本区間]
+$s,t\in M_\delta$ が $s\leq_\delta t$ を満たすとき
+\begin{equation}
+ \delta[s,t]:[\delta,s]\longrightarrow[\delta,t]
+ \label{eq:elementary-segment}
+\end{equation}
+を $\delta$ の\textbf{基本区間}と呼ぶ。
+\end{definition}
+
+式\eqref{eq:elementary-segment}の矢印は、向そのものではない。端なき向 $\delta$ が二刻印 $s,t$ によって局所化された後に得られる射候補である。記号的には
+\[
+ [\delta,s]\ \dline\ [\delta,t]
+ \quad\leadsto\quad
+ \delta[s,t]:[\delta,s]\to[\delta,t]
+\]
+という順序で形成される。
+
+\begin{definition}[零区間]
+$\delta[s,s]$ を事象 $[\delta,s]$ における\textbf{零区間}と呼ぶ。
+\end{definition}
+
+異なる向 $\delta,\varepsilon$ の刻印が
+\[
+ [\delta,s]=[\varepsilon,u]
+\]
+を満たす場合、二つの零区間 $\delta[s,s]$ と $\varepsilon[u,u]$ は同じ事象の異なる局所表示である。後に両者を同じ恒等射へ同一視する。
+
+\subsection{経路}
+
+\begin{definition}[向経路]
+事象 $A$ から $B$ への\textbf{向経路}とは、基本区間の有限列
+\begin{equation}
+ p=
+ \delta_1[s_0,s_1]
+ \cdot
+ \delta_2[s_2,s_3]
+ \cdots
+ \delta_n[s_{2n-2},s_{2n-1}]
+ \label{eq:direction-path}
+\end{equation}
+で、隣接区間の終事象と始事象が一致し、最初の始事象が $A$、最後の終事象が $B$ であるものをいう。長さ零の空列 $\epsilon_A$ も $A$ から $A$ への経路とする。
+\end{definition}
+
+同じ事象において別の向へ乗り換えることができる。したがって向経路の方向性は各向内部の順序から、経路の空間的接続は一致関係から生じる。
+
+\begin{definition}[生経路圏]
+向系 $\mathfrak D$ の\textbf{生経路圏} $\mathcal P(\mathfrak D)$ を、対象を $\Evt(\mathfrak D)$、射を向経路、合成を経路列の連結、恒等射を空経路とする圏として定める。
+\end{definition}
+
+\begin{proposition}
+$\mathcal P(\mathfrak D)$ は、事象を頂点、基本区間を生成辺とする有向グラフ上の自由圏である。
+\end{proposition}
+
+\begin{proof}
+向経路は基本区間の有限可合成列そのものであり、課されている等式は列の連結に関する圏の単位律と結合律だけである。したがって自由圏の普遍性を満たす。
+\end{proof}
+
+生経路圏は、同じ向を途中で切断した二つの区間と、一度に切断した一つの区間をまだ区別する。観測上不要な細分を次の合同で除く。
+
+\subsection{構造的合同}
+
+\begin{definition}[経路合同]
+向経路上の最小の合同関係 $\equiv$ で、次を満たすものを\textbf{構造的経路合同}と呼ぶ。
+\begin{align}
+ \delta[s,s]&\equiv\epsilon_{[\delta,s]},
+ \label{eq:zero-elimination}\\
+ \delta[s,t]\cdot\delta[t,u]
+ &\equiv\delta[s,u]
+ \qquad(s\leq_\delta t\leq_\delta u).
+ \label{eq:collinear-fusion}
+\end{align}
+\end{definition}
+
+式\eqref{eq:zero-elimination}は刻印方法に依存しない恒等性を与える。式\eqref{eq:collinear-fusion}は同じ向を途中で観測しても、全体として一つの区間へ戻せることを表す。異なる向を通る区間は自動的には融合しない。
+
+\section{圏の復元}
+
+\subsection{復元圏}
+
+\begin{definition}[復元圏]
+向系 $\mathfrak D$ の\textbf{復元圏}を、生経路圏の合同商
+\begin{equation}
+ \mathcal C(\mathfrak D)
+ :=\mathcal P(\mathfrak D)/{\equiv}
+ \label{eq:reconstructed-category}
+\end{equation}
+として定める。標準商関手を
+\begin{equation}
+ Q_{\mathfrak D}:
+ \mathcal P(\mathfrak D)
+ \longrightarrow
+ \mathcal C(\mathfrak D)
+ \label{eq:path-quotient}
+\end{equation}
+と書く。
+\end{definition}
+
+\begin{theorem}[圏復元定理]
+任意の向系 $\mathfrak D$ に対して、$\mathcal C(\mathfrak D)$ は圏をなす。
+\end{theorem}
+
+\begin{proof}
+$\mathcal P(\mathfrak D)$ は圏であり、$\equiv$ はその合成に関する合同である。したがって合同商は圏をなし、$Q_{\mathfrak D}$ は対象上恒等な全射関手である。
+\end{proof}
+
+この定理の内容は、圏の公理を向に直接課したことではない。向には合成も恒等射もない。合成は切断された区間の列に、恒等射は零区間の消去に現れる。圏は端なき向の観測的な影として得られる。
+
+\begin{proposition}[商の普遍性]
+関手 $F:\mathcal P(\mathfrak D)\to\mathcal E$ が零区間を恒等射へ送り、同一向上の融合可能区間について
+\[
+ F(\delta[s,t]\cdot\delta[t,u])
+ =F(\delta[s,u])
+\]
+を満たすなら、一意な関手
+\[
+ \overline F:\mathcal C(\mathfrak D)\to\mathcal E
+\]
+が存在して $F=\overline F\circ Q_{\mathfrak D}$ となる。
+\end{proposition}
+
+\begin{proof}
+$F$ は構造的合同の各生成関係を等しい射へ送るため、合同同値類上へ一意に降下する。
+\end{proof}
+
+\begin{corollary}[対象表示の独立性]
+同じ事象 $A$ を表す任意の刻印 $(\delta,s)$ と $(\varepsilon,u)$ に対し
+\[
+ [\delta[s,s]]=[\varepsilon[u,u]]=\id_A
+\]
+が $\mathcal C(\mathfrak D)$ で成立する。
+\end{corollary}
+
+\begin{proof}
+両零区間は式\eqref{eq:zero-elimination}によって空経路 $\epsilon_A$ と同値である。
+\end{proof}
+
+\subsection{構造的正規形}
+
+\begin{definition}[既約経路]
+零区間を含まず、同じ向上で融合可能な二つの区間が隣接しない向経路を\textbf{既約}という。
+\end{definition}
+
+\begin{theorem}[経路正規化]
+すべての有限向経路は、式\eqref{eq:zero-elimination}と\eqref{eq:collinear-fusion}を左から繰り返し適用することにより、有限回で既約経路へ変形される。
+\end{theorem}
+
+\begin{proof}
+零区間の消去も隣接区間の融合も経路の区間数を真に減少させる。区間数は自然数なので書換えは停止する。停止時には適用可能な規則がなく、得られた経路は既約である。
+\end{proof}
+
+\begin{proposition}[正規形の一意性]
+前順序を固定し、構造的合同として式\eqref{eq:zero-elimination}と\eqref{eq:collinear-fusion}だけを用いるとき、各経路の既約形は区間列として一意である。
+\end{proposition}
+
+\begin{proof}
+重なり得る書換えは、三つ以上の同一向区間
+\[
+ \delta[r,s]\cdot\delta[s,t]\cdot\delta[t,u]
+\]
+の融合順序と、零区間に隣接する融合だけである。前者はいずれの順序でも $\delta[r,u]$ となり、後者も零区間を先に消去する場合と融合してから消去する場合で同じ区間になる。したがって局所合流的である。停止性と局所合流性から正規形は一意である。
+\end{proof}
+
+\begin{corollary}[構造的等式の決定可能性]
+向、刻印、前順序および一致関係の等値判定が決定可能なら、有限経路間の構造的合同 $p\equiv q$ は決定可能である。
+\end{corollary}
+
+\begin{proof}
+$p,q$ を正規化し、得られた有限区間列を比較すればよい。
+\end{proof}
+
+\subsection{反対向系}
+
+\begin{definition}[反対向系]
+向系
+\[
+ \mathfrak D=
+ \bigl(D,(M_\delta,\leq_\delta)_{\delta\in D},\sim\bigr)
+\]
+に対し
+\begin{equation}
+ \mathfrak D^{\mathrm{op}}
+ :=
+ \bigl(D,(M_\delta,\geq_\delta)_{\delta\in D},\sim\bigr)
+ \label{eq:opposite-direction-system}
+\end{equation}
+を\textbf{反対向系}と呼ぶ。
+\end{definition}
+
+一致関係は刻印順序を参照しないため、分離条件\eqref{eq:separated-coincidence}は反転後も保存される。
+
+\begin{proposition}[反対圏の復元]
+経路の順序と各基本区間を反転する対応により、標準同型
+\begin{equation}
+ \mathcal C(\mathfrak D^{\mathrm{op}})
+ \cong
+ \mathcal C(\mathfrak D)^{\mathrm{op}}
+ \label{eq:opposite-reconstruction}
+\end{equation}
+が得られる。
+\end{proposition}
+
+\begin{proof}
+$\mathfrak D$ の基本区間 $\delta[s,t]$ に、$\mathfrak D^{\mathrm{op}}$ の区間 $\delta[t,s]$ を対応させる。経路
+\[
+ e_1\cdot e_2\cdots e_n
+\]
+には逆順の経路
+\[
+ e_n^{\mathrm{op}}\cdots e_2^{\mathrm{op}}\cdot e_1^{\mathrm{op}}
+\]
+を対応させる。この対応は零区間消去と同一向融合を保存し、二回適用すると元へ戻る。
+\end{proof}
+
+\section{向系の写像と関手性}
+
+\begin{definition}[向系の写像]
+向系 $\mathfrak D$ から $\mathfrak E$ への\textbf{向写像} $F$ とは、次のデータからなる。
+\begin{enumerate}
+ \item 向の写像 $F_D:D_{\mathfrak D}\to D_{\mathfrak E}$。
+ \item 各 $\delta$ に対する単調写像
+ \[
+  F_\delta:M_\delta\longrightarrow M_{F_D(\delta)}.
+ \]
+ \item 一致保存条件
+ \[
+  (\delta,s)\sim(\varepsilon,t)
+  \Longrightarrow
+  (F_D\delta,F_\delta s)
+  \sim
+  (F_D\varepsilon,F_\varepsilon t).
+ \]
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[復元の関手性]
+向写像 $F:\mathfrak D\to\mathfrak E$ は関手
+\[
+ \mathcal C(F):
+ \mathcal C(\mathfrak D)\longrightarrow
+ \mathcal C(\mathfrak E)
+\]
+を誘導する。
+\end{proposition}
+
+\begin{proof}
+対象上では
+\[
+ [\delta,s]\longmapsto
+ [F_D\delta,F_\delta s]
+\]
+とし、基本区間を
+\[
+ \delta[s,t]\longmapsto
+ F_D(\delta)[F_\delta s,F_\delta t]
+\]
+へ送る。単調性により右辺は形成可能であり、一致保存により対象写像は良定義である。零区間と同一向融合は保存されるため経路合同を保ち、経路連結と空経路も保存する。
+\end{proof}
+
+したがって、適切な向系と向写像からなる圏を $\mathbf{DirSys}$ と書けば
+\[
+ \mathcal C:\mathbf{DirSys}\longrightarrow\Cat
+\]
+という復元関手が得られる。
+
+\section{観測者相対的方向}
+
+\subsection{刻印の粗視化}
+
+向系の一致関係 $\sim$ は、理論が採用する基礎的な事象同一性である。これとは別に、観測者は複数の事象または履歴を区別せずに読むことがある。
+
+\begin{definition}[観測者粗視化]
+観測者 $o$ による\textbf{粗視化}とは、集合 $X_o$ と写像
+\begin{equation}
+ \pi_o:\widetilde M\longrightarrow X_o
+ \label{eq:observer-coarse-graining}
+\end{equation}
+で、基礎的一致を保存するもの
+\[
+ m\sim m'
+ \quad\Longrightarrow\quad
+ \pi_o(m)=\pi_o(m')
+\]
+をいう。したがって $\pi_o$ は事象集合上の写像
+\[
+ \overline\pi_o:\Evt(\mathfrak D)\longrightarrow X_o
+\]
+を誘導する。
+\end{definition}
+
+観測者は刻印の詳細を忘れるが、その忘却後にも方向的予測が代表刻印によらず定まるとは限らない。
+
+\begin{definition}[観測未来プロファイル]
+刻印 $m=(\delta,s)$ に対し、観測者 $o$ が見る\textbf{未来プロファイル}を
+\begin{equation}
+ \Fut_o(m)
+ :=
+ \{\pi_o(\delta,t)\mid s\leq_\delta t\}
+ \subseteq X_o
+ \label{eq:observed-future-profile}
+\end{equation}
+ とする。
+\end{definition}
+
+これは到達可能性だけを記録する\textbf{定性的}未来プロファイルである。集合の濃度が等しいことではなく、$X_o$ の同じ部分集合であることを要求する。分岐の重複度、確率または区間ラベルを保持するモデルでは、$\Fut_o(m)$ を多重集合、遷移核またはラベル付き関係へ置き換えなければならない。
+
+\subsection{方向的lumpability}
+
+``lumpability'' という名称は、状態を粗視化した後も遷移法則が代表状態によらず定まるというMarkov連鎖の条件に由来する\cite{KemenySnell1976}。本稿では確率を仮定せず、観測可能な到達先についてその定性的類似物を用いる。
+
+\begin{definition}[方向的lumpability]
+向系 $\mathfrak D$ が観測者 $o$ に関して\textbf{方向的にlumpable}であるとは
+\begin{equation}
+ \pi_o(m)=\pi_o(m')
+ \quad\Longrightarrow\quad
+ \Fut_o(m)=\Fut_o(m')
+ \label{eq:directional-lumpability}
+\end{equation}
+が成り立つことをいう。すなわち同じ観測状態を表すどの刻印から出発しても、観測可能な到達先の集合が同じであることを要求する。
+\end{definition}
+
+\begin{definition}[方向降下障害]
+$x\in X_o$ に対し
+\begin{equation}
+ \Def_o(x)
+ :=
+ \{\Fut_o(m)\mid\pi_o(m)=x\}
+ \label{eq:lumpability-defect}
+\end{equation}
+を $x$ における\textbf{方向降下障害}と呼ぶ。$\Def_o(x)$ が一要素であることは、その観測状態からの未来プロファイルが代表刻印によらないことを表す。
+\end{definition}
+
+\begin{proposition}[観測遷移の降下]
+$\mathfrak D$ が $o$ に関して方向的にlumpableなら、$X_o$ 上の関係
+\begin{equation}
+ x\leadsto_o y
+ \quad:\Longleftrightarrow\quad
+ \exists\delta,s,t\ 
+ \bigl(s\leq_\delta t,\
+       \pi_o(\delta,s)=x,\
+       \pi_o(\delta,t)=y\bigr)
+ \label{eq:observed-transition}
+\end{equation}
+は、始点を表す刻印の選択によらず定まる。
+\end{proposition}
+
+\begin{proof}
+$m,m'$ が同じ $x$ を表すとき、式\eqref{eq:directional-lumpability}により両者の観測未来プロファイルは一致する。したがって $m$ から観測終点 $y$ への区間が存在することと、$m'$ から同じ観測終点への対応区間が存在することは同値である。
+\end{proof}
+
+観測された区間の同一視が零区間消去と融合も保存する場合、観測遷移グラフの自由圏への関手
+\[
+ L_o:\mathcal P(\mathfrak D)\longrightarrow\mathcal O_o
+\]
+が得られる。さらに構造的合同を保存すれば、商の普遍性によって $L_o$ は $\mathcal C(\mathfrak D)$ 上へ降下する。これを観測者による\textbf{方向商}と呼ぶ。
+
+\subsection{履歴忘却}
+
+履歴を持つ刻印を導入するとき、それを新しい事象同一性として基礎関係 $\sim$ へ直ちに追加する必要はない。
+
+\begin{example}[履歴付き刻印]
+各 $M_\delta$ に対し、履歴集合 $H$ を持つ拡張刻印集合
+\[
+ M_\delta^H\subseteq M_\delta\times H
+\]
+と、射影
+\[
+ q_\delta:M_\delta^H\longrightarrow M_\delta
+\]
+を取る。$M_\delta^H$ の前順序は $q_\delta$ を単調にするものとする。観測者 $o$ が履歴を忘れる粗視化を
+\[
+ \pi_o(\delta,s,h):=(\delta,s)
+\]
+と定める。
+\end{example}
+
+異なる履歴 $(\delta,s,h)$ と $(\delta,s,h')$ が同じ観測状態へ送られても、未来プロファイルが一致すれば粗視化はlumpableである。一致しない場合にだけ、履歴忘却は予測上の欠損を生む。
+
+\begin{remark}[再訪と履歴依存]
+異なる時間刻印が同じ空間状態へ射影される\textbf{再訪}と、同じ観測状態から異なる未来が現れる\textbf{履歴依存}は別である。決定論的周期系では再訪しても未来が同じであり、履歴忘却がlumpableな場合がある。式\eqref{eq:lumpability-defect}が検出するのは再訪そのものではなく、観測者が忘れた情報による予測の非一意性である。
+\end{remark}
+
+\subsection{共観との接続}
+
+二つの観測者 $o_0,o_1$ が同じ向系を異なる粗視化で読むとき、両者の観測状態を単純に同一視せず、共通の刻印または経路を媒介として比較できる。共観主義論理は、この観測者間比較を命題水準へ持ち上げる候補となる。一方、$\Def_{o_i}(x)$ は各観点への方向情報の降下可能性を測るため、中観主義的な非降下条件への有限段階の診断を与える。
+
+\section{基本モデル}
+
+\subsection{前順序モデル}
+
+\begin{example}[一方向モデル]
+前順序集合 $(P,\leq)$ に対し、向を一つ $D=\{\delta\}$ とし
+\[
+ M_\delta=P,
+ \qquad
+ \leq_\delta=\leq,
+ \qquad
+ (\delta,p)\sim(\delta,q)\Longleftrightarrow p=q
+\]
+とする。これを $\mathfrak D_P$ と書く。
+\end{example}
+
+\begin{proposition}
+$P$ を圏とみなし、$p\leq q$ のときただ一つの射 $p\to q$ があるとする。このとき
+\[
+ \mathcal C(\mathfrak D_P)\cong P
+\]
+である。
+\end{proposition}
+
+\begin{proof}
+すべての区間は同じ向 $\delta$ 上にある。任意の有限経路は融合則によって一つの区間 $\delta[p,q]$ へ縮約される。したがって $p\leq q$ のとき射は一つ、そうでないとき射は存在しない。
+\end{proof}
+
+この例では、一つの端なき時間方向を異なる刻印で切り取ることにより、前順序圏が復元される。
+
+\subsection{有向グラフモデル}
+
+\begin{example}[グラフからの向系]
+有向グラフ $G=(V,E,s,t)$ を取る。各辺 $e\in E$ に向 $\delta_e$ と二刻印
+\[
+ 0_e<1_e
+\]
+を与える。また孤立頂点を含む各 $v\in V$ に一点向 $\iota_v$ を加える。刻印
+\[
+ (\delta_e,0_e),\quad
+ (\delta_f,1_f),\quad
+ (\iota_v,*)
+\]
+を、それぞれ $s(e)=v$ または $t(f)=v$ のとき一致させる。
+\end{example}
+
+\begin{proposition}
+上の向系を $\mathfrak D_G$ とすると、復元圏 $\mathcal C(\mathfrak D_G)$ は $G$ 上の自由圏と同型である。
+\end{proposition}
+
+\begin{proof}
+事象は頂点に対応する。非零基本区間は各辺 $e$ に対応し、異なる辺に属する区間間には融合則がない。したがって既約経路はちょうど $G$ の有限有向道であり、合成は道の連結である。
+\end{proof}
+
+この結果は、向が少なくとも有向グラフの辺と同程度の表現力を持つことを示す。ただし本理論では一つの向に任意個の刻印を置けるため、辺をあらかじめ細分化する必要がない。
+
+\subsection{有向空間との比較}
+
+有向空間では、点を持つ位相空間と、定数路を含み連結および単調再パラメータ化で閉じた有向路の族を取る\cite{Grandis2003Directed}。その有向路を向、路のパラメータ値を刻印、同じ空間点へ写る刻印を一致と読めば、本稿の向系を作れる。ただし同じ有向路が自己交差する場合、分離条件\eqref{eq:separated-coincidence}を満たさない。この場合は路を自己交差間で分割するか、点ではなく通過事象の芽を刻印の一致対象として用いる必要がある。
+
+したがって向系は有向空間の完全な一般化ではない。向の局所通過を対象生成の単位とする、より組合せ的な影である。
+
+\section{理想刻印と外部方向}
+
+\subsection{完備化と半開方向}
+
+通常の射は二つの実在刻印を必要とする。しかし、向がある方向へ継続しながら、その先を刻印として持たない場合がある。
+
+\begin{definition}[理想刻印]
+各前順序 $M_\delta$ に順序を保存する埋め込み
+\[
+ \iota_\delta:M_\delta\hookrightarrow\overline M_\delta
+\]
+が与えられているとする。元
+\[
+ \omega\in
+ \overline M_\delta\setminus\iota_\delta(M_\delta)
+\]
+を $\delta$ の\textbf{理想刻印}と呼ぶ。
+\end{definition}
+
+理想刻印は向の新しい端ではない。それは完備化において方向を比較するための境界表示であり、元の刻印集合には属さない。
+
+\begin{definition}[前進的逃走作用]
+向 $\delta$ 上の\textbf{前進的逃走作用}とは、単調自己写像
+\[
+ R:M_\delta\longrightarrow M_\delta
+\]
+で、各 $t\in M_\delta$ に対して次を満たすものをいう。
+\begin{enumerate}
+ \item $t<_\delta R(t)$。
+ \item 軌道 $t<R(t)<R^2(t)<\cdots$ は $M_\delta$ で上限を持たない。
+ \item 任意の $u\in M_\delta$ に対し、ある $n$ が存在して $u\leq_\delta R^n(t)$ となる。
+\end{enumerate}
+\end{definition}
+
+単なる非不動点性だけでは、二周期または有限周期が残り、理想刻印への逃走を保証しない。上の条件は軌道が真に前進し、共終的で、内部刻印へ収束しないことを要求する。
+
+\begin{proposition}[逃走軌道が定める理想刻印]
+$M_\delta$ が順序完備化 $\overline M_\delta$ を持ち、前進的逃走作用 $R$ の軌道が $\overline M_\delta$ で上限 $\omega$ を持つなら
+\[
+ \omega\in
+ \overline M_\delta\setminus\iota_\delta(M_\delta)
+\]
+であり、$\omega$ は理想刻印である。
+\end{proposition}
+
+\begin{proof}
+もし $\omega=\iota_\delta(v)$ が内部刻印であれば、軌道は $v$ を上限として $M_\delta$ 内に持つことになり、逃走作用の第二条件に反する。
+\end{proof}
+
+\begin{definition}[半開方向]
+$s\in M_\delta$ と理想刻印 $\omega$ が $\iota_\delta(s)\leq\omega$ を満たすとき
+\[
+ \delta[s,\omega)
+\]
+を $s$ から $\omega$ への\textbf{半開方向}または\textbf{方向尾}と呼ぶ。これは $\mathcal C(\mathfrak D)$ の射ではない。
+\end{definition}
+
+右端を丸括弧で書くのは、$\omega$ が実在刻印として区間に含まれないことを表す。
+
+\subsection{境界方向前層}
+
+\begin{definition}[理想刻印への方向]
+事象 $A$ から理想刻印 $\omega$ への\textbf{方向表示}とは、有限向経路 $p:A\to[\delta,s]$ と半開方向 $\delta[s,\omega)$ の組
+\[
+ p\cdot\delta[s,\omega)
+\]
+である。経路合同および同一向上の有限な尾の移動
+\[
+ p\cdot\delta[s,t]\cdot\delta[t,\omega)
+ \equiv
+ p\cdot\delta[s,\omega)
+\]
+で割った同値類を $\partial_\omega(A)$ と書く。
+\end{definition}
+
+\begin{proposition}[境界前層]
+対応
+\[
+ \partial_\omega:
+ \mathcal C(\mathfrak D)^{\mathrm{op}}\longrightarrow\Set
+\]
+は前層を定める。
+\end{proposition}
+
+\begin{proof}
+射 $f:B\to A$ と方向表示 $[p\cdot\delta[s,\omega)]$ に対し
+\[
+ \partial_\omega(f)
+ [p\cdot\delta[s,\omega)]
+ :=
+ [f\cdot p\cdot\delta[s,\omega)]
+\]
+とする。経路合同は前合成で保存されるため良定義である。空経路と経路連結の結合律から前層の単位律と合成律が従う。
+\end{proof}
+
+\begin{definition}[外部方向条件]
+理想刻印 $\omega$ が\textbf{外部方向条件}を満たすとは、前層 $\partial_\omega$ が $\mathcal C(\mathfrak D)$ で表現可能でないこと、すなわちどの事象 $R$ に対しても
+\[
+ \partial_\omega
+ \not\cong
+ \Hom_{\mathcal C(\mathfrak D)}(-,R)
+\]
+であることをいう。
+\end{definition}
+
+非表現可能性により、理想刻印へのすべての向きを一つの内部対象への射として回収できない。これが「向を保ったまま、外点を終域にしない」ことの形式的内容である。
+
+\subsection{自然数の無限遠方向}
+
+\begin{example}[無限遠刻印]
+前順序 $\mathbb N$ の一方向モデルを取り
+\[
+ \overline M_\delta
+ =\mathbb N\cup\{\omega\},
+ \qquad
+ n<\omega
+\]
+とする。このとき各 $n$ から $\omega$ への方向表示はただ一つであるから
+\[
+ \partial_\omega(n)\cong 1
+\]
+である。
+\end{example}
+
+\begin{theorem}[無限遠方向の非表現可能性]
+上の $\partial_\omega:\mathbb N^{\mathrm{op}}\to\Set$ は前順序圏 $\mathbb N$ で表現可能でない。
+\end{theorem}
+
+\begin{proof}
+ある $r\in\mathbb N$ が $\partial_\omega$ を表現すると仮定する。するとすべての $n$ について
+\[
+ 1\cong\partial_\omega(n)
+ \cong\Hom_{\mathbb N}(n,r)
+\]
+である。しかし $n=r+1$ とすれば $n\nleq r$ なので右辺は空集合であり矛盾する。
+\end{proof}
+
+この例では、どの有限刻印からも「先」は指示できるが、その先全体を表す最大自然数は存在しない。外部性は神秘的対象の仮定ではなく、方向前層の非表現可能性として検証される。
+
+\section{中観主義論理との接続}
+
+\subsection{外点を端にしない判断}
+
+中観主義論理では
+\[
+ A\rightsquigarrow_i\dfix
+\]
+という判断を、拡大圏の射 $j_iA\to\gamma$ によって安全に解釈した。この方法は型が明確である一方、方向を最終的に射へ戻す。
+
+向の形式理論では、理想刻印 $\omega$ を外点表示 $\dfix$ に対応させ
+\begin{equation}
+ r:A\dline\dfix
+ \quad:\Longleftrightarrow\quad
+ r\in\partial_\omega(A)
+ \label{eq:madhyic-direction}
+\end{equation}
+と読む。ここで ``---'' は射記号ではなく、半開方向の存在を示す判断記号である。$\dfix$ は事象集合に属さず、式\eqref{eq:madhyic-direction}は $A\to\dfix$ という射を形成しない。
+
+\begin{proposition}[内部射への非崩壊]
+$\omega$ が外部方向条件を満たすなら、すべての判断 $A\dline\dfix$ を一様に内部射 $A\to R$ へ翻訳する事象 $R$ は存在しない。
+\end{proposition}
+
+\begin{proof}
+そのような一様な翻訳が自然同型として存在すれば
+\[
+ \partial_\omega\cong
+ \Hom_{\mathcal C(\mathfrak D)}(-,R)
+\]
+となり、外部方向条件に反する。
+\end{proof}
+
+この命題は、個々の方向表示がメタ理論で記述不能であることを意味しない。主張は、それらの族全体が復元圏の一対象へ自然に回収されないという相対的なものである。
+
+\begin{remark}[拡大圏と外部性の移動]
+$\partial_\omega$ が $\mathcal C(\mathfrak D)$ で表現可能でなくても、$\omega$ を対象として含む拡大圏 $\mathcal D$ を構成し、半開方向を $jA\to\omega$ という射で表すことはできる。このとき型付けは通常の圏論へ戻るが、$\omega$ が元の復元圏へ降下しないという相対的外部性は残る。向は拡大圏による表現を禁止するものではなく、拡大以前の観点で終域を内部所有していないことを明示する。
+\end{remark}
+
+\subsection{\texorpdfstring{$A\dline\dfix\dline A$}{A---○---A} の位置}
+
+記号列
+\[
+ A\dline\dfix\dline A
+\]
+は本理論の基本公理から自動的には形成されない。第一の半開方向に加えて、同じ境界表示から $A$ へ戻る反対向または帰還データが必要だからである。
+
+\begin{definition}[正負の境界プロファイル]
+$\mathfrak D$ における $A$ から $\omega$ への境界前層を $\partial_\omega^+$ と書く。反対向系 $\mathfrak D^{\mathrm{op}}$ において対応する理想刻印から $A$ へ向かう方向表示の集合を $\partial_\omega^-(A)$ と書く。
+\end{definition}
+
+理想刻印は復元圏の対象でないため、$r^+\in\partial_\omega^+(A)$ と $r^-\in\partial_\omega^-(A)$ を通常の射として合成することはできない。境界を経由した内部自己射を得るには、次の追加構造が必要である。
+
+\begin{definition}[境界ペアリング]
+$\omega$ における\textbf{境界ペアリング}とは、各事象 $A$ に対する写像
+\begin{equation}
+ \Hol_{A,\omega}:
+ \partial_\omega^+(A)
+ \times
+ \partial_\omega^-(A)
+ \longrightarrow
+ \operatorname{End}_{\mathcal C(\mathfrak D)}(A)
+ \label{eq:boundary-pairing}
+\end{equation}
+である。これを境界ホロノミーとも呼ぶ。
+\end{definition}
+
+式\eqref{eq:boundary-pairing}の定義域は既に経路合同で割った境界方向類からなる。代表経路上で $\Hol$ を構成する場合は、零区間消去、同一向融合および尾の移動によって代表を変更しても値が不変であることを、境界ペアリングのwell-definedness条件として別途証明しなければならない。
+
+\begin{definition}[外部媒介的恒等対]
+組 $(r^+,r^-)$ が
+\[
+ \Hol_{A,\omega}(r^+,r^-)=\id_A
+\]
+を満たすとき、これを $A$ における\textbf{外部媒介的恒等対}と呼ぶ。
+\end{definition}
+
+したがって
+\[
+ A\dline\dfix\dline A
+\]
+を恒等性として読むことは、圏復元定理から従う主張ではなく、境界ペアリングと恒等対の存在を要求する拡張原理である。この分離により、外部方向の非表現可能性と、外部を介した内部ホロノミーとを混同しない。
+
+\begin{remark}[探索と帰還という解釈]
+正負の境界方向とそのペアリングは、将来の計算的解釈において、未確定な未来への投機、その検証による帰還、および帰還後に残る変化を記述する接続構造として読めるが、本稿ではこの解釈を形式化しない。
+\end{remark}
+
+\section{既存理論との比較}
+
+\subsection{対象なし圏論}
+
+対象なし圏論では、恒等射を対象の代理として射だけで圏を記述する\cite{HellerKról2016}。これは対象の原始性を弱めるが、射の始域・終域作用と合成は残る。本稿ではさらに、射を二刻印間の区間として導出する。
+
+\[
+ \text{対象なし圏論}:
+ \quad\text{射}\Longrightarrow\text{対象},
+\]
+\[
+ \text{向の形式理論}:
+ \quad\text{向＋刻印＋一致}
+ \Longrightarrow\text{対象＋射}.
+\]
+
+\subsection{有向代数的位相}
+
+有向代数的位相は非可逆過程、並行計算および時空部分のモデルを扱い、d-spaceから基本圏を構成する\cite{Grandis2003Directed}。本稿の圏復元はこの発想と近いが、位相、連続性およびホモトピーを要求しない。逆に、本稿だけでは有向ホモトピー不変量を扱えない。向系に位相または層構造を加えることが後続課題となる。
+
+\subsection{合成的高次圏論}
+
+有向区間を持つ型理論では、Segal条件によって合成の存在と高次整合性を表現できる\cite{RiehlShulman2017}。本稿は一次元の有限経路と厳密な商圏だけを扱い、高次セルを導入しない。したがって本理論は $\infty$-圏論の代替ではなく、その前に
+\[
+ \text{向}
+ \longrightarrow
+ \text{区間}
+ \longrightarrow
+ \text{射}
+\]
+という生成段階を明示する試みである。
+
+高次化する場合も、直ちに無限階層を置く必要はない。まず向経路間の変形を二次方向として追加し、その接合則を定め、必要な段階まで反復する方法が考えられる。
+
+\subsection{生経路、トレースおよび高次化}
+
+生の向経路は $\mathcal C(\mathfrak D)$ の射列そのものではなく、基本区間を生成辺とする自由圏 $\mathcal P(\mathfrak D)$ の射である。この区別は重要である。$\mathcal C(\mathfrak D)$ の一つの射は既に複数の基本区間の合同類であり、その有限射列には多数の分解があるため、一般に
+\[
+ \Path_{\mathrm{raw}}(\mathfrak D)
+ \cong
+ \operatorname{Tr}(\mathcal C(\mathfrak D))
+\]
+という標準的一対一対応は存在しない。
+
+本稿で厳密に得られる構造は
+\[
+ \boxed{
+ \mathcal P(\mathfrak D)
+ \xrightarrow{\ Q_{\mathfrak D}\ }
+ \mathcal C(\mathfrak D)
+ }
+\]
+である。高次化の第一候補は、同じ復元射へ送られる二つの生経路 $p,q$、すなわち
+\[
+ Q_{\mathfrak D}(p)=Q_{\mathfrak D}(q)
+\]
+を結ぶ二次セルを保持することである。この段階では二次セルは構造的合同による薄いセルにすぎない。非自明なホモトピーまたは時間情報を保持するには、合同生成子そのものの証拠項と、それらの間の関係を追加する必要がある。
+
+\section{限界と今後の課題}
+
+\subsection{刻印は完全には消去されていない}
+
+本稿は対象を刻印の一致類として導出したが、刻印集合そのものはプリミティブである。したがって「一切の点的データなしに対象を生成した」とは言えない。より強い理論では、刻印を複数の向の相互作用または観測作用から導出する必要がある。
+
+\subsection{分離条件、再訪および履歴}
+
+条件\eqref{eq:separated-coincidence}は圏復元を単純にするが、同じ向が同じ空間位置を複数回通過する場合、それらを同じ時間的事象としては扱わない。本稿では履歴付き刻印と観測者粗視化を用い、時間的事象を区別したまま空間状態だけを同定する方法を採った。周期運動そのものと、履歴忘却によるlumpabilityの破れは別であり、後者だけが方向降下障害として検出される。
+
+\subsection{局所芽と事象の普遍性}
+
+入射プロファイルは有限区間を記録するが、位相的な方向芽ではない。芽を導入するには、各刻印 $s$ における右近傍の添字前順序
+\[
+ J^+_{\delta,s}
+ :=\{t\in M_\delta\mid s<_\delta t\}
+\]
+が局所的に共濾過的であること、および $v\leq t$ に沿う区間制限写像を定めることが必要である。可算列の存在は一般には要求せず、可算近傍基を持つモデルだけの追加条件とする。
+
+さらに、事象 $A$ を流入芽の余極限または流出芽の極限として特徴づけることは、局所共濾過性だけからは従わない。芽の図式の稠密性、層条件または明示的なグルーイング公理が必要である。
+
+\begin{conjecture}[芽による事象復元]
+向系に適切なGrothendieck位相と有効なグルーイング条件が与えられ、$A$ へ入射する芽の図式が稠密であるなら、$A$ をその図式の普遍的な貼合せとして特徴づけられる具体的模型が存在する。
+\end{conjecture}
+
+\subsection{高次合同}
+
+本稿の経路合同は零区間と同一向融合だけから生成される。商関手 $Q_{\mathfrak D}$ の同じファイバーに属する生経路間に薄い二次セルを置くことはできるが、異なる向経路間の非自明なホモトピー、交換則または二次元変形は含まれない。これらを追加すると復元圏は二重圏または高次圏へ拡張され得るが、それぞれ独立の整合性証明が必要である。
+
+\subsection{境界ペアリング}
+
+境界前層 $\partial_\omega^\pm$ だけから境界ホロノミー\eqref{eq:boundary-pairing}は自動的に得られない。ペアリングを具体的に構成するには、正負の方向尾を同じ有限切断で比較する安定化条件、境界コンパクト化、プロ関手の評価、または別の双対性構造が必要である。外部媒介的恒等対の存在は、その後に検証される追加性質である。
+
+\subsection{局所表現可能性と下降障害}
+
+任意の前層は表現可能前層の標準的な余極限として表示できるため\cite{MacLane1998,Riehl2016}、表現可能前層からの近似の存在だけでは非表現可能性の程度を測れない。Čech型障害を用いるには、観点圏上の被覆、各局所領域での表現対象、重なり上の比較同型、およびその自己同型を係数とする層またはスタックが必要である\cite{johnstone}。
+
+\begin{conjecture}[局所表現対象の下降障害]
+境界前層 $\partial_\omega$ がある被覆上で局所的に表現可能であり、その局所表現対象が重なり上でtorsor状の比較同型を持つ場合、大域的表現可能性の障害を非可換Čech型の下降類として記述できる模型が存在する。
+\end{conjecture}
+
+一般の非表現可能前層にこの障害類が自動的に付随するとは主張しない。方向的lumpabilityの欠損 $\Def_o$ と下降類の関係も、被覆と係数構造を具体化した後の課題である。
+
+\subsection{物理的時間との関係}
+
+方向順序層の前順序 $\leq_\delta$ は、時間計量、因果錐、不可逆性または熱力学的時間の矢を自動的に与えない。状態と終域が内部対象として与えられた時間発展は、通常の射または既存の時間付き圏論で記述できる。本理論の役割は時間理論一般の置換ではない。物理的解釈を与える場合には、局所有限性、因果整合性、計量または確率過程などの追加構造が必要である。
+
+\subsection{凝集性との接続}
+
+向系は方向的先後と刻印間の一致を分離するが、近傍、連続性および滑らかさをまだ持たない。各刻印集合と事象集合をサイト、層または凝集的対象として豊穣化し、空間的凝集モダリティと方向順序の交換則を調べることが今後の課題である。
+
+\section{結論}
+
+本稿は、過程表示が対象間の射へ外延化される前後、および対象化された世界と非対象化境界との接面を区別するための最小形式理論を構成した。中心となるデータは
+\[
+ \boxed{
+ \mathfrak D=
+ \bigl(D,(M_\delta,\leq_\delta)_{\delta\in D},\sim\bigr)
+ }
+\]
+である。$D$ は端を指定されない向の族、$M_\delta$ は各向上の観測刻印、$\leq_\delta$ は向内部の先後、$\sim$ は異なる向の刻印間の空間的一致を表す。
+
+対象は先に与えず
+\[
+ \boxed{
+ \Evt(\mathfrak D)
+ =\left(\coprod_{\delta\in D}M_\delta\right)/{\sim}
+ }
+\]
+として生成する。射は向そのものではなく、二刻印による切断
+\[
+ \boxed{
+ \delta[s,t]:[\delta,s]\to[\delta,t]
+ }
+\]
+およびその有限接合として得られる。零区間の消去と同一向区間の融合により、これらは復元圏 $\mathcal C(\mathfrak D)$ を形成する。
+
+より正確には、基本区間の有限列は生経路圏 $\mathcal P(\mathfrak D)$ をなし、構造的合同は商関手
+\[
+ Q_{\mathfrak D}:
+ \mathcal P(\mathfrak D)\longrightarrow
+ \mathcal C(\mathfrak D)
+\]
+として観測上不要な細分を消去する。この分離により、過程としての経路表示と、その外延的な復元射を混同せずに扱える。
+
+この構成によって、向、局所区間および対象間の射という三水準を区別できる。
+\[
+ \text{端なき向}
+ \longrightarrow
+ \text{刻印による局所区間}
+ \longrightarrow
+ \text{対象間の射}.
+\]
+向はすべての射を置き換えるものではなく、射へ外延化される以前の方向的表示である。対象は向の外部に固定された点ではなく、刻印の一致によって生じる事象である。一方、始域と終域が既に内部対象として与えられている時間発展や計算過程は、通常の射で記述してよい。
+
+また観測者粗視化 $\pi_o$ を導入し、同じ観測状態を表す刻印の未来プロファイルが一致するとき方向的lumpabilityが成立すると定めた。これにより、空間的な再訪と、履歴を忘れることで未来予測が代表刻印に依存する現象とを分離できる。反対向系は反対圏を復元し、正方向と帰還方向を型の異なるデータとして比較する基礎を与える。
+
+さらに理想刻印 $\omega$ への半開方向から境界前層 $\partial_\omega$ を構成した。これが非表現可能であるとき
+\[
+ A\dline\dfix
+\]
+は外点を終域とする射ではなく、現在の復元圏の内部対象へ回収されない方向判断として解釈される。十分大きな拡大圏ではこれを射として表現できるが、そのことは元の観点における非降下性と非表現可能性を消去しない。向の必要性は絶対的な圏外性ではなく、どの対象世界を内部と見なすかに相対的である。
+
+以上より、本理論の中心は圏を新たに再発明することではなく、過程表示から圏論的射への外延化で失われる情報と、内部射を形成できない境界接続とを同じ枠内で区別することにある。今後の主要課題は、刻印そのものの生成理論、近傍系による真の方向芽、事象の普遍的貼合せ、高次方向、凝集構造との結合、および境界ペアリングが外部媒介的恒等対を持つ条件を明らかにすることである。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}

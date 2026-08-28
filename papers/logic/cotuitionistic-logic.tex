@@ -1,0 +1,608 @@
+% !TeX program = lualatex
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[unicode]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{assumption}[definition]{仮定}
+\newtheorem{remark}[definition]{注記}
+\newtheorem{example}[definition]{例}
+\newtheorem{conjecture}[definition]{予想}
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{corollary}[definition]{系}
+
+\newcommand{\CoInt}{\mathrm{CoInt}}
+\newcommand{\Val}{\operatorname{Val}}
+\newcommand{\Img}{\operatorname{Im}}
+\newcommand{\Dir}{\operatorname{Dir}}
+\newcommand{\Sub}{\operatorname{Sub}}
+\newcommand{\Sh}{\operatorname{Sh}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\dfix}{\bigcirc}
+\newcommand{\forcesc}{\Vdash_{\!c}}
+
+\title{共観主義論理の基礎\\[0.2em]
+  {\Large ---複数観点の共通段階意味論と非降下な比較余剰---}\\[0.4em]
+  {\large Foundations of Cotuitionistic Logic}}
+\author{千葉将臣}
+\date{2026-08-24}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿は、二つの論理的観点を一方へ還元せず、共通の観測段階において同時に比較する形式体系を\textbf{共観主義論理}（Cotuitionistic logic）として提案する。二つの直観主義命題言語 $\mathcal L_0,\mathcal L_1$ と、それぞれのHeyting代数意味論 $H_0,H_1$ を、共通比較代数 $K$ への写像 $e_0,e_1$ によって結ぶ。共観判断
+\[
+ u\forcesc A\bowtie B
+\]
+は、$u\in K$ が $e_0(\Val_0(A))$ と $e_1(\Val_1(B))$ の双方を精密化することとして定義される。したがって共観は、一つの体系で $A$ と $B$ を混合して主張することではなく、異なる観点に属する二命題が同じ段階から支持されることを表す。
+
+本稿では、共観判断の持続性、連言・含意に対する意味論的規則、観点交換、成分論理に対する保守性を示す。また、共通段階 $u$ がいずれの観点からも降下しない場合を\textbf{厳密共観}と呼び、その段階が各観点に定める方向フィルターを比較余剰として定式化する。幾何学的写像によるトポス意味論では、幾何学的断片と完全なHeyting断片を区別し、後者には含意を保存する追加条件が必要であることを明示する。
+
+共観主義論理は、直観主義論理の否定でも、矛盾許容論理でも、既存のco-intuitionistic logicの別名でもない。それは複数の内部論理を共通意味論上で比較するための二層判断体系である。体系外部の方向や外点 $\dfix$ は本稿では導出せず、非降下な比較余剰から外部方向意味論へ進む後続研究の課題として位置づける。
+
+\medskip
+\noindent\textbf{キーワード：} 共観主義論理、Cotuitionistic logic、直観主義論理、Heyting代数、トポス、幾何学的写像、非降下性、比較意味論
+\end{abstract}
+
+\tableofcontents
+
+\section{序論}
+
+\subsection{単一観点から複数観点へ}
+
+直観主義論理では、命題の真理は証明または構成可能性によって理解される。Kripke意味論や層意味論では、この構成可能性は段階、世界または局所領域に相対化される\cite{Kripke1965,FourmanScott1979,johnstone}。しかし、複数の構成主体、複数の内部言語、あるいは構文的記述と意味論的評価を同時に扱う場合、単一の段階順序だけでは次の問いを十分に表せない。
+
+\begin{quote}
+異なる観点に属する二つの命題は、一方を他方へ翻訳して消去することなく、どのような共通条件の下で同時に観測できるか。
+\end{quote}
+
+本稿は、この問いに対する最小の形式的回答を与える。共観主義論理における「共観」とは、二命題を同一視することでも、一つの論理体系の内部で単純に連言することでもない。異なる言語に属する命題を共通意味論へ写し、その共通段階を明示して比較することである。
+
+\subsection{名称と非同一性}
+
+英語名を\textbf{Cotuitionistic logic} とする。接頭辞 ``co-'' は、intuition を双対化するという意味ではなく、複数の観点が\emph{共に観る}ことを表す。したがって本稿のCotuitionistic logicは、直観主義論理の双対として余含意や排除を研究する ``co-intuitionistic logic'' とは異なる。
+
+また、共観判断 $A\bowtie B$ は、一つの言語における $A\land B$ ではない。特に $A$ と $B$ が異なる言語に属するため、$A\land B$ はそもそも形成されない。両者を比較可能にするものは、共通意味論と観測段階である。
+
+\subsection{本稿の主張強度}
+
+本稿では次の三水準を区別する。
+
+\begin{center}
+\begin{tabular}{p{0.23\textwidth} p{0.29\textwidth} p{0.38\textwidth}}
+\toprule
+水準 & 内容 & 本稿での位置 \\
+\midrule
+既存数学 & Heyting代数、Kripke・層意味論、幾何学的写像 & 意味論的基礎 \\
+新しい定義 & 共観枠、共観判断、厳密共観、方向フィルター & 本稿の中心 \\
+将来課題 & 外部方向、外点 $\dfix$、高次共観、中観主義論理 & 展望 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+本稿は、四句分別と四種類の論理体系の厳密な対応、停止性問題の一般的解決、Gödelの不完全性定理の回避、あるいは外点 $\dfix$ の導出を主張しない。これらの解釈へ進む前に必要となる、二観点比較の基礎層だけを構築する。
+
+\section{二つの観点と言語}
+
+\subsection{成分言語}
+
+$\mathcal L_0$ と $\mathcal L_1$ を、命題変数の集合が互いに素である二つの直観主義命題言語とする。各言語は
+\[
+ \top,\quad\bot,\quad\land,\quad\lor,\quad\to
+\]
+を持ち、$\neg A$ は $A\to\bot$ の略記とする。添字 $i\in\{0,1\}$ に対し、$A\in\mathcal L_i$ を観点 $i$ に属する命題と呼ぶ。
+
+各成分言語には通常の直観主義的導出関係
+\[
+ \Gamma_i\vdash_i A
+\]
+が与えられているとする。本稿は成分論理を変更せず、二つの導出関係の上に比較判断を追加する。
+
+\begin{definition}[共観式]
+$A\in\mathcal L_0$ と $B\in\mathcal L_1$ に対し
+\[
+ A\bowtie B
+\]
+を\textbf{共観式}と呼ぶ。記号 $\bowtie$ は対象言語内部の二項結合子ではなく、二つの言語にまたがる比較形成子である。
+\end{definition}
+
+この型の区別によって、$A\bowtie\neg A$ のような無添字の表現は形成できない。観点0の命題 $A$ と観点1の命題 $B$ が、それぞれの意味論の下で反対の内容を持つことはあり得るが、それは一つの論理体系における矛盾を直ちに意味しない。
+
+\subsection{共観判断}
+
+共観式の成立には、共通観測段階を明記する。
+
+\begin{definition}[共観判断の形]
+$u$ を共通観測段階とするとき
+\[
+ u\forcesc A\bowtie B
+\]
+を共観判断と呼び、「段階 $u$ において、観点0の $A$ と観点1の $B$ が共に観測される」と読む。
+\end{definition}
+
+この判断の意味は第3節で与える。段階 $u$ を省略した無条件の $A\bowtie B$ は、原則として使用しない。共観が成立する範囲を明示することが、単純な視点融合との違いを担う。
+
+\section{Heyting代数による共通段階意味論}
+
+\subsection{共観枠}
+
+\begin{definition}[Heyting共観枠]
+\textbf{Heyting共観枠}とは、次の五つ組
+\[
+ \mathfrak C=(H_0,H_1,K,e_0,e_1)
+ \label{eq:cotuition-frame}
+\]
+である。
+\begin{enumerate}
+ \item $H_0,H_1,K$ はHeyting代数である。
+ \item $e_i:H_i\to K$ は有限交叉、有限結合、$0,1$ およびHeyting含意を保存する写像である。
+\end{enumerate}
+$K$ を\textbf{共通比較代数}、$e_i$ を\textbf{観点埋入}と呼ぶ。必要に応じて $e_i$ が単射であることを追加仮定する。
+\end{definition}
+
+各言語の付値を
+\[
+ \Val_i:\mathcal L_i\longrightarrow H_i
+\]
+とする。$e_i\Val_i(A)$ は、観点 $i$ の命題 $A$ を共通比較代数から見た真理値である。
+
+\begin{definition}[共観値]
+共観式 $A\bowtie B$ の\textbf{共観値}を
+\begin{equation}
+ \Val_c(A\bowtie B)
+ :=e_0\Val_0(A)\wedge e_1\Val_1(B)
+ \in K
+ \label{eq:cotuition-value}
+\end{equation}
+と定める。
+\end{definition}
+
+\begin{definition}[共観forcing]
+$u\in K$ に対して
+\begin{equation}
+ u\forcesc A\bowtie B
+ \quad:\Longleftrightarrow\quad
+ u\leq e_0\Val_0(A)\wedge e_1\Val_1(B)
+ \label{eq:cotuition-forcing}
+\end{equation}
+と定める。
+\end{definition}
+
+式\eqref{eq:cotuition-forcing}は、$u$ が二つの命題の共通の精密化であることを述べる。$u$ は第三の真理値を追加するのではなく、$K$ における局所的観測範囲を指定する。
+
+\subsection{基本性質}
+
+\begin{proposition}[持続性]
+$v\leq u$ かつ $u\forcesc A\bowtie B$ ならば
+\[
+ v\forcesc A\bowtie B
+\]
+である。
+\end{proposition}
+
+\begin{proof}
+式\eqref{eq:cotuition-forcing}から
+$u\leq e_0\Val_0(A)\wedge e_1\Val_1(B)$ である。$v\leq u$ と推移律より結論を得る。
+\end{proof}
+
+\begin{proposition}[成分単調性]
+$\Val_0(A)\leq\Val_0(A')$ および
+$\Val_1(B)\leq\Val_1(B')$ とする。このとき
+\[
+ u\forcesc A\bowtie B
+ \quad\Longrightarrow\quad
+ u\forcesc A'\bowtie B'.
+\]
+特に、$A\vdash_0 A'$ と $B\vdash_1 B'$ が成分意味論で健全なら同じ含意が成立する。
+\end{proposition}
+
+\begin{proof}
+$e_0,e_1$ の単調性を用いる。
+\end{proof}
+
+\begin{theorem}[連言則]
+任意の $u\in K$ について
+\begin{align}
+ &u\forcesc (A\land C)\bowtie(B\land D)\\
+ &\qquad\Longleftrightarrow
+ \bigl(u\forcesc A\bowtie B\bigr)
+ \text{ かつ }
+ \bigl(u\forcesc C\bowtie D\bigr).
+ \label{eq:conjunction-rule}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+$e_i$ は有限交叉を保存するので、左辺の共観値は
+\[
+ e_0\Val_0(A)\wedge e_0\Val_0(C)
+ \wedge e_1\Val_1(B)\wedge e_1\Val_1(D)
+\]
+である。$u$ がこの元以下であることは、二つの共観値の双方以下であることと同値である。
+\end{proof}
+
+\begin{theorem}[成分別含意則]
+任意の $u\in K$ について、次は同値である。
+\begin{enumerate}
+ \item $u\forcesc(A\to C)\bowtie(B\to D)$。
+ \item すべての $v\leq u$ に対し、
+ \begin{align*}
+  v\leq e_0\Val_0(A)&\Longrightarrow v\leq e_0\Val_0(C),\\
+  v\leq e_1\Val_1(B)&\Longrightarrow v\leq e_1\Val_1(D)
+ \end{align*}
+ が成り立つ。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Heyting代数における随伴性
+\[
+ x\leq(a\Rightarrow c)
+ \quad\Longleftrightarrow\quad
+ x\wedge a\leq c
+\]
+と、そのKripke型の同値表現を各成分に適用する。$e_i$ がHeyting含意を保存することから結論を得る。
+\end{proof}
+
+含意則の前件は成分ごとに検査される。$v\forcesc A\bowtie B$ だけを前件とすると、$A$ と $B$ が同時に成立する段階しか検査できず、各成分の含意より弱くなる。この区別は共観を一つの混合論理へ潰さないために必要である。
+
+\subsection{選言と再対形成}
+
+選言については連言のような単純な双方向規則は一般に成立しない。分配法則により
+\begin{align}
+ &\Val_c((A\lor C)\bowtie(B\lor D))\\
+ &=\bigl(e_0\Val_0(A)\wedge e_1\Val_1(B)\bigr)
+ \lor\bigl(e_0\Val_0(A)\wedge e_1\Val_1(D)\bigr)\notag\\
+ &\quad\lor\bigl(e_0\Val_0(C)\wedge e_1\Val_1(B)\bigr)
+ \lor\bigl(e_0\Val_0(C)\wedge e_1\Val_1(D)\bigr).
+ \label{eq:cross-pairing}
+\end{align}
+したがって、選言後には当初の対 $(A,B)$ と $(C,D)$ だけでなく、交差対 $(A,D)$ と $(C,B)$ が現れる。この現象を\textbf{再対形成}と呼ぶ。共観が単なる二つの証明列の並置ではなく、共通意味論上の比較であることがここに表れる。
+
+\section{推論体系}
+
+\subsection{橋渡し公理と閉包規則}
+
+具体的な応用では、どの命題対が比較可能かを指定する必要がある。
+
+\begin{definition}[橋渡し基底]
+共観枠に対する\textbf{橋渡し基底} $\mathcal B$ とは、意味論的に妥当な基本判断
+\[
+ u\forcesc A\bowtie B
+\]
+の指定された族である。
+\end{definition}
+
+$\CoInt(\mathcal B)$ を、橋渡し基底と次の規則で生成される判断体系とする。
+
+\begin{align}
+\frac{u\forcesc A\bowtie B\qquad v\leq u}
+     {v\forcesc A\bowtie B}
+&\quad\textsc{Stage},
+\label{rule:stage}\\[0.8em]
+\frac{u\forcesc A\bowtie B\qquad A\vdash_0 A'\qquad B\vdash_1 B'}
+     {u\forcesc A'\bowtie B'}
+&\quad\textsc{Mon},
+\label{rule:mon}\\[0.8em]
+\frac{u\forcesc A\bowtie B\qquad u\forcesc C\bowtie D}
+     {u\forcesc(A\land C)\bowtie(B\land D)}
+&\quad\textsc{Meet},
+\label{rule:meet}\\[0.8em]
+\frac{u\forcesc A\bowtie B}
+     {u\forcesc(A\lor C)\bowtie(B\lor D)}
+&\quad\textsc{Join}_{00}.
+\label{rule:join}
+\end{align}
+
+最後の規則には、左右の選言導入の選び方に応じた四つの変種がある。例えば $A\bowtie D$ からも $(A\lor C)\bowtie(B\lor D)$ を導入できる。これは式\eqref{eq:cross-pairing}に対応する。
+
+\begin{theorem}[健全性]
+橋渡し基底 $\mathcal B$ の各判断が共観枠 $\mathfrak C$ で妥当であり、成分導出 $\vdash_i$ が $H_i$ で健全であるなら、$\CoInt(\mathcal B)$ で導出可能なすべての判断は $\mathfrak C$ で妥当である。
+\end{theorem}
+
+\begin{proof}
+導出の長さに関する帰納法による。\textsc{Stage} は持続性、\textsc{Mon} は成分単調性、\textsc{Meet} は連言則から従う。選言導入は各共観値が式\eqref{eq:cross-pairing}の対応する交叉項以下であることから従う。
+\end{proof}
+
+\subsection{成分論理に対する保守性}
+
+共観判断から成分判断を無条件に取り出す射影規則
+\[
+ \frac{u\forcesc A\bowtie B}{\vdash_0 A}
+\]
+は採用しない。局所段階で支持されることと、成分論理における大域定理であることは異なるからである。
+
+\begin{proposition}[大域共観の成分反映]
+$e_0,e_1$ が $1$ を反映するとする。このとき
+\[
+ 1_K\forcesc A\bowtie B
+\]
+ならば
+\[
+ \Val_0(A)=1_{H_0},
+ \qquad
+ \Val_1(B)=1_{H_1}.
+\]
+\end{proposition}
+
+\begin{proof}
+$1_K\leq e_0\Val_0(A)\wedge e_1\Val_1(B)$ ならば両因子は $1_K$ である。$e_i$ が $1$ を反映するので結論を得る。
+\end{proof}
+
+\begin{corollary}[意味論的保守性]
+成分論理がそれぞれのHeyting代数クラスに関して完全であり、共観体系に大域段階以外から成分定理を取り出す規則を加えないなら、共観判断の追加だけでは成分言語の新しい定理は生じない。
+\end{corollary}
+
+\section{観点交換と非対称性}
+
+\subsection{交換共観枠}
+
+共観は二観点を扱うが、対称性は自動的ではない。
+
+\begin{definition}[交換構造]
+共観枠 $\mathfrak C$ の\textbf{交換構造}とは、Heyting代数同型
+\[
+ \sigma:K\longrightarrow K
+\]
+であって $\sigma^2=\mathrm{id}_K$ を満たし、適切な同型 $s:H_0\cong H_1$ の下で
+\[
+ \sigma e_0=e_1s,
+ \qquad
+ \sigma e_1=e_0s^{-1}
+\]
+となるものである。
+\end{definition}
+
+\begin{proposition}[観点交換]
+交換構造が存在するならば
+\[
+ u\forcesc A\bowtie B
+ \quad\Longleftrightarrow\quad
+ \sigma(u)\forcesc s(B)\bowtie s(A)
+\]
+である。
+\end{proposition}
+
+一般には、観点0が構文、観点1が意味論である場合や、一方が他方より細かい観測能力を持つ場合、交換構造は存在しない。共観主義論理は対称性を公理化するのではなく、対称な比較と非対称な委託を同じ形式で区別する。
+
+\section{厳密共観と比較余剰}
+
+\subsection{降下可能な段階}
+
+共通比較代数 $K$ の段階が、いずれかの観点の真理値として既に表現できる場合、その段階は新しい比較情報を持たない可能性がある。
+
+\begin{definition}[降下性]
+$u\in K$ が観点 $i$ へ\textbf{降下可能}であるとは、ある $a\in H_i$ が存在して
+\[
+ u=e_i(a)
+\]
+となることをいう。$u\notin\Img(e_i)$ のとき、$u$ は観点 $i$ へ\textbf{非降下}である。
+\end{definition}
+
+\begin{definition}[厳密共観]
+共観判断 $u\forcesc A\bowtie B$ が\textbf{厳密共観}であるとは
+\[
+ u\notin\Img(e_0)\cup\Img(e_1)
+ \label{eq:strict-cotuition}
+\]
+が成り立つことをいう。
+\end{definition}
+
+厳密共観では、共通段階 $u$ は両成分から記述できる命題を支持しながら、段階そのものはどちらの真理値にも一致しない。この差を\textbf{比較余剰}と呼ぶ。ただし比較余剰は、直ちに体系外部の対象が存在することを意味しない。それは共通意味論が各成分より細かい解像度を持つという相対的事実である。
+
+\subsection{方向フィルター}
+
+\begin{definition}[方向フィルター]
+$u\in K$ が観点 $i$ に定める\textbf{方向フィルター}を
+\begin{equation}
+ \Dir_i(u)
+ :=\{a\in H_i\mid u\leq e_i(a)\}
+ \label{eq:direction-filter}
+\end{equation}
+と定める。
+\end{definition}
+
+\begin{proposition}
+$\Dir_i(u)$ は $H_i$ のフィルターである。すなわち $1\in\Dir_i(u)$ であり、上方閉かつ有限交叉で閉じる。
+\end{proposition}
+
+\begin{proof}
+$e_i(1)=1$ なので $u\leq e_i(1)$ である。$a\leq b$ と $u\leq e_i(a)$ から $u\leq e_i(b)$ を得る。また $u\leq e_i(a)$ かつ $u\leq e_i(b)$ なら
+\[
+ u\leq e_i(a)\wedge e_i(b)=e_i(a\wedge b)
+\]
+である。
+\end{proof}
+
+方向フィルターは、共通段階 $u$ 自体を成分内部に置くことなく、$u$ がその観点からどの命題の方向に位置するかを記録する。厳密共観のとき、$u$ は両観点に対して非降下であるが、$\Dir_0(u)$ と $\Dir_1(u)$ は各成分の内部データだけからなる。この構造が、後に「外部の点ではなく外部の方向を指示する」意味論へ接続する候補となる。
+
+\subsection{有限例}
+
+\begin{example}[粗い二観点と細かい共通段階]
+$H_0=H_1=\mathbf 2=\{0,1\}$、
+$K=\mathcal P(\{x,y\})$ とし、$e_0,e_1$ は
+\[
+ 0\longmapsto\varnothing,
+ \qquad
+ 1\longmapsto\{x,y\}
+\]
+で与える。$u=\{x\}$ とする。このとき
+\[
+ u\notin\Img(e_0)\cup\Img(e_1)
+\]
+である。一方、$\Val_0(A)=\Val_1(B)=1$ なら
+\[
+ \{x\}\forcesc A\bowtie B.
+\]
+したがって $u$ は、いずれの成分も単独では命名できない細かい観測段階として、厳密共観を与える。
+\end{example}
+
+この例は外部対象を生成しない。$u$ は $K$ の内部要素である。しかし、二つの粗い観点から共通比較層へ移ったときに初めて可視化される段階が存在することを、有限モデルで示している。
+
+\section{トポスおよび層意味論}
+
+\subsection{共通比較トポス}
+
+圏論的には、二つの観点を二つのトポス $\mathcal E_0,\mathcal E_1$、共通比較層をトポス $\mathcal D$ として表す。幾何学的写像
+\[
+ f_i:\mathcal D\longrightarrow\mathcal E_i
+\]
+の逆像関手
+\[
+ f_i^*:\mathcal E_i\longrightarrow\mathcal D
+\]
+は有限極限と任意余極限を保存する\cite{johnstone,FourmanScott1979}。部分終対象のフレームを用いれば
+\[
+ H_i=\Sub_{\mathcal E_i}(1),
+ \qquad
+ K=\Sub_{\mathcal D}(1)
+\]
+と置き、$f_i^*$ から観点写像 $e_i$ を得る。
+
+\begin{remark}[幾何学的断片とHeyting断片]
+一般の幾何学的逆像関手は有限交叉と任意結合を保存するが、Heyting含意や全称量化を必ず保存するとは限らない。したがって、幾何学的写像だけから無条件に得られるのは
+\[
+ \top,\quad\bot,\quad\land,\quad\lor,\quad\exists
+\]
+からなる\textbf{幾何学的共観断片}である。第3節の完全なHeyting共観意味論を得るには、$f_i^*$ が含意を保存する論理的写像であること、または部分終対象上で対応するHeyting準同型が与えられることを追加仮定する。
+\end{remark}
+
+この区別により、「幾何学的写像がある」ことと「二つの内部直観主義論理のすべての結合子をそのまま比較できる」ことを混同しない。
+
+\subsection{局所的共観}
+
+$\mathcal D=\Sh(\mathcal C,J)$ の場合、$u$ をサイトの対象または開部分として読むことができる。共観判断
+\[
+ u\forcesc A\bowtie B
+\]
+は、$u$ 上で $f_0^*A$ と $f_1^*B$ が同時に成立するというKripke--Joyal型判断になる。存在命題は被覆上の局所証人によって成立し得るため、共観は大域点の選択を要求しない。
+
+この局所性は、共観主義論理を古典的な「二人の観測者の意見の一致」に還元できない理由でもある。一致は単一の真偽値ではなく、どの領域で、どの精密化に対して持続するかを含む幾何学的データである。
+
+\section{他の論理との関係}
+
+\subsection{古典論理と直観主義論理}
+
+$H_0,H_1,K$ がBoolean代数なら、共観意味論は古典的な共通事象の比較へ特殊化する。しかし共観という二層判断の型は残る。逆に一般のHeyting代数では排中律を仮定せず、各成分の直観主義性が保たれる。
+
+共観主義論理は直観主義論理を置き換えない。各観点内部の推論は直観主義論理に従い、共観は観点間の比較層だけを追加する。
+
+\subsection{様相論理および多主体論理との差}
+
+多主体様相論理では、通常、一つの対象言語の式に主体ごとの様相演算子を付ける。これに対し本稿では、$\mathcal L_0$ と $\mathcal L_1$ は異なる言語であってよく、共通比較代数 $K$ への意味論的写像が明示される。したがって主体名だけでなく、語彙、構成原理、真理値の解像度が異なる観点も比較できる。
+
+\subsection{矛盾許容論理との差}
+
+観点0で $A$ が支持され、観点1で $B$ が支持され、外部的な翻訳が $B$ を $A$ の否定に対応づける場合でも、一つの成分言語で $A\land\neg A$ が導かれたわけではない。矛盾を同一体系内に保持する矛盾許容論理と、異なる体系の判断を型付きで併記する共観主義論理は区別される。
+
+\subsection{随伴の役割}
+
+共観枠そのものは随伴を要求しない。随伴は比較写像を構成する重要な方法だが、随伴の存在だけで命題対や共通段階は自動的に定まらない\cite{Kan1958,MacLane1998,Riehl2016}。具体的応用では、構文と意味論の随伴、抽象化と具体化の随伴、あるいは幾何学的写像の随伴から $e_i$ と橋渡し基底を構成する必要がある。
+
+\section{外部方向への接続}
+
+\subsection{比較余剰と外部性の区別}
+
+厳密共観
+\[
+ u\notin\Img(e_0)\cup\Img(e_1)
+\]
+は、$u$ が両観点の外部にあることではなく、両観点から共通比較層へ降下できないことを表す。$u$ は依然として $K$ の内部要素である。したがって、厳密共観だけから体系一般の外点 $\dfix$ を導出することはできない。
+
+しかし、方向フィルター
+\[
+ \Dir_i(u)=\{a\in H_i\mid u\leq e_i(a)\}
+\]
+は重要な中間概念を与える。各観点は $u$ を点として所有しなくても、$u$ によって支持される命題の族を通じて、その方向を記述できる。
+
+\subsection{後続理論の候補}
+
+基底圏 $\mathcal C_i$、共通拡大圏 $\mathcal D$、解釈
+\[
+ j_i:\mathcal C_i\longrightarrow\mathcal D
+\]
+および両側へ降下しない対象 $\gamma\in\mathcal D$ が与えられた場合、外部方向プロファイルを
+\[
+ \partial_\gamma^{(i)}(X)
+ :=\Hom_{\mathcal D}(j_iX,\gamma)
+\]
+と定めることができる。これが $\mathcal C_i$ 内で表現可能でない場合、共観の比較余剰は非表現可能な外部方向へ拡張される。
+
+ただし、この構成には $\mathcal D,j_i,\gamma$ と非表現可能性の証明が追加で必要である。本稿では、$\dfix$ を $K$ の元や共観式の真理値として導入しない。
+
+\begin{conjecture}[共観から外部方向への拡張]
+適切な共観枠の圏論的実現において、厳密共観段階の方向フィルターが、ある非降下対象 $\gamma$ の外部方向プロファイル $\partial_\gamma^{(i)}$ と自然に対応する具体例が存在する。
+\end{conjecture}
+
+この予想が実現されれば、研究の段階は
+\[
+ \text{二観点の共観}
+ \longrightarrow
+ \text{非降下な比較余剰}
+ \longrightarrow
+ \text{非表現可能な外部方向}
+ \longrightarrow
+ \text{外点指示}
+\]
+と整理できる。
+
+\section{限界と研究課題}
+
+\subsection{橋渡し基底は追加データである}
+
+二つの論理言語を与えただけでは、どの命題対を比較すべきかは定まらない。翻訳、観測写像、実験対応、随伴などから橋渡し基底を構成し、その健全性を個別に証明する必要がある。
+
+\subsection{共通比較層の選択依存性}
+
+同じ二つの成分論理でも、異なる $K$ と $e_i$ を選べば異なる共観判断が得られる。これは欠陥ではなく、比較が媒介に相対的であることを示す。ただし比較結果の不変性を論じるには、共観枠間の射と同値概念が必要になる。
+
+\subsection{完全性}
+
+本稿は橋渡し基底に相対的な健全性を示したが、独立した構文体系に対する完全性定理は与えていない。完全性を得るには、段階記号 $u$ の構文、橋渡し公理の生成法、および標準共観枠を定める必要がある。
+
+\subsection{量化と依存型}
+
+一階量化を含む場合は、二つのHeyting超教義または圏論的論理を共通超教義へ写す必要がある。幾何学的写像は存在量化と有限論理には適しているが、全称量化および含意の保存には追加条件を要する。依存型を含む共観主義論理は、文脈圏と置換の整合性を別途扱わなければならない。
+
+\subsection{哲学的解釈の位置}
+
+「真理が主体の内から主体間へ移る」「共に観る」といった表現は、本稿の数学的構造に対する解釈である。数学的主張はHeyting代数、観点写像、共通段階、非降下性および方向フィルターによって与えられる。四句分別や中観思想との対応は、これらの基礎が確立した後に検討すべき独立の比較哲学的課題である\cite{Garfield1995,Westerhoff2009}。
+
+\section{結論}
+
+本稿は、複数の論理的観点を一方へ還元せずに比較する最小形式として、共観主義論理（Cotuitionistic logic）を定式化した。中心となる判断は
+\[
+ \boxed{
+ u\forcesc A\bowtie B
+ \quad\Longleftrightarrow\quad
+ u\leq e_0\Val_0(A)\wedge e_1\Val_1(B)
+ }
+\]
+である。
+
+$A$ と $B$ は異なる直観主義言語に属し、$u$ は共通比較代数 $K$ の段階である。この型分離によって、共観は単純な連言、視点融合、矛盾の導入から区別される。持続性、成分単調性、連言則、成分別含意則および橋渡し基底に相対的な健全性が得られ、観点埋入が大域真理を反映する場合には成分論理に対する保守性も保たれる。
+
+また
+\[
+ u\notin\Img(e_0)\cup\Img(e_1)
+\]
+を満たす共観を厳密共観とし、各観点に
+\[
+ \Dir_i(u)=\{a\in H_i\mid u\leq e_i(a)\}
+\]
+という方向フィルターを定めた。これにより、いずれの観点にも点として回収されない比較段階を、その段階が支持する内部命題の方向として記述できる。
+
+ただし、この比較余剰はまだ外点 $\dfix$ ではない。共観主義論理の役割は、外部を一挙に導出することではなく、単一観点から外部方向へ進む途中にある「比較可能だが単独の観点へは降下しない」構造を厳密に分離することにある。次の課題は、非降下な共通段階から非表現可能な方向プロファイルを構成する具体例を与え、その後に中観主義的外部方向意味論との接続を検討することである。
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
